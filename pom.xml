@@ -18,7 +18,7 @@
         <raar.version>3.3.g-C-0</raar.version>
         <jackson.version>1.8.1</jackson.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-security.version>3.1.0.RELEASE</spring-security.version>        
+        <spring-security.version>5.2.1.RELEASE</spring-security.version>        
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>

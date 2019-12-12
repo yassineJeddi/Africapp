@@ -52,9 +52,17 @@ and open the template in the editor.
                                            <h:outputText value="#{at.dateAccident}" />
                                     </p:column> 
                                     <p:column headerText="Action" >
-                                           <p:commandButton icon="ui-icon-document-b" oncomplete="PF('dlg_detailAccident').show()" title="Détail accident" 
-                                                 actionListener="#{accidentTravailMb.detailAccident(at)}"
-                                                 update=":forme,:forme:form_detailAccident" immediate="true" />
+                                           <p:commandButton icon="ui-icon-document-b" 
+                                                            oncomplete="PF('dlg_detailAccident').show()" 
+                                                            title="Détail accident" 
+                                                            class="btn btn-sm"
+                                                            actionListener="#{accidentTravailMb.detailAccident(at)}"
+                                                            update=":forme,:forme:form_detailAccident" 
+                                                            immediate="true" />
+                                           <p:commandButton icon="ui-icon-clock" 
+                                                            class="btn btn-sm"
+                                                            title="Suivi accident" 
+                                                            actionListener="#{accidentTravailMb.redirectEnginDetAT(at)}" />
                                     </p:column> 
                                        
                                    </p:dataTable>

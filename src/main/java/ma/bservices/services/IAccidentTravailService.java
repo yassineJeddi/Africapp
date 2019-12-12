@@ -21,7 +21,7 @@ public interface IAccidentTravailService {
     public void editAccidentTravail(AccidentTravail a);
     public void remouveAccidentTravail(AccidentTravail a);
     public List<AccidentTravail> allAccidentTravail();
-    public AccidentTravail allAccidentTravailById(Integer id);
+    public AccidentTravail allAccidentTravailById(Long id);
     public List<AccidentTravail> allAccidentTravailByChantier(Chantier c);
     public List<AccidentTravail> allAccidentTravailBySalarie(Salarie s);
     

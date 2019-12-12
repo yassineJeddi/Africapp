@@ -5,14 +5,17 @@
  */
 package ma.bservices.mb;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.el.ELContext;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import ma.bservice.tgcc.Constante.Message;
 import ma.bservices.beans.AccidentTravail;
@@ -195,6 +198,19 @@ public class AccidentTravailMb {
             chantiers = chantierService.searchByUser(auth.getPrincipal().toString());
         }
         
+        
+        Long id =Long.valueOf(-1);
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = facesContext.getExternalContext();
+        Map<String, String> requestParameters = externalContext.getRequestParameterMap();
+        if (requestParameters.containsKey("atId")) {
+            id = Long.valueOf(requestParameters.get("atId"));
+            
+            System.out.println("=====> accidentTravail id : "+id);
+            accidentTravail = accidentTravailService.allAccidentTravailById(id);
+            System.out.println("=====> accidentTravail : "+accidentTravail.toString());
+        }
+        
     }
     
     public void listSalarieByChantier(){
@@ -243,6 +259,12 @@ public class AccidentTravailMb {
     public void detailAccident(AccidentTravail a){
         accidentTravail = a;
     }
+    public void redirectEnginDetAT(AccidentTravail a) throws IOException {
+        System.out.println("redirect");
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        ec.redirect(ec.getRequestContextPath() + "/at/detailAt.xhtml?faces-redirect=true&atId=" + a.getId());
+        
+    }  
     
     
     

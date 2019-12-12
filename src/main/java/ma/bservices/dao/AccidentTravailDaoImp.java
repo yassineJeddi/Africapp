@@ -80,7 +80,7 @@ public class AccidentTravailDaoImp extends MbHibernateDaoSupport implements IAcc
     }
 
     @Override
-    public AccidentTravail allAccidentTravailById(Integer id) {
+    public AccidentTravail allAccidentTravailById(Long id) {
          AccidentTravail  l = new AccidentTravail();
         try {
              l =  this.getHibernateTemplate().load(AccidentTravail.class, id);

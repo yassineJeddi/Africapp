@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Voiture</title>
+    </h:head>
+    <body>
+        <ui:composition template="./Template.xhtml">
+            <ui:define name="arborescence"> 
+                <h:form id="formeSolde">RH > Accident Travail</h:form>
+            </ui:define>
+            <ui:define name="content">
+                <h:form id="forme">
+                    <div class="ui-fluid">
+                        <p:growl id="msgs" showDetail="true" />
+                        <p:messages id="msgsP" showDetail="true" autoUpdate="true" closable="true" />
+                        <!-- Information d'accident -->
+                        <p:panel id="id_infoAT" header="" toggleable="true" 
+                                 toggleSpeed="500" closeSpeed="500"
+                                 widgetVar="panel" style="margin-bottom:20px"> 
+                             <h:panelGrid columns="6" cellpadding="10">
+                                <h:outputText value="Projet:" />
+                                <h:outputText value="#{accidentTravailMb.accidentTravail.chantier.code}" />
+                                
+                                <h:outputText value="Date / Heure:" />
+                                <h:outputText value="#{accidentTravailMb.accidentTravail.dateAccident}" />
+                                
+                                <h:outputText value="Directeur Projet /ou Chef de Projet :" />
+                                <h:outputText value="" />
+                                
+                                <h:outputText value="Chef de chantier: " />
+                                <h:outputText value="" />
+                                
+                                
+                            </h:panelGrid>
+                        </p:panel>
+                        <!-- Information d'accident -->
+                        <p:panel id="id_infoVictime" header="Victime" toggleable="true" 
+                                 toggleSpeed="500" closeSpeed="500"
+                                 widgetVar="panel" style="margin-bottom:20px"> 
+                             <h:panelGrid columns="10" cellpadding="10">
+                               
+                                <h:outputText value="Nom et Prenom :" />
+                                <h:outputText value="#{accidentTravailMb.accidentTravail.salarie.nom} #{accidentTravailMb.accidentTravail.salarie.prenom}" />
+                                <h:outputText value="Nom et Prenom(Arabe) :" />
+                                <h:outputText value="#{accidentTravailMb.accidentTravail.salarie.nomArabe} #{accidentTravailMb.accidentTravail.salarie.prenomArabe}" />
+                                <h:outputText value="Sex :" />
+                                <h:outputText value="#{accidentTravailMb.accidentTravail.salarie.civilite.civilite}" />
+                                <h:outputText value="Qualification :" />
+                                <h:outputText value="#{accidentTravailMb.accidentTravail.salarie.fonction.fonction}" />
+                                <h:outputText value="Date d'embauche :" />
+                                <h:outputText value="#{accidentTravailMb.accidentTravail.salarie.dateCreation}" />
+                                <h:outputText value="N° CIN :" />
+                                <h:outputText value="#{accidentTravailMb.accidentTravail.salarie.cin}" />
+                                <h:outputText value="N° CNSS :" />
+                                <h:outputText value="#{accidentTravailMb.accidentTravail.salarie.cnss}" />
+                                <h:outputText value="Adresse :" />
+                                <h:outputText value="#{accidentTravailMb.accidentTravail.salarie.adresse}" />
+                                <h:outputText value="Adresse (arabe) :" />
+                                <h:outputText value="#{accidentTravailMb.accidentTravail.salarie.adresseArabe}" />
+                                <h:outputText value="N° de téléphone :" />
+                                <h:outputText value="#{accidentTravailMb.accidentTravail.salarie.telephone}" />
+                                <h:outputText value="Nationalité :" />
+                                <h:outputText value="#{accidentTravailMb.accidentTravail.salarie.nationalite.nationalite}" />
+                                <h:outputText value="Situation familiale :" />
+                                <h:outputText value="#{accidentTravailMb.accidentTravail.salarie.situationFamiliale.situationFamiliale}" />
+                                <h:outputText value="Nombre d'épouse :" />
+                                <h:outputText value="#{accidentTravailMb.accidentTravail.salarie.nombreEnfants}" />
+                                <h:outputText value="Nombre Enfants :" />
+                                <h:outputText value="#{accidentTravailMb.accidentTravail.salarie.nombreEnfants}" />
+                            </h:panelGrid>
+                        </p:panel>
+                        <!-- Information d'accident -->
+                        <p:panel id="id_infocausAt" header="Cause AT" toggleable="true" 
+                                 toggleSpeed="500" closeSpeed="500"
+                                 widgetVar="panel" style="margin-bottom:20px"> 
+                             <h:panelGrid columns="2" cellpadding="10">
+                                <h:outputText value="Francis Ford Coppola's legendary continuation and sequel to his landmark 1972 film, The_Godfather, parallels the young Vito Corleone's rise with his son Michael's spiritual fall, deepening The_Godfather's depiction of the dark side of the American dream. 
+                                In the early 1900s, the child Vito flees his Sicilian village for America after the local Mafia kills his family. Vito struggles to make a living, legally or illegally, for his wife and growing brood in Little Italy, 
+                                killing the local Black Hand Fanucci after he demands his customary cut of the tyro's business. With Fanucci gone, Vito's communal stature grows." />
+                            </h:panelGrid>
+                        </p:panel>
+                        <!-- Information Lieu AT -->
+                        <p:panel id="id_infoLieuAT" header="Lieu AT" toggleable="true" 
+                                 toggleSpeed="500" closeSpeed="500"
+                                 widgetVar="panel" style="margin-bottom:20px"> 
+                             <h:panelGrid columns="2" cellpadding="10">
+                                <h:outputText value="Francis Ford Coppola's legendary continuation and sequel to his landmark 1972 film, The_Godfather, parallels the young Vito Corleone's rise with his son Michael's spiritual fall, deepening The_Godfather's depiction of the dark side of the American dream. 
+                                In the early 1900s, the child Vito flees his Sicilian village for America after the local Mafia kills his family. Vito struggles to make a living, legally or illegally, for his wife and growing brood in Little Italy, 
+                                killing the local Black Hand Fanucci after he demands his customary cut of the tyro's business. With Fanucci gone, Vito's communal stature grows." />
+                            </h:panelGrid>
+                        </p:panel>
+                        <!-- Information Description AT -->
+                        <p:panel id="id_infoDescriptionAT" header="Description AT" toggleable="true" 
+                                 toggleSpeed="500" closeSpeed="500"
+                                 widgetVar="panel" style="margin-bottom:20px"> 
+                             <h:panelGrid columns="2" cellpadding="10">
+                                <h:outputText value="Francis Ford Coppola's legendary continuation and sequel to his landmark 1972 film, The_Godfather, parallels the young Vito Corleone's rise with his son Michael's spiritual fall, deepening The_Godfather's depiction of the dark side of the American dream. 
+                                In the early 1900s, the child Vito flees his Sicilian village for America after the local Mafia kills his family. Vito struggles to make a living, legally or illegally, for his wife and growing brood in Little Italy, 
+                                killing the local Black Hand Fanucci after he demands his customary cut of the tyro's business. With Fanucci gone, Vito's communal stature grows." />
+                            </h:panelGrid>
+                        </p:panel>
+                        <!-- Information Description AT -->
+                        <p:panel id="id_infoNatureAT" header="Nature de la blessure" toggleable="true" 
+                                 toggleSpeed="500" closeSpeed="500"
+                                 widgetVar="panel" style="margin-bottom:20px"> 
+                             <h:panelGrid columns="2" cellpadding="10">
+                                <h:outputText value="Francis Ford Coppola's legendary continuation and sequel to his landmark 1972 film, The_Godfather, parallels the young Vito Corleone's rise with his son Michael's spiritual fall, deepening The_Godfather's depiction of the dark side of the American dream. 
+                                In the early 1900s, the child Vito flees his Sicilian village for America after the local Mafia kills his family. Vito struggles to make a living, legally or illegally, for his wife and growing brood in Little Italy, 
+                                killing the local Black Hand Fanucci after he demands his customary cut of the tyro's business. With Fanucci gone, Vito's communal stature grows." />
+                            </h:panelGrid>
+                        </p:panel>
+                        <!-- Information Description AT -->
+                        <p:panel id="id_infosiegeAT" header="Siège de la blessure" toggleable="true" 
+                                 toggleSpeed="500" closeSpeed="500"
+                                 widgetVar="panel" style="margin-bottom:20px"> 
+                             <h:panelGrid columns="2" cellpadding="10">
+                                <h:outputText value="Francis Ford Coppola's legendary continuation and sequel to his landmark 1972 film, The_Godfather, parallels the young Vito Corleone's rise with his son Michael's spiritual fall, deepening The_Godfather's depiction of the dark side of the American dream. 
+                                In the early 1900s, the child Vito flees his Sicilian village for America after the local Mafia kills his family. Vito struggles to make a living, legally or illegally, for his wife and growing brood in Little Italy, 
+                                killing the local Black Hand Fanucci after he demands his customary cut of the tyro's business. With Fanucci gone, Vito's communal stature grows." />
+                            </h:panelGrid>
+                        </p:panel>
+                        <!-- Information Description AT -->
+                        <p:panel id="id_infoMesureAT" header="Mesures prise immédiatement" toggleable="true" 
+                                 toggleSpeed="500" closeSpeed="500"
+                                 widgetVar="panel" style="margin-bottom:20px"> 
+                             <h:panelGrid columns="2" cellpadding="10">
+                                <h:outputText value="Francis Ford Coppola's legendary continuation and sequel to his landmark 1972 film, The_Godfather, parallels the young Vito Corleone's rise with his son Michael's spiritual fall, deepening The_Godfather's depiction of the dark side of the American dream. 
+                                In the early 1900s, the child Vito flees his Sicilian village for America after the local Mafia kills his family. Vito struggles to make a living, legally or illegally, for his wife and growing brood in Little Italy, 
+                                killing the local Black Hand Fanucci after he demands his customary cut of the tyro's business. With Fanucci gone, Vito's communal stature grows." />
+                            </h:panelGrid>
+                        </p:panel>
+                        <!-- Information Description AT -->
+                        <p:panel id="id_infoSuitAT" header="Suites" toggleable="true" 
+                                 toggleSpeed="500" closeSpeed="500"
+                                 widgetVar="panel" style="margin-bottom:20px"> 
+                             <h:panelGrid columns="2" cellpadding="10">
+                                <h:outputText value="Francis Ford Coppola's legendary continuation and sequel to his landmark 1972 film, The_Godfather, parallels the young Vito Corleone's rise with his son Michael's spiritual fall, deepening The_Godfather's depiction of the dark side of the American dream. 
+                                In the early 1900s, the child Vito flees his Sicilian village for America after the local Mafia kills his family. Vito struggles to make a living, legally or illegally, for his wife and growing brood in Little Italy, 
+                                killing the local Black Hand Fanucci after he demands his customary cut of the tyro's business. With Fanucci gone, Vito's communal stature grows." />
+                            </h:panelGrid>
+                        </p:panel>
+                        <!-- Information Description AT -->
+                        <p:panel id="id_infoPhotosAT" header="Photos /ou croquis" toggleable="true" 
+                                 toggleSpeed="500" closeSpeed="500"
+                                 widgetVar="panel" style="margin-bottom:20px"> 
+                             <h:panelGrid columns="2" cellpadding="10">
+                                <h:outputText value="Francis Ford Coppola's legendary continuation and sequel to his landmark 1972 film, The_Godfather, parallels the young Vito Corleone's rise with his son Michael's spiritual fall, deepening The_Godfather's depiction of the dark side of the American dream. 
+                                In the early 1900s, the child Vito flees his Sicilian village for America after the local Mafia kills his family. Vito struggles to make a living, legally or illegally, for his wife and growing brood in Little Italy, 
+                                killing the local Black Hand Fanucci after he demands his customary cut of the tyro's business. With Fanucci gone, Vito's communal stature grows." />
+                            </h:panelGrid>
+                        </p:panel>
+                    </div>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

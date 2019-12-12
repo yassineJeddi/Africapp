@@ -45,7 +45,8 @@
                     <br /><br />
                     <h:form id="tablePE">
                         <p:growl id="growlM" autoUpdate="false" showDetail="true" life="10000" />
-                        <p:dataTable id="tbl" var="parcEnginsIt" value="#{parcEngins.engins}" widgetVar="tableEng"   rowKey="#{parcEnginsIt.IDEngin}"
+                        <p:dataTable id="tbl" var="parcEnginsIt" value="#{parcEngins.engins}" 
+                                     widgetVar="tableEng"   rowKey="#{parcEnginsIt.IDEngin}"
                                      selection="#{parcEngins.engin}" filteredValue="#{parcEngins.filtredengins}"
                                      rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
                                      {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
@@ -109,8 +110,11 @@
                             </p:column>
                             <c:if test="#{authentification.hasPermission(constanteMb.actionEngin)}">
                                 <p:column exportable="false" headerText="Action" >
-                                    <p:commandButton icon="ui-icon-document" title="detail de l'engin" onclick="PF('find').show();" 
-                                                     update=":find" actionListener="#{parcEngins.afficherDetailEngin(parcEnginsIt)}" />
+                                    <p:commandButton icon="ui-icon-document" 
+                                                     title="detail de l'engin" 
+                                                     onclick="PF('find').show();" 
+                                                     update=":find" 
+                                                     actionListener="#{parcEngins.afficherDetailEngin(parcEnginsIt)}" />
                                     <p:commandButton icon="ui-icon-pencil"
                                                      disabled="#{parcEnginsIt.archive}"
                                                      actionListener="#{parcEngins.prepareModifEngins()}" 

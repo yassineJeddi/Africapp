@@ -53,7 +53,7 @@ public class AccidentTravailServiceImp implements Serializable,IAccidentTravailS
     }
 
     @Override
-    public AccidentTravail allAccidentTravailById(Integer id) {
+    public AccidentTravail allAccidentTravailById(Long id) {
        return accidentTravailDao.allAccidentTravailById(id);
     }
 

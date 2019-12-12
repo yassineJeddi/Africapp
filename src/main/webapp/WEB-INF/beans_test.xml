@@ -1,0 +1,157 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p" 
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+   <bean id="fonctionService" class="ma.bservices.services.FonctionServiceImpl">
+        <property name="fonctionDao" ref="fonctionDao"/>
+    </bean>
+    <bean id="fonctionDao" class="ma.bservices.dao.FonctionDaoImpl" >
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+<!--    -->
+    <bean id="zoneServices" class="ma.bservices.services.ZoneServicesImpl">
+        <property name="zoneDAO" ref="zoneDAO" /> 
+    </bean>
+   
+    <bean id="zoneDAO" class="ma.bservices.dao.ZoneDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    <!-- Niveau Fonction  -->
+    <bean id="niveauFonctionDao" class="ma.bservices.dao.NiveauFonctionImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    <bean id="salarieDao" class="ma.bservices.dao.SalarieDaoImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    <bean id="salarieServiceIn" class="ma.bservices.services.SalarieServiceImpl">
+        <property name="salarieDao" ref="salarieDao"/>
+    </bean>
+    
+    <bean id="niveauFonctionService" class="ma.bservices.services.NiveauFonctionServiceImpl">
+        <property name="niveauFonctionDao" ref="niveauFonctionDao"/>
+    </bean>
+    <!-- Salarie   -->
+    <bean id="salarieService" class="ma.bservices.services.SalarieService">
+        <property name="sessionFactory" ref="sessionFactory" />    
+        <property name="parametrageService" ref="parametrageService" />    
+        <property name="contratService" ref="contratService" />
+    </bean>
+    <bean id="heuresSupplementairesService" class="ma.bservices.services.HeuresSupplementairesService">
+        <property name="sessionFactory" ref="sessionFactory" />
+        <property name="administrationService" ref="administrationService" />
+    </bean>
+    <bean id="achatService" class="ma.bservices.services.AchatService">
+        <property name="sessionFactory" ref="sessionFactory" />
+        <property name="administrationService" ref="administrationService" />
+    </bean>
+    <bean id="presenceService" class="ma.bservices.services.PresenceService">
+        <property name="sessionFactory" ref="sessionFactory" />    
+        <property name="parametrageService" ref="parametrageService" />
+        <property name="contratService" ref="contratService" />
+        <property name="salarieService" ref="salarieService" />
+        <property name="chantierService" ref="chantierService" />
+        <property name="administrationService" ref="administrationService" />
+    </bean>
+    
+    <bean id="documentService" class="ma.bservices.services.DocumentService">
+        <property name="sessionFactory" ref="sessionFactory" />
+        <property name="parametrageService" ref="parametrageService" />
+        <property name="contratService" ref="contratService" />
+    </bean>
+    
+    <bean id="enfantService" class="ma.bservices.services.EnfantService">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    <bean id="chantierService" class="ma.bservices.services.ChantierService">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    <bean id="contratService" class="ma.bservices.services.ContratService">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    <bean id="parametrageService" class="ma.bservices.services.ParametrageService">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    <bean id="administrationService" class="ma.bservices.services.AdministrationService">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    <bean id="absenceService" class="ma.bservices.services.AbsenceService">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+   
+    <bean id="outilTravailService" class="ma.bservices.services.OutilTravailService">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    
+<!--    <bean id="transactionManager"
+          class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+
+        <property name="sessionFactory">
+            <ref bean="sessionFactory" />
+        </property>
+    </bean> 
+    -->
+    
+    <import resource="spring/hibernate-context.xml"/>
+    
+    <bean id ="hierarchieService" class="ma.bservices.services.HierarchieServiceImpl">
+        <property name="hierarchieDao" ref="hierarchieDao"/>
+        <property name="niveauFonctionDao" ref="niveauFonctionDao"/>
+    </bean>
+    <bean id="hierarchieDao" class="ma.bservices.dao.HierarchieDaoImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    
+<!--    <bean id="transactionManager"
+          class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+
+        <property name="sessionFactory">
+            <ref bean="sessionFactory" />
+        </property>
+    </bean> -->
+    
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+          destroy-method="close"
+          p:driverClass="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+          p:jdbcUrl="jdbc:sqlserver://172.16.172.2;databaseName=Bpaie"
+          p:user="bservices"
+          p:password="bservices"
+          p:acquireIncrement="5"
+          p:idleConnectionTestPeriod="60"
+          p:maxPoolSize="100"
+          p:maxStatements="50"
+          p:minPoolSize="10" />
+	
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+				 
+        <property name="dataSource">
+            <ref bean="dataSource"/>
+        </property>
+        <property name="packagesToScan" value="ma.bservices" />			 
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">ma.bservices.beans.SQLServerDialect</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+                <prop key="hibernate.connection.autocommit">true</prop>
+            </props>
+        </property>
+        		
+    </bean>
+
+    <!-- Declare a transaction manager-->
+    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager" 
+          p:sessionFactory-ref="sessionFactory" />
+    
+    
+</beans>

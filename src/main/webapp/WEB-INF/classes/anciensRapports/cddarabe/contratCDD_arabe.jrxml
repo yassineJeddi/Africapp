@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="contratCDD_arabe" pageWidth="520" pageHeight="842" columnWidth="480" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="823cbbf2-4a61-4572-b61f-21756a5f0f38">
+    <property name="ireport.zoom" value="1.0"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+    <parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA["C:\\Users\\n.bourjila\\Desktop\\JasperReport\\"]]></defaultValueExpression>
+    </parameter>
+    <parameter name="NOM_PRENOM" class="java.lang.String"/>
+    <parameter name="ADRESSE" class="java.lang.String"/>
+    <parameter name="FONCTION" class="java.lang.String"/>
+    <parameter name="CIN" class="java.lang.String"/>
+    <parameter name="DATE_DEBUT" class="java.lang.String"/>
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    <title>
+        <band height="23" splitType="Stretch">
+            <staticText>
+                <reportElement uuid="5dfd904f-1251-4f3b-9a27-0d8cfd86d0d6" x="180" y="4" width="100" height="15"/>
+                <textElement textAlignment="Right">
+                    <font size="10" isBold="true" isUnderline="true" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[عقد الشغل محدد  المــدة]]></text>
+            </staticText>
+        </band>
+    </title>
+    <pageHeader>
+        <band splitType="Stretch"/>
+    </pageHeader>
+    <columnHeader>
+        <band splitType="Stretch"/>
+    </columnHeader>
+    <detail>
+        <band height="736" splitType="Stretch">
+            <staticText>
+                <reportElement uuid="3113ca4f-8f5b-49ae-a916-28dabfe8c440" x="10" y="63" width="447" height="16"/>
+                <textElement textAlignment="Right">
+                    <font pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[ 2) وبين السيد ...............................................]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="d93cc218-0dea-4062-bbde-9c926c018fb7" x="203" y="141" width="124" height="20"/>
+                <textElement textAlignment="Right">
+                    <font isBold="true" isUnderline="true" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[تم الاتفاق والتراضي على مايلي :]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="0600f783-f545-4ecb-9a4f-557ada9694d5" mode="Transparent" x="11" y="225" width="447" height="20"/>
+                <textElement textAlignment="Right">
+                    <font fontName="SansSerif" isBold="false" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[بداية من تاريخ : ............................]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="0600f783-f545-4ecb-9a4f-557ada9694d5" stretchType="RelativeToTallestObject" mode="Transparent" x="9" y="42" width="448" height="20"/>
+                <textElement textAlignment="Right">
+                    <font fontName="SansSerif" isBold="false" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[ 1) شركة الأشغال العامة للبناء ،مأخوذة في شخص ممثلها القانوني والكائن مقرها الاجتماعي ب :4، زنقة إمام مسلم الوزيسِِ، الدار البيضاء.]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="21f6233a-7ade-4839-a978-9b56ff956bb8" x="339" y="156" width="118" height="20"/>
+                <textElement textAlignment="Right">
+                    <font isBold="true" isUnderline="true" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[البند الأول  : موضوع العقد 	: ]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="21f6233a-7ade-4839-a978-9b56ff956bb8" x="354" y="10" width="103" height="20"/>
+                <textElement textAlignment="Right">
+                    <font isBold="true" isUnderline="true" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[بين الموقعين أسفله :]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="0600f783-f545-4ecb-9a4f-557ada9694d5" mode="Transparent" x="10" y="184" width="447" height="20"/>
+                <textElement textAlignment="Right">
+                    <font fontName="SansSerif" isBold="false" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[بمقتضى هذا العقد قبلت شركة الأشغال العامة للبناء السيد .......................................]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="0600f783-f545-4ecb-9a4f-557ada9694d5" mode="Transparent" x="10" y="319" width="446" height="31"/>
+                <textElement textAlignment="Right">
+                    <font fontName="SansSerif" isBold="false" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[تطبيقا لمقتضيات الفصل 16 من قانون 65-99 من مدونة الشغل أن مثل هذه العقود لها طابع موسمي و لا يمكن للعامل إن يكتسب صفة العامل الرسمي إلا بقرار الإدارة العامة للشركة المشغلة.]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="0600f783-f545-4ecb-9a4f-557ada9694d5" mode="Transparent" x="10" y="284" width="446" height="30"/>
+                <textElement textAlignment="Right">
+                    <font fontName="SansSerif" isBold="false" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[	إن الشركة المتعاقدة تعمل بأشغال البناء وتشغل لديها يد عاملة مؤقتة ومياومة كلما تواجدت لديها أعمال عرضية وخلال فترة قصيرة التي يتطلبها نشاطها بالورش.]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="21f6233a-7ade-4839-a978-9b56ff956bb8" x="310" y="260" width="146" height="20"/>
+                <textElement textAlignment="Right">
+                    <font isBold="true" isUnderline="true" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[البند الثاني : طبيعة العقد طبيعة مؤقتة 	]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="0600f783-f545-4ecb-9a4f-557ada9694d5" mode="Transparent" x="10" y="389" width="447" height="30"/>
+                <textElement textAlignment="Right">
+                    <font fontName="SansSerif" isBold="false" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[انه تم الاتفاق على توقيع هذا العقد للمدة التي يتطلبهاإنجاز ورش البناء الكائن.................................. على أساس أن لا يتعدى 6 أشهر قابلة للتجديد بصفة ضمنية لمرة واحدة على أن لا تتعدى مدة العقد سنة.]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="21f6233a-7ade-4839-a978-9b56ff956bb8" x="310" y="365" width="146" height="20"/>
+                <textElement textAlignment="Right">
+                    <font isBold="true" isUnderline="true" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[البند الثالث : مدة العقد ]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="0600f783-f545-4ecb-9a4f-557ada9694d5" mode="Transparent" x="10" y="424" width="446" height="17"/>
+                <textElement textAlignment="Right">
+                    <font fontName="SansSerif" isBold="false" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[يخضع العامل لفترة الإختبارمحددة في 15 يوما قابلة للتجديد مرة واحدة قبل سريان العقد كما يقضي بذلك الفصل 14 من مدونة الشغل. ]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="21f6233a-7ade-4839-a978-9b56ff956bb8" x="283" y="453" width="172" height="20"/>
+                <textElement textAlignment="Right">
+                    <font isBold="true" isUnderline="true" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[البند الرابع: توقيت العمل والأجرة حسب الساعة]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="0600f783-f545-4ecb-9a4f-557ada9694d5" mode="Transparent" x="11" y="477" width="443" height="53"/>
+                <textElement textAlignment="Right">
+                    <font fontName="SansSerif" isBold="false" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[إن طبيعة العمل التي تتلخص في أعمال البناء تتطلب حضور العمال لمدة 6 أيام في الأسبوع وتتطلب أشغالا تكميلية لا غنى عنها للنشاط العام كون الضرورة تقتضي بأدائها.
+وأن طبيعة الشغل كمكلف بالحراسة في اليوم يستحيل إنجازها في مدة الشغل العادية وتستوجب تمديد فترة الشغل لتنفيذ هذه المدة إلى 12 ساعة (إثني عشرة ساعة) كحد أقصى تطبيقا للمادة 190 و 193 من مدونة الشغل.]]></text>
+            </staticText>
+            <textField>
+                <reportElement uuid="7179a880-0c64-4dfa-add7-c95b34a1a574" x="86" y="62" width="317" height="15" forecolor="#8A0808"/>
+                <textElement textAlignment="Right">
+                    <font size="10" isBold="false" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{NOM_PRENOM}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement uuid="3113ca4f-8f5b-49ae-a916-28dabfe8c440" x="10" y="88" width="447" height="16"/>
+                <textElement textAlignment="Right">
+                    <font pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[  الساكن .....................................................................................................]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="3113ca4f-8f5b-49ae-a916-28dabfe8c440" x="7" y="107" width="450" height="16"/>
+                <textElement textAlignment="Right">
+                    <font pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[  الحامل للبطاقة الوطنية ......................... مهنته .......................................]]></text>
+            </staticText>
+            <textField>
+                <reportElement uuid="49b8e4e6-12d2-4ed2-9942-c8254d3e1948" x="18" y="88" width="404" height="15" forecolor="#8A0808"/>
+                <textElement textAlignment="Right">
+                    <font isBold="false" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{ADRESSE}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement uuid="5c0a260a-c451-4ea5-9703-ed0ceb8fbbc0" x="304" y="106" width="76" height="15" forecolor="#8A0808"/>
+                <textElement textAlignment="Center">
+                    <font isBold="false"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{CIN}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement uuid="8c26a36d-f0bc-434e-8edb-12259af27dee" x="18" y="106" width="261" height="15" forecolor="#8A0808"/>
+                <textElement textAlignment="Right">
+                    <font isBold="false" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{FONCTION}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement uuid="575830f9-791c-4ef2-a44c-3ce79cab6bf3" x="300" y="224" width="100" height="17" forecolor="#8A0808"/>
+                <textElement textAlignment="Right">
+                    <font isBold="false"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{DATE_DEBUT}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement uuid="0600f783-f545-4ecb-9a4f-557ada9694d5" mode="Transparent" x="10" y="681" width="446" height="22"/>
+                <textElement textAlignment="Right">
+                    <font fontName="SansSerif" isBold="false" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[ - وفي حالة ضياعها أو تلفها نتيجة أخطائه أو استعمالها في غير ما سلمت له فإنه يكون مسؤولا مباشرا ومسؤولا مدنيا عنها.]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="21f6233a-7ade-4839-a978-9b56ff956bb8" x="260" y="542" width="196" height="20"/>
+                <textElement textAlignment="Right">
+                    <font isBold="true" isUnderline="true" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[البند الرابع: توقيت العمل والأجرة حسب الساعة]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="0600f783-f545-4ecb-9a4f-557ada9694d5" mode="Transparent" x="10" y="642" width="446" height="34"/>
+                <textElement textAlignment="Right">
+                    <font fontName="SansSerif" isBold="false" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[ - في حالة عدم ردها بعد فسخ عقد العمل لأي سبب كان بصفته إرادية يكون معرضا للمسائلة الجنائية وفق مقتضيات المادة 547 من القانون الجنائي.]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="0600f783-f545-4ecb-9a4f-557ada9694d5" mode="Transparent" x="11" y="605" width="446" height="33"/>
+                <textElement textAlignment="Right">
+                    <font fontName="SansSerif" isBold="false" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[ - يلتزم الأجير بصفة صريحة بالمحافظة على الأشياء والوسائل المسلمة إليه للقيام بالشغل المكلف به مع ردها بعد انتهاء مهامه أو فسخ عقد العمل.]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="0600f783-f545-4ecb-9a4f-557ada9694d5" mode="Transparent" x="10" y="569" width="446" height="32"/>
+                <textElement textAlignment="Right">
+                    <font fontName="SansSerif" isBold="false" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[ - يلتزم الأجير أثناء مدة الخدمة بمصالح الشركة المشغلة باحترام واجباته والتزاماته المنصوص عليها في المواد 20 و 21 من مدونة الشغل،ويتحمل كامل مسؤولياته وأعماله وعدم كفاءته وانتباهه وٱخطائه في عمله.]]></text>
+            </staticText>
+            <subreport>
+                <reportElement uuid="437d8d29-d943-4039-b36a-58d2c3f5f8ba" x="2" y="636" width="200" height="100"/>
+                <dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
+                <subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sous1ContratCDD_arabe.jasper"]]></subreportExpression>
+            </subreport>
+            <staticText>
+                <reportElement uuid="0600f783-f545-4ecb-9a4f-557ada9694d5" mode="Transparent" x="10" y="203" width="447" height="20"/>
+                <textElement textAlignment="Right">
+                    <font fontName="SansSerif" isBold="false" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <text><![CDATA[	 بصفته .....................................]]></text>
+            </staticText>
+            <textField>
+                <reportElement uuid="8c26a36d-f0bc-434e-8edb-12259af27dee" x="165" y="202" width="261" height="15" forecolor="#8A0808"/>
+                <textElement textAlignment="Right">
+                    <font isBold="false" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{FONCTION}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement uuid="7179a880-0c64-4dfa-add7-c95b34a1a574" x="13" y="183" width="261" height="15" forecolor="#8A0808"/>
+                <textElement textAlignment="Right">
+                    <font isBold="false" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{NOM_PRENOM}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+    <columnFooter>
+        <band splitType="Stretch"/>
+    </columnFooter>
+    <pageFooter>
+        <band height="27" splitType="Stretch">
+            <textField>
+                <reportElement uuid="0a652189-f23f-4c5c-bd78-93bbaabbfe33" x="352" y="6" width="80" height="20"/>
+                <textElement textAlignment="Right"/>
+                <textFieldExpression><![CDATA[$V{PAGE_NUMBER}+"/"]]></textFieldExpression>
+            </textField>
+            <textField evaluationTime="Report">
+                <reportElement uuid="21b62e8b-d970-43b5-abc5-0ac5239053a8" x="432" y="6" width="25" height="20"/>
+                <textElement/>
+                <textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
+    <summary>
+        <band splitType="Stretch"/>
+    </summary>
+</jasperReport>

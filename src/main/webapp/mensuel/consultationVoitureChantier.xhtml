@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"   
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Consultation des voitures chantier</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+            <ui:define name="arborescence">
+                <h:form>
+                    #{gestion_voitureMb.afficherVoitureAffecterChantier()}
+                    Mensuel > <h:commandLink action="/mensuel/AffecterVoitureChantier.xhtml" actionListener="#{voitureChantierMb.charger_voiture_Non_affacter()}"> Affecter une voiture à un chantier </h:commandLink> > <strong> Consultation </strong>                </h:form>
+            </ui:define>
+
+            <ui:define name="content">
+                <p:panel id="pannel">
+                    <h:form id="f1">
+                        <p:messages id="msgsM" closable="true"/>
+                        <br />
+                        <div class="affectation-switch">
+                                <div class="btn-group" data-toggle="buttons">
+                                    <p:commandButton  class="btn btn-switch active"   value="V. A. à un Chantier" 
+                                                      action="/mensuel/consultVoitureSalarie.xhtml?faces-redirect=true"
+                                                      update=":f1:table"/>
+                                    <p:commandButton  class="btn btn-default" value="V. A. à un Salarié" 
+                                                      action="/mensuel/consultVoitureSalarie.xhtml?faces-redirect=true"
+                                                      update=":f1:table" />
+                                    <p:commandButton  class="btn btn-default" value="Gestion Voiture" 
+                                                      action="/mensuel/CreationVoiture.xhtml?faces-redirect=true" 
+                                                      update=":f1:table" />
+                                    <p:commandButton  class="btn btn-default" value="Historique Voiture Salarie"
+                                                      action="/mensuel/HistoriqueVoiture.xhtml?faces-redirect=true" />
+                                    <p:commandButton  class="btn btn-default" value="Historique Voiture Chantier" 
+                                                      action="/mensuel/HistoriqueVoitureCh.xhtml?faces-redirect=true"  />
+                                </div>
+                        </div>
+                        <br />
+
+                        <p:commandButton value="Réinitialiser"
+                                         ajax="true" update=":f1:table"
+                                         actionListener="#{gestion_voitureMb.afficherVoitureAffecterChantier()}" 
+                                         />
+                        <p:spacer width="50"/>
+                       
+                        <h:commandLink>
+                            <p:commandButton value="Exporter" icon="ui-icon-arrowthickstop-1-s"/>
+                            <p:dataExporter  type="xls" target=":f1:table" fileName="VoitureSalarie"  pageOnly="false"  />
+                        </h:commandLink>
+                        <br /><br />
+                       <p:dataTable id="table" var="voitureIt" value="#{gestion_voitureMb.voitures}"
+                                     rows="10"  paginator="true" editable="true" 
+                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink}
+                                     {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                                     rowsPerPageTemplate="5,10,15">
+                            <p:ajax event="rowEdit" listener="#{gestion_voitureMb.onRowEdit}" update=":f1:msgsM" />
+                            <p:ajax event="rowEditCancel" listener="#{gestion_voitureMb.onRowCancel}"  update=":f1:msgsM" />
+                            <p:column headerText="N°Immatriculation"  filterBy="#{voitureIt.matriculevoiture}" filterMatchMode="contains"  sortBy="#{voitureIt.matriculevoiture}"  >
+                                <h:outputText value="#{voitureIt.matriculevoiture}" />
+                            </p:column>
+                            <p:column headerText="Model " filterBy="#{voitureIt.model}" filterMatchMode="contains"  sortBy="#{voitureIt.model}"  >
+                                <h:outputText value="#{voitureIt.model}" />
+                            </p:column>
+                            <p:column headerText="WW " filterBy="#{voitureIt.matricule_voiture_nouveau}" filterMatchMode="contains"  sortBy="#{voitureIt.matricule_voiture_nouveau}"  >
+                                <h:outputText value="#{voitureIt.matricule_voiture_nouveau}" />
+                            </p:column>
+                            <p:column headerText="Chantier " filterBy="#{voitureIt.chantier.code}" filterMatchMode="contains"  sortBy="#{voitureIt.chantier.code}"  >
+                                <h:outputText value="#{voitureIt.chantier.code}"/>
+                            </p:column>
+                            <p:column headerText="Actions"  exportable="false" style="width: 300px;" >
+                                <p:commandButton  value="Annuler" oncomplete="PF('tableau').clearFilters()" actionListener="#{voituresMb.desaffecter_Or_affecterVoiture(vehicule)}" update=":f1">
+                                    <p:confirm header="Confirmation" message=" Voulez vous vraiment annuler l'affectation de cette voiture?" icon="ui-icon-alert" />
+                                </p:commandButton>
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                    <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                </p:confirmDialog>
+                                <p:commandButton  value="Désaffecter" onclick="PF('dateR').show();" update=":find"  
+                                                  title="Ajouter Date Rendu" >
+                                    <f:setPropertyActionListener value="#{voitureIt}" target="#{gestion_voitureMb.voiture}" />
+                                </p:commandButton>
+                                <p:commandButton icon ="ui-icon-document" onclick="PF('detail').show();" update=":detail"  
+                                                 title="Afficher le détail de la voiture chantier" >
+                                    <f:setPropertyActionListener value="#{voitureIt}" target="#{gestion_voitureMb.voitureSelected}" />
+                                </p:commandButton>
+                            </p:column>
+
+                        </p:dataTable>
+                    </h:form>
+
+                    <p:dialog header="Détail Voiture Chantier" widgetVar="detail" modal="true">
+                        <h:form id="detail">
+                            <h:panelGrid columns="4" cellpadding="5">
+                                <p:outputLabel value="Numero Immatriculation :"/>        
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.matriculevoiture}"/>
+                                <p:outputLabel value="Premier Mise en service :"/>        
+                                <h:outputText value="#{gestion_voitureMb.convertDateFormat(gestion_voitureMb.voitureSelected.premier_mise_circulation)}" />
+                                <p:outputLabel value="WW" />       
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.matricule_voiture_nouveau}"/>
+                                <p:outputLabel value="M.C Au Maroc" />       
+                                <h:outputText value="#{gestion_voitureMb.convertDateFormat(gestion_voitureMb.voitureSelected.mc_maroc)}" />
+                                <p:outputLabel value="Marque :"/>        
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.marque}"/>
+                                <p:outputLabel value="Model" />       
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.model}"/>
+                                <p:outputLabel value="Type Carburant :"/>        
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.type_carburant}"/>
+                                <p:outputLabel value="Puissance Fiscal :"/>        
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.puissance_fiscal}"/>
+                                <p:outputLabel value="Date de la prochaine visite technique :"/>        
+                                <h:outputText value="#{gestion_voitureMb.convertDateFormat(gestion_voitureMb.voitureSelected.dateprochainetech)}" />
+                                <p:outputLabel value="N° de contrat d'assurance :"/>        
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.numcontrat}"/>
+                                <p:outputLabel value="Cout de Location/cout de leasing :"/>        
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.coutlocation}"/>
+                                <p:outputLabel value="Date de début du contrat d'assuranace :"/>        
+                                <h:outputText value="#{gestion_voitureMb.convertDateFormat(gestion_voitureMb.voitureSelected.datedebutcontrat)}" />
+                                <p:outputLabel value="N° de la carte grise :"/>        
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.numcartegrise}"/>
+                                <p:outputLabel value="Date de fin du contrat d'assuranace :"/>        
+                                <h:outputText value="#{gestion_voitureMb.convertDateFormat(gestion_voitureMb.voitureSelected.datefincontrat)}" />
+                                <p:outputLabel value="Nom Mensuel"/>        
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.salarie.nom  }"/>
+                                <p:outputLabel value="Prenom Mensuel"/>        
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.salarie.prenom}"/>
+                                <p:outputLabel value="Matricule nMensuel"/>        
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.salarie.matricule}"/>
+                                <p:outputLabel value="Numero Chassis :"/>        
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.num_chassis}"/>
+                                <p:outputLabel value="Date d'acquisition :"/>        
+                                <h:outputText value="#{gestion_voitureMb.convertDateFormat(gestion_voitureMb.voitureSelected.dateacquisition)}" />
+                                <br/>
+
+                                <h:outputText/>
+                                <p:commandButton value="Quitter" onclick="PF('detail').hide();"/>
+
+                            </h:panelGrid>   
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog header="Désafecter la voiture" widgetVar="dateR" modal="true" width="400px">
+                        <h:form id="find">
+                            <h:panelGrid columns="2">
+                                <h:outputText value="Date Rendu :"/>        
+                                <p:calendar pattern="dd/MM/yyyy" id="date"   
+                                            value="#{gestion_voitureMb.datedesafct}" 
+                                            showOn="button"
+                                            mindate="#{gestion_voitureMb.voiture.dateaffectation}"
+                                            maxdate="#{operationStock.dateOfToday}"
+                                            required="true" requiredMessage="date rendu est obligatoire"
+                                            label="date rendu"/>
+                                <br/>
+
+                                <h:outputText/>
+                                <p:commandButton 
+                                    value="Désaffecter" 
+                                    onclick="PF('dateR').hide();" 
+                                    action="#{gestion_voitureMb.desaffectVoitureChantier()}" 
+                                    update=":f1:msgsM,:f1:table"
+                                     oncomplete="PF('tableau').clearFilters()"/>
+
+                            </h:panelGrid>   
+                        </h:form>
+                    </p:dialog>
+                </p:panel>
+            </ui:define>
+
+
+        </ui:composition>
+
+    </body>
+
+
+
+
+
+</html>

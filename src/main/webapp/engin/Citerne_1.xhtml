@@ -1,0 +1,597 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets" 
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <h:head>
+        <link rel="stylesheet" type="text/css" href="../resources/css/main.css" />
+        <title>Gestion Des Citerne</title>
+    </h:head>
+
+    <body>
+        <ui:composition template="./enginTemplate.xhtml">
+            <ui:define name="arborescence">
+                <h:form>
+                    Engin > <strong>Gestion Des Citerne</strong> 
+                </h:form>
+            </ui:define>
+            <ui:define name="content">
+                <p:blockUI block="pannel" trigger=":formA:btn" >
+                    Chargement<br /> <h:graphicImage value="../resources/img/loading.gif"/>
+                </p:blockUI>
+                <p:panel id="pannel">
+                    <br/>
+                    <br/>
+                    <h:form id="form">
+                        <p:messages id="msgsM" closable="true"  />
+                        <p:commandButton value="Charger" actionListener="#{citerneMb.chargerCiterne()}" 
+                                         update="form" />
+                        <p:dataTable id="tbl" var="citerneIt" value="#{citerneMb.l_citernes}"   rowKey="#{citerneIt.id}"
+                                     rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                     rowStyleClass="#{citerneIt.archiver == true ? 'old' : null}"
+                                     >
+                            <p:column headerText="Libelle Citerne" filterBy="#{citerneIt.libelle_citerne}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{citerneIt.libelle_citerne}" />
+                            </p:column>
+                            <p:column headerText="Type Citerne">
+                                <h:outputText value="#{citerneIt.type_citerne}" />
+                            </p:column>
+                            <p:column headerText="Capacité">
+                                <h:outputText value="#{citerneIt.capacite/1000} m³" />
+                            </p:column>
+                            <p:column headerText="Volume Actuel">
+                                <h:outputText value="#{citerneMb.dedecimals(citerneIt.volume_actuel_)} litre" />
+                            </p:column>
+                           
+                            <p:column headerText="Chantier Principal" filterBy="#{citerneIt.chantier_Principal.code}" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{citerneIt.chantier_Principal.codeNovapaie} - #{citerneIt.chantier_Principal.code}" />
+                            </p:column>
+
+                            <p:column headerText="Remplir BL" style="width: 100px;">
+                                <center>
+                                    <p:commandButton icon="ui-icon-plusthick" disabled="#{citerneIt.archiver == true }" 
+                                                     title="Ajouter Bon De Livraison" oncomplete="PF('dlg_livraison').show()"
+                                                     actionListener="#{citerneMb.redirect_pop_livraison(citerneIt)}" update=":formA" />
+                                </center>
+
+                            </p:column>
+                            <p:column headerText="BG Engin" style="width: 100px;">
+
+                                <center>
+                                    <p:commandButton icon="ui-icon-plusthick" 
+                                                     disabled="#{citerneIt.archiver eq true or citerneIt.volume_actuel_ eq 0}" 
+                                                     title="Ajouter Bon de Gasoil" 
+                                                     oncomplete="PF('dlg_bon_gasoil_engin').show()"
+                                                     actionListener="#{citerneMb.redirect_bon_caisse(citerneIt)}"
+                                                     update=":form_bon_caisse" />
+                                </center>
+
+                            </p:column>
+
+                            <p:column headerText="Detail" style="width: 60px;">
+                                <p:commandButton icon="ui-icon-document-b" oncomplete="PF('dlg_historique_citerne').show()" title="Détail de la citerne" 
+                                                 actionListener="#{citerneMb.redirectHistoriqueCiterne(citerneIt)}"
+                                                 update=":form_historique" immediate="true" />
+                            </p:column>
+
+                        </p:dataTable>
+                    </h:form>
+                    <p:dialog header="Ajouter BL" id="dlLivraison" 
+                              modal="true" draggable="false" widgetVar="dlg_livraison" resizable="false">
+                        <h:form id="formA" prependId="true"  enctype="multipart/form-data">
+                            <br />
+
+                            <p:growl id="msgs" life="5000"/>
+
+                            <h:panelGrid columns="2" cellpadding="5">
+
+                                <p:outputLabel value="Volume  en m³:" />
+                                <p:inputText required="true" requiredMessage="Le volume est obligatoire" 
+                                             value="#{citerneMb.volume_actuel}" id="volume"                                             
+                                             label="capacité max" 
+                                             >
+                                    
+                                    <p:ajax event="change" listener="#{Gestion_CiterneMb.converti(citerneMb.volume_actuel)}"
+                                            update="btn , text_afficherVolume , id_tonne " />                                   
+                                </p:inputText>                              
+                                
+                                
+                                <p:outputLabel value="Volume  en tonne:" />
+                                <p:inputText  value="#{Gestion_CiterneMb.tons}" 
+                                              id="id_tonne"
+                                             label="capacité max" 
+                                             readonly="true"
+                                   >
+                                </p:inputText>
+                                
+                                <h:outputText />
+                                
+                                <p:outputLabel id="text_afficherVolume" value="en tonne : #{citerneMb.afficherVolumeTonne} en tonne (t)"/>
+
+                                <h:outputText />
+                                
+                                <p:outputLabel value="capacité max : #{citerneMb.tons_max_afficherLivraison} en tonne (t)"/>
+                                
+                                <p:outputLabel value="Num Bon Livraison  :" />
+                                <p:inputText  value="#{citerneMb.numero_commande_livraison}">
+                           
+                                </p:inputText>
+
+                                <p:outputLabel value="Num Bon Commande  :" />                               
+                                <p:inputText required="true" requiredMessage="Le numero de BC est obligatoire" 
+                                             label="num Commande" value="#{citerneMb.numero_commande}" >                                    
+                                </p:inputText>
+
+                                <p:outputLabel value="Fichier Livraison :" />
+                                <p:fileUpload required="true" requiredMessage="Le fichier de livraison est obligatoire" 
+                                              label="fichier" value="#{citerneMb.uploadedFile}"   mode="simple"></p:fileUpload>
+
+                                <p:outputLabel value="Date Livraison :" />
+                                 <p:calendar pattern="dd/MM/yyyy"  class="value_dis" id="button"
+                                             mask="99/99/9999"
+                                              
+                                             showOn="button" value="#{citerneMb.date_Bon_livraison}" 
+                                             maxdate="#{citerneMb.date_Bon_livraison}"
+                                             mindate="#{citerneMb.date_Bon_livraison}"
+                                             />
+                                 
+                                <p:outputLabel value="Commentaire  :" />                               
+                                <p:inputText label="Commentaire" value="#{citerneMb.commentBl}" >                                    
+                                </p:inputText>
+                            </h:panelGrid>
+
+
+                            <br/>
+
+                            <br/>
+
+                            <br/>
+
+                            <p:commandButton id="btn" disabled="#{citerneMb.checkBtn}"
+                                             actionListener="#{citerneMb.save()}" 
+                                             style="width: 45%" class="pull-left btn btn-switch active" 
+                                             value="Ajouter Bon Livraison" 
+                                             oncomplete="PF(dlg_livraison').show()" 
+                                             />
+
+                            <p:commandButton id="btn_nv" 
+                                             actionListener="#{citerneMb.refrechBl()}" 
+                                             style="width: 45%" class="pull-left btn btn-switch active" 
+                                             value="Nouveau Bon Livraison" 
+                                             update=":dlLivraison"
+                                             />
+
+                            <!--</div>-->
+                        </h:form>
+
+                    </p:dialog>
+
+                    <!-- ********************   dialog pour afficher bon gasoil ************************************-->
+
+
+
+                    <p:dialog header="Bon Gasoil Engin" 
+                              modal="true" 
+                              draggable="false"
+                              widgetVar="dlg_bon_gasoil_engin"  >
+                        <h:form id="form_bon_caisse"  enctype="multipart/form-data">
+                            <p:messages id="msgsM" closable="true" showDetail="true"/>
+                            <br />
+
+                            <h:panelGrid columns="2" cellpadding="10">
+                                <h:outputText value="Citerne  :"  />
+                                <h:outputText  value="#{citerneMb.citerne_bon_caisse.chantier_Principal.code} - #{citerneMb.citerne_bon_caisse.chantier_Principal.codeNovapaie}"/>
+                                
+                                <h:outputText value="Code Engin  : " />
+                                <p:selectOneMenu required="true" 
+                                                 requiredMessage="Le code engin est obligatoire" 
+                                                 validatorMessage="Veuillez vérifier le code engin"
+                                                 id="enginList"  
+                                                 value="#{citerneMb.l_engin_to_bonCaisse}" filter="true" filterMatchMode="contains">
+                                    <f:selectItem itemLabel="code engin - designation " noSelectionOption="true"/>
+                                    <f:selectItems value="#{citerneMb.l_engin_chantier_bon_caisse}" var="ch"
+                                                   itemLabel="#{ch.code} - #{ch.designation}" itemValue="#{ch.code}" />
+                                    <p:ajax listener="#{citerneMb.display_engin_kiometrique(citerneMb.l_engin_to_bonCaisse)}" update=":form_bon_caisse,:form_bon_caisse:idBonGE_kilometrique"/>
+                                </p:selectOneMenu>
+                                <h:outputText value="Compteur KM:   " />
+                                <p:inputNumber id="idBonGE_kilometrique" 
+                                               value="#{citerneMb.kilométrage_bon_caisse}" 
+                                               placeholder="#{citerneMb.bon_gasoil.engin.compteurKilometrique}" 
+                                                />
+                                <h:outputText value="Compteur KM:   " />
+                                <p:inputText 
+                                             id="id_kilometrique" value="#{citerneMb.kilométrage_bon_caisse}"
+                                            
+                                             onkeypress="if(event.which &lt; 48 || event.which &gt; 57) return false;">
+                                </p:inputText>
+                                <h:outputText value="Compteur Horaire: " />
+                                <p:inputText 
+                                             id="id_heure" value="#{citerneMb.heure_engin}" 
+                                             
+                                             onkeypress="if(event.which &lt; 48 || event.which &gt; 57) return false;"
+                                             />
+                                <h:outputText  value="Nombre en Litre:  " />
+                                <p:inputText required="true" 
+                                             requiredMessage="Veuillez remplir le nombre de litres" 
+                                             label="Nombre en litre" 
+                                             value="#{citerneMb.tonnes_bonCaisse}">
+                                </p:inputText>
+                                <h:outputText  value="N° BON  " />
+                                <p:inputText label="Numero de bon" 
+                                             value="#{citerneMb.bon_gasoil.numBon}">
+                                </p:inputText>
+                                <h:outputText value="Date:  " />
+                                 <p:calendar pattern="dd/MM/yyyy" id="button2" 
+                                            required="true"
+                                            requiredMessage="Veuillez entrer la date"
+                                            mask="99/99/9999"
+                                            showOn="button" 
+                                            value="#{citerneMb.date_bon_caisse}" 
+                                            maxdate="#{citerneMb.date_bon_caisse}"
+                                            mindate="#{citerneMb.date_bon_caisse}"
+                                            />
+                                <h:outputText value="Commentaire: " />
+                                <p:inputText 
+                                    id="id_comment" value="#{citerneMb.commentBl}" 
+                                             />
+                            </h:panelGrid>
+                            <br/><br/><br/>
+                            <h:panelGrid columns="2" cellpadding="10">
+                                <p:commandButton   actionListener="#{citerneMb.save_bon_gasoil()}"  
+                                                   style="width: 100%" class="pull-right btn btn-switch active" 
+                                                   value="Valider"  
+                                                   update=":form_bon_caisse:msgsM,:form:tbl, :form_bon_caisse:editBtn"
+                                                   disabled="#{citerneMb.isButtonVisible eq false}"                                                   
+                                                   />
+                                <p:commandButton   actionListener="#{citerneMb.downloadBonGasoil()}"  
+                                                   style="width: 100%" class="pull-right btn btn-switch active" 
+                                                   value="Editer Bon"  
+                                                   id="editBtn"
+                                                   update=":form_bon_caisse"
+                                                   onclick="PF('dlg_bon_gasoil_engin').hide();"
+                                                   ajax="false"                                                   
+                                                   disabled="#{citerneMb.isButtonVisible}"
+                                                   />
+                            </h:panelGrid>
+
+                        </h:form>
+                        <h:form>
+                            <h:panelGrid columns="1" cellpadding="10">
+                                <p:commandButton   actionListener="#{citerneMb.nv_bon_gasoil()}"  
+                                                   style="width: 100%" class="pull-right btn btn-switch active" 
+                                                   value="NV Bon"  
+                                                   id="NVBtn"
+                                                   update=":form_bon_caisse"
+                                                   />
+                            </h:panelGrid>
+                        </h:form>
+                    </p:dialog>
+                    <!--*******************  dialog pour historique ****************************************-->
+                    <p:dialog header="Historique Citerne " 
+                              resizable="false" modal="true" height="600"
+                              width="80%" style="margin-right:80px;" 
+                              draggable="false"
+                              maximizable="true"
+                              widgetVar="dlg_historique_citerne"  >
+                        <h:form id="form_historique"  enctype="multipart/form-data">
+                            <br />
+
+                            <div class="row">
+
+                                <div class="col-lg-3">
+                                    <p:outputLabel  value="Nom de la citerne :" />
+                                    <h:outputText  value="#{citerneMb.historique_searchBonLivraison.libelle_citerne}"/>
+                                </div>
+
+                                <div class="col-lg-3">
+                                    <p:outputLabel  value="Capacité  :" />
+                                    <h:outputText  value="#{citerneMb.historique_searchBonLivraison.capacite}"/>
+                                </div>
+
+
+                                <div class="col-lg-6">
+                                    <p:outputLabel  value="Chantier Principal  :" />
+                                    <h:outputText  value=" #{citerneMb.historique_searchBonLivraison.chantier_Principal.code} - #{citerneMb.historique_searchBonLivraison.chantier_Principal.codeNovapaie}"/>
+                                </div>
+                            </div>
+                            
+                            <br/>
+                            <br/>
+
+                             <h:panelGrid columns="8" cellpadding="5">
+                                <p:outputLabel  value="Date  :" />
+                                <p:calendar pattern="dd/MM/yyyy" class="value_dis"  showOn="button" 
+                                            value="#{citerneMb.date_historique_search}" style="display:flex; width:200px; " />
+                                   <p:outputLabel  value="  Action:" />
+                                <p:selectOneMenu required="true" requiredMessage="L'action est obligatoire"
+                                                 id="id_action" value="#{citerneMb.action_search}" filter="true" filterMatchMode="contains">
+
+                                    <f:selectItem itemLabel="" itemValue="-1"/>
+                                    <f:selectItem itemLabel="LIVRAISON" itemValue="LIVRAISON"/>
+                                    <f:selectItem itemLabel="BON_GASOIL_ENGIN" itemValue="BON_GASOIL_ENGIN"/>
+                                    <f:selectItem itemLabel="BON_GASOIL_MENSUEL" itemValue="BON_GASOIL_MENSUEL"/>
+
+                                </p:selectOneMenu>
+
+                               <p:outputLabel  value="Num Commande  :" />
+
+                                <p:inputText  value="#{citerneMb.numCommande_search}" style="width: 80px"/>
+
+                                
+
+                                 <p:outputLabel  value="Num Livraison  :" />
+
+                                 <p:inputText  value="#{citerneMb.numLivraison_search}" style="width: 80px"/>
+
+                            </h:panelGrid>
+
+                            <br/>
+                            <p:commandButton value="Rechercher"  actionListener="#{citerneMb.rechercher_historique_citerne()}" update=":form_historique:tbl" />
+                            <p:commandButton value="Reinitialiser"  actionListener="#{citerneMb.reinitHistoCiterne()}" update=":form_historique:tbl" />
+
+                            <br/>
+                            <br/>
+                            <p:dataTable id="tbl" var="citerneIt" value="#{citerneMb.l_detail_citerne_historique}"   
+                                         rowKey="#{citerneIt.id}"
+                                         rows="5"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                         >
+
+                                <p:column headerText="Engin"  filterBy="#{citerneIt.engin.designation}">
+                                    <h:outputText value="#{citerneIt.engin.designation} - #{citerneIt.engin.code}" />
+                                </p:column>
+
+                                <p:column headerText="Date"  sortBy="#{citerneIt.date}">
+                                    <h:outputText value="#{citerneMb.convertFormatDate(citerneIt.date)}" />
+                                </p:column>
+                                <p:column headerText="Volume">
+                                    <h:outputText value="#{citerneIt.volume}" />
+                                </p:column>
+
+                                <p:column headerText="Volume actuel"  >
+                                    <h:outputText value="#{citerneIt.volume_actuel}" />
+                                </p:column>
+                                
+                                <p:column headerText="Compteur Engin Kilometrage"  >
+                                    <h:outputText value="#{citerneIt.kilometrage}" />
+                                </p:column>
+                                
+                                 <p:column headerText="Compteur Engin Horaire"  >
+                                     <h:outputText value="#{citerneIt.heure}" />
+                                </p:column>
+                                
+                                  <p:column headerText="Commentaire"  >
+                                      <h:outputText value="#{citerneIt.commentaire}" />
+                                </p:column>
+                                                               
+                                <p:column headerText="Numero BC">
+                                    <h:outputText value="#{citerneIt.numero_commande}" />
+                                </p:column>
+
+                                <p:column headerText="Numero BL">
+                                    <h:outputText value="#{citerneIt.numero_Livraison}" />
+                                </p:column>
+
+                                <p:column headerText="Opération" style="width: 200px;">
+                                    <h:outputText value="#{citerneIt.action}" />
+                                </p:column>
+
+                                <p:column headerText="Editer le Bon">
+                                    <p:commandButton value="Editer le Bon "  
+                                                     actionListener="#{citerneMb.telecharger_bon_gasoil_historique(citerneIt)}"
+                                                     ajax="false" />
+
+                                </p:column>
+
+                            </p:dataTable>
+
+                        </h:form>
+
+                    </p:dialog>
+
+
+                    <!-- ************************************************************************************ 
+                    *************************************************************************************** 
+                    *********************** dialog bon gasoil Mensuel **************************************-->
+
+
+                    <p:dialog header="Bon Gasoil Mensuel" 
+                              modal="true"  resizable="false"
+                              closable="true" width="80%"
+                              draggable="false"
+                              maximizable="true"
+                              style="max-height:90%;overflow:auto" 
+                              widgetVar="dlg_bon_gasoil_mensuel" 
+                              >
+                        <h:form id="form_bon_gasoil_mensuel" 
+                                enctype="multipart/form-data">
+
+                            <p:growl id="msgsM"  showDetail="true" />
+
+                             <h:panelGrid columns="2"
+                                         cellpadding="10"
+                                         >
+
+
+                                <p:outputLabel value="Chantier Principal  :" />
+                                <h:outputText  value="#{citerneMb.citerne_bon_gasoil_mensuel.chantier_Principal.codeNovapaie}"/>
+
+
+                            </h:panelGrid>
+
+                            
+                            <div class="row">
+                                <div class="col-lg-4">
+
+                                    <h:outputText value="Matricule" />
+                                    <p:autoComplete class="value_dis" 
+                                                    value="#{citerneMb.mensuel_to_search.matricule}" 
+                                                    completeMethod="#{mensuelServMb.matricules}"
+                                                    />
+                                </div>
+
+                                <div class="col-lg-3">
+
+                                    <h:outputText value="Nom" />
+                                    <p:autoComplete class="value_dis" 
+                                                    value="#{citerneMb.mensuel_to_search.nom}" 
+                                                    maxResults="50" 
+                                                    completeMethod="#{mensuelServMb.last_name}" />
+
+                                </div>
+
+                                <div class="col-lg-3">
+                                    <h:outputText value="Prénom" />
+                                    <p:autoComplete class="value_dis" 
+                                                    value="#{citerneMb.mensuel_to_search.prenom}"
+                                                    maxResults="50" 
+                                                    completeMethod="#{mensuelServMb.first_name}" />
+
+
+                                </div>
+
+                                <div  class="col-lg-2">
+                                    <p:commandButton 
+                                        class="btn btn-switch active"
+                                        value="Rechercher"  
+                                        update=":form_bon_gasoil_mensuel:tbl_"
+                                        
+                                        actionListener="#{citerneMb.rechercher_mensuel_By()}"
+                                        />
+
+                                </div>
+                            </div>
+                            <br />
+
+                            
+                            <p:dataTable id="tbl_" style="width:100%;" var="mensuelIt"
+                                         value="#{citerneMb.mensuels}" rowKey="#{mensuelIt.id}"
+                                         rows="10"  paginator="true" 
+                                         paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}"
+                                         emptyMessage="Aucun mensuel correspond à votre recherche, veuillez réessayer"
+                                         rowsPerPageTemplate="5,10,15"  
+                                         scrollable="true" scrollHeight="150"
+                                         >
+                                
+                                <p:ajax event="rowSelect" 
+                                        listener="#{citerneMb.onRowSelectMensuel(mensuelIt)}"
+                                        />
+                                
+                                <p:column headerText="Matricule">
+                                    <h:outputText value="#{mensuelIt.matricule}" />
+                                </p:column>
+
+                                <p:column headerText="Nom"   >
+                                    <h:outputText  value="#{mensuelIt.nom}"/>
+                                </p:column>
+
+
+                                <p:column headerText="Prénom" >
+                                    <h:outputText  value="#{mensuelIt.prenom}"/>
+                                </p:column>
+
+                                <p:column headerText="Date Début"   >
+                                    <h:outputText  value="#{mensuelIt.dateCreation}"/>
+                                </p:column>
+
+
+                                <p:column>
+                                    <p:commandButton icon="ui-icon-check"  
+                                                     update=":form_bon_gasoil_mensuel" 
+                                                     process="tbl_"
+                                                     action="#{citerneMb.afficher_voiture_mensuel(mensuelIt)}"
+                                                     >
+                                        
+                                        <f:setPropertyActionListener value="#{mensuelIt}" 
+                                                                     target="#{citerneMb.mensuel}"
+                                                                     />
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                            
+                            <h:panelGrid columns="2">
+                             <h:outputText value="Matricule Mensuel Choisi :"
+                                           />
+                             <h:outputText value="#{citerneMb.mensuel.matricule}"
+                                            />
+                             
+                               <h:outputText value="Nom Mensuel Choisi :"
+                                           />
+                             <h:outputText value="#{citerneMb.mensuel.nom}"
+                                            />
+                             
+                             </h:panelGrid>
+                             
+                             
+                            
+                            <hr />
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <h:outputText value="Voiture :" />
+                                    <ui:repeat  value="#{citerneMb.voitureSalaries}" var="l">
+                                        <h:outputText  value=" #{l.num_chassis} - #{l.marque}" /> 
+                                    </ui:repeat>
+                                </div>
+                               
+                                <h:panelGrid columns="2" cellpadding="10">
+                                <h:outputText value="Date :" />
+                                 <p:calendar pattern="dd/MM/yyyy" id="button2" 
+                                            required="true"
+                                                 requiredMessage="Veuillez entrer la date"
+                                            style="padding-left:15px;display:flex; width: 200px;" 
+                                            showOn="button"  value="#{citerneMb.date_bon_gasoil_mensuel}" 
+                                            maxdate="#{citerneMb.date_bon_gasoil_mensuel}"
+                                             mindate="#{citerneMb.date_bon_gasoil_mensuel}"/>
+                                </h:panelGrid>
+                            </div>
+                            
+                             <div class="col-lg-4">
+                                    <h:outputText  value="Nombre en Litre  :" />
+                                    <p:inputText 
+                                        value="#{citerneMb.nombre_litre_bon_gasoil_mensuel}"
+                                        validatorMessage="Veuillez verifier le nombre de litres">                                      
+                                         <f:validateDoubleRange minimum="0.00001" maximum="99999" />
+                                    </p:inputText>
+                                </div>
+                            <h:panelGrid columns="2" cellpadding="10">
+                                
+                                <p:commandButton   action="#{citerneMb.save_bon_gasoil_mensuel()}" 
+                                                   style="width: 100%" 
+                                                   ajax="false"
+                                                   class="pull-right btn btn-switch active" 
+                                                   disabled="#{citerneMb.closeBGMWindow}"
+                                                   value="Ajouter Bon Gasoil et editer Bon"  
+                                                   update=":form_bon_gasoil_mensuel, :form:tbl"
+                                                   />
+                                 <p:commandButton  
+                                              
+                                                   style="width: 100%" 
+                                                   class="pull-right btn btn-switch active" 
+                                                   onclick="PF('dlg_bon_gasoil_mensuel').hide()" 
+                                                   value="Fermer" 
+                                                   
+                                                   />
+                            </h:panelGrid>
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                        </h:form>
+                    </p:dialog>
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

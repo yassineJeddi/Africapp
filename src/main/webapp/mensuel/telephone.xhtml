@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+    <h:head>
+        <title>Affectation des ordinateurs</title>
+    </h:head>
+
+    <body>
+        <ui:composition template="./mensuelTemplate.xhtml">
+            #{telephone_ServMb}
+            <ui:define name="arborescence">
+
+
+
+
+
+                <h:form>
+                    Mensuel ><strong> Affecter téléphone  à un salarié </strong> 
+                </h:form>
+
+            </ui:define>
+            <ui:define name="content">
+                <p:panel id="pannel">
+
+                    <!--                    <h:form>
+                                        <h:panelGrid columns="2" cellpadding="20">
+                                                <h:commandLink action="/mensuel/consultationtelephone.xhtml">Consulter Telephone à un salarié</h:commandLink>
+                                        </h:panelGrid>
+                                        </h:form>-->
+
+                    <h:form id="formbtn">
+                        <p:messages id="msgsM" closable="true" />
+
+                        <br />
+
+
+
+                        <br /><br />
+
+
+
+
+
+
+                        <br /><br />
+
+                        <div class="row">
+
+                            <div class="col-lg-offset-1 col-lg-4">
+
+                                <div>
+
+                                    <p:commandButton style="width: 100%" class="btn btn-default" 
+                                                     value="Rechercher salarié" update=":f:tbl"
+                                                     action="#{telephoneMb.afficherMensuelRechercher()}" 
+                                                     oncomplete ="PF('dlg1').show();" immediate="true" />
+
+                                </div>
+
+
+                                <div class="spacer30"></div>
+
+                                <div class="form-group">
+
+                                    <p:outputLabel value="Nom de bénéficiaire :" />
+                                    <h:outputText class="value_dis"  value="#{telephoneMb.mensuel.nom}"/>
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <p:outputLabel value="Prénom de bénéficiaire" />
+                                    <h:outputText class="value_dis"  value="#{telephoneMb.mensuel.prenom}"/>
+
+
+
+                                </div>
+
+                                <div class="form-group">
+
+                                    <p:outputLabel value="Matricule de bénéficiaire" />
+                                    <h:outputText class="value_dis"  value="#{telephoneMb.mensuel.matricule}" />
+
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-lg-1">
+                                <div class="verticalLine">
+
+                                </div>
+                            </div>
+
+
+                            <div class="col-lg-offset-1 col-lg-4">
+
+
+
+                                <div>
+
+                                    <p:commandButton style="width: 100%" class="btn btn-default" 
+                                                     value="Rechercher téléphone" update=":form_telephone" 
+                                                     action="#{telephoneMb.afficherTelephoneRechercher()}"
+                                                     oncomplete="PF('dlg1_telephone').show();"
+                                                     immediate="true"/>
+
+                                </div>
+
+
+                                <div class="spacer30"></div>
+
+
+
+
+                                <div class="form-group">
+
+
+
+                                    <p:outputLabel value="Numero série :" />
+                                    <h:outputText class="value_dis"  value="#{telephoneMb.telephone_to_affect.numSerieTel}" />
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <p:outputLabel value="Marque : " />
+                                    <h:outputText class="value_dis"  value="#{telephoneMb.telephone_to_affect.marque}" />
+
+                                </div>
+
+
+
+                                <div class="form-group">
+
+                                    <p:outputLabel value="Model : " />
+                                    <h:outputText class="value_dis"  value="#{telephoneMb.telephone_to_affect.modele}" />
+
+                                </div>
+
+                                <hr/>
+
+                                <br/>
+
+
+
+
+
+
+
+                                <div class="row">
+
+                                    <p:outputLabel  value="Date d'affectation : "/>
+                                    
+
+                                    <p:calendar pattern="dd/MM/yyyy" style="width: 80%" id="button" required="true" requiredMessage="date d'affectation  est obligatoire"
+                                                showOn="button" 
+                                                value="#{telephoneMb.dateDebutTelephone}" 
+                                                mindate="#{telephoneMb.telephone_to_affect.dateRendu}"
+                                                maxdate="#{operationStock.dateOfToday}"
+                                                >
+                                            <!--<p:ajax event="dateSelect" update="button2"/>-->
+                                    </p:calendar>
+
+                                   
+
+                                </div>
+
+                                <br/>
+
+                                <br/>
+
+                             
+
+
+                                <hr/>
+
+
+
+
+
+
+                                <div>
+
+                                    <p:commandButton id="button_affect" disabled="#{telephoneMb.telephone_to_affect.numSerieTel == null ? true : false }"
+                                                     value="Affecter Téléphone" actionListener="#{telephoneMb.validateAffect()}" style="width: 100%" class="btn btn-switch active" update=":formbtn" />
+
+                                </div>
+
+
+                                <div class="col-lg-2">
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+
+
+
+                        <br /><br />
+
+
+                        <br /><br />
+
+
+
+                    </h:form>   
+
+
+
+                    <p:dialog header="Rechercher Salarié Par " widgetVar="dlg1" width="80%" minHeight="40" >
+                        <h:form id="f"> 
+                            
+                            <br /><br />
+                            <p:dataTable id="tbl" style="width:100%;" var="mensuelIt" value="#{telephoneMb.mensuels}" rowKey="#{mensuelIt.id}"
+                                         rows="10"  paginator="true"  paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" 
+                                         scrollable="true" scrollHeight="150" >
+
+                                <p:column headerText="Matricule"  filterBy="#{mensuelIt.matricule}" filterFunction="#{filterMb.filterByX}" >
+                                    <h:outputText value="#{mensuelIt.matricule}" />
+                                </p:column>
+
+                                <p:column headerText="Nom" filterBy="#{mensuelIt.nom}" filterFunction="#{filterMb.filterByX}"  >
+                                    <h:outputText  value="#{mensuelIt.nom}"/>
+                                </p:column>
+
+
+                                <p:column headerText="Prénom" filterBy="#{mensuelIt.prenom}" filterFunction="#{filterMb.filterByX}"  >
+                                    <h:outputText  value="#{mensuelIt.prenom}"/>
+                                </p:column>
+
+                                <p:column headerText="Date Début" filterBy="#{mensuelIt.dateCreation}" filterFunction="#{filterMb.filterByX}"  >
+                                    <h:outputText  value="#{modem3gMb.convertDateFormat(mensuelIt.dateCreation)}"/>
+                                </p:column>
+
+
+                                <p:column>
+                                    <p:commandButton icon="ui-icon-check" onclick="PF('dlg').hide();" update=":formbtn" action="#{telephoneMb.redirectMensuel(mensuelIt)}">
+                                        <f:setPropertyActionListener value="#{mensuelIt}"  target="#{telephoneMb.mensuel}"/>
+                                    </p:commandButton>
+                                </p:column>
+
+                            </p:dataTable>
+
+
+
+                        </h:form>
+                    </p:dialog>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    <!--***************************************************************************************
+                    *******************************************************************************************
+                    *******************************************************************************************-->
+
+
+
+
+                    <p:dialog header="Rechercher Téléphone " widgetVar="dlg1_telephone" width="70%" minHeight="40" >
+                        <h:form id="form_telephone"> 
+                           
+                            <p:dataTable id="tbl_tel" style="width:100%;" var="telephoneIt" value="#{telephoneMb.l_tel_ByNum_Marque}" rowKey="#{telephoneIt.id}"
+                                         rows="10"  paginator="true"  paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" 
+                                         scrollable="true" scrollHeight="150" >
+
+                                <p:column headerText="Numero Série"  filterBy="#{telephoneIt.numSerieTel}" filterFunction="#{filterMb.filterByX}" >
+                                    <h:outputText value="#{telephoneIt.numSerieTel}" />
+                                </p:column>
+
+
+
+                                <p:column headerText="Marque" filterBy="#{telephoneIt.marque}" filterFunction="#{filterMb.filterByX}"   >
+                                    <h:outputText  value="#{telephoneIt.marque}"/>
+                                </p:column>
+
+
+                                <p:column headerText="Modèle" filterBy="#{telephoneIt.modele}" filterFunction="#{filterMb.filterByX}" >
+                                    <h:outputText  value="#{telephoneIt.modele}"/>
+                                </p:column>
+
+
+                                <p:column>
+                                    <p:commandButton icon="ui-icon-check" onclick="PF('dlg1_telephone').hide();" update=":formbtn" action="#{telephoneMb.redirect_to_affecte(telephoneIt)}">
+                                        <f:setPropertyActionListener value="#{telephoneIt}"  target="#{telephoneMb.telephone_to_affect}"/>
+                                    </p:commandButton>
+                                </p:column>
+
+
+                            </p:dataTable>
+
+
+                        </h:form>
+                    </p:dialog>
+
+                </p:panel>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+
+
+
+
+
+</html>

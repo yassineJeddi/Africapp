@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+
+    <h:head>
+        <title> Historique Des Citerne</title>
+    </h:head>
+
+    <body>
+
+
+        <ui:composition template="./enginTemplate.xhtml">
+
+            <ui:define name="arborescence">
+
+                
+
+                <h:form>
+                    Engin ><strong>Gestion Des Citerne</strong> 
+                </h:form>
+
+            </ui:define>
+
+
+
+
+            <ui:define name="content">
+                <p:panel id="pannel">
+
+
+
+                    <br/>
+
+
+                    <br/>
+
+                    <h:form id="form">
+
+                        <p:messages id="msgsM" />
+
+
+                        <p:dataTable id="tbl" var="citerneIt" value="#{citerneMb.l_Historiqes}"   rowKey="#{citerneIt.id}"
+                                     rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                     >
+
+                            <p:column headerText="Engin"  >
+                                <h:outputText value="#{citerneIt.engin.code}" />
+                            </p:column>
+
+                            <p:column headerText="Date"  >
+                                <h:outputText value="#{citerneIt.date}" />
+                            </p:column>
+
+
+                            <p:column headerText="Volume ancien"  >
+                                <h:outputText value="#{citerneIt.volume}" />
+                            </p:column>
+
+                            <p:column headerText="Volume actuel"  >
+                                <h:outputText value="#{citerneIt.volume_actuel}" />
+                            </p:column>
+
+
+
+
+
+                            <p:column headerText="Action">
+                                <h:outputText value="#{citerneIt.action}" />
+                            </p:column>
+
+
+
+
+
+
+                            <p:column headerText="Edite le Bon" style="width: 70px;">
+                                <p:commandButton icon="ui-icon-pencil"  actionListener="#{citerneMb.telecharger_bon_gasoil_historique(citerneIt)}" ajax="false"/>
+
+                            </p:column>
+
+
+                        </p:dataTable>
+                    </h:form>
+
+
+
+                </p:panel>
+
+            </ui:define>
+
+
+
+        </ui:composition>
+
+    </body>
+
+</html>
+

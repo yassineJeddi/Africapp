@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Consultation des cartes gasoils</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+            <ui:define name="arborescence">
+
+
+
+                <h:form>
+                    Mensuel > <h:commandLink action="/mensuel/affecterCarteGasoilParChantier.xhtml"> Affecter carte gasoil à un chantier </h:commandLink> > <strong>Consultation</strong> 
+                </h:form>
+
+            </ui:define>
+
+            <ui:define name="content">
+                <p:panel id="pannel">
+                    <h:form id="f1">
+                        <p:messages id="msgsM" closable="true"/>
+
+
+                        <br />
+                        <div class="affectation-switch">
+                            <div class="btn-group" data-toggle="buttons">
+                                <p:commandButton class="btn btn-switch active" 
+                                                 
+                                                 value="CG Affectées à un Chantier "
+                                                 actionListener="#{carteGasoilMb.afficherCarteGasoilAffectChantier()}"/>
+                                <p:commandButton class="btn btn-default "
+                                                 action="/mensuel/consultCarteGS.xhtml?faces-redirect=true"
+                                                 value="CG Affectées à un Salarie" 
+                                                 actionListener="#{carteGSMb.afficherCarteGasoilAffect()}"/>
+                                <p:commandButton class="btn btn-default"
+                                                 value="Gestion Cartes Gasoil"
+                                                 action="/mensuel/gestionCarteGasoil.xhtml?faces-redirect=true"
+                                                 actionListener="#{gestion_Carte_GasoilMb.afficherCarteGasoilFindAll()}"
+                                                />
+                                 <p:commandButton class="btn btn-default"
+                                                 value="Historique Cartes Gasoil"
+                                                 action="/mensuel/historiqueCG.xhtml?faces-redirect=true"
+                                                />
+                             <p:commandButton class="btn btn-default"
+                                                 value="Historique CG Chantier"
+                                                 action="/mensuel/historiqueCGC.xhtml?faces-redirect=true"
+                                                />
+                            
+                            </div>
+                        </div>
+                        <br />
+
+                        <h:panelGrid columns="9" cellpadding="10" class="text-center">
+                        <p:spacer width="20"/>
+                            <p:commandButton  value="Rechercher un Chantier" onclick="PF('dlg').show();"
+                                             actionListener="#{carteGasoilMb.afficherChantierRechercher()}" 
+                                             
+                                             update=":formA:tbl"  />
+                        
+
+
+                        <p:commandButton value="Réinitialiser"
+                                         actionListener="#{carteGasoilMb.afficherCarteGasoilAffectChantier()}" 
+                                         update=":f1:table" />
+
+                       
+                      
+                         <p:spacer width="20"/>
+                        <h:outputText value="Date " />
+                        
+                        <p:calendar pattern="dd/MM/yyyy" id="aqui"  style="display: flex; width: 200px;" showOn="button" value="#{carteGasoilMb.de}"/>
+                        <p:spacer width="10"/>
+                        <p:commandButton value="OK" update=":f1:table" actionListener="#{carteGasoilMb.rechercherByDateNum()}"/>
+                       </h:panelGrid>
+                        <br /><br />
+
+                        <p:dataTable id="table"
+                                     rows="10"  paginator="true"   editable="true" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" var="mensuelIt" value="#{carteGasoilMb.carteGasoilChantiers}" rowsPerPageTemplate="5,10,15">
+
+                            <p:column headerText="N° de la carte"  filterBy="#{mensuelIt.numcartegasoil}" filterFunction="#{filterMb.filterByX}"  >
+                                <h:outputText value="#{mensuelIt.numcartegasoil}"/>
+                            </p:column>
+
+                            <p:column headerText="Plafonds"    filterBy="#{mensuelIt.plafondotation}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{mensuelIt.plafondotation}"/>
+                            </p:column>
+
+
+                            <p:column headerText="Date affectation"   filterBy="#{carteGasoilMb.convertDateFormat(mensuelIt.datedebut)}" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{carteGasoilMb.convertDateFormat(mensuelIt.datedebut)}">
+
+                                </h:outputText >
+                            </p:column>
+
+<!--                            <p:column headerText="Date Rendu"   filterBy="#{carteGasoilMb.convertDateFormat(mensuelIt.datefin)}" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{carteGasoilMb.convertDateFormat(mensuelIt.datefin)}">
+
+                                </h:outputText >
+                            </p:column>-->
+
+                            <p:column headerText="Nom chantier"   filterBy="#{mensuelIt.chantier.code}" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText  value="#{mensuelIt.chantier.code}" />     
+                            </p:column>
+
+                            <p:column headerText="Region"   filterBy="#{mensuelIt.chantier.region}" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{mensuelIt.chantier.region}"/>
+                            </p:column>
+
+                            <p:column headerText="Code chantier"   filterBy="#{mensuelIt.chantier.codeNovapaie}" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{mensuelIt.chantier.codeNovapaie}"/>
+                            </p:column>
+
+                            <p:column headerText="Désaffecter"  exportable="false" style="width: 250px;" >
+                                <p:commandButton  value="Annuler" actionListener="#{carteGasoilMb.desaffecter_carteGasoil_chantier(mensuelIt)}" update=":f1:table, :f1">
+                                    <p:confirm header="Confirmation" message=" Voulez vous vraiment Annuler cette afféctation ?" icon="ui-icon-alert" />
+                                </p:commandButton>
+
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                    <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                </p:confirmDialog>
+                                <p:commandButton value="Désaffecter" onclick="PF('dateR').show();" update=":find" >
+                                    <f:setPropertyActionListener value="#{mensuelIt}" target="#{carteGasoilMb.carteGCelected}" />
+                                </p:commandButton>
+                                <p:commandButton icon ="ui-icon-document" onclick="PF('detail').show();" update=":detail"  title="Afficher le détail du téléphone">
+                                    <f:setPropertyActionListener value="#{mensuelIt}" target="#{carteGasoilMb.carteGCelected}" />
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+
+                    <p:dialog header="Détail de la carte gasoil" widgetVar="detail" modal="true" >
+                        <h:form id="detail">
+                            <h:panelGrid columns="2" cellpadding="5">
+
+                                <p:outputLabel value="Nom du Chantier :" />
+                                <h:outputText value="#{carteGasoilMb.carteGCelected.chantier.code}"/>
+
+                                <p:outputLabel value="code du Chantier :" />
+                                <h:outputText value="#{carteGasoilMb.carteGCelected.chantier.codeNovapaie}"/>
+
+                                <p:outputLabel value="Région :" />
+                                <h:outputText value="#{carteGasoilMb.carteGCelected.chantier.region}"/>
+
+                                <p:outputLabel value="Date d'affectation :" />
+                                <h:outputText value="#{carteGasoilMb.convertDateFormat(carteGasoilMb.carteGCelected.dateAffectation)}"/>
+
+                                <p:outputLabel value="Numero Carte Gasoil :" />
+                                <h:outputText value="#{carteGasoilMb.carteGCelected.numcartegasoil}"/>
+
+                                <p:outputLabel value="Numero Carte Gasoil :" />
+                                <h:outputText value="#{carteGasoilMb.carteGCelected.chantier.region}"/>
+
+                                <p:outputLabel value="Plafond Dotation :" />
+                                <h:outputText value="#{carteGasoilMb.carteGCelected.plafondotation}"/>
+                            </h:panelGrid>
+
+                            <p:commandButton value="Quitter" oncomplete="PF('detail').hide()" />
+
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog header="Désaffecter" widgetVar="dateR" modal="true" width="400px">
+                        <h:form id="find">
+                            <h:panelGrid columns="2">
+                                <h:outputText value="Date Rendu :"/>        
+                                <p:calendar pattern="dd/MM/yyyy" id="date"    
+                                            value="#{carteGasoilMb.dateRendu}"
+                                            mindate="#{carteGasoilMb.carteGCelected.datedebut}"
+                                            maxdate="#{operationStock.dateOfToday}"
+                                            required="true" requiredMessage="date rendu est obligatoire "
+                                            showOn="button"/>
+
+                                <br/>
+
+                                <h:outputText/>
+                                <p:commandButton value="Valider" onclick="PF('dateR').hide();" action="#{carteGasoilMb.addDateRendu()}" update=":f1:msgsM,:f1:table"/>
+
+                            </h:panelGrid>   
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog header="Rechercher Chantier Par " width="80%" widgetVar="dlg" minHeight="40" >
+                        <h:form id="formA">
+                          
+
+                            <br /><br />
+                            <p:dataTable id="tbl" style="width:100%;" var="mensuelIt" value="#{carteGasoilMb.listeChantier}" 
+                                         rowKey="#{mensuelIt.id}" 
+                                         rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"  
+                                         scrollable="true" scrollHeight="150" >
+                                <p:ajax event="rowSelect"/>
+                                <p:column headerText="Code Chantier" filterBy="#{mensuelIt.codeNovapaie}" filterFunction="#{filterMb.filterByX}"   >
+                                    <h:outputText value="#{mensuelIt.codeNovapaie}" />
+                                </p:column>
+
+                                <p:column headerText="Nom Chantier" filterBy="#{mensuelIt.code}" filterFunction="#{filterMb.filterByX}"    >
+                                    <h:outputText value="#{mensuelIt.code}" />
+                                </p:column>
+
+
+                                <p:column headerText="Region" filterBy="#{mensuelIt.region}" filterFunction="#{filterMb.filterByX}"   >
+                                    <h:outputText value="#{mensuelIt.region}" />
+                                </p:column>
+
+                                <p:column>
+                                    <p:commandButton value="OK" onclick="PF('dlg').hide();" update=":f1:table" actionListener="#{carteGasoilMb.consultCarteChantier(mensuelIt)}">
+
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                            <p:commandButton value="Annuler"  onclick="PF('dlg').hide();"  ajax="true"/>
+                        </h:form>
+
+                    </p:dialog>
+
+                </p:panel>
+            </ui:define>
+
+
+
+        </ui:composition>
+
+    </body>
+
+
+
+
+
+</html>

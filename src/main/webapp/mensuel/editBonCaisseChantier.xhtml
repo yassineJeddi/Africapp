@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+    <h:head>
+        <title>Editer le bon de caisse pour un chantier</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+
+            <ui:define name="arborescence">
+
+
+
+                <h:form>
+                    Mensuel > <h:commandLink action="/mensuel/affectLoyerChantier.xhtml"> Affecter Loyer à un chantier </h:commandLink> > <h:commandLink action="/mensuel/consultLoyerChantier.xhtml"> Consultation Loyer à un chantier </h:commandLink> > <strong>Edite bon caisse</strong> 
+                </h:form>
+
+            </ui:define>
+
+            <ui:define name="content">
+                <p:panel id="pannel">
+                    <h:form id="formE">
+
+                        <p:messages id="msgsM" showDetail="true"/>
+                        <fieldset>
+                            <legend> informations </legend>
+                            <h:panelGrid columns="4" cellpadding="5">
+                                <h:outputText value="identifiant"/>
+                                <h:outputText  style="font-weight:bold" value="#{control_bon_caisse_Mb.lcSelected.id}"/>
+                                <h:outputText value="Numéro Contrat"/>
+                                <h:outputText style="font-weight:bold" value="#{control_bon_caisse_Mb.lcSelected.numcontrat}"/>
+                            
+                      
+                                <h:outputText value="Mode Paiement"/>
+                                <h:outputText style="font-weight:bold" value="#{control_bon_caisse_Mb.lcSelected.modepaiment}"/>
+                            </h:panelGrid>
+                        </fieldset>
+                        <h:panelGrid columns="2" cellpadding="5">
+                            <h:outputText value="Le mois"/>  
+                            <p:selectOneMenu id="mois"  value="#{control_bon_caisse_Mb.bcChantier.mois}">               
+                                <f:selectItem itemValue="01" itemLabel="Janvier"/>
+                                <f:selectItem itemValue="02" itemLabel="Février"/>
+                                <f:selectItem itemValue="03" itemLabel="Mars"/>
+                                <f:selectItem itemValue="04" itemLabel="Avril"/>
+                                <f:selectItem itemValue="05" itemLabel="Mai"/>
+                                <f:selectItem itemValue="06" itemLabel="Juin"/>
+                                <f:selectItem itemValue="07" itemLabel="Juillet"/>
+                                <f:selectItem itemValue="08" itemLabel="Aout"/>
+                                <f:selectItem itemValue="09" itemLabel="Septembre"/>
+                                <f:selectItem itemValue="10" itemLabel="Octobre"/>
+                                <f:selectItem itemValue="11" itemLabel="Novembre"/>
+                                <f:selectItem itemValue="12" itemLabel="Décembre"/>
+                            </p:selectOneMenu>
+
+                            <h:outputText value="Année"/>
+                            <p:selectOneMenu id="annee"  value="#{control_bon_caisse_Mb.bcChantier.annee}">               
+
+                                <f:selectItem itemValue="2012" itemLabel=" 2012 "/>
+                                <f:selectItem itemValue="2013" itemLabel=" 2013 "/>
+                                <f:selectItem itemValue="2014" itemLabel=" 2014 "/>
+                                <f:selectItem itemValue="2015" itemLabel=" 2015 "/>
+                                <f:selectItem itemValue="2016" itemLabel=" 2016 "/>
+                                <f:selectItem itemValue="2017" itemLabel=" 2017 "/>
+                                <f:selectItem itemValue="2018" itemLabel=" 2018 "/>
+                                <f:selectItem itemValue="2019" itemLabel=" 2019 "/>
+                                <f:selectItem itemValue="2020" itemLabel=" 2020 "/>
+                                <f:selectItem itemValue="2021" itemLabel=" 2021 "/>
+                                <f:selectItem itemValue="2022" itemLabel=" 2022 "/>
+                                <f:selectItem itemValue="2023" itemLabel=" 2023 "/>
+                                <f:selectItem itemValue="2024" itemLabel=" 2024 "/>
+
+                            </p:selectOneMenu>
+
+
+
+
+                            <p:commandButton class="btn btn-switch active pull-right" 
+                                             icon="ui-icon-check"
+                                             value="Valider et Visualiser"
+                                             
+                                             actionListener="#{control_bon_caisse_Mb.updateBonCaisseChantier()}" 
+                                             update=":formE, :bonCC"  
+                                             />
+
+
+
+
+                        </h:panelGrid>
+                    </h:form>
+
+
+                    <p:dialog showEffect="fade"  
+                              hideEffect="fade" 
+                              header="Bon de Caisse" 
+                              modal="true" 
+                              resizable="true"  
+                              widgetVar="consultBC"
+                              >
+                        <h:form id="bonCC">
+                            <p:media value="#{imageBean.documentMensuel}" width="100%" height="500px" player="pdf"> 
+                                <f:param name="path" value="#{control_bon_caisse_Mb.codeCurrentChantier}" />
+                            </p:media>
+                        </h:form>
+                    </p:dialog> 
+
+
+                </p:panel>
+            </ui:define>
+
+
+
+        </ui:composition>
+
+    </body>
+
+
+
+
+
+</html>

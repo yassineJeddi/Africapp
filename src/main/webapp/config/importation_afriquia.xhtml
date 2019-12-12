@@ -1,0 +1,196 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Gestion Afriquia</title>
+    </h:head>
+
+    <body>
+
+
+        <ui:composition template="./configTemplate.xhtml">
+
+            <ui:define name="arborescence">
+
+
+
+                <h:form>
+                    Config ><strong>Consommation Afriquia</strong> 
+                </h:form>
+
+            </ui:define>
+
+
+
+
+            <ui:define name="content">
+
+
+                <p:panel id="pannel">
+                    <h:form id="form">
+
+                        <p:messages id="msgsM" autoUpdate="false" showDetail="true" closable="true" />
+
+
+
+
+                        <br /><br />
+
+                        <div class="row">
+
+                            <div class="col-lg-offset-1 col-lg-4">
+
+                                <div>
+                                    <h:panelGrid columns="11" cellpadding="5" id="grid">
+                                        <p:outputLabel value="Fichier à uploader"  />
+
+
+
+
+                                        <p:commandButton value="importer"
+                                                         class="btn btn-switch active"
+                                                         onclick="PF('uploadExcel').show()" />
+
+
+                                        <p:spacer width="5px"  height="1px"/>
+                                        <p:outputLabel for="button" value="De:" />
+                                        <p:calendar 
+                                            id="button" value="#{CGAfriquiaMb.dateFrom}"  pattern="dd/MM/yyyy" />
+                                      
+                                        <p:outputLabel for="button2" value="à:" />
+                                        <p:calendar
+                                            id="button2" value="#{CGAfriquiaMb.dateTo}" pattern="dd/MM/yyyy" />
+                                        <p:spacer width="20px"  height="1px"/>
+
+                                        <p:commandButton class="btn btn-switch active" 
+                                                         onstart="PF('blk').show();"
+                                                         oncomplete="PF('blk').hide();"
+                                                         value="Rechercher" update=":form:tblAf"
+                                                         icon="ui-icon-search"
+                                                         action="#{CGAfriquiaMb.searchByDate}" />
+
+                                         <p:commandButton class="btn btn-switch active" 
+                                                         onstart="PF('blk').show();"
+                                                         oncomplete="PF('blk').hide();"
+                                                         value="Reinitialiser" update=":form:tblAf, :form:grid "
+                                                         icon="ui-icon-arrowthickstop-1-s"
+                                                         action="#{CGAfriquiaMb.reinit()}" />
+
+
+                                    </h:panelGrid>
+                                    
+
+
+                                      <p:blockUI widgetVar="blk" id="blok" block=":form:tblAf" >
+                                        Chargement en cours ... <br />
+                                        <p:graphicImage url="https://upload.wikimedia.org/wikipedia/commons/5/53/Loading_bar.gif"/>
+                                    </p:blockUI>
+                                </div>
+                            </div>
+                        </div>
+
+                        <br /><br />
+
+                        <p:dataTable id="tblAf" var="afriquiaIt" value="#{CGAfriquiaMb.listOfAfriquia}" 
+                                     rows="10"  paginator="true" scrollable="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+
+
+
+
+                            <p:column headerText="Carte N." filterBy="#{afriquiaIt.numCarte}" >
+                                <h:outputText value="#{afriquiaIt.numCarte}"/>
+                            </p:column>
+
+                            <p:column headerText="Station" filterBy="#{afriquiaIt.station}" >
+                                <h:outputText value="#{afriquiaIt.station}"/>
+                            </p:column>
+
+
+                            <p:column headerText="Date" sortBy="#{afriquiaIt.date}" >
+                                <h:outputText value="#{citerneMb.convertFormatDate(afriquiaIt.date)}"/>
+                            </p:column>
+
+
+                            <p:column headerText="Heure" filterBy="#{afriquiaIt.heure}" >
+                                <h:outputText value="#{afriquiaIt.heure}"/>
+                            </p:column>
+
+                            <p:column headerText="Libelle Carte " filterBy="#{afriquiaIt.libCarte}" >
+                                <h:outputText value="#{afriquiaIt.libCarte}"/>
+                            </p:column>
+
+                            <p:column headerText="Libelle " filterBy="#{afriquiaIt.libelle}" >
+                                <h:outputText value="#{afriquiaIt.libelle}"/>
+                            </p:column>
+
+                            <p:column headerText="Matricule" filterBy="#{afriquiaIt.heure}" >
+                                <h:outputText value="#{CGAfriquiaMb.toInt(afriquiaIt.matricule_)}"/>
+                            </p:column>
+
+                            <p:column headerText="Produit" >
+                                <h:outputText value="#{afriquiaIt.produit}"/>
+                            </p:column>
+
+                            <p:column headerText="Montant" >
+                                <h:outputText value="#{afriquiaIt.montant}"/>
+                            </p:column>
+
+                            <p:column headerText="Kilométrage" >
+                                <h:outputText value="#{afriquiaIt.kilometrage}"/>
+                            </p:column>
+
+                            <p:column headerText="Quantité" >
+                                <h:outputText value="#{afriquiaIt.quantite}"/>
+                            </p:column>
+
+
+                        </p:dataTable>
+
+
+
+
+
+
+                    </h:form>
+
+
+                    <h:form>                        
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                            <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                            <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                        </p:confirmDialog>
+                    </h:form>
+
+                    <p:dialog header="Importer" widgetVar="uploadExcel" modal="true">
+                        <h:form  enctype="multipart/form-data" prependId="false">
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <p:fileUpload id="fileUploadImport" value="#{CGAfriquiaMb.uploadedExcelConso}"
+                                              update="msgupload" invalidFileMessage="type autorisé xls, xlsx" 
+                                              allowTypes="/(\.|\/)(xlsx|xls)$/" label="Choisir ficher de consommation" 
+                                              mode="simple" >
+                                </p:fileUpload>
+                                <p:message id="msgupload" for="fileUploadImport" />
+                                <p:commandButton value="importer" 
+                                                 oncomplete="PF('uploadExcel').hide();"
+                                                 class="btn btn-switch active"
+                                                 action="#{CGAfriquiaMb.parseFichierExcelAfriquia()}"
+                                                 ajax="false"/>
+
+                            </h:panelGrid>
+                        </h:form>
+                    </p:dialog>
+
+
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans 
+http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+                        http://www.springframework.org/schema/security
+ http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+
+    
+    <beans:bean id="customAuthListener" class="ma.bservices.tgcc.authentification.CustomAuthListener"/>
+
+    <http auto-config='true'  use-expressions="true">
+        <access-denied-handler error-page="/mensuel/accessdenied.xhtml"/>
+        <http-basic />
+        
+        
+ 
+        <intercept-url pattern="/administration/**"  access="hasRole('admin')" />
+        <intercept-url pattern="/config/**"          access="hasRole('admin')" /> 
+        <intercept-url pattern="/mensuel/**"         access="hasRole('admin')" /> 
+        <intercept-url pattern="/at/**"              access="hasRole('admin')" /> 
+        <intercept-url pattern="/mensuel/**"         access="hasRole('mensuel')" /> 
+        
+        <intercept-url pattern="/achat/achatBL.xhtml"               access="hasAnyRole('admin','liste des bons de livraison','EMAIL_CONTRIBUTORS')" />	
+        <intercept-url pattern="/achat/newBL.xhmtl"                 access="hasAnyRole('admin','valider un bon de livraison','EMAIL_CONTRIBUTORS')" />		
+        <intercept-url pattern="/achat/dmdAchat.xhtml"              access="hasAnyRole('admin','liste des demandes d approvisionnement','EMAIL_CONTRIBUTORS')" />	
+        <intercept-url pattern="/achat/nouvelledemandeappro.xhtml"  access="hasAnyRole('admin','créer une nouvelle demande d approvisionnement','EMAIL_CONTRIBUTORS')" />	
+	
+        		
+        <intercept-url pattern="/evol/salaries.xhtml"               access="hasAnyRole('admin','liste et recherche des salariés','EMAIL_CONTRIBUTORS')" />
+        <intercept-url pattern="/evol/nouveausalarie.xhtml"         access="hasAnyRole('admin','ajouter un nouveau salarié','EMAIL_CONTRIBUTORS')" />
+        <intercept-url pattern="/evol/detail.xhtml"                 access="hasAnyRole('admin','afficher le détail du salarié','EMAIL_CONTRIBUTORS')" />
+        	
+        <intercept-url pattern="/evol/presenceSalarie.xhtml"        access="hasAnyRole('admin','liste et recherche des présences','EMAIL_CONTRIBUTORS')" />
+        <intercept-url pattern="/evol/pointageSalarie.xhtml"        access="hasAnyRole('admin','pointage par salarié','EMAIL_CONTRIBUTORS')" />
+        <intercept-url pattern="/evol/pointageEntre.xhtml"          access="hasAnyRole('admin','pointages entrée')" />
+        <intercept-url pattern="/evol/absences.xhtml"               access="hasAnyRole('admin','liste et recherche des absences')" />
+        <intercept-url pattern="/evol/pointageSortie.xhtml"         access="hasAnyRole('admin','pointages sortie','pointage de sortie')" />       
+        <intercept-url pattern="/evol/pointageLot.xhtml"            access="hasAnyRole('admin','pointages lot','EMAIL_CONTRIBUTORS')" />
+        <intercept-url pattern="/evol/fichePointageLot.xhtml"       access="hasAnyRole('admin','fiche_pointage_lot','EMAIL_CONTRIBUTORS')" />
+        <intercept-url pattern="/evol/fichepointages.xhtml"         access="hasAnyRole('admin','fiche_pointage_lot','EMAIL_CONTRIBUTORS')" />
+         
+        <intercept-url pattern="/evol/importation.xhtml"            access="hasAnyRole('admin','importation de pointages')" />  
+        <intercept-url pattern="/evol/heuressupplementaires.xhtml"  access="hasAnyRole('admin','valider heures supplémentaires', 'liste heures supplémentaires', 'ajouter heure(s) supplémentaire(s)')" />      
+        
+        <!-- nouvelles fonctionalités -->
+        <intercept-url pattern="/evol/affectSalarieSupp.xhtml"      access="hasAnyRole('EMAIL_CONTRIBUTORS', 'affectation salarie sup' ,'admin' )"/>
+        <intercept-url pattern="/evol/consultSalarieSupp.xhtml"     access="hasAnyRole('EMAIL_CONTRIBUTORS','consultation salarie sup','admin')"/>
+        <intercept-url pattern="/evol/niveauFonction.xhtml"         access="hasAnyRole('EMAIL_CONTRIBUTORS','admin')"/>
+        <intercept-url pattern="/evol/hierarchieChantier.xhtml"     access="hasAnyRole('EMAIL_CONTRIBUTORS','organigram','admin')"/>
+        <intercept-url pattern="/evol/lots.xhtml"                   access="hasAnyRole('EMAIL_CONTRIBUTORS','admin')"/>
+        <intercept-url pattern="/evol/salarieChefEquipe.xhtml"            access="hasAnyRole('EMAIL_CONTRIBUTORS','admin')"/> 
+         
+        <intercept-url pattern="/evol/affectLoyer.xhtml"                  access="hasAnyRole('affecter Loyer','admin')" />
+        <intercept-url pattern="/evol/affectLoyerChantier.xhtml"          access="hasAnyRole('affecter Loyer Chantier','admin')" />  
+        <intercept-url pattern="/evol/consultLoyer.xhtml"                 access="hasAnyRole('consulter Loyer','admin')" />  
+        <intercept-url pattern="/evol/consultLoyerChantier.xhtml"         access="hasAnyRole('consulter Loyer Chantier','admin')" />  
+        <intercept-url pattern="/evol/histoLoyerS.xhtml"                  access="hasAnyRole('historique Loyer Sal','admin')" />  
+        <intercept-url pattern="/evol/caisse.xhtml"                       access="hasAnyRole('Caisse','admin')" />      
+        <intercept-url pattern="/evol/mensuel.xhtml"                      access="hasAnyRole('Affectation Mensuelle','admin')" />        
+
+        
+        
+        <!-- AT -->
+        <intercept-url pattern="/at/at.xhtml"                       access="hasAnyRole('AT','Ajouter_AT','admin')" />  
+        <intercept-url pattern="/at/gestion.xhtml"                  access="hasAnyRole('AT','Gerer_AT','admin')" />  
+        
+        <!--
+        <intercept-url pattern="/mensuel/mensuel.xhtml"                 access="hasAnyRole('mensuel')" />
+        <intercept-url pattern="/mensuel/pointage.xhtml"                access="hasAnyRole('mensuel')" />
+        <intercept-url pattern="/mensuel/mensuelInActif.xhtml"          access="hasAnyRole('mensuel')" />
+        <intercept-url pattern="/mensuel/affectVoiture.xhtml"           access="hasAnyRole('mensuel')" />
+        <intercept-url pattern="/mensuel/consultVoitureSalarie.xhtml"   access="hasAnyRole('mensuel')" />
+        <intercept-url pattern="/mensuel/affecterModem3gMensuel.xhtml"  access="hasAnyRole('mensuel')" />
+        <intercept-url pattern="/mensuel/consulter3g.xhtml"             access="hasAnyRole('mensuel')" />
+        <intercept-url pattern="/mensuel/affectOrdinateurs.xhtml"       access="hasAnyRole('mensuel')" />
+        <intercept-url pattern="/mensuel/consultOrdinateurs.xhtml"      access="hasAnyRole('mensuel')" />
+        <intercept-url pattern="/mensuel/affectLoyer.xhtml"             access="hasAnyRole('mensuel')" />
+        <intercept-url pattern="/mensuel/consultLoyer.xhtml"            access="hasAnyRole('mensuel')" />
+        <intercept-url pattern="/mensuel/telephone.xhtml"               access="hasAnyRole('mensuel')" />
+        <intercept-url pattern="/mensuel/consultationtelephone.xhtml"   access="hasAnyRole('mensuel')" />
+        <intercept-url pattern="/mensuel/affectCarteGasoil.xhtml"       access="hasAnyRole('mensuel')" />
+        <intercept-url pattern="/mensuel/consultCarteGS.xhtml"          access="hasAnyRole('mensuel')" />
+        <intercept-url pattern="/mensuel/CreationVoiture.xhtml"         access="hasAnyRole('mensuel')" />
+        <intercept-url pattern="/mensuel/GestionModem3G.xhtml"          access="hasAnyRole('mensuel')" />
+        <intercept-url pattern="/mensuel/gestionOrdinateur.xhtml"       access="hasAnyRole('mensuel')" />
+        <intercept-url pattern="/mensuel/gestionTelephone.xhtml"        access="hasAnyRole('mensuel')" />
+        <intercept-url pattern="/mensuel/cartesGazoile.xhtml"           access="hasAnyRole('mensuel')" />
+        <intercept-url pattern="/mensuel/caisse.xhtml"                  access="hasAnyRole('mensuel')" />
+        <intercept-url pattern="/mensuel/absenceValide.xhtml"           access="hasAnyRole('mensuel')" />
+        <intercept-url pattern="/mensuel/valideAbsenceMensuel.xhtml"    access="hasAnyRole('mensuel')" />
+        <intercept-url pattern="/mensuel/absenceAjout.xhtml"            access="hasAnyRole('mensuel')" />
+        -->
+      
+        <!-- Module d'achat et BL		--> 
+        
+        <intercept-url pattern="/engin/parcengins.xhtml"    access= "hasAnyRole('pointage_des_engins','maintenance','parc_engin', 'admin')" />
+        <intercept-url pattern="/engin/enginReforme.xhtml"  access= "hasAnyRole('parc_engin', 'admin')" />
+        <intercept-url pattern="/engin/enginArchive.xhtml"  access= "hasAnyRole('parc_engin', 'admin')" />
+        <intercept-url pattern="/engin/enginDept.xhtml"     access= "hasAnyRole('parc_engin', 'admin')" />
+        <intercept-url pattern="/engin/panne.xhtml"         access= "hasAnyRole('maintenance', 'admin')" />
+        <intercept-url pattern="/engin/Citerne.xhtml"       access= "hasAnyRole('citerne', 'admin')" />
+        <intercept-url pattern="/engin/pointage.xhtml"      access= "hasAnyRole('pointage_des_engins','admin')" />
+        <intercept-url pattern="/engin/index.xhtml"         access= "hasAnyRole('pointage_des_engins','admin')" />
+        
+        
+        <intercept-url pattern="/stock/stock.xhtml"                     access="hasAnyRole('stock','admin')" />
+        <intercept-url pattern="/stock/gestionTransferts.xhtml"         access="hasAnyRole('stock','admin')" />
+        <intercept-url pattern="/stock/receptionsTransferts.xhtml"      access="hasAnyRole('stock','admin')" />
+        <intercept-url pattern="/stock/historique_affectations.xhtml"   access="hasAnyRole('stock','admin')" />
+        <intercept-url pattern="/stock/traitementTransferts.xhtml"      access="hasAnyRole('admin', 'admin transferts')" />
+        <intercept-url pattern="/stock/ecartStock.xhtml"                access="hasAnyRole('admin', 'ecart stock')" />
+        
+        
+        
+        
+        <!--        <intercept-url pattern="/chantiers/index" access="hasAnyRole('liste chantiers','EMAIL_CONTRIBUTORS')" />
+        <intercept-url pattern="/chantiers/ajouterChantier" access="hasAnyRole('créer un nouveau chantier','EMAIL_CONTRIBUTORS')" />
+        <intercept-url pattern="/chantiers/modifierChantier" access="hasAnyRole('modifier chantier','EMAIL_CONTRIBUTORS')" />
+        <intercept-url pattern="/chantiers/affecterSalarieChantier*" access="hasAnyRole('affecter un salarié à un chantier','EMAIL_CONTRIBUTORS')" />	-->
+			
+        <intercept-url pattern="/administration/group.xhtml"        access="hasAnyRole('liste groupes','EMAIL_CONTRIBUTORS')" />
+        <intercept-url pattern="/administration/utilisateur.xhtml"  access="hasAnyRole('liste et recherche des utilisateurs','EMAIL_CONTRIBUTORS')" />
+        <intercept-url pattern="/administration/nouveauGroupe"      access="hasAnyRole('créer un nouveau groupe','EMAIL_CONTRIBUTORS')" />
+        <intercept-url pattern="/administration/nouveauUtilisateur" access="hasAnyRole('créer un nouvel utilisateur','EMAIL_CONTRIBUTORS')" />		
+		
+
+        <intercept-url pattern="/login.xhtml" access="permitAll" />
+        <intercept-url pattern="/resources/**" access="permitAll" />
+        <intercept-url pattern="/**" access="isFullyAuthenticated()" />
+        <intercept-url pattern="/mensuel/**" access= "hasAnyRole('mensuel', 'admin')" />
+        
+        
+
+        <logout logout-success-url="/login.xhtml" invalidate-session="true"/>
+        <form-login login-page='/login.xhtml'
+                    authentication-failure-url="/login.xhtml?error=true"
+                    authentication-success-handler-ref="myAuthenticationSuccessHandler"
+        />
+        <session-management invalid-session-url="/login.xhtml">
+            
+        </session-management>
+         
+          
+          
+        
+          
+    </http>
+ 
+    <beans:bean id="myAuthenticationSuccessHandler"
+                class="ma.bservices.tgcc.authentification.MySimpleUrlAuthenticationSuccessHandler" />
+    
+    
+                
+	
+    <beans:bean id="customAuthenticationProvider" class="ma.bservices.tgcc.authentification.CustomAuthenticationProvider" /> 
+    
+    <authentication-manager alias="authenticationManager">
+        <authentication-provider ref="customAuthenticationProvider" />    
+    </authentication-manager>
+
+</beans:beans>

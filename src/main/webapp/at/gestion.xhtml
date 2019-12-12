@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Voiture</title>
+    </h:head>
+    <body>
+        <ui:composition template="./Template.xhtml">
+            <ui:define name="arborescence"> 
+                <h:form id="formeSolde">RH > Accident Travail</h:form>
+            </ui:define>
+            <ui:define name="content">
+                <h:form id="forme">
+                    <div class="ui-fluid">
+                        <p:growl id="msgs" showDetail="true" />
+                        <p:panel id="basic" header="" style="margin-bottom:20px">
+                            <h:commandButton value="Charger " action="#{accidentTravailMb.chargerAccident()}"  />
+                            <h:panelGrid  
+                                         styleClass="ui-panelgrid-blank ui-fluid"
+                                         cellpadding="10">
+                                   <p:dataTable var="at" value="#{accidentTravailMb.accidentTravails}" widgetVar="atTable"
+                                        emptyMessage="Aucun mot trouvé" >
+
+                                    <f:facet name="Entête">
+                                        <p:outputPanel>
+                                            <h:outputText value="Chercher dans touts les champs :" />
+                                            <p:inputText id="globalFilter" onkeyup="PF('atTable').filter()" style="width:250px" placeholder="Entrer un mot"/>
+                                        </p:outputPanel>
+                                    </f:facet>
+                                       
+                                    <p:column headerText="N°" filterBy="#{at.id}"  filterMatchMode="contains" >
+                                        <h:outputText value="#{at.id}" />
+                                    </p:column> 
+                                    <p:column headerText="Chantier" filterBy="#{at.chantier.code}"  filterMatchMode="contains" >
+                                        <h:outputText value="#{at.chantier.code}" />
+                                    </p:column> 
+                                    <p:column headerText="Salarie" filterBy="#{at.salarie.cin.trim()} | #{at.salarie.matricule.trim()} | #{at.salarie.nom.trim()} #{at.salarie.prenom.trim()}"  filterMatchMode="contains" >
+                                        <h:outputText value="#{at.salarie.cin.trim()} | #{at.salarie.matricule.trim()} | #{at.salarie.nom.trim()} #{at.salarie.prenom.trim()}" />
+                                    </p:column> 
+                                    <p:column headerText="Date" filterBy="#{at.dateAccident}"  filterMatchMode="contains" >
+                                           <h:outputText value="#{at.dateAccident}" />
+                                    </p:column> 
+                                    <p:column headerText="Action" >
+                                           <p:commandButton icon="ui-icon-document-b" oncomplete="PF('dlg_detailAccident').show()" title="Détail accident" 
+                                                 actionListener="#{accidentTravailMb.detailAccident(at)}"
+                                                 update=":forme,:forme:form_detailAccident" immediate="true" />
+                                    </p:column> 
+                                       
+                                   </p:dataTable>
+                            </h:panelGrid>
+                            
+                            
+                    <p:dialog header="Detail Accident" 
+                              resizable="false" modal="true"
+                              style="margin-right:80px;" 
+                              draggable="false"
+                              maximizable="true"
+                              widgetVar="dlg_detailAccident"  >
+                        <h:form id="form_detailAccident" >
+                            <h:outputText value="Chantier : #{accidentTravailMb.accidentTravail.chantier.code}" /><br />
+                            <h:outputText value="Salarie : #{accidentTravailMb.accidentTravail.salarie.nom.trim()} #{accidentTravailMb.accidentTravail.salarie.prenom.trim()}" /><br />
+                            <h:outputText value="Matricule : #{accidentTravailMb.accidentTravail.salarie.matricule.trim()}" /><br />
+                            <h:outputText value="CIN : #{accidentTravailMb.accidentTravail.salarie.cin.trim()}" /><br />
+                            <h:outputText value="Fonction : #{accidentTravailMb.accidentTravail.salarie.fonction.fonction}" /><br />
+                            <h:outputText value="Date: #{accidentTravailMb.accidentTravail.dateAccident}" /><br />
+                            <h:outputText value="Lieu : #{accidentTravailMb.accidentTravail.lieu}" /><br />
+                            <h:outputText value="Description : #{accidentTravailMb.accidentTravail.description}" /><br />
+                        </h:form>
+                    </p:dialog>
+                        </p:panel>
+                    </div>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

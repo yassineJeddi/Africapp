@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Modem 3G</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+
+            <ui:define name="arborescence">
+
+
+
+                <h:form>
+                    Mensuel > <strong> gestion 3G </strong>
+                </h:form>
+
+            </ui:define>
+
+            <ui:define name="content">
+                <p:panel id="pannel">
+
+                    <h:form id="form">
+                        <br/>
+                        <div class="affectation-switch">
+                            <div class="btn-group" data-toggle="buttons">
+                                <p:commandButton  class="btn btn-default" 
+                                                  action="/mensuel/consulter3g.xhtml?faces-redirect=true" value="Consulter Modem 3G"
+                                                  actionListener="#{modem3gMb.afficherModem3gAffecte()}" />
+                                <p:commandButton  class="btn btn-switch active"
+                                                  value="Gestion Modem 3G" 
+                                                  actionListener="#{gestion_modem3G.afficherModem3g()}" 
+                                                  update=":form:tbl" />
+                                <p:commandButton  class="btn btn-default"                                                  
+                                                  value="Historique Modem 3G"  
+                                                  action="/mensuel/HistoriqueModem3G.xhtml?faces-redirect=true" 
+
+                                                  actionListener="#{gestion_modem3G.afficherModem3g()}"/>
+
+                            </div>
+                        </div>
+                        <br/>
+                        <p:messages id="msgsM" closable="true"/>
+
+                        <p:commandButton class="btn btn-switch active" value="Ajouter" icon="ui-icon-plus" onclick="PF('dlg_Ajouter').show();" />
+                        <br/><br/>
+
+
+                        <p:dataTable id="tbl" var="modemIt" value="#{gestion_modem3G.modem3gs}"
+                                     rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                     >
+
+
+                            <p:ajax event="rowEdit" listener="#{gestion_modem3G.onRowEdit}" update=":form:msgsM" />
+                            <p:ajax event="rowEditCancel" listener="#{gestion_modem3G.onRowCancel}"  update=":form:msgsM" />
+
+
+                            <p:column headerText="Imei" filterBy="#{modemIt.imei}" filterFunction="#{filterMb.filterByX}" >
+                                <p:cellEditor>
+                                    <f:facet name="output"><h:outputText value="#{modemIt.imei}" /></f:facet>
+                                    <f:facet name="input"><p:inputText value="#{modemIt.imei}" style="width:100%"/></f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+
+                            <p:column headerText="Numero serie" filterBy="#{modemIt.serie_numero}" filterFunction="#{filterMb.filterByX}" >
+                                <p:cellEditor>
+                                    <f:facet name="output"><h:outputText value="#{modemIt.serie_numero}" /></f:facet> 
+                                    <f:facet name="input"><p:inputText value="#{modemIt.serie_numero}"  style="width:100%"/></f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+                            <p:column headerText="Operateur" filterBy="#{modemIt.operateur}" filterFunction="#{filterMb.filterByX}" >
+                                <p:cellEditor>
+                                    <f:facet name="output"><h:outputText value="#{modemIt.operateur}" /></f:facet>
+                                    <f:facet name="input">
+
+                                        <p:selectOneMenu id="id_operateur" value="#{modemIt.operateur}" style="width:125px">
+                                            <f:selectItem itemLabel="Méditel" itemValue="Méditel" />
+                                            <f:selectItem itemLabel="Maroc Telecom" itemValue="Maroc Telecom" />
+                                            <f:selectItem itemLabel="Inwi" itemValue="Inwi" />
+                                        </p:selectOneMenu>
+
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+
+                            <p:column headerText="Numero 3g" filterBy="#{modemIt.numero}" filterFunction="#{filterMb.filterByX}" >
+                                <p:cellEditor>
+                                    <f:facet name="output"><h:outputText value="#{modemIt.numero}" /></f:facet>
+                                    <f:facet name="input"><p:inputMask id="id_num_tel_edit" value="#{modemIt.numero}" mask="99 99-99-99-99" style="width:100%"/></f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+                            <p:column headerText="Affectation" filterBy="#{modemIt.mensuel.nom}" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{modemIt.mensuel eq null?'Non Affecté':modemIt.mensuel.nom}"/>
+                            </p:column>
+
+                            <p:column>
+                                <p:commandButton  icon="ui-icon-trash"  update=":form:tbl,:pannel" action="#{gestion_modem3G.delete(modemIt)}"  ajax="true">
+                                    <p:confirm header="Confirmation" message=" Voulez vous vraiment supprimer ce modem ?" icon="ui-icon-alert" />
+                                </p:commandButton>
+
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                    <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                </p:confirmDialog>
+                            </p:column>
+
+                            <p:column style="width:32px">
+                                <p:rowEditor />
+                            </p:column>
+
+                        </p:dataTable>
+                    </h:form>
+
+
+
+
+
+                    <!-- ******************************************************************************
+                    ****************************** ajouter modem 3g **********************************-->
+
+                    <p:dialog header="Nouvel Modem 3G" widgetVar="dlg_Ajouter" minHeight="40" >
+                        <h:form id="formA">
+                            <h:panelGrid columns="4" cellpadding="5">
+                                <h:outputText value="Imei" />
+                                <p:inputText required="true" requiredMessage="imei est obligatoir" value="#{gestion_modem3G.modem3gToAdd.imei}"/>
+
+                                <h:outputText value="Numero serie" />
+                                <p:inputText required="true" requiredMessage="numero serie  obligatoir" 
+                                             label="numero serie " value="#{gestion_modem3G.modem3gToAdd.serie_numero}"/>
+
+                                <h:outputText value="operateur" />
+
+                                <p:selectOneMenu id="id_operateur" value="#{gestion_modem3G.modem3gToAdd.operateur}" style="width:125px">
+                                    <f:selectItem itemLabel="Méditel" itemValue="Méditel" />
+                                    <f:selectItem itemLabel="Maroc Telecom" itemValue="Maroc Telecom" />
+                                    <f:selectItem itemLabel="Inwi" itemValue="Inwi" />
+                                </p:selectOneMenu>
+
+                                <h:outputText value="numero 3g" />
+
+                                <p:inputMask required="true" 
+                                             requiredMessage="numero 3g obligatoir" label="numero 3g"
+                                             id="id_num_tel_ajouter" value="#{gestion_modem3G.modem3gToAdd.numero}" mask="99 99-99-99-99" />
+
+                            </h:panelGrid>
+
+                            <p:commandButton value="Ajouter" action="#{gestion_modem3G.ajouter_3G()}" oncomplete="PF('dlg_Ajouter').hide()" ajax="true"  update=":form:tbl,:pannel"/>
+
+                        </h:form>
+                    </p:dialog>
+
+
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

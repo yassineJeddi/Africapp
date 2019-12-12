@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Gestion Afriquia</title>
+    </h:head>
+
+    <body>
+
+
+        <ui:composition template="./configTemplate.xhtml">
+
+            <ui:define name="arborescence">
+
+
+
+                <h:form>
+                    Config ><strong> Configuration de la synchronisation </strong> 
+                </h:form>
+
+            </ui:define>
+
+
+
+
+            <ui:define name="content">
+
+
+                <p:panel id="pannel">
+                    <h:form id="form">
+
+                        <p:messages id="msgsM" autoUpdate="false" closable="true" />
+
+
+
+
+                        <br /><br />
+
+                        <div class="row">
+
+                            <div class="col-lg-offset-1 col-lg-4">
+
+                                <div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <br /><br />
+
+                        <p:dataTable id="tblAf" var="var" value="#{syncConfigMb.emailConfigs}" 
+                                     rows="10"  paginator="true" scrollable="true" editable="true" 
+                                     paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+
+                            <p:column headerText="Module" >
+                                <h:outputText value="#{var.module}"/>
+                            </p:column>
+
+                            <p:column headerText="Destinataire" >
+                                <h:outputText value="#{var.mail_to}"/>
+                            </p:column>
+                            
+                             <p:column headerText="Modifier" >
+                                 <p:commandButton value="Modifier" 
+                                                  actionListener="#{syncConfigMb.initMailsPerModule(var.module)}"
+                                                  oncomplete="PF('configDialog').show();"
+                                                  update=":config"
+                                                  />
+                            </p:column>
+
+
+
+                        </p:dataTable>
+
+
+
+
+
+
+                    </h:form>
+
+
+                    <h:form>                        
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                            <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                            <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                        </p:confirmDialog>
+                    </h:form>
+
+                    <p:dialog header="Configurer" widgetVar="configDialog" modal="true" width="550px" height="200px">
+                        <h:form  id="config">
+                            <p:messages id="msgsM" closable="true"/>
+                            <h:panelGrid columns="2" style="text-align: center;margin: auto;" class="text-center">
+                                
+                                <p:outputLabel value="Module : "></p:outputLabel>
+                                <p:outputLabel value="#{syncConfigMb.module}" />
+                                <p:outputLabel value="Emails : "></p:outputLabel>
+                                <h:inputTextarea style="width: 250px;height: 100%;" 
+                                                 value="#{syncConfigMb.emails}" cols="15" rows="5"/>
+                                
+                                <p:commandButton value="Confirmer"  update=":config:msgsM, :form:tblAf" 
+                                                 actionListener="#{syncConfigMb.validateEmails()}"/>
+                            </h:panelGrid>
+                        </h:form>
+                    </p:dialog>
+
+
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

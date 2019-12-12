@@ -1,0 +1,351 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets" 
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <h:head>
+        <title>Facelet Title</title>
+        <link rel="stylesheet" type="text/css" href="../resources/css/main.css" />
+    </h:head>
+    <h:body>
+
+        <ui:composition template="Template.xhtml">
+            <ui:define name="arborescence">
+                <h:outputText value="RH > Heure Supplémentaire" style="color:#000066; font-size: 14px;  font-family: Times New Roman, Georgia, Serif; margin-left: -920px;"/>
+            </ui:define>
+            <ui:define name="content">
+                <div class="col-lg-12">
+                    <p:blockUI block="tableHS" widgetVar="block">
+                        Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                    </p:blockUI>
+                    <p:growl showDetail="true" id="msgsHS" autoUpdate="true" />
+                    <h:form id="tableHS">
+                        <div class="row">
+                            <div class="col-lg-12 ">
+                                <h:panelGrid columns="17" class="without-border">
+                                    <c:if test="#{authentification.hasPermission(constanteMb.ajouterHS)}">
+                                        <p:commandButton actionListener="#{heuresuppMb.initAjoutDialogue()}"
+                                                         icon="ui-icon-plus"                                                          
+                                                         value="Ajouter"
+                                                         update=":addHS"
+                                                         oncomplete="PF('add').show();" 
+                                                         />
+                                    </c:if>
+                                    <p:spacer width="15px"/>
+                                    <h:outputText value="Chantier :"/>
+                                    <p:spacer width="5px"/>
+                                    <p:selectOneMenu id="chantier" value="#{heuresuppMb.intChantier}"
+                                                     filter="true" filterMatchMode="contains" 
+                                                     style="width: 100px;">
+                                        <f:selectItem itemLabel="-- Chantier --" />
+                                        <f:selectItems value="#{chantier.chantiers}" var="c" itemLabel="#{c.code}" itemValue="#{c.id}" />
+                                    </p:selectOneMenu>
+                                    <p:spacer width="10px" />
+                                    <h:outputText value="Etat :"/>
+                                    <p:spacer width="5px"/>
+                                    <p:selectOneMenu id="etat" value="#{heuresuppMb.etatHS}"
+                                                     filterMatchMode="contains" style="margin-top: 5px"
+                                                     >
+                                        <f:selectItem />
+                                        <f:selectItems value="#{etatHsMb.etatHs}" 
+                                                       var="et" itemLabel="#{et.etatHeuresSupplementaires}" 
+                                                       itemValue="#{et.id}"
+                                                       />
+                                    </p:selectOneMenu>
+                                    <p:spacer width="5px"/>
+                                    <p:calendar pattern="dd/MM/yyyy" id="button" value="#{heuresuppMb.rechercheDate}" maxdate="#{constanteMb.maxDate}" style="display: flex"/>
+                                    <p:spacer width="15px"/>
+                                    <p:commandButton onstart="PF('block').show()" oncomplete="PF('block').hide()" 
+                                                     value="Ok  " update=":tableHS:salarieTable"                                                     
+                                                     action="#{heuresuppMb.rechercheHS()}"
+                                                     />
+
+                                    <p:spacer width="5px"/>
+                                    <p:commandButton onstart="PF('block').show()" oncomplete="PF('block').hide()" 
+                                                     icon="ui-icon-refresh" value="rénitialiser" update=":tableHS" 
+                                                     action="#{heuresuppMb.renitialiser()}"/>
+
+                                    <p:spacer width="5px"/>
+                                    <p:commandButton icon="ui-icon-search" value="rechercher" 
+                                                     actionListener="#{heuresuppMb.reinitSearch}" 
+                                                     oncomplete="PF('Find').show();"
+                                                     update="FindHS"
+                                                     />
+
+                                </h:panelGrid>
+
+                            </div>
+                        </div>
+
+
+
+                        <p:dataTable var="hsupp" value="#{heuresuppMb.listHS}" rowKey="#{hsupp.id}"
+                                     rows="10"
+                                     class="table table-responsive table-bordered"
+                                     paginatorPosition="bottom"
+                                     id="salarieTable" >
+
+                            <p:column headerText="Chantier">
+                                <h:outputText value="#{hsupp.chantier.code}"/>
+                            </p:column>
+
+                            <p:column headerText="Matricule">
+                                <h:outputText value="#{hsupp.salarie.matricule}"/> 
+                            </p:column>
+
+                            <p:column headerText="Nom et prénom">
+                                <h:outputText value="#{hsupp.salarie.nom} #{hsupp.salarie.prenom}"/>
+                            </p:column>
+
+                            <p:column headerText="Fonction">
+                                <h:outputText value="#{hsupp.salarie.fonction.fonction}"/>
+                            </p:column>
+
+                            <p:column headerText="Date">
+                                <h:outputText value="#{constanteMb.getDateFormatFR(hsupp.date)}"/>
+                            </p:column>
+
+                            <p:column headerText="Heure De Début">
+                                <h:outputText value="#{hsupp.heureDebut}"/>
+                            </p:column>
+
+                            <p:column headerText="Heure De Fin">
+                                <h:outputText value="#{hsupp.heureFin}"/>
+                            </p:column>
+
+                            <p:column headerText="Durée">
+                                <h:outputText value="#{hsupp.nombreHeures}#{hsupp.nombreHeures eq null ? '':'h'}
+                                              #{hsupp.nombreMinutes}#{hsupp.nombreMinutes eq null ? '':'min'}"/>
+                            </p:column>
+
+                            <p:column headerText="Etat">
+                                <h:outputText value="#{hsupp.etat.etatHeuresSupplementaires}"/>
+                            </p:column>
+
+                            <p:column headerText="Action">
+                                <img src="../images/validated.png" style="display: #{hsupp.etat.id==2 ? 'block':'none'}"
+                                     width="24px" heigth="24px" alt="Validé" title="Validé"/>
+
+                                <img src="../images/invalidated.png" style="display: #{hsupp.etat.id==3 ? 'block':'none'}" 
+                                     width="24px" heigth="24px" alt="Validé" title="Validé"/>
+
+                                <div style="display: #{hsupp.etat.id==1 ? 'block':'none'}">
+
+                                    <p:commandButton icon="ui-icon-pencil" action="#{heuresuppMb.beforeUpdate()}" oncomplete="PF('up').show()" update=":up">
+                                        <f:setPropertyActionListener value="#{hsupp}" target="#{heuresuppMb.hs}" />
+                                    </p:commandButton>
+
+                                    <p:commandButton onstart="PF('block').show()" oncomplete="PF('block').hide()"
+                                                     rendered="#{authentification.hasPermission(constanteMb.validerHS)}" 
+                                                     action="#{heuresuppMb.acceptHS()}" icon="ui-icon-circle-check" 
+                                                     update=":tableHS">
+                                        <f:setPropertyActionListener value="#{hsupp}"
+                                                                     target="#{heuresuppMb.hs}" 
+                                                                     />
+                                        <p:confirm header="Confirmation" 
+                                                   message=" Veuillez valider ces heures supplémentaires ?"
+                                                   icon="ui-icon-alert" />
+                                    </p:commandButton>
+
+                                    <p:commandButton action="#{heuresuppMb.CancelHS()}" icon="ui-icon-close" update=":tableHS">
+                                        <f:setPropertyActionListener value="#{hsupp}" target="#{heuresuppMb.hs}" />
+                                        <p:confirm header="Confirmation" message=" Voullez vous vraiment refuser ces heures supplémentaires ?" icon="ui-icon-alert" />
+                                    </p:commandButton>
+
+                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                        <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                        <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                    </p:confirmDialog>
+                                </div>
+                            </p:column>
+
+                            <f:facet name="footer">
+                                <h:panelGrid columns="9">
+                                    <p:commandButton onstart="PF('block').show()" 
+                                                     oncomplete="PF('block').hide()" 
+                                                     id="first" icon="ui-icon-triangle-1-w" 
+                                                     class="ui-paginator-first ui-state-default ui-corner-all"
+                                                     disabled="#{heuresuppMb.first}"
+                                                     action="#{heuresuppMb.onFirst()}" 
+                                                     update=":tableHS:salarieTable"
+                                                     />
+
+                                    <p:commandButton onstart="PF('block').show()"
+                                                     oncomplete="PF('block').hide()"
+                                                     id="prev" 
+                                                     icon="ui-icon-carat-1-w"
+                                                     disabled="#{heuresuppMb.prev}"
+                                                     action="#{heuresuppMb.onPrevious()}" 
+                                                     update=":tableHS:salarieTable"
+                                                     />
+
+                                    <p:spinner id="page" 
+                                               value="#{heuresuppMb.page}" 
+                                               disabled="#{heuresuppMb.pageId}" 
+                                               min="1" 
+                                               max="#{heuresuppMb.var}"
+                                               >
+                                        <p:ajax onstart="PF('block').show()"
+                                                oncomplete="PF('block').hide()" 
+                                                listener="#{heuresuppMb.onPaginate()}" 
+                                                event="change" 
+                                                update=":tableHS:salarieTable" 
+                                                />
+                                    </p:spinner>
+
+                                    <h:outputText value="/ #{heuresuppMb.var}"/>
+
+                                    <p:commandButton onstart="PF('block').show()"
+                                                     oncomplete="PF('block').hide()"  
+                                                     id="next" 
+                                                     disabled="#{heuresuppMb.next}"
+                                                     icon="ui-icon-carat-1-e"
+                                                     update=":tableHS:salarieTable"
+                                                     action="#{heuresuppMb.onNext()}"
+                                                     />
+
+                                    <p:commandButton onstart="PF('block').show()" oncomplete="PF('block').hide()" id="last" disabled="#{heuresuppMb.last}" icon="ui-icon-triangle-1-e" update=":tableHS:salarieTable" action="#{heuresuppMb.onLast()}" />
+
+                                    <h:outputText value="Nombre Total" style="padding-right:  7px ; color:  white"/>
+
+                                    <h:outputText value="#{heuresuppMb.i}"/>
+
+                                    <h:outputText value="#{heuresuppMb.page ==1 or heuresuppMb.page ==0 ?
+                                                           '1 -10': ''.concat((heuresuppMb.page-1) * 10 +1).concat('-').concat((heuresuppMb.page-1) * 10 +10) }"
+                                                  style="color:  white"/>
+                                </h:panelGrid>
+                            </f:facet>
+
+                        </p:dataTable>
+                    </h:form>
+                </div>
+
+                <p:dialog modal="true" width="650px" header="Ajouter HS" widgetVar="add" >
+                    <h:form id="addHS">
+                        <p:growl showDetail="true" id="msgs"   />
+                        <p:growl showDetail="true" id="msgsMa" />
+                        
+                        <div class="form-group">
+                            <h:outputText value="Matricule :"/>
+                            <p:inputText id="matr" required="true" class="form-control" value="#{heuresuppMb.matricule}"
+                                         requiredMessage="Il faut saisir le matricule du salarié"
+                                         onkeypress="if (event.keyCode === 13) {
+                                                     this.blur();
+                                                     return false;
+                                                 }">
+                                <p:ajax listener="#{heuresuppMb.salarieVerification()}" 
+                                        onstart="PF('block').show()" oncomplete="PF('block').hide()" 
+                                        event="blur" update="msgs, addHD" />
+                            </p:inputText>
+
+                        </div>
+
+                        <div class="form-group">
+                            <h:outputText value="Chantier :"/>
+                            <p:selectOneMenu class="form-control" id="cha" value="#{heuresuppMb.codeChantier}"
+                                             required="true" requiredMessage ="Le chantier est obligatoire" 
+                                             style="width: 100%"
+                                             filter="true" filterMatchMode="contains"> 
+                                <f:selectItem itemLabel="-- Chantier --" itemValue="" noSelectionOption="true" /> 
+                                <f:selectItems value="#{chantier.chantiers}" var="c" itemLabel="#{c.code}" 
+                                               itemValue="#{c.id}" />
+                                <p:ajax listener="#{heuresuppMb.getHeureChantierByChantier()}" 
+                                        update="heMax , minMaxE, hsMax, minMaxS, addHD" />
+                            </p:selectOneMenu>
+                        </div>
+
+                        <div class="form-group">
+                            <h:outputText value="Date :" />
+                            <p:calendar pattern="dd/MM/yyyy" id="button" class="" 
+                                        style="display: flex" 
+
+                                        required="true" 
+                                        maxdate="#{operationStock.dateOfToday}"
+                                        requiredMessage = "La date est obligatoire" 
+                                        showOn="button" 
+                                        value="#{heuresuppMb.currentDate}">
+                                <p:ajax event="dateSelect" 
+                                        listener="#{heuresuppMb.onDateSelect}" 
+                                        update="msgs, addHD"
+                                        />
+                                <p:ajax event="blur" 
+                                        listener="#{heuresuppMb.onDateHSBlur}" 
+                                        update="msgs, addHD"
+                                        />
+                            </p:calendar>
+                        </div>
+
+                        <div class="form-group col-lg-6">
+                            <h:outputText value="Heure De Début : "/>
+                            <p:spinner id="heMax" required="true" requiredMessage="heure de début est obligatoire"  min="0" max="24" value="#{heuresuppMb.heureEntree}" /> :
+                            <p:spinner id="minMaxE" value="#{heuresuppMb.minEntree}" min="0" max="59"/>
+                        </div>
+
+                        <div class="form-group col-lg-6">
+                            <h:outputText value="Heure De Fin : "/>
+                            <p:spinner id="hsMax" required="true" min="0" max="24" requiredMessage ="L'heure de fin est obligatoire" value="#{heuresuppMb.heureSortie}"/> :
+                            <p:spinner id="minMaxS" value="#{heuresuppMb.minSortie}" min="0" max="59" />
+
+                        </div>
+
+
+                        <br /><br />
+                        <div style="width: 100%">
+                            <p:commandButton id="addHD" disabled="#{heuresuppMb.addButtonValidate == false}" 
+                                             class="col-lg-offset-6 col-lg-4 btn btn-switch active"  
+                                             value="Ajouter HS" action="#{heuresuppMb.ajouterHS()}" 
+                                             update=":tableHS"
+                                             />
+                        </div>
+
+                    </h:form>
+                </p:dialog>
+                <p:dialog modal="true" header="Recherche" widgetVar="Find" >
+                    <h:form id="FindHS">
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Matricule :"/>
+                            <p:inputText value="#{heuresuppMb.matriculeSearch}" />
+
+                            <h:outputText value="CIN :"/>
+                            <p:inputText value="#{heuresuppMb.cinSearch}" />
+
+                            <h:outputText value="CNSS :"/>
+                            <p:inputText value="#{heuresuppMb.cnss}" />
+
+                            <p:commandButton value="Rechercher" action="#{heuresuppMb.rechercheByMatCinCnss()}" 
+                                             onclick="PF('Find').hide();"
+                                             update=":tableHS" />
+                        </h:panelGrid>
+                    </h:form>
+                </p:dialog>
+                <p:dialog modal="true" header="Modifier HS" widgetVar="up" >
+                    <h:form id="up">
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Date :"/>
+                            <p:calendar pattern="dd/MM/yyyy" id="button" style="display: flex" showOn="button" value="#{heuresuppMb.hs.date}"/>
+                            <h:outputText value="Heure De Début :"/>
+                            <h:panelGrid columns="2">
+                                <p:spinner id="heMax" required="true" requiredMessage ="heure de début est obligatoir" value="#{heuresuppMb.heureDebutMod}" />
+                                <p:spinner id="minMaxE" value="#{heuresuppMb.minDebutMod}"/>
+                            </h:panelGrid>
+                            <h:outputText value="Heure De Fin :"/>
+                            <h:panelGrid columns="2">
+                                <p:spinner id="hsMax" required="true" requiredMessage ="heure de fin est obligatoir" value="#{heuresuppMb.heureFinMod}"/>
+                                <p:spinner id="minMaxS" value="#{heuresuppMb.minFinMod}" />
+                            </h:panelGrid>
+                            <h:outputText/>
+                            <p:commandButton value="Modifier" update=":tableHS:salarieTable" action="#{heuresuppMb.updateHS()}" oncomplete="PF('up').hide();"/>
+                        </h:panelGrid>
+                    </h:form>
+                </p:dialog>
+            </ui:define>
+        </ui:composition>
+
+    </h:body>
+</html>
+
+

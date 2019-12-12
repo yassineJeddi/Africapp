@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title></title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+
+            <ui:define name="arborescence">
+
+
+
+                <h:form>
+                    Mensuel > <strong> ajouter des absences </strong>
+                </h:form>
+
+            </ui:define>
+
+
+            <ui:define name="content">
+                <p:panel style="border: 0px" id="pannel">
+                    <h:form id="f1">
+                        <p:messages id="msgsM" closable="true" showDetail="true" autoUpdate="false" />
+                        <p:commandButton class="btn btn-default" icon="ui-icon-search" value="Rechercher Mensuel" iconPos="left" onclick="PF('dlg').show();" />
+                        <br /><br />
+
+                        <br />
+
+                        <div class="row">
+
+                            <div class="col-lg-4">
+                                <p:outputLabel for="nom" value="Nom: " />
+                                <h:outputText class="value_dis" id="nom" value="#{absenceMb.mensuelToSearchForNewAbsence.nom}" />
+                            </div>
+
+
+                            <div class="col-lg-4">
+                                <p:outputLabel for="prenom" value="Prénom: " />
+                                <h:outputText class="value_dis" id="prenom" value="#{absenceMb.mensuelToSearchForNewAbsence.prenom}" />
+                            </div>
+
+                            <div class="col-lg-4">
+                                <p:outputLabel for="fonction" value="Fonction: " />
+                                <h:outputText class="value_dis" id="fonction" value="#{absenceMb.mensuelToSearchForNewAbsence.fonction.fonction}" />
+                            </div>
+
+                            <div class="col-lg-4">
+                                <p:outputLabel for="cin" value="CIN: " />
+                                <h:outputText class="value_dis" id="cin" value="#{absenceMb.mensuelToSearchForNewAbsence.cin}" />
+                            </div>
+
+                            <div class="col-lg-4">
+                                <p:outputLabel  for="cnss" value="CNSS: " />
+                                <h:outputText class="value_dis" id="cnss" value="#{absenceMb.mensuelToSearchForNewAbsence.cnss}" />
+                            </div>
+
+                        </div>
+
+                        <br />
+                        <hr />
+                        <br />
+
+                        <div class="create">
+
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <p:outputLabel class="col-lg-3" for="dateFrom" value="Date de début:" />
+                                    <p:calendar pattern="dd/MM/yyyy" class="col-lg-6 cust_calendar value_dis"   disabled="#{absenceMb.absenceToAdd.salarie == null}" id="dateFrom" value="#{absenceMb.absenceToAdd.dateDebut}"   >
+                                        <p:ajax event="dateSelect" update="dateTo" />
+                                    </p:calendar>
+                                    <p:selectOneMenu class="value_dis col-lg-3" id="heureD" value="#{absenceMb.crenauxF}" style="width:70px;">
+                                        <f:selectItem itemLabel="8" itemValue="1" />
+                                        <f:selectItem itemLabel="10" itemValue="2" />
+                                        <f:selectItem itemLabel="14" itemValue="3" />
+                                        <f:selectItem itemLabel="16" itemValue="4" />
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+
+                            
+
+                            <div class="col-lg-6">
+
+                                <div class="row">
+                                    <p:outputLabel for="dateTo" class="col-lg-3" value="Date de fin:" />
+
+                                    <p:calendar pattern="dd/MM/yyyy" class="col-lg-6 cust_calendar value_dis" mindate="#{absenceMb.absenceToAdd.dateDebut}" disabled="#{absenceMb.absenceToAdd.salarie == null}" id="dateTo" value="#{absenceMb.absenceToAdd.dateFin}"   >
+                                        <p:ajax event="dateSelect" update="comment, subMsg" />
+                                    </p:calendar> 
+
+
+                                    <p:selectOneMenu id="heureF" class="value_dis col-lg-3" value="#{absenceMb.crenauxT}" style="width:70px">
+                                        <f:selectItem itemLabel="10" itemValue="1" />
+                                        <f:selectItem itemLabel="12" itemValue="2" />
+                                        <f:selectItem itemLabel="16" itemValue="3" />
+                                        <f:selectItem itemLabel="18" itemValue="4" />
+                                    </p:selectOneMenu>
+
+                                </div>
+
+
+
+                            </div>
+
+
+                            <div class="col-lg-12" style="margin-top: 30px; margin-bottom: 20px;"> 
+                                <p:outputLabel for="comment" value="Commentaire:" />
+                                <p:inputTextarea disabled="#{absenceMb.absenceToAdd.salarie == null}" id="comment" rows="5" style="width: 100%" completeMethod="#{absenceMb.absenceToAdd.commentaire}" queryDelay="750" minQueryLength="4" />
+                            </div>
+                            
+                            <br /><br />
+                            <p:commandButton class="btn btn-switch active pull-right" disabled="#{absenceMb.absenceToAdd.salarie == null}" icon="ui-icon-submit" action="#{absenceMb.addAbsence(absenceMb.absenceToAdd)}" value="Ajouter l'absence" iconPos="left" onclick="" id="subMsg" update="msgsM, f1, comment" />
+                        </div> 
+
+                    </h:form>
+
+
+
+                    <p:dialog header="Rechercher Mensuel" resizable="false" widgetVar="dlg" width="1000" minHeight="40" modal="true" >
+                        <h:form id="formA">
+
+                            <p:dataTable id="tbl" var="mensuelIt" value="#{mensuelMb.l_mensuels}" 
+                                         rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" 
+                                         scrollable="true" scrollHeight="150"
+                                         >
+
+                                <f:facet name="header">
+                                    Rechercher un mensuel
+                                </f:facet>
+
+
+                                <p:ajax event="rowSelect"/>
+
+                                <p:column headerText="Matricule Mensuel"  filterBy="#{mensuelIt.matricule}" filterFunction="#{filterMb.filterByX}" >
+                                    <h:outputText value="#{mensuelIt.matricule}" />
+                                </p:column>
+
+
+                                <p:column headerText="Nom Mensuel"  filterBy="#{mensuelIt.nom}" filterFunction="#{filterMb.filterByX}" >
+                                    <h:outputText value="#{mensuelIt.nom}" />
+                                </p:column>
+
+                                <p:column headerText="Prénom Mensuel" filterBy="#{mensuelIt.prenom}" filterFunction="#{filterMb.filterByX}" >
+                                    <h:outputText value="#{mensuelIt.prenom}" />
+                                </p:column>
+
+                                <p:column headerText="Date Début">
+                                    <h:outputText value="#{mensuelIt.dateCreation}" />
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton icon="ui-icon-check" onclick="PF('dlg').hide();" update="f1:nom, f1:prenom, f1:fonction, f1:cin, f1:cnss, f1:dateFrom" actionListener="#{absenceMb.selectMensuel_ForNewAbsence(mensuelIt.id)}">
+                                        <f:setPropertyActionListener value="#{mensuelIt}"  target="#{absenceMb.mensuel}" />
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                            <br/>
+                            <div>
+                                <p:commandButton icon="ui-icon-close" class="col-lg-offset-6 btn btn-switch active pull-right" value="Annuler"  onclick="PF('dlg').hide();"  ajax="true" />
+
+                            </div>
+                        </h:form>
+
+                    </p:dialog>
+
+                </p:panel>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+
+</html>

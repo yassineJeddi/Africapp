@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Facelet Title</title>
+        <link rel="stylesheet" type="text/css" href="../resources/css/mainevol.css" />
+
+    </h:head>
+    <h:body>
+        <ui:composition template="Template.xhtml">
+            <ui:define name="arborescence">                
+                <h:outputText value="RH > Pointage d'entré" 
+                              style="color:#000066; margin-left: -920px; font-size: 14px;  font-family: Times New Roman, Georgia, Serif;"
+                              />                
+            </ui:define>
+            
+            <ui:define name="content">
+                <p:blockUI block="form" widgetVar="block">
+                    Chargement <br />
+                    <h:graphicImage value="../images/loading.gif"/>
+                </p:blockUI>
+                <h:form id="form" >
+                    <div class="row">
+                        <div class="col-lg-10 col-lg-offset-1">
+                            <h:panelGrid  columns="26" >
+                                <h:outputText value="Chantier"/>
+                                <p:spacer width="5px"/>
+                                <p:selectOneMenu filter="true" 
+                                                 filterMatchMode="contains"
+                                                 value="#{pointageEntreMb.idChantier}" style="width: 100px" required="true" label="Chantier" >
+                                    <f:selectItem itemLabel="----" itemValue=""/>
+                                    <f:selectItems value="#{chantier.chantiers}" 
+                                                   var="c" 
+                                                   itemLabel="#{c.code}" 
+                                                   itemValue="#{c.id}" 
+                                                   />
+                                </p:selectOneMenu>
+                                <p:spacer width="5px"/>
+                                <h:outputText value="Date"/>
+                                <p:spacer width="5px"/>
+                                 <p:calendar pattern="dd/MM/yyyy" maxdate="#{constanteMb.maxDate}" 
+                                            style="width: 70px"
+                                            value="#{pointageEntreMb.datePointage}" 
+                                            required="true"
+                                            />
+                                <p:spacer width="5px"/>
+                                <h:outputText value="Salaries" />
+                                <p:spacer width="5px"/>
+                                <p:selectOneMenu style="width: 100px"  value="#{pointageEntreMb.p_np}" styleClass="widthSelect" required="true" label="Pointage" >
+                                    <f:selectItem itemLabel="----" itemValue=""/>
+                                    <f:selectItem itemLabel="Non Pointés" itemValue="np" />
+                                    <f:selectItem itemLabel="Pointés" itemValue="p"/>
+                                </p:selectOneMenu>
+                                <p:spacer width="5px"/>
+                                <p:commandButton value="OK" 
+                                                 onstart="PF('block').show()" oncomplete ="PF('block').hide();" action="#{pointageEntreMb.entre}" class="btn-switch active " update="pointageEntree,heure,min, pointt"/>
+                                <p:spacer width="50px"/>
+                                <h:outputText value="Heure"/>
+                                <p:spacer width="5px"/>
+                                <p:spinner  id="heure" value="#{pointageEntreMb.heure}" min="0" max="23"  style="width: 50px!important; display: #{pointageEntreMb.visible};"/>
+                                <p:spacer width="5px"/>
+                                <h:outputText value="h"/>
+                                <p:spacer width="5px"/>
+                                <p:spinner id="min" value="#{pointageEntreMb.min}" min="0" max="59" style="width: 50px!important; display: #{pointageEntreMb.visible};"/>
+                                <p:spacer width="5px"/>
+                                <h:outputText value="min"/>
+                                <p:spacer width="5px"/>
+                                <h:panelGrid id="pointt">
+                                    <c:if test="#{authentification.hasPermission(constanteMb.annulerPointage)}">
+                                        <p:commandButton value="#{pointageEntreMb.btnPoint}" 
+                                                         onstart="PF('block').show()" 
+                                                         oncomplete ="PF('block').hide(); "
+                                                         class="btn btn-switch active" id='btnPoint'
+                                                         style="color: #666" update=":form"  
+                                                         action="#{pointageEntreMb.pointage()}"/>
+                                    </c:if>
+                                </h:panelGrid>
+                            </h:panelGrid>
+                        </div>
+                    </div>
+                    <p:growl showDetail="true" id="messages"   autoUpdate="true"  />
+                    <p:dataTable value="#{pointageEntreMb.presences}" var="p" id="pointageEntree"
+                                 rows="10" paginator="true" rowSelectMode="add"
+                                 rowKey="#{p.id}"
+                                 selection="#{pointageEntreMb.selection}"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15" class="table table-bordered" >
+
+                        <p:column headerText="Matricule" filterBy="#{p.salarie.matricule}" filterFunction="#{filterMb.filterByX}">
+                            <h:outputText value="#{p.salarie.matricule}"/>
+                        </p:column>
+                        <p:column headerText="Nom">
+                            <h:outputText value="#{p.salarie.nom}"/>
+                        </p:column>
+                        <p:column headerText="Prénom">
+                            <h:outputText value="#{p.salarie.prenom}"/>
+                        </p:column>
+                        <p:column headerText="CIN"  filterBy="#{p.salarie.cin}" filterFunction="#{filterMb.filterByX}">
+                            <h:outputText value="#{p.salarie.cin}"/>
+                        </p:column>
+                        <p:column headerText="CNSS"  filterBy="#{p.salarie.cnss}" filterFunction="#{filterMb.filterByX}">
+                            <h:outputText value="#{p.salarie.cnss}"/>
+                        </p:column>
+                        <p:column headerText="Fonction"  filterBy="#{p.salarie.fonction.fonction}" filterFunction="#{filterMb.filterByX}">
+                            <h:outputText value="#{p.salarie.fonction.fonction}"/>
+                        </p:column>
+
+                        <p:column headerText="Heure d'entrée" >
+                            <h:outputText value="#{p.heureEntree}"/>
+                        </p:column>
+
+                        <p:column selectionMode="multiple"/>
+                        <f:facet name="footer">
+                            Nombre total salariés : #{fn:length(pointageEntreMb.presences)}
+                        </f:facet>
+                    </p:dataTable>
+                </h:form>
+                <!--                <script type="text/javascript"  >
+                                    $(".ui-spinner input").css("width", "50px");
+                                </script>-->
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

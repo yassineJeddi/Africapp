@@ -1,0 +1,9 @@
+applications:
+- path: ROOT.war
+  memory: 512M
+  instances: 1
+  domain: mybluemix.net
+  name: TGCC-M
+  host: tgcc
+  disk_quota: 1024M
+

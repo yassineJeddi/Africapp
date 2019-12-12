@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <body>
+
+        <ui:composition template="./Template.xhtml">
+
+            <ui:define name="arborescence">
+                Fonctions > Lots
+            </ui:define>
+
+            <ui:define name="content">
+                <style type="text/css">
+                    .ui-datatable .ui-column-filter {
+                        display: inline;
+                        width: 300px;
+                        margin-left: 15px;
+                    }
+                </style>
+                <p:growl showDetail="true" id="messages"   autoUpdate="true" />
+                <p:blockUI block="formLot" widgetVar="block">
+                    Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                </p:blockUI>
+                <h:form id="formLot">
+                    <p:tabView id="tabs">
+                        <p:tab title="Affecter Fonction - Lot">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <p:selectOneListbox style="width: 100%!important;" filter="true" value="#{lotMb.idFonction}">
+                                        <f:selectItems value="#{evol_fonctionMb.fonctions}" var="f" itemLabel="#{f.fonction}" itemValue="#{f.id}"/>
+                                        <p:ajax listener="#{lotMb.onSelectedFonction()}" 
+                                                onstart="PF('block').show()" 
+                                                oncomplete="PF('block').hide();PF('tableau').clearFilters()"
+                                                event="change" update="tableau" />
+                                    </p:selectOneListbox>
+                                </div>
+                                <div class="col-lg-8">
+                                    <section class="label label-default">List des Lots Non Affecter </section>
+                                    <p:dataTable widgetVar="tableau" id="tableau" value="#{lotMb.lots}" var="l"
+                                                 filteredValue="#{lotMb.filterLot}"
+                                                 selection="#{lotMb.selection}" paginator="true"
+                                                 rowKey="#{l.id}" rows="10" rowsPerPageTemplate="5,10,15,20"
+                                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                                        <p:column style="width: 30px" selectionMode="multiple"/>
+                                        <p:column headerText="libelle" filterBy="#{l.libelle}" filterFunction="#{filterMb.filterByX}">
+                                            <h:outputText value="#{l.libelle}" />
+                                        </p:column>
+                                        <f:facet name="footer">
+                                            <p:commandButton onstart="PF('block').show()" oncomplete="PF('block').hide();PF('tableau').clearFilters()" value="Valider" action="#{lotMb.affecter()}" update="tableau"/>
+                                        </f:facet> 
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </p:tab>
+                        <p:tab title="Consulter Fonction - Lot">
+                            <p:dataTable value="#{evol_fonctionMb.fonctions}" var="f" paginator="true"
+                                         widgetVar="consultTable" id="consultTable" filteredValue="#{lotMb.filtedListFonction}"
+                                         rowKey="#{f.id}" rows="10" rowsPerPageTemplate="5,10,15,20"
+                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                                <p:column headerText="Libelle" filterBy="#{f.fonction}" filterFunction="#{filterMb.filterByX}">
+                                    <h:outputText value="#{f.fonction}"/>
+                                </p:column>
+
+                                <p:column headerText="Opération">
+                                    <p:commandButton icon="ui-icon-document" action="#{lotMb.listLots}" 
+                                                     oncomplete="PF('block').hide();PF('lots').show()"
+                                                     onstart="PF('block').show()" value="Lots"
+                                                     title="Liste des Lots" update=":formDesAffect" >
+                                        <f:setPropertyActionListener value="#{f}" target="#{lotMb.fonction}"/>
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab>
+
+                    </p:tabView>
+                </h:form>
+                <p:dialog widgetVar="lots" modal="true" width="500px" closable="true">
+                    <p:blockUI block="formDesAffect" widgetVar="blockDialog">
+                        Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                    </p:blockUI>
+                    <h:form id="formDesAffect">
+                        <p:dataTable widgetVar="lotTable" id="lots" value="#{lotMb.lotsByFonction}" filteredValue="#{lotMb.filtedListLot}"
+                                     rowKey="#{l.id}" var="l" paginator="true" rows="10">
+                            <p:column headerText="Libelle" filterBy="#{l.libelle}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{l.libelle}"/>
+                            </p:column>
+                            <p:column headerText="Opération">
+                                <p:commandButton icon="ui-icon-minus" title="Désaffecter" action="#{lotMb.desaffecter(l)}" 
+                                                 oncomplete="PF('blockDialog').hide();PF('consultTable').clearFilters();PF('lotTable').clearFilters();PF('tableau').clearFilters();"
+                                                 update=":formLot:tabs:tableau, :formDesAffect:lots " onstart="PF('blockDialog').show()"/>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </p:dialog>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

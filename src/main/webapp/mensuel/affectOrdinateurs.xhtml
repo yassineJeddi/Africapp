@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+    <h:head>
+        <title>Affectation des ordinateurs</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+
+            #{ordinateur_ServMb}
+            }
+
+            <ui:define name="arborescence">
+
+
+
+                <h:form>
+                    Mensuel ><strong> Affecter Ordinateur à un salarié </strong> 
+                </h:form>
+
+            </ui:define>
+
+            <ui:define name="content">
+                <p:panel id="pannel">
+
+                    <!--                    <h:form>
+                                        <h:panelGrid columns="2" cellpadding="20">
+                                                <h:commandLink action="/mensuel/consultOrdinateurs.xhtml">Consulter Ordinateur à un salarié</h:commandLink>
+                                        </h:panelGrid>
+                                        </h:form>-->
+
+                    <h:form id="form">
+                        <p:messages id="msgsM" closable="true"/>
+
+
+                        <br />
+
+
+
+                        <br /><br />
+
+
+
+
+
+
+                        <br /><br />
+
+                        <div class="row">
+
+                            <div class="col-lg-offset-1 col-lg-4">
+
+                                <div>
+                                    <p:commandButton style="width: 100%" class="btn btn-default" 
+                                                     value="Rechercher salarié"
+                                                     update=":f" action="#{ordinateurMb.afficherMensuelRechercher()}"
+                                                     oncomplete ="PF('dlg').show();"
+                                                     immediate="true"/>
+                                </div>
+
+
+
+                                <div class="spacer30"></div>
+
+                                <div class="form-group">
+
+                                    <h:outputText value="Nom de bénéficiaire : " />
+                                    <h:outputText class="value_dis"  value="#{ordinateurMb.mensuel.nom}"/>
+
+
+                                </div>
+
+
+
+                                <div class="form-group">
+
+                                    <h:outputText value="Prénom de bénéficiaire :" />
+                                    <h:outputText class="value_dis"  value="#{ordinateurMb.mensuel.prenom}"/>
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <h:outputText value="Matricule de bénéficiaire :" />
+                                    <h:outputText class="value_dis"  value="#{ordinateurMb.mensuel.matricule}" />
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-lg-1">
+                                <div class="verticalLine">
+
+                                </div>
+                            </div>
+
+
+                            <div class="col-lg-offset-1 col-lg-4">
+
+                                <div class="form-group">
+
+
+                                    <div>
+                                        <p:commandButton style="width: 100%" class="btn btn-default"
+                                                         value="Rechercher Ordinateur" update=":fR:tblR"
+                                                         action="#{ordinateurMb.afficherOrdinateurRechercher()}"
+                                                         oncomplete="PF('dlg1').show();" immediate="true"/>
+                                    </div>
+                                    <br/>
+                                    <br/>
+                                    <div class="form-group">
+
+                                        <h:outputText value="Marque :"/>
+                                        <h:outputText value="#{ordinateurMb.ordinateurChoisi.marque}"/>
+
+
+                                    </div>
+                                    <div class="form-group">
+
+                                        <h:outputText value="Numero Serie :"/>
+                                        <h:outputText value="#{ordinateurMb.ordinateurChoisi.numeroSerieOrd}"/>
+
+
+                                    </div>
+
+                                </div>
+
+                                <hr/>
+
+                                <br/>
+
+
+
+
+
+                                <div class="row">
+                                    <h:outputText  value="Date d'affectation :" />
+                                    <p:calendar pattern="dd/MM/yyyy"  style="width: 80%"  id="button"  
+                                                 showOn="button" 
+                                                 required="true" 
+                                                 requiredMessage="date d'affectation est obligatoire "
+                                                 value="#{ordinateurMb.dateDebutOrdinateur}"
+                                                 mindate="#{ordinateurMb.ordinateurChoisi.dateRendu}" 
+                                                 maxdate="#{operationStock.dateOfToday}"
+                                                 >
+                                        <!--<p:ajax event="dateSelect" update="button2"/>-->
+                                    </p:calendar>
+                                </div>
+
+
+                                <br/>
+
+                                <br/>
+
+
+
+
+                                <hr/>
+
+
+
+
+
+
+                                <div>
+                                    <p:commandButton id="button_affect" disabled="#{ordinateurMb.ordinateurChoisi.numeroSerieOrd == null ? true : false }" value="Affecter Ordinateur"
+                                                     action="#{ordinateurMb.validateAffectOrd()}" style="width: 100%" class="btn btn-switch active" update=":form" />
+
+                                </div>
+
+
+                                <div class="col-lg-2">
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+
+
+
+                        <br /><br />
+
+
+                        <br /><br />
+
+
+
+
+                    </h:form>   
+
+
+
+                    <p:dialog header="Rechercher Salarié Par " width="80%" widgetVar="dlg" minHeight="40" >
+                        <h:form id="f"> 
+                            <div class="row">
+
+
+                                <div class="col-lg-3" >
+
+
+
+                                    <h:outputText value="Matricule :" />
+                                    <p:autoComplete value="#{ordinateurMb.mensuelToSearch.matricule}" completeMethod="#{mensuelServMb.matricules}" />
+
+                                </div>
+
+
+
+                                <div class="col-lg-3" >
+                                    <h:outputText value="Nom : " />
+                                    <p:autoComplete value="#{ordinateurMb.mensuelToSearch.nom}" completeMethod="#{mensuelServMb.last_name}"/>
+
+
+                                </div>
+
+                                <div class="col-lg-3" >
+
+                                    <h:outputText value="Prénom : " />
+                                    <p:autoComplete value="#{ordinateurMb.mensuelToSearch.prenom}" completeMethod="#{mensuelServMb.first_name}"/>
+
+
+
+                                </div>
+
+                                <div class="col-lg-3" >
+                                    <h:outputText value="Cin : " />
+                                    <p:inputText value="#{ordinateurMb.mensuelToSearch.cin}"/>
+
+
+                                </div>
+
+                                <br/>
+
+                                <br/>
+
+                                <br/>
+
+                            </div>
+
+
+                            <p:commandButton class="pull-right btn btn-switch active" value="Rechercher" onclick="PF('dlg').show();"  ajax="true" update=":f:tbl" actionListener="#{ordinateurMb.rechercherMensuel()}"/>
+
+
+
+                            <br/>
+
+
+                            <br /><br />
+                            <p:dataTable id="tbl" style="width:100%;" var="mensuelIt" value="#{ordinateurMb.mensuels}" 
+                                         rows="10"  paginator="true"  paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                         scrollable="true" scrollHeight="150" >
+
+                                <p:column headerText="Matricule"  filterBy="#{mensuelIt.matricule}" filterFunction="#{filterMb.filterByX}"  >
+                                    <h:outputText value="#{mensuelIt.matricule}" />
+                                </p:column>
+
+                                <p:column headerText="Nom"  filterBy="#{mensuelIt.nom}" filterFunction="#{filterMb.filterByX}" >
+                                    <h:outputText  value="#{mensuelIt.nom}"/>
+                                </p:column>
+
+
+                                <p:column headerText="Prénom"  filterBy="#{mensuelIt.prenom}" filterFunction="#{filterMb.filterByX}" >
+                                    <h:outputText  value="#{mensuelIt.prenom}"/>
+                                </p:column>
+
+                                <p:column headerText="Date Début"  filterBy="#{mensuelIt.dateCreation}" filterFunction="#{filterMb.filterByX}" >
+                                    <h:outputText  value="#{modem3gMb.convertDateFormat(mensuelIt.dateCreation)}"/>
+                                </p:column>
+
+                                <p:column>
+                                    <p:commandButton icon="ui-icon-check" onclick="PF('dlg').hide();" update=":form" action="#{ordinateurMb.redirectMensuel(mensuelIt)}">
+                                        <f:setPropertyActionListener value="#{mensuelIt}"  target="#{ordinateurMb.mensuel}"/>
+                                    </p:commandButton>
+                                </p:column>
+
+                            </p:dataTable>
+                            <p:commandButton value="Annuler"  onclick="PF('dlg').hide();"  ajax="true"/>
+
+                        </h:form>
+                    </p:dialog>
+
+                    <!--Partie Recherche Ordinateur--> 
+                    <p:dialog header="Rechercher Ordinateur Par " width="80%" widgetVar="dlg1" minHeight="40" >
+                        <h:form id="fR"> 
+                      
+
+                            <br/>
+
+
+                            
+                            
+                            <p:dataTable id="tblR" style="width:100%;" var="ordiIt" value="#{ordinateurMb.listOrdianByMarque}" 
+                                         rows="10"  paginator="true"  paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                         scrollable="true" scrollHeight="150" >
+
+                                <p:column headerText="Marque"  filterBy="#{ordiIt.marque}" filterFunction="#{filterMb.filterByX}" >
+                                    <h:outputText value="#{ordiIt.marque}" />
+                                </p:column>
+
+                                <p:column headerText="Numéro Série"  filterBy="#{ordiIt.numeroSerieOrd}" filterFunction="#{filterMb.filterByX}"  >
+                                    <h:outputText  value="#{ordiIt.numeroSerieOrd}"/>
+                                </p:column>
+
+                                <p:column>
+                                    <p:commandButton icon="ui-icon-circle-check" onclick="PF('dlg1').hide();" update=":form" >
+                                        <f:setPropertyActionListener value="#{ordiIt}"  target="#{ordinateurMb.ordinateurChoisi}"/>
+                                    </p:commandButton>
+                                </p:column>
+
+                            </p:dataTable>
+                            <p:commandButton value="Annuler"  onclick="PF('dlg1').hide();"  ajax="true"/>
+
+                        </h:form>
+                    </p:dialog>
+                    <!--Fin Partie Recherche Ordianateur-->
+
+                </p:panel>
+            </ui:define>
+
+
+        </ui:composition>
+
+    </body>
+
+
+
+
+
+</html>

@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"    
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Consultation des loyers</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+
+            <ui:define name="arborescence">
+
+
+
+                <h:form>
+                    Mensuel > <h:commandLink action="/mensuel/affectLoyer.xhtml"> 
+                        Affecter Loyer à un salarié </h:commandLink> >
+                    <strong>Consultation</strong> 
+                </h:form>
+
+            </ui:define>
+
+            <ui:define name="content">
+
+                <p:panel id="pannel">
+                    <h:form id="f1">
+                        <p:messages id="msgsM" />
+
+
+                        <br />
+                        <div class="affectation-switch">
+                            <div class="btn-group" data-toggle="buttons">
+                                <p:commandButton class="btn btn-switch active" 
+                                                 value="Loyer Affectées à un Salarié "
+                                                 actionListener="#{loyer_SalarieMb.afficherListeLoyerSalarie()}"
+                                                 update=":f1:table"
+                                                 />
+
+                                <p:commandButton  action="/mensuel/consultLoyerChantier.xhtml?faces-redirect=true"
+                                                  class="btn btn-default" 
+                                                  value="Loyer Affectées à un Chantier"
+                                                  />
+
+                                <p:commandButton  action="/mensuel/histoLoyerS.xhtml?faces-redirect=true"
+                                                  class="btn btn-default"
+                                                  value="Historique des affectations"
+                                                  actionListener="#{loyer_SalarieMb.loadHisto()}"
+                                                  />
+                            </div>
+                        </div>
+
+                        <br />
+
+                        <h:panelGrid columns="9">
+                            <p:commandButton value="Rechercher salarié" 
+                                             onclick="PF('dlg').show();"
+                                             actionListener="#{loyer_SalarieMb.afficherMensuel()}" 
+                                             update=":formA:tbl" 
+                                             />
+
+
+                            <p:commandButton value="Réinitialiser"
+                                             id="blockTriggerLS"
+                                             onstart="PF('blockWidget').show();"
+                                             oncomplete="PF('blockWidget').hide();"
+                                             actionListener="#{loyer_SalarieMb.afficherListeLoyerSalarie()}"
+                                             update=":f1:table, :f1" 
+                                             />
+
+
+                            <p:blockUI widgetVar="blockWidget" block=":f1:table" trigger=":f1" >
+                                Chargement en cours ... <br />
+                                <p:graphicImage url="https://upload.wikimedia.org/wikipedia/commons/5/53/Loading_bar.gif"/>
+                            </p:blockUI>
+
+
+                            <p:spacer width="50"/>
+
+
+                            <p:outputLabel value="Date Debut " />
+                            <p:spacer width="10"/>
+                            <p:calendar pattern="dd/MM/yyyy" id="btnDate" style="display: flex; width: 200px;" showOn="button" value="#{loyer_SalarieMb.date_Debut_Loyer_To_Search}"/>
+                            <p:spacer width="10"/>
+                            <p:commandButton value="OK" update=":f1:table" actionListener="#{loyer_SalarieMb.searchByDateLS()}"/>
+
+                        </h:panelGrid>
+                        
+                        <br /><br />
+
+                        <p:dataTable id="table"
+                                     rowKey="#{mensuelIt.id}" 
+                                     widgetVar="tableau"
+                                     rows="10"  paginator="true" editable="true" 
+                                     paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" 
+                                     var="mensuelIt"
+                                     value="#{loyer_SalarieMb.listeLSalrie}" 
+                                     rowsPerPageTemplate="5,10,15"
+                                     rowStyleClass="#{mensuelIt.isEstArchive() eq true ? 'old' : null}"
+                                     >
+
+                            <p:column headerText="Identifiant" filterBy="#{mensuelIt.id}" filterFunction="#{filterMb.filterByX}"   >
+                                <h:outputText value="#{mensuelIt.id}"/>
+                            </p:column>
+
+                            <p:column headerText="N° Contrat"  filterBy="#{mensuelIt.numcontrat}" filterFunction="#{filterMb.filterByX}"  >
+                                <h:outputText value="#{mensuelIt.numcontrat}"/>
+                            </p:column>
+
+
+                            <p:column headerText="Nom Bénéficiaire" filterBy="#{mensuelIt.mensuel_Principal.nom}" filterFunction="#{filterMb.filterByX}"  >
+                                <h:outputText value="#{mensuelIt.mensuel_Principal.nom}"/>
+                            </p:column>    
+
+                            <p:column headerText="Prenom Bénéficiaire" filterBy="#{mensuelIt.mensuel_Principal.prenom}" filterFunction="#{filterMb.filterByX}"  >
+                                <h:outputText value="#{mensuelIt.mensuel_Principal.prenom}"/>
+                            </p:column>    
+
+                            <p:column headerText="Matricule Bénéficiaire" filterBy="#{mensuelIt.mensuel_Principal.matricule}" filterFunction="#{filterMb.filterByX}"   >
+                                <h:outputText  value="#{mensuelIt.mensuel_Principal.matricule}"/>
+                            </p:column>
+
+                            <p:column headerText="Date de Début" sortBy="#{mensuelIt.datedebut}" filterBy="#{mensuelIt.datedebut}" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{mensuelIt.datedebut}" />
+
+                            </p:column>
+
+                            <p:column headerText="Montant" filterBy="#{mensuelIt.montantloyer}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{mensuelIt.montantloyer}" />
+                            </p:column>
+
+                            <p:column headerText="Mode de paiemenet" filterBy="#{mensuelIt.modepaiment}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{mensuelIt.modepaiment}" />
+                            </p:column>
+                            
+                            
+                            <p:column headerText="Chantier Divalto" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText  />
+                            </p:column>
+
+
+
+                            <p:column headerText="Actions" class="text-center" style="width:250px;"  >
+                                <p:commandButton title="Génerer bon caisse" 
+                                                 icon="ui-icon-document" 
+                                                 disabled="#{mensuelIt.isEstArchive() eq true}"
+                                                  action="#{loyer_SalarieMb.redirectBonCaisse(mensuelIt)}"
+                                                 actionListener="#{loyer_SalarieMb.redirectEditBCaisseS(mensuelIt)}"
+                                                 />
+                                <p:commandButton  title="Consulter Fiche Loyer" 
+                                                  icon="ui-icon-folder-collapsed"  
+                                                  action="#{loyer_SalarieMb.redirectFicheLoyer(mensuelIt)}"
+                                                  actionListener="#{loyer_SalarieMb.visualiserFicheLoyer(mensuelIt)}" 
+                                                  />
+                                <p:commandButton title="Gérer les recus caisse" 
+                                                 icon="ui-icon-arrowthickstop-1-s" 
+                                                 action="#{loyer_SalarieMb.redirectRecuCaisse(mensuelIt)}"
+                                                 actionListener="#{loyer_SalarieMb.visualiserRecuSalarie(mensuelIt)}"
+                                                 />
+                                <p:commandButton title="Anuuler l'affectation" 
+                                                 oncomplete="PF('addDatRenduDlg').show();"
+                                                 disabled="#{mensuelIt.isEstArchive() eq true}" 
+                                                 update=":f1:table, :f1:msgsM, :formS" 
+                                                 icon="ui-icon-circle-close"  
+                                                 actionListener="#{loyer_SalarieMb.setLoyerSelected(mensuelIt)}"
+                                                 />
+                            </p:column>
+
+                        </p:dataTable>
+                    </h:form>
+
+
+
+
+
+
+                    <p:dialog header="ajouter date de fin" widgetVar="addDatRenduDlg" resizable="false" minHeight="50" modal="true">
+                        <h:form id="formS">
+                            <h:panelGrid columns="3">
+                                <p:outputLabel for="button22" value="Date Fin" />
+                                <p:calendar pattern="dd/MM/yyyy" id="button22" 
+                                            mindate="#{loyer_SalarieMb.dateDebutLoyerSelected}" 
+                                            maxdate="#{operationStock.dateOfToday}"
+                                            required="true" requiredMessage="veuillez entrer une date de fin" 
+                                            value="#{loyer_SalarieMb.dateRenduS}"  
+                                            showOn="button"
+                                             
+                                            />
+                                <p:commandButton value="Valider"  action="#{loyer_SalarieMb.annulerAffectLoyerS()}" update=":f1:table, :f1:msgsM"  oncomplete="PF('tableau').clearFilters()" onclick="PF('addDatRenduDlg').hide();" />
+                            </h:panelGrid>   
+                        </h:form>
+                    </p:dialog>
+
+
+                    <p:dialog header="Rechercher Salarié Par " modal="true" resizable="false" width="80%" widgetVar="dlg" minHeight="40" >
+                        <h:form id="formA" enctype="multipart/form-data">                          
+
+                            <br /><br />
+                            <p:dataTable id="tbl" style="width:100%" var="mensuelIt" value="#{loyer_SalarieMb.mensuels}" 
+                                         rowKey="#{mensuelIt.id}" 
+                                         rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"  
+                                         scrollable="true" scrollHeight="150" >
+                                <p:ajax event="rowSelect"/>
+
+
+                                <p:column headerText="Matricule Bénéficiaire" filterBy="#{mensuelIt.matricule}" filterFunction="#{filterMb.filterByX}"   >
+                                    <h:outputText value="#{mensuelIt.matricule}" />
+                                </p:column>
+
+
+                                <p:column headerText="Nom Bénéficiaire" filterBy="#{mensuelIt.nom}" filterFunction="#{filterMb.filterByX}"   >
+                                    <h:outputText value="#{mensuelIt.nom}" />
+                                </p:column>
+
+                                <p:column headerText="Prénom Bénéficiaire" filterBy="#{mensuelIt.prenom}" filterFunction="#{filterMb.filterByX}" >
+                                    <h:outputText value="#{mensuelIt.prenom}" />
+                                </p:column>
+
+                                <p:column headerText="Date de Début" sortBy="#{mensuelIt.dateCreation}">
+                                    <h:outputText value="#{modem3gMb.convertDateFormat(mensuelIt.dateCreation)}" />
+
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton icon="ui-icon-search" onclick="PF('dlg').hide();" actionListener="#{loyer_SalarieMb.consultation(mensuelIt)}" update=":f1:table"  >
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                            <p:commandButton value="Annuler"  onclick="PF('dlg').hide();"  ajax="true"/>
+
+                        </h:form>
+                    </p:dialog>
+
+
+                </p:panel>
+            </ui:define>
+
+
+
+        </ui:composition>
+
+    </body>
+
+
+
+
+
+</html>

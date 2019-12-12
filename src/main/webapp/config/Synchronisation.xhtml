@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+    <h:head>
+        <title>Gestion Des Citerne</title>
+    </h:head>
+
+    <body>
+
+
+        <ui:composition template="./configTemplate.xhtml">
+
+            <ui:define name="arborescence">
+
+
+
+                <h:form>
+                    Configuration > <strong>Synchronisation Stock</strong> 
+                </h:form>
+
+            </ui:define>
+
+
+
+
+            <ui:define name="content">
+
+
+                <p:panel id="pannel">
+                    <h:form id="form">
+
+                        <p:growl id="msgsM" autoUpdate="false" showDetail="true" />
+
+
+
+
+                        <br /><br />
+
+                        <div class="row">
+
+                            <div class="col-lg-offset-1 col-lg-4">
+
+                                <div>
+                                    <p:commandButton style="width: 100%" 
+                                                      id="block4T"
+                                                     class="btn btn-default"
+                                                     value="Synchroniser le Stock" 
+                                                     update="msgsM"
+                                                     action="#{operationStock.articleWSLaunch()}"
+                                                     />
+                                   
+                                </div>
+                                <br/>
+                            </div>
+                            
+                              <div class="col-lg-offset-1 col-lg-4">
+
+                                <div>
+                                    <p:commandButton style="width: 100%" 
+                                                      
+                                                     class="btn btn-default"
+                                                     value="Synchroniser les mensuels" 
+                                                     update="msgsM"
+                                                     action="#{mensuelMb.callWSmensuel()}"
+                                                     />
+                                   
+                                </div>
+                                <br/>
+                            </div>
+                             </div>
+                            
+                               
+                                
+                                <p:blockUI block="form" trigger="block4T" widgetVar="block">
+                                chargement en cours ... <br />
+                                <p:graphicImage url="https://upload.wikimedia.org/wikipedia/commons/5/53/Loading_bar.gif"/>
+                            </p:blockUI>
+                                
+                                    </h:form>
+                            
+                       
+
+                      
+
+
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+
+        <script type="text/javascript">
+            function start() {
+                PF('startDocLoader').disable();
+
+                window['progress'] = setInterval(function () {
+                    var pbClient = PF('progress'),
+                            oldValue = pbClient.getValue(),
+                            newValue = oldValue + 10;
+
+                    pbClient.setValue(pbClient.getValue() + 10);
+
+                    if (newValue === 100) {
+                        clearInterval(window['progress']);
+                    }
+
+
+                }, 1000);
+            }
+
+            function cancel() {
+                clearInterval(window['progress']);
+                PF('progress').setValue(0);
+                PF('startDocLoader').enable();
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,166 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>TGCC - Présence Salarie</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="Template.xhtml">
+
+            <ui:define name="content">
+                <p:growl showDetail="true" autoUpdate="true" id="msgs"/> 
+                <h:form id="form">
+                    <h:panelGrid columns="11">                      
+                        <p:spacer width="20px" />
+                        <p:outputLabel value="Salarié" />
+                        <p:inputText readonly="true" 
+                                     value="#{presenceMb.findSalarie.nom} #{presenceMb.findSalarie.prenom}"
+                                     />
+                          
+                           <p:spacer width="20px" />
+                           <p:outputLabel value="Total des heures" 
+                                      />
+                           <p:inputText readonly="true"
+                                     value="#{presenceMb.nombreHeuresMinutesPresencesSalarie}"
+                                     />
+                      
+                     
+                        <p:commandButton value="Q1" class="btn-switch active" onclick="PF('generateExcelQ1').show()" />
+                        <p:commandButton value="Q2" class="btn-switch active" onclick="PF('generateExcelQ2').show()" />
+                        
+                        
+                        <p:spacer width="200px"/>
+                        
+                        <p:commandButton value="Excel" class="btn-switch active" onclick="PF('generateExcel').show()"/>
+                        <p:commandButton value="Rechercher" class="btn-switch active" onclick="PF('find').show();" />
+                        
+                    </h:panelGrid>    
+                    
+                    <p:dataTable id="presenceTable" value="#{presenceMb.presences}" 
+                                 rows="10"
+                                 paginator="true"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15"
+                                 var="presence" 
+                                 >
+                        
+                        <f:facet name="header">
+                            <h:outputText value="Présences"/>
+                        </f:facet>
+                        <p:column headerText="Chantier">
+                            <h:outputText value="#{presence.chantier.code}"/>
+                        </p:column>
+                        <p:column headerText="Date">
+                            <h:outputText value="#{constanteMb.getDateFormatFR(presence.date)}"/>
+                        </p:column>
+                        <p:column headerText="Heure d'entrée" >
+                            <h:outputText value="#{presence.heureEntree}" />
+                        </p:column>
+                        <p:column headerText="Heure Sortie">
+                            <h:outputText value="#{presence.heureSortie}"/>
+                        </p:column>
+                        <p:column headerText="Durée">
+                            <h:outputText value="#{presence.nombreHeures }#{presence.nombreHeures  eq null ? '' :'h'} #{presence.nombreMinutes} #{presence.nombreMinutes eq null ? '' : 'min'}"/>
+                        </p:column>
+                          <f:facet name="footer">
+                            Nombre total présences : #{fn:length(presenceMb.presences)}
+                        </f:facet>
+                    </p:dataTable>
+                </h:form>
+
+                <p:dialog header="Effectuer une recherche" widgetVar="find" modal="true" minHeight="300">
+                    <h:form>
+                        <h:panelGrid columns="2" cellpadding="8">
+                            <p:outputLabel for="matricule" value="Matricule"/>
+                            <p:inputText id="matricule" label="Matricule" value="#{presenceMb.matricule}" />
+                            <p:outputLabel for="cin" value="Cin"/>
+                            <p:inputText id="cin" label="cin" value="#{presenceMb.cin}" />
+                            <p:outputLabel for="cnss" value="Cnss"/>
+                            <p:inputText id="cnss" label="cnss" value="#{presenceMb.cnss}" />
+                            <p:outputLabel value="Chantier"/>
+                            <p:selectOneMenu  filter="true" filterMatchMode="contains" value="#{presenceMb.idChantier}">
+                                <f:selectItem itemLabel="--Chantier--" itemValue="" />
+                                <f:selectItems value="#{chantier.chantiers}" var="c" itemLabel="#{c.code}" itemValue="#{c.id}" />
+                            </p:selectOneMenu>
+                            <p:outputLabel for="de" value="De :"/>
+                             <p:calendar pattern="dd/MM/yyyy" id="de" label="de" value="#{presenceMb.dateDe}" />
+                            <p:outputLabel for="a" value="A :"/>
+                             <p:calendar pattern="dd/MM/yyyy" id="a" label="date a" value="#{presenceMb.dateA}" />
+
+                            <p:commandButton class="btn-switch active" value="Rechercher" 
+                                             oncomplete="PF('find').hide();" update=":form" 
+                                             actionListener="#{presenceMb.recherche()}"/>
+                            <p:commandButton class="btn-switch active" value="Annuler" onclick="PF('find').hide();" />
+                        </h:panelGrid>
+                    </h:form>
+                </p:dialog>
+                <p:dialog widgetVar="generateExcel" modal="true" closable="true" header="Génération excel">
+                    <h:form>
+                        <h:panelGrid columns="2" cellpadding="8">
+                            <p:outputLabel value="Chantier"/>
+                            <p:selectOneMenu required="true" filter="true" filterMatchMode="contains" value="#{presenceMb.idChantier_Excel}">
+                                <f:selectItem itemLabel="--Chantier--" itemValue="" />
+                                <f:selectItems value="#{chantier.chantiers}" var="c" itemLabel="#{c.code}" itemValue="#{c.id}" />
+                            </p:selectOneMenu>
+
+                            <p:outputLabel value="De :"/>
+                             <p:calendar pattern="dd/MM/yyyy" required="true" label="de" value="#{presenceMb.dateDe_Excel}" />
+
+                            <p:outputLabel value="A :"/>
+                             <p:calendar pattern="dd/MM/yyyy" required="true" label="date a" value="#{presenceMb.dateA_Excel}" />
+
+                            <p:commandButton value="Recherche" update=":form" oncomplete="PF('generateExcel').hide();" ajax="false" actionListener="#{presenceMb.generateExcel()}">
+                                <p:fileDownload value="#{presenceMb.file_Excel}"/>
+                            </p:commandButton>
+                            <p:commandButton value="Annuler" onclick="PF('generateExcel').hide();" />
+                        </h:panelGrid>
+                    </h:form>
+                </p:dialog>
+                <p:dialog widgetVar="generateExcelQ1" modal="true" closable="true" header="Génération excel">
+                    <h:form>
+                        <h:panelGrid columns="2" cellpadding="8">
+
+                            <p:outputLabel value="De :"/>
+                             <p:calendar pattern="dd/MM/yyyy" required="true" label="de" value="#{presenceMb.dateDe_Excel_Q1}" />
+
+                            <p:outputLabel value="A :"/>
+                             <p:calendar pattern="dd/MM/yyyy" required="true" label="date a" value="#{presenceMb.dateA_Excel_Q1}" />
+
+                            <p:commandButton value="Recherche" update=":form" ajax="false"
+                                             actionListener="#{presenceMb.genereteExcelQ('Q1')}"
+                                             oncomplete="PF('generateExcelQ1').hide();" >
+                                <p:fileDownload value="#{presenceMb.file_Excel_Q}"/>
+                            </p:commandButton>
+                            <p:commandButton value="Annuler" onclick="PF('generateExcelQ1').hide();" />
+                        </h:panelGrid>
+                    </h:form>
+                </p:dialog>
+                <p:dialog widgetVar="generateExcelQ2" modal="true" closable="true" header="Génération excel">
+                    <h:form>
+                        <h:panelGrid columns="2" cellpadding="8">
+
+                            <p:outputLabel value="De :"/>
+                             <p:calendar pattern="dd/MM/yyyy" required="true" label="de" value="#{presenceMb.dateDe_Excel_Q2}" />
+
+                            <p:outputLabel value="A :"/>
+                             <p:calendar pattern="dd/MM/yyyy" required="true" label="a" value="#{presenceMb.dateA_Excel_Q2}" />
+
+                            <p:commandButton value="Recherche" update=":form" ajax="false" oncomplete="PF('generateExcelQ2').hide();" 
+                                             actionListener="#{presenceMb.genereteExcelQ('Q2')}">
+                                <p:fileDownload value="#{presenceMb.file_Excel_Q}"/>
+                            </p:commandButton>
+                            <p:commandButton value="Annuler" onclick="PF('generateExcelQ2').hide();" />
+                        </h:panelGrid>
+                    </h:form>
+                </p:dialog>
+            </ui:define>
+
+        </ui:composition>
+    </h:body>
+</html>
+

@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets" 
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+
+        <ui:composition template="Template.xhtml">
+            <ui:define name="arborescence">
+                <h:outputText class="label label-default" value="RH > Dossier Salarie > Documents"/>
+            </ui:define>
+            <ui:define name="content">
+                <p:blockUI block="panel" widgetVar="block">
+                    Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                </p:blockUI>
+                <p:panel id="panel" header="Dossier Salaries">
+                    <c:forEach items="#{dossierSalarieDocMb.typeDocuments}" var="type" varStatus="index">
+                        <h:form>
+                            <div class="col-lg-4">
+                                <p:fileUpload allowTypes="/(\.|\/)(pdf|PDF)$/" 
+                                              id="fileUp"
+                                              label="Upload #{type.typeDocument}"
+                                              mode="advanced" update="@form" auto="true"
+                                              onstart="PF('block').show()"
+                                              oncomplete="PF('block').hide()"
+                                              uploadLabel="Document #{type.typeDocument}"
+                                              fileUploadListener="#{dossierSalarieDocMb.save}">
+                                    <f:setPropertyActionListener target="#{dossierSalarieDocMb.idTypeDoc}" value="#{type.id}"/>
+                                </p:fileUpload>
+                                <p:message id="msg_file" for="fileUp" />
+                            </div>
+                            <div class="col-lg-8">
+                                <p:commandButton style="display: #{dossierSalarieDocMb.displayFile}" value="annuler" action="#{dossierSalarieDocMb.supprimerDocument(dossierSalarieDocMb.document)}"/>
+                                <br/>
+                                <object type="application/pdf" 
+                                        data="#{request.contextPath}/#{dossierSalarieDocMb.document.nodeRef}?pfdrid_c=true" 
+                                        height="500px" 
+                                        width="100%" >
+                                    <embed src="#{request.contextPath}/#{dossierSalarieDocMb.document.nodeRef}" type="application/pdf" />
+                                </object>
+
+                            </div>
+                        </h:form>
+                    </c:forEach>
+
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:p="http://www.springframework.org/schema/p" 
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+          http://www.springframework.org/schema/security
+			http://www.springframework.org/schema/security/spring-security-3.0.xsd">
+
+    <!-- HTTP security configurations -->
+    <!-- 	<security:global-method-security secured-annotations="enabled" /> -->
+	
+    <security:http auto-config="false" use-expressions="true"
+                   access-denied-page="/dataAccessFailure" entry-point-ref="authenticationEntryPoint">
+        <!-- <form-login login-processing-url="/resources/j_spring_security_check" 
+        login-page="/login" authentication-failure-url="/login?login_error=t"/> -->
+        <!-- <logout logout-url="/resources/j_spring_security_logout"/> -->
+        <security:logout 
+            invalidate-session="true" 
+            logout-success-url="/login" 
+            logout-url="/resources/j_spring_security_logout"/>
+	
+        <!-- Configure these elements to secure URIs in your application -->
+			
+        <security:intercept-url pattern="/presencesWebService" access="permitAll" />	
+        <security:intercept-url pattern="/chantiers/index" access="hasAnyRole('liste chantiers','EMAIL_CONTRIBUTORS')" />	
+        <security:intercept-url pattern="/chantiers/ajouterChantier" access="hasAnyRole('créer un nouveau chantier','EMAIL_CONTRIBUTORS')" />
+        <security:intercept-url pattern="/chantiers/modifierChantier" access="hasAnyRole('modifier chantier','EMAIL_CONTRIBUTORS')" />
+        <security:intercept-url pattern="/chantiers/affecterSalarieChantier*" access="hasAnyRole('affecter un salarié à un chantier','EMAIL_CONTRIBUTORS')" />	
+		
+        <security:intercept-url pattern="/demandesapprovisionnement/bonsdelivraison" access="hasAnyRole('liste des bons de livraison','EMAIL_CONTRIBUTORS')" />	
+        <security:intercept-url pattern="/demandesapprovisionnement/nouveaubondelivraison" access="hasAnyRole('valider un bon de livraison','EMAIL_CONTRIBUTORS')" />	
+		
+        <security:intercept-url pattern="/demandesapprovisionnement/index" access="hasAnyRole('liste des demandes d approvisionnement','EMAIL_CONTRIBUTORS')" />	
+        <security:intercept-url pattern="/demandesapprovisionnement/nouvelledemandeappro" access="hasAnyRole('créer une nouvelle demande d approvisionnement','EMAIL_CONTRIBUTORS')" />	
+		
+        <security:intercept-url pattern="/administration/groupes" access="hasAnyRole('liste groupes','EMAIL_CONTRIBUTORS')" />
+        <security:intercept-url pattern="/administration/utilisateurs" access="hasAnyRole('liste et recherche des utilisateurs','EMAIL_CONTRIBUTORS')" />
+        <security:intercept-url pattern="/administration/nouveauGroupe" access="hasAnyRole('créer un nouveau groupe','EMAIL_CONTRIBUTORS')" />
+        <security:intercept-url pattern="/administration/nouveauUtilisateur" access="hasAnyRole('créer un nouvel utilisateur','EMAIL_CONTRIBUTORS')" />		
+		
+		
+        <security:intercept-url pattern="/salaries/index" access="hasAnyRole('liste et recherche des salariés','EMAIL_CONTRIBUTORS')" />
+        <security:intercept-url pattern="/salaries/nouveausalarie" access="hasAnyRole('ajouter un nouveau salarié','EMAIL_CONTRIBUTORS')" />
+        <security:intercept-url pattern="/salaries/modifierInformationsSalarie" access="hasAnyRole('modification salarié','EMAIL_CONTRIBUTORS')" />
+        <security:intercept-url pattern="/salaries/detailSalarie*" access="hasAnyRole('afficher le détail du salarié','EMAIL_CONTRIBUTORS')" />
+        <security:intercept-url pattern="/salaries/changerEtatSalarie*" access="hasAnyRole('changer état du salarié','EMAIL_CONTRIBUTORS')" />
+        <security:intercept-url pattern="/salaries/modifierDateFinContratSalarie*" access="hasAnyRole('régler un ouvrier','EMAIL_CONTRIBUTORS')" />
+        <security:intercept-url pattern="/salaries/reinitialiserdatefincontrat*" access="hasAnyRole('réinitialiser la date de fin du contrat','EMAIL_CONTRIBUTORS')" />
+        <security:intercept-url pattern="/salaries/modifierTFContrat*" access="hasAnyRole('changer taux/fonction','EMAIL_CONTRIBUTORS')" />
+        <security:intercept-url pattern="/salaries/supprimerEnfant*" access="hasAnyRole('supprimer un enfant','EMAIL_CONTRIBUTORS')" />
+        <security:intercept-url pattern="/salaries/changerEtatContrat*" access="hasAnyRole('changer statut contrat','EMAIL_CONTRIBUTORS')" />		
+		
+        <security:intercept-url pattern="/presences/index" access="hasAnyRole('liste et recherche des présences','EMAIL_CONTRIBUTORS')" />
+        <security:intercept-url pattern="/presences/pointageparsalarie" access="hasAnyRole('pointage par salarié','EMAIL_CONTRIBUTORS')" />
+        <security:intercept-url pattern="/presences/pointagesentree*" access="hasAnyRole('pointages entrée','EMAIL_CONTRIBUTORS')" />
+        <security:intercept-url pattern="/presences/pointagessortie*" access="hasAnyRole('pointages sortie','EMAIL_CONTRIBUTORS')" />
+        <security:intercept-url pattern="/presences/annulerPointage*" access="hasAnyRole('annuler le pointage','EMAIL_CONTRIBUTORS')" />
+        <security:intercept-url pattern="/presences/importation*" access="hasAnyRole('importation de pointages','EMAIL_CONTRIBUTORS')" />
+        <security:intercept-url pattern="/presences/pointageEntreeSalaries*" access="hasAnyRole('pointage massif','EMAIL_CONTRIBUTORS')" />
+        <security:intercept-url pattern="/presences/pointageEntreeSalaries*" access="hasAnyRole('pointage massif','EMAIL_CONTRIBUTORS')" />
+		
+		
+        <security:intercept-url pattern="/heuressupplementaires/index" access="hasAnyRole('liste heures supplémentaires','EMAIL_CONTRIBUTORS')" />
+        <security:intercept-url pattern="/heuressupplementaires/validerHS" access="hasAnyRole('valider heures supplémentaires','EMAIL_CONTRIBUTORS')" />
+		
+        <security:intercept-url pattern="/absences/index" access="hasAnyRole('liste et recherche des absences','EMAIL_CONTRIBUTORS')" />		
+				
+				
+		
+		
+        <security:intercept-url pattern="/resources/**" access="permitAll" />
+        <security:intercept-url pattern="/login" access="permitAll" />
+        <security:intercept-url pattern="/**" access="isAuthenticated()"/>
+		
+		
+		
+        <security:custom-filter ref="authenticationFilter" position="FORM_LOGIN_FILTER" />
+
+    </security:http>
+
+    <bean id="authenticationFilter" class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"
+          p:authenticationManager-ref="customAuthenticationManager"
+          p:authenticationFailureHandler-ref="customAuthenticationFailureHandler"
+          p:authenticationSuccessHandler-ref="customAuthenticationSuccessHandler" 
+          p:filterProcessesUrl="/resources/j_spring_security_check"
+    />
+  		
+    <!-- Configure Authentication mechanism -->
+    <bean id="customAuthenticationManager" class="ma.bservices.authentication.SampleAuthenticationManager"/>
+	
+    <bean id="customAuthenticationFailureHandler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler"
+          p:defaultFailureUrl="/login?error=true" />
+ 		
+    <!-- We just actually need to set the default target url here -->
+    <bean id="customAuthenticationSuccessHandler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler"
+          p:defaultTargetUrl="/salaries/index" />
+    <bean id="authenticationEntryPoint"  class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint"
+          p:loginFormUrl="/login"/> 	  
+	 	  
+    <security:authentication-manager/>
+    <!--	-->
+    <!--		<security:authentication-provider>-->
+    <!--			<security:jdbc-user-service data-source-ref="dataSource"-->
+    <!--				users-by-username-query="select LOGIN-->
+    <!--		     							 from UTILISATEUR -->
+    <!--		     							 where LOGIN=?" -->
+    <!-- -->
+    <!--		   		authorities-by-username-query="select U.LOGIN,P.SOUSMODULE -->
+    <!--		   									   from UTILISATEUR U, UTILISATEUR_PERMISSION UP, PERMISSION P -->
+    <!--		      							  	   where U.ID = UP.UTILISATEUR_ID and UP.PERMISSION_ID=P.ID and U.LOGIN=?  " -->
+    <!--			-->
+    <!--			 />-->
+    <!--		</security:authentication-provider>-->
+    <!--	</security:authentication-manager>-->
+
+	
+
+</beans>

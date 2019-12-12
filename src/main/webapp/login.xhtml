@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      template="/WEB-INF/templates/template.xhtml"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <link rel="stylesheet" href="resources/css/LoginCSS.css" />
+    </h:head>
+
+    <body id="loginform">
+        <div id="page_content">
+            <div class="container">
+                <a  class="logo">
+                    <img src="resources/img/logo.png" id="imLogo" name="imLogo" border="0" />            
+                </a>
+
+                <br />
+                <!-- Login form -->
+                <h:form prependId="false" id="login_form" class="disableAjax login hide js-show" style="display: inline;">
+                    <fieldset>
+                        <legend>Connexion</legend>
+                        <div class="item">
+
+                            <h:messages globalOnly="true"/>
+                              <h:panelGrid columns="3">
+                                <h:outputLabel for="j_username" value="User: * " />  
+                                <h:inputText id="j_username" required="true" label="username" />  
+                                <h:message for="j_username"  style="color:red" />
+
+                                <h:outputLabel for="j_password" value="Password: * " />  
+                                <h:inputSecret id="j_password" label="password" required="true" />  
+                                <h:message for="j_password" style="color:red"/>
+
+                                      
+                            </h:panelGrid>
+
+                            <h:commandButton type="submit" 
+                                             class="btn btn-switch active"
+                                             id="login" value="Login"
+                                             action="#{authentification.doLogin()}" />
+                        </div>
+                    </fieldset>
+
+                </h:form>
+            </div>
+        </div>
+    </body>
+</html>

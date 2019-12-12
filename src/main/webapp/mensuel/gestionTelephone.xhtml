@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+    <h:head>
+        <title>Telephone</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+
+            <ui:define name="arborescence">
+
+
+                <h:form>
+                    Mensuel > <strong> gestion Téléphone </strong>
+                </h:form>
+
+            </ui:define>
+
+            <ui:define name="content">
+                <p:panel id="pannel">
+
+                    <h:form id="form">
+                        <br />
+                        <div class="affectation-switch">
+                            <div class="btn-group" data-toggle="buttons">
+                                <p:commandButton class="btn btn-default"
+                                                 actionListener="#{gestion_telephone.setlisttel()}"
+                                                 action="/mensuel/consultationtelephone.xhtml?faces-redirect=true" 
+                                                 value="Consulter Téléthone" />
+                                <p:commandButton class="btn btn-switch active" value="Gestion Télephone" />
+                                <p:commandButton class="btn btn-default"
+                                                 action="/mensuel/histoTel.xhtml?faces-redirect=true"
+                                                 value="Historique Téléthone" />
+
+                            </div>
+                        </div>
+                        <br />
+                        <p:messages id="msgsM" closable="true"/>
+
+                        <p:commandButton value="Ajouter" icon="ui-icon-plus" onclick="PF('dlg_Ajouter').show();" />
+
+
+                        <br/><br/>
+
+
+                        <p:dataTable id="tbl" var="telephoneIt" value="#{gestion_telephone.telephones}"
+                                     rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                     >
+
+
+                            <p:ajax event="rowEdit" listener="#{gestion_telephone.onRowEdit}" update=":form:msgsM" />
+                            <p:ajax event="rowEditCancel" listener="#{gestion_telephone.onRowCancel}"  update=":form:msgsM" />
+
+
+                            <p:column headerText="Numero serie Téléphone" filterBy="#{telephoneIt.numSerieTel}" filterFunction="#{filterMb.filterByX}" >
+                                <p:cellEditor>
+                                    <f:facet name="output"><h:outputText value="#{telephoneIt.numSerieTel}" /></f:facet>
+                                    <f:facet name="input"><p:inputText value="#{telephoneIt.numSerieTel}" style="width:100%"/></f:facet>
+                                </p:cellEditor>
+                            </p:column>
+                            
+                            <p:column headerText="Numero ligne Téléphone" filterBy="#{telephoneIt.numLigneTel}" filterFunction="#{filterMb.filterByX}" >
+                                <p:cellEditor>
+                                    <f:facet name="output"><h:outputText value="#{telephoneIt.numLigneTel}" /></f:facet>
+                                    <f:facet name="input"><p:inputText value="#{telephoneIt.numLigneTel}" style="width:100%"/></f:facet>
+                                </p:cellEditor>
+                            </p:column>
+                            
+                            <p:column headerText="Montant Téléphone" filterBy="#{telephoneIt.montantTel}" filterFunction="#{filterMb.filterByX}" >
+                                <p:cellEditor>
+                                    <f:facet name="output"><h:outputText value="#{telephoneIt.montantTel}" /></f:facet>
+                                    <f:facet name="input"><p:inputText value="#{telephoneIt.montantTel}" style="width:100%"/></f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+
+                            <p:column headerText="Marque Téléphone" filterBy="#{telephoneIt.marque}" filterFunction="#{filterMb.filterByX}"  >
+                                <p:cellEditor>
+                                    <f:facet name="output"><h:outputText value="#{telephoneIt.marque}" /></f:facet> 
+                                    <f:facet name="input"><p:inputText value="#{telephoneIt.marque}"  style="width:100%"/></f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+                            <p:column headerText="Modèle Téléphone" filterBy="#{telephoneIt.modele}" filterFunction="#{filterMb.filterByX}"  >
+                                <p:cellEditor>
+                                    <f:facet name="output"><h:outputText value="#{telephoneIt.modele}" /></f:facet> 
+                                    <f:facet name="input"><p:inputText value="#{telephoneIt.modele}"  style="width:100%"/></f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+                            <p:column headerText="Affectation">
+                                <h:outputText value="#{telephoneIt.mensuel eq null?'Non affecté':telephoneIt.mensuel.nom}"/>
+                            </p:column>
+                            <p:column>
+                                <p:commandButton  icon="ui-icon-trash"  update=":form:tbl,:pannel" action="#{gestion_telephone.delete(telephoneIt)}"  ajax="true">
+                                    <p:confirm header="Confirmation" message=" Voulez vous vraiment supprimer ce téléphone ?" icon="ui-icon-alert" />
+                                </p:commandButton>
+
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                    <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                </p:confirmDialog>
+                            </p:column>
+
+                            <p:column style="width:32px">
+                                <p:rowEditor />
+                            </p:column>
+
+                        </p:dataTable>
+                    </h:form>
+
+
+
+
+
+                    <!-- ******************************************************************************
+                    ****************************** ajouter Telephone **********************************-->
+
+                    <p:dialog header="Nouvel Téléphone" widgetVar="dlg_Ajouter" minHeight="40" >
+                        <h:form id="formA">
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <h:outputText value="Numero Serie Téléphone" />
+                                <p:inputText required="true" requiredMessage="numero serie est obligatoir" value="#{gestion_telephone.telephoneToAdd.numSerieTel}"/>
+
+                                <h:outputText value="Marque Téléphone" />
+                                <p:inputText required="true"  requiredMessage="marque est obligatoir" value="#{gestion_telephone.telephoneToAdd.marque}"/>
+
+                                <h:outputText value="Modéle Téléphone" />
+                                <p:inputText required="true" requiredMessage="model est obligatoir*" value="#{gestion_telephone.telephoneToAdd.modele}"/>
+
+                                  <h:outputText value="Montant " />
+                                  <p:inputText required="true" requiredMessage="montant est obligatoir*" value="#{gestion_telephone.telephoneToAdd.montantTel}"/>
+
+                                   <h:outputText value="Numero de ligne " />
+                                   <p:inputText required="true"
+                                                requiredMessage="numero de ligne est obligatoire"
+                                                value="#{gestion_telephone.telephoneToAdd.numLigneTel}"/>
+
+
+                            </h:panelGrid>
+
+                            <p:commandButton value="Ajouter" action="#{gestion_telephone.ajouter_Telephone()}" oncomplete="PF('dlg_Ajouter').hide()" ajax="true"  update=":form:tbl,:pannel"/>
+
+                        </h:form>
+                    </p:dialog>
+
+
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

@@ -1,0 +1,226 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <head>
+        <title>TGCC | Application Chantiers</title>
+        <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+            <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css" />
+            <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css" />
+            <link rel="stylesheet" type="text/css" href="css/main.css" />
+
+
+            <link rel="icon" type="img/ico" href="img/logo.ico" />
+    </head>
+
+    <body>
+        <div id="wrapper">
+
+            <!-- Sidebar -->
+            <div id="sidebar-wrapper">
+
+                <div id="logo-zone">
+                    <img class="logo-img center center-block" alt="logo-tgcc" src="img/logo.png" />
+                </div>
+
+                <div>
+                    <ul class="sidebar-nav">
+                        <!--                    <li class="sidebar-brand">
+                                                <a href="#">
+                                                    
+                                                </a>
+                                            </li>-->
+                        <li>
+                            <div>
+                                <a href="#">Quinzainiers 
+                                    <div class="icon-arrow-menu"></div>
+                                </a>
+
+                            </div>
+
+
+
+                        </li>
+
+                        <li>
+                            <a href="#">Mensuels
+                                <div class="icon-arrow-menu"></div>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="#">Engins
+                                <div class="icon-arrow-menu"></div>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="#">Stock
+                                <div class="icon-arrow-menu"></div>
+                            </a>
+                        </li>
+
+
+
+                    </ul>
+                </div>
+
+            </div>
+            <!-- /#sidebar-wrapper -->
+
+            <!-- Page Content -->
+            <div id="page-content-wrapper">
+
+
+
+                <div class="menu-vertical">
+                    <div class="row">
+
+                        <div class="col-lg-1 col-sm-1 col-xs-1 col-md-1">
+                            <a href="#menu-toggle" id="menu-toggle">
+                                <div class="menu-ham">
+                                    <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+                                </div>
+                            </a>
+
+                        </div>
+
+
+
+                        <div class="col-lg-9 col-sm-9 col-xs-9 col-md-9">
+                            <div class="row nav-row">
+                                <ul class="nav nav-pills nav-tgcc" role="menu" aria-labelledby="dropdownMenu">
+
+                                    <li class="nav-divider nav-divider-atl-header"></li>
+
+                                    <li class="nav-tgcc  vertical-center" role="maintenance">
+
+                                        <a class="trigger right-caret" tabindex="0" data-toggle="dropdown" aria-expanded="false">
+
+                                            <span class="menu-logo"><img src="img/icon-engin.png" /></span> 
+
+                                            <span class="text-menu visible-lg visible-md">ENGIN</span> 
+
+                                        </a>
+
+                                        <ul class="dropdown-menu">
+
+                                            <li > <a href="#" tabindex="0">Parc engins</a></li>
+                                            <li> <a href="#" tabindex="0">Pointage</a></li>
+                                            <li> <a href="#" tabindex="0">Historique pointage</a></li>
+
+
+
+
+                                        </ul>
+
+                                    </li>
+
+                                    <li class="nav-divider nav-divider-atl-header"></li>
+
+
+
+                                    <li class="nav-tgcc vertical-center" role="maintenance">
+
+                                        <a class="trigger right-caret" tabindex="0" data-toggle="dropdown" aria-expanded="false">
+                                            <span class="menu-logo"><img src="img/icon-maintenance.png" /></span>    
+                                            <span class="text-menu visible-lg visible-md">MAINTENANCE</span>
+
+                                        </a>
+
+                                        <ul class="dropdown-menu">
+
+                                            <li > <a href="#" tabindex="0">Gestion des pannes</a></li>
+
+                                        </ul>
+
+                                    </li>
+                                    <li class="nav-divider nav-divider-atl-header"></li>
+
+
+
+                                    <li class="nav-tgcc vertical-center" role="user">
+                                        <a class="trigger right-caret" tabindex="0" data-toggle="dropdown" aria-expanded="false">
+                                            <span class="menu-logo"><img src="img/icon-user.png" /></span>    
+                                            <span class="text-menu visible-lg visible-md">GESTION DES UTILISATEURS</span>
+
+                                        </a>
+                                        <ul class="dropdown-menu">
+
+                                            <li > <a href="auto-cash.php" tabindex="0">Groupes</a></li>
+                                            <li > <a href="auto-cash.php" tabindex="0">Utilisateurs</a></li>
+
+                                        </ul>
+                                    </li>
+
+
+
+
+                                </ul>
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-lg-2 col-sm-2 col-xs-2 col-md-2">
+                            <div class="logout">
+                                <div class="visible-lg visible-md">
+
+                                    Logout
+                                </div>
+                                <div class="logout-small visible-xs visible-sm">
+                                    <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="arborescence">
+
+                </div>
+
+                <div class="content">
+
+
+                </div>
+
+                <!--                <br />  
+                                <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">T</a>-->
+            </div>
+            <!-- /#page-content-wrapper -->
+
+        </div>
+        <!-- /#wrapper -->
+
+        <!-- jQuery -->
+        <script src="js/jquery.js"></script>
+
+        <!-- Bootstrap Core JavaScript -->
+        <script src="js/bootstrap.min.js"></script>
+
+        <!-- jQuery -->
+        <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>        
+
+        <!-- Bootstrap Core JavaScript -->
+        <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+        <!-- Menu Toggle Script -->
+        <script>
+            $("#menu-toggle").click(function (e) {
+                e.preventDefault();
+                $("#wrapper").toggleClass("toggled");
+            });
+
+
+
+        </script>
+
+
+
+    </body>
+</html>

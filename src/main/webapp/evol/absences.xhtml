@@ -1,0 +1,207 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="Template.xhtml">
+            <ui:define name="content">    
+                <p:growl showDetail="true" id="growlId"   autoUpdate="true"  />
+                <p:blockUI block="form" widgetVar="block">
+                    Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                </p:blockUI>
+                <h:form id="form"> 
+                    <p:growl showDetail="true" id="msgs"  />
+                    <p:dataTable 
+                        id="absenceTable" value="#{evol_absenceMb.absences}" var="absence"
+                        paginatorPosition="bottom"
+                        class="table table-responsive table-bordered"
+                        editable="true" >
+
+                        <f:facet name="header">
+                            <c:if test="#{authentification.hasPermission(constanteMb.ajouterAbsence)}">
+                                <p:commandButton icon="fa-plus" value="Ajouter Absence" type="button" onclick="PF('addAbsence').show();"/>
+                            </c:if>
+                            <p:commandButton  value="Recherche" icon="fa-search" type="button" onclick="PF('find').show();"/>
+                        </f:facet>
+
+                        <f:facet name="footer">
+                            <h:panelGrid columns="9">
+                                <p:commandButton onstart="PF('block').show()" oncomplete="PF('block').hide()" id="first" icon="ui-icon-triangle-1-w" class="ui-paginator-first ui-state-default ui-corner-all" disabled="#{evol_absenceMb.first}"
+                                                 action="#{evol_absenceMb.onFirst()}" update=":form:absenceTable"/>
+
+                                <p:commandButton onstart="PF('block').show()" oncomplete="PF('block').hide()" id="prev" icon="ui-icon-carat-1-w" disabled="#{evol_absenceMb.prev}"
+                                                 action="#{evol_absenceMb.onPrevious()}" update=":form:absenceTable"/>
+
+                                <p:spinner id="page" value="#{evol_absenceMb.page}" disabled="#{evol_absenceMb.pageId}" 
+                                           min="1" max="#{evol_absenceMb.var}"  >
+                                    <p:ajax onstart="PF('block').show()" oncomplete="PF('block').hide()" listener="#{evol_absenceMb.onPaginate()}"  event="change" update=":form:absenceTable" />
+                                </p:spinner>
+
+                                <h:outputText value="/ #{evol_absenceMb.var}"/>
+
+                                <p:commandButton onstart="PF('block').show()" oncomplete="PF('block').hide()"  id="next" disabled="#{evol_absenceMb.next}" icon="ui-icon-carat-1-e" update=":form:absenceTable" action="#{evol_absenceMb.onNext()}"/>
+
+                                <p:commandButton onstart="PF('block').show()" oncomplete="PF('block').hide()" id="last" disabled="#{evol_absenceMb.last}" icon="ui-icon-triangle-1-e" update=":form:absenceTable" action="#{evol_absenceMb.onLast()}" />
+
+                                <h:outputText value="Nombre Total" style="padding-right:  7px ; color:  white"/>
+
+                                <h:outputText value="#{evol_absenceMb.i}"/>
+
+                                <h:outputText value="#{evol_absenceMb.page ==1 or evol_absenceMb.page ==0 ?
+                                                       '1 -10': ''.concat((evol_absenceMb.page-1) * 10 +1).concat('-').concat((evol_absenceMb.page-1) * 10 +10) }"
+                                              style="color:  white"/>
+                            </h:panelGrid>
+                        </f:facet>
+
+                        <p:ajax event="rowEdit" listener="#{evol_absenceMb.onRowEdit}" update=":form:msgs" />
+                        <p:ajax event="rowEditCancel" listener="#{evol_absenceMb.onRowCancel}" update=":form:msgs" />
+<!--                        <p:ajax event="rowEditInit" listener="#{evol_absenceMb.onRowInit}" update=":form:msgs" />-->
+
+                        <p:column headerText="Matricule">
+                            <h:outputText value="#{absence.salarie.matricule}"/>
+                        </p:column>
+                        <p:column headerText="Nom">
+                            <h:outputText value="#{absence.salarie.nom}"/>
+                        </p:column>
+                        <p:column headerText="Prénom">
+                            <h:outputText value="#{absence.salarie.prenom}"/>
+                        </p:column>
+                        <p:column headerText="Date de début">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{constanteMb.getDateFormatFR(absence.dateDebut)}  #{absence.heureDebut}" /></f:facet>
+                                <f:facet name="input">
+                                    <div style="width: 100%" class="row">
+                                         <p:calendar pattern="dd/MM/yyyy" class="col-lg-12" value="#{absence.dateDebut}" />
+                                        <div class="col-lg-6"><p:spinner value="#{absence.heuredeb}" label="Heure Début" placeholder="hh" min="0" max="23"/> h</div>
+                                        <div style="margin-left: -5%; width: 54%;" class="col-lg-6"><p:spinner value="#{absence.mindeb}" label="min Début" placeholder="mm" min="0" max="59"/> min</div>
+                                    </div>
+
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Date de fin">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{constanteMb.getDateFormatFR(absence.dateFin)} #{absence.heureFin}"/></f:facet>
+                                <f:facet name="input">
+                                    <div style="width: 100%" class="row">
+                                         <p:calendar pattern="dd/MM/yyyy" class="col-lg-12" value="#{absence.dateFin}" />
+                                        <div class="col-lg-6"><p:spinner value="#{absence.heureF}" label="Heure Début" placeholder="hh" min="0" max="23"/> h</div>
+                                        <div style="margin-left: -5%; width: 54%;" class="col-lg-6"><p:spinner value="#{absence.minF}" label="min Début" placeholder="mm" min="0" max="59"/> min</div>
+                                    </div>
+
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Type d'absence">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{absence.typeAbsence.typeAbsence}"/></f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu style="width: 100%" id="typeAbsence" value="#{absence.idtypeAbs}" required="true">
+                                        <f:ajax event="change" render="typeAbsenceMsg"/>
+                                        <f:selectItems value="#{typeAbsenceMb.typeAbsences}" var="t" itemLabel="#{t.typeAbsence}" itemValue="#{t.id}" />
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Commentaire">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{absence.commentaire}"/></f:facet>
+                                <f:facet name="input">
+                                    <div style="width: 80%; margin-left: 5px;" class="row">
+                                        <p:inputTextarea id="comment" rows="4"  value="#{absence.commentaire}" />
+                                    </div>
+
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column style="width:42px">
+                            <p:rowEditor />
+                        </p:column>
+
+                    </p:dataTable>
+
+
+
+
+
+
+
+                </h:form>
+                <p:dialog widgetVar="find" modal="true" minHeight="300">
+                    <h:form>
+                        <h:panelGrid columns="2" cellpadding="8">
+                            <p:outputLabel for="matricule" value="Matricule"/>
+                            <p:inputText id="matricule" label="Matricule" value="#{evol_absenceMb.findSalarie.matricule}" />
+                            <p:outputLabel for="cin" value="Cin"/>
+                            <p:inputText id="cin" label="cin" value="#{evol_absenceMb.findSalarie.cin}" />
+                            <p:outputLabel for="cnss" value="Cnss"/>
+                            <p:inputText id="cnss" label="cnss" value="#{evol_absenceMb.findSalarie.cnss}" />
+                            <p:outputLabel for="typeAbsence" value="Type Absence"/>
+                            <p:selectOneMenu id="typeAbsence" value="#{evol_absenceMb.IDtypeAb}" filter="true" filterMatchMode="contains"> 
+                                <f:selectItem itemLabel="-- Type Absence --" itemValue="" /> 
+                                <f:selectItems value="#{typeAbsenceMb.typeAbsences}" var="t" itemLabel="#{t.typeAbsence}" itemValue="#{t.id}" />
+                            </p:selectOneMenu>
+                            <p:commandButton value="Recherche" update=":form:absenceTable" 
+                                             oncomplete="PF('find').hide();"
+                                             action="#{evol_absenceMb.recherche()}"/>
+                            <p:commandButton value="Annuler" onclick="PF('find').hide();" />
+                        </h:panelGrid>
+                    </h:form>
+                </p:dialog>
+                <p:dialog header="Nouvelle Absence" widgetVar="addAbsence" modal="true" minHeight="300" minWidth="400" >
+                    <h:form id="addForm">
+                        <h:panelGrid columns="3" cellpadding="8">
+                            <p:outputLabel for="matricule" value="Matricule "/>
+                            <p:inputText id="matricule" value="#{evol_absenceMb.idSalarie}" required="true">
+                                <f:ajax event="blur" render="msgMatricule"/>
+                            </p:inputText>
+                            <p:message for="matricule" id ="msgMatricule"/> 
+                            <p:outputLabel for="typeAbsence" value="Type d'absence "/>
+                            <p:selectOneMenu id="typeAbsence" value="#{evol_absenceMb.idtypeAbs}" required="true">
+                                <f:selectItem itemLabel="-- Type Absences--" itemValue="" />
+                                <f:ajax event="change" render="typeAbsenceMsg"/>
+                                <f:selectItems value="#{typeAbsenceMb.typeAbsences}" var="t" itemLabel="#{t.typeAbsence}" itemValue="#{t.id}" />
+                            </p:selectOneMenu>
+                            <p:message for="typeAbsence" id ="typeAbsenceMsg"/> 
+
+                            <p:outputLabel for="dateDe" value="Date de début"/>
+                             <p:calendar pattern="dd/MM/yyyy" id="dateDe" value="#{evol_absenceMb.newAbsence.dateDebut}" required="true"/>
+                            <h:panelGrid columns="4">
+                                <p:spinner value="#{evol_absenceMb.heureDebut}" label="Heure Début" placeholder="hh" min="0" max="23"/>h
+                                <p:spinner value="#{evol_absenceMb.minDebut}" label="min Début" placeholder="mm" min="0" max="59"/>min
+                            </h:panelGrid>
+
+                            <p:outputLabel for="dateFn" value="Date de fin"/>
+                             <p:calendar pattern="dd/MM/yyyy" id="dateFn" value="#{evol_absenceMb.newAbsence.dateFin}" required="true"/>
+
+                            <h:panelGrid columns="4">
+                                <p:spinner value="#{evol_absenceMb.heureFin}" label="Heure Fin" placeholder="hh" min="0" max="23"/>h
+                                <p:spinner value="#{evol_absenceMb.minFin}" label="min Fin" placeholder="mm" min="0" max="59"/>min
+                            </h:panelGrid>
+
+                            <p:outputLabel for="comment" value="Commentaire"/>
+                            <p:inputTextarea id="comment" rows="6" value="#{evol_absenceMb.newAbsence.commentaire}" />
+                            <p:message for="comment" />
+                        </h:panelGrid>
+                        <p:commandButton value="Ajouter" action="#{evol_absenceMb.ajouterAbsence()}" 
+                                         update=":form:absenceTable, :addForm" 
+                                         oncomplete="PF('addAbsence').hide()" 
+                                         icon="ui-icon-chek"/>
+                    </h:form>
+                </p:dialog>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+

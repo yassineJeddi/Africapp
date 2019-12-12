@@ -1,0 +1,324 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <body>
+
+        <ui:composition template="./Template.xhtml">
+
+            <ui:define name="arborescence">
+                Rh > Organigramme
+            </ui:define>
+
+            <ui:define name="content">
+                <p:blockUI block="form" widgetVar='block' >
+                    Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                </p:blockUI>
+
+                <h:form id="form">
+                    <div style="text-align: center">
+                        <p:selectOneMenu value="#{organigrameMb.idChantier}" filter="true" filterMatchMode="contains">
+                            <p:ajax listener="#{organigrameMb.onChantierChange()}" update=":form:organigram,:salarieSearchForm:nonAffectFct" />
+                            <f:selectItem itemLabel="-- Chantier --" itemValue="" noSelectionOption="true"/>
+                            <f:selectItems value="#{chantier.chantiers}" var="c" itemLabel="#{c.code}" itemValue="#{c.id}"/>
+
+                        </p:selectOneMenu>
+                    </div>
+
+                    <br/>
+                    <br/>
+                    <style>
+                        .ui-organigram .ui-organigram-node.division {
+                            width: 200px !important;
+                            font-weight: bold;
+
+
+                            background: #712D35; /* fallback for old browsers */
+
+                        }
+                        .level-0{
+                            border-radius: 0px !important;
+                            width: 50% !important;
+                            color: #000000 !important;
+
+                            background: #ffffff !important; /* fallback for old browsers */
+                            border: 2px solid #000 !important;
+                        }
+
+                        .level-0 .ui-organigram-node-content{
+                            color: #000000 !important;
+                        }
+
+                        .ui-organigram-node-content{
+                            color: white;
+                            font-weight: bold;
+                        }
+
+
+                        .ui-organigram .ui-organigram-node.chef {
+                            width: 200px !important;
+                            color: #ffffff !important;
+                            font-weight: bold;
+                            background: #255625;
+
+                        }
+
+                        .ui-organigram .ui-organigram-node.employee {
+                            width: 200px !important;
+                            color: #ffffff !important;
+                            font-weight: bold;
+                            background: #666;
+
+                        }
+                    </style>
+
+                    <p:growl id="growl" />
+
+                    <p:organigram id="organigram"
+                                  widgetVar="organigram"
+                                  value="#{organigrameMb.rootNode}"
+                                  var="node"                                  
+                                  leafNodeConnectorHeight="#{organigrameMb.leafNodeConnectorHeight}"
+                                  autoScrollToSelection="#{organigrameMb.autoScrollToSelection}"
+                                  zoom="#{organigrameMb.zoom}"
+                                  selection="#{organigrameMb.selection}"
+                                  style="width: 100%; text-align: center; color: red;"
+                                  >
+
+
+                        <p:ajax event="select" process="@this" update="@form:growl" listener="#{organigrameMb.nodeSelectListener}" />
+                        <p:ajax event="contextmenu" process="@this" />
+
+
+                        <p:organigramNode>
+                            <h:outputText value="#{node.data}" />
+                        </p:organigramNode>
+
+                        <p:organigramNode type="root"
+                                          style="border-radius: 10px;">
+                            <h:outputText value="#{node.data}" />
+                        </p:organigramNode>
+
+                        <p:organigramNode type="division"
+                                          styleClass="#{organigrameMb.checkNodeChef(node.data) eq false ? 'division' : 'chef'}"
+                                          icon="ui-icon-suitcase"
+                                          iconPos="left">
+                            <h:outputText value="#{node.data}" />
+
+                        </p:organigramNode>
+
+                        <p:organigramNode type="employee"
+                                          styleClass="employee"
+                                          icon="ui-icon-person">
+                            <h:outputText value="#{node.data}" />
+                        </p:organigramNode>
+                    </p:organigram>
+
+                    <p:contextMenu for="organigram" nodeType="employee">
+                        <p:menuitem value="Supprimer Salarie"
+                                    update="organigram"
+                                    icon="ui-icon-close"
+                                    actionListener="#{organigrameMb.removeSalarie()}" />
+
+                        <p:menuitem value="Choisir Supérieur"
+                                    update=":formChefSalarie:chefsTable"
+                                    icon="ui-icon-search"
+                                    actionListener="#{organigrameMb.choisirChefSalarie()}"
+                                    oncomplete="PF('choisirChefSalarie').show();"
+                                    />
+                        <p:menuitem value="Consulter Supérieur"
+                                    update=":listChefs:grid"
+                                    icon="ui-icon-document"
+                                    oncomplete="PF('supWidget').show();"
+                                    actionListener="#{organigrameMb.listeChefSalarie()}" />
+                    </p:contextMenu>
+
+                    <p:contextMenu for="organigram" nodeType="division">
+                        <p:menuitem value="Ajouter Salarie"
+                                    update=":salarieSearchForm:nonAffectFct"
+                                    actionListener="#{organigrameMb.initAddSalarie()}"
+                                    icon="ui-icon-plus"    
+
+                                    oncomplete="PF('addEmployeeDialog').show();" 
+                                    />
+
+                        <p:menuitem value="Définir Chef"
+                                    update="organigram @form:growl"
+                                    icon="ui-icon-check"
+                                    actionListener="#{organigrameMb.defineChef()}" 
+                                    />
+
+                        <p:menuitem value="Retirer Chef"
+                                    update="organigram @form:growl"
+                                    icon="ui-icon-close"
+                                    actionListener="#{organigrameMb.retirerChef()}" 
+                                    />
+                    </p:contextMenu>
+
+
+                </h:form>
+                <p:dialog id="addEmployeeDialog"
+                          widgetVar="addEmployeeDialog"
+                          modal="true"
+                          width="1000px"
+                          header="Ajouter Salarie"
+                          >
+                    <h:form id="salarieSearchForm">
+
+                        <p:dataTable  var="mensuelIt"  widgetVar="tableMensuel" value="#{organigrameMb.salaries_actif}"   rowKey="#{mensuelIt.id}"
+                                      rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                      {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                      {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" paginatorPosition="bottom"
+                                      id="nonAffectFct"
+                                      selection="#{organigrameMb.selectedSalaries}"
+                                      >
+
+                            <f:facet name="header">
+                                <p:commandButton value="Valider"
+                                                 actionListener="#{organigrameMb.addSalarie()}"
+                                                 oncomplete="PF('tableMensuel').clearFilters();PF('addEmployeeDialog').hide();"
+                                                 update=":form:organigram"                                                 
+                                                 />
+                            </f:facet>
+
+                            <p:column selectionMode="multiple" style="width:32px;text-align:center"/>
+
+                            <p:column sortBy="#{mensuelIt.matricule}" filterBy="#{mensuelIt.matricule}" headerText="Matricule"  filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{mensuelIt.matricule}" />
+                            </p:column>
+
+                            <p:column sortBy="#{mensuelIt.nom}" filterBy="#{mensuelIt.nom}" headerText="Nom" filterMatchMode="contains" filterFunction="#{filterMb.filterByX}"  >
+                                <h:outputText value="#{mensuelIt.nom}" />
+                            </p:column>
+
+                            <p:column sortBy="#{mensuelIt.prenom}" filterBy="#{mensuelIt.prenom}" headerText="Prénom" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{mensuelIt.prenom}" />
+                            </p:column>
+
+                            <p:column sortBy="#{mensuelIt.fonction.fonction}" filterBy="#{mensuelIt.fonction.fonction}"  headerText="Fonction" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{mensuelIt.fonction.fonction}" />
+                            </p:column>
+
+                            <p:column headerText="CIN" sortBy="#{mensuelIt.cin}" filterBy="#{mensuelIt.cin}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{mensuelIt.cin}" />
+                            </p:column>
+
+                            <p:column  headerText="CNSS" sortBy="#{mensuelIt.cnss}" filterBy="#{mensuelIt.cnss}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{mensuelIt.cnss}"  />
+                            </p:column>
+
+
+
+
+
+
+                        </p:dataTable>
+
+
+
+
+
+
+
+                    </h:form>
+
+                </p:dialog>
+
+
+
+                <p:dialog id="choisirChefSalarie"
+                          widgetVar="choisirChefSalarie"
+                          modal="true"                          
+                          width="1000px"
+                          header="Choisir Chefs"
+                          >
+                    <h:form id="formChefSalarie">
+
+                        <p:dataTable  var="mensuelIt" value="#{organigrameMb.listeChefsParSalarie}"  rowKey="#{mensuelIt.id}"
+                                      rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                      {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                      {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" paginatorPosition="bottom"
+                                      id="chefsTable"
+                                      selection="#{organigrameMb.selectedChefSalarie}"
+                                      selectionMode="single"
+                                      >
+
+
+                            <f:facet name="header">
+                                <p:commandButton value="Valider"
+                                                 actionListener="#{organigrameMb.addChefSalarie()}"
+                                                 oncomplete="PF('choisirChefSalarie').hide()"
+
+                                                 />
+
+                            </f:facet>
+
+
+
+                            <p:column sortBy="#{mensuelIt.matricule}" filterBy="#{mensuelIt.matricule}" headerText="Matricule"  filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{mensuelIt.matricule}" />
+                            </p:column>
+
+                            <p:column sortBy="#{mensuelIt.nom}" filterBy="#{mensuelIt.nom}" headerText="Nom" filterMatchMode="contains" filterFunction="#{filterMb.filterByX}"  >
+                                <h:outputText value="#{mensuelIt.nom}" />
+                            </p:column>
+
+                            <p:column sortBy="#{mensuelIt.prenom}" filterBy="#{mensuelIt.prenom}" headerText="Prénom" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{mensuelIt.prenom}" />
+                            </p:column>
+
+                            <p:column sortBy="#{mensuelIt.fonction.fonction}" filterBy="#{mensuelIt.fonction.fonction}"  headerText="Fonction" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{mensuelIt.fonction.fonction}" />
+                            </p:column>
+
+                            <p:column headerText="CIN" sortBy="#{mensuelIt.cin}" filterBy="#{mensuelIt.cin}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{mensuelIt.cin}" />
+                            </p:column>
+
+                            <p:column  headerText="CNSS" sortBy="#{mensuelIt.cnss}" filterBy="#{mensuelIt.cnss}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{mensuelIt.cnss}"  />
+                            </p:column>
+
+
+
+
+
+
+                        </p:dataTable>
+
+
+
+
+
+
+
+                    </h:form>
+
+                </p:dialog>
+
+
+
+                <p:dialog header="Supérieur" widgetVar="supWidget" modal="true" 
+                          showEffect="fade" hideEffect="fade" 
+                          resizable="false" width="500">
+                    <h:form id="listChefs">
+                        <h:panelGrid id="grid" columns="2" cellpadding="11">
+                            <p:outputLabel value="Matricule Supérieur : "/>
+                            <p:outputLabel value="#{organigrameMb.supChef.matricule}"/>
+                            <p:outputLabel value="Nom Supérieur : "/>
+                            <p:outputLabel value="#{organigrameMb.supChef.nom}"/>
+                            <p:outputLabel value="Prénom Supérieur : "/>
+                            <p:outputLabel value="#{organigrameMb.supChef.prenom}"/>
+                        </h:panelGrid>
+                    </h:form>
+                </p:dialog>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

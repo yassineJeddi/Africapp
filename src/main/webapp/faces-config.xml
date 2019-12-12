@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!-- =========== FULL CONFIGURATION FILE ================================== -->
+
+<faces-config version="3.0"
+              xmlns="http://java.sun.com/xml/ns/javaee" 
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+              xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd">
+
+
+
+   <application>
+        <el-resolver>
+            org.springframework.web.jsf.el.SpringBeanFacesELResolver
+        </el-resolver>
+        
+        <action-listener>org.primefaces.application.DialogActionListener</action-listener>
+        <navigation-handler>org.primefaces.application.DialogNavigationHandler</navigation-handler>
+        <view-handler>org.primefaces.application.DialogViewHandler</view-handler>
+        
+        
+        <navigation-rule>
+            <from-view-id>*</from-view-id>
+            <navigation-case>
+                <from-outcome>dialog</from-outcome>
+                <to-view-id>dialog.xhtml</to-view-id>
+            </navigation-case>
+        </navigation-rule>
+        
+    </application>
+
+<!--    <application>     
+        <resource-bundle>
+            <base-name>sc.ma.i18n.entreprise</base-name>
+            <var>iEntre</var>
+            <locale-config>
+                <default-locale>fr</default-locale>
+                <supported-locale>en</supported-locale>
+            </locale-config>
+        </resource-bundle>
+        <resource-bundle>
+            <base-name>sc.ma.i18n.global</base-name>
+            <var>iGlo</var>
+            <locale-config>
+                <default-locale>fr</default-locale>
+                <supported-locale>en</supported-locale>
+            </locale-config>
+        </resource-bundle>
+                <resource-bundle>
+            <base-name>sc.ma.i18n.personne</base-name>
+            <var>iPerso</var>
+            <locale-config>
+                <default-locale>fr</default-locale>
+                <supported-locale>en</supported-locale>
+            </locale-config>
+        </resource-bundle>
+
+        <resource-bundle>
+            <base-name>sc.ma.i18n.message</base-name>
+            <var>iMes</var>
+            <locale-config>
+                <default-locale>fr</default-locale>
+                <supported-locale>en</supported-locale>
+            </locale-config>
+        </resource-bundle>
+        
+        <resource-bundle>
+            <base-name>sc.ma.i18n.champsRecherche</base-name>
+            <var>iChaRech</var>
+            <locale-config>
+                <default-locale>fr</default-locale>
+                <supported-locale>en</supported-locale>
+            </locale-config>
+        </resource-bundle>
+        <resource-bundle>
+            <base-name>sc.ma.i18n.pages</base-name>
+            <var>iPage</var>
+            <locale-config>
+                <default-locale>fr</default-locale>
+                <supported-locale>en</supported-locale>
+            </locale-config>
+        </resource-bundle>
+    </application>        -->
+
+    
+</faces-config>

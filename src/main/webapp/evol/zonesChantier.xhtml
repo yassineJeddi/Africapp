@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./Template.xhtml">
+
+            <ui:define name="arborescence">
+                Parametrage > Consulter Zones par Chantier
+            </ui:define>
+
+            <ui:define name="content">
+                <p:blockUI block="form" widgetVar="block">
+                    Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                </p:blockUI>
+                
+                <p:growl showDetail="true" autoUpdate="true" 
+                          
+                         id="msgs"
+                         />
+                
+                <h:form id="form">
+                    <div class="row">
+                        <div class="col-lg-6 col-lg-offset-1">
+                            <div class="form-group">
+                                <p:selectOneMenu value="#{consulterZone.idChantier}" >
+                                    <f:selectItem itemLabel="--Chantier --" itemValue=""/>
+                                    <f:selectItems value="#{evol_chantierMb.chantiers}" var="c" itemLabel="#{c.code}" itemValue="#{c.id}"/>
+                                    <p:ajax onstart="PF('block').show();" oncomplete="PF('block').hide()" listener="#{consulterZone.zoneByChantier}" update=":form:zones,:form:salaries"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <p:dataTable emptyMessage="Aucune zone dans ce chantier" selectionMode="single" 
+                                         selection="#{consulterZone.selectedZone}" var="z" paginator="true" rows="10" 
+                                         rowKey="#{z.idZone}" id='zones' value="#{consulterZone.zones}" >
+                                <p:ajax event="rowSelect" onstart="PF('block').show()" oncomplete="PF('block').hide()" listener="#{consulterZone.salarieByZone()}" update=":form:salaries" />
+                                <p:ajax event="rowUnselect" onstart="PF('block').show()" oncomplete="PF('block').hide()" listener="#{consulterZone.libreZone()}" update=":form:salaries" />
+                                <p:column headerText="La zone">
+                                    <h:outputText value="#{z.libeleZone}"/>
+                                </p:column>
+                                <p:column headerText="Chantier">
+                                    <h:outputText value="#{z.idChantier.code}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                        <div class="col-lg-7">
+                            <p:dataTable emptyMessage="Aucun chef d'équipe" selectionMode="single"
+                                         selection="#{consulterZone.selectedSalarie}"  id='salaries' rowKey="#{s.id}"
+                                         value="#{consulterZone.salaries}" var="s" paginator="true" rows="10" >
+                                <p:ajax event="rowSelect" onstart="PF('block').show()" oncomplete="PF('block').hide()" listener="#{consulterZone.zoneBySalarie()}" update=":form:zones" />
+                                <p:ajax event="rowUnselect" onstart="PF('block').show()" oncomplete="PF('block').hide()" listener="#{consulterZone.libreSalarie()}" update=":form:zones" />
+                                <p:column headerText="Matricule">
+                                    <h:outputText value="#{s.matricule}"/>
+                                </p:column>
+                                <p:column headerText="Nom">
+                                    <h:outputText value="#{s.nom}"/>
+                                </p:column>
+                                <p:column headerText="Prénom">
+                                    <h:outputText value="#{s.prenom}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

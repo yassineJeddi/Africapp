@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+    <h:head>
+        <title>Affecter un loyer à un salarié</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+            <ui:define name="arborescence">
+
+
+
+
+                <h:form>
+                    Mensuel ><strong> Affecter Loyer à un salarié </strong> 
+                </h:form>
+
+            </ui:define>
+
+            <ui:define name="content">
+                <p:panel id="pannel">
+                    <h:form id="formA">
+                        <p:messages id="msgsM" closable="true" />
+                        <div class="affectation-switch">
+                            <div class="btn-group" data-toggle="buttons">
+                                <p:commandButton action="/mensuel/affectLoyerChantier.xhtml?faces-redirect=true" 
+                                                 class="btn btn-default" 
+                                                 value="Affecter Loyer à un Chantier" immediate="true"/>
+                                <p:commandButton  class="btn btn-switch active"  
+                                                  value="Affecter Loyer à un salarié" />
+                            </div>
+                        </div>
+
+                        <br />
+                        <div class="row">
+
+                            <div class="col-lg-offset-1 col-lg-4">
+
+                                <div>
+
+
+                                    <p:commandButton style="width: 100%" class="btn btn-default" 
+                                                     value="Rechercher salarié"
+                                                     onclick="PF('dlg').show();"
+                                                     actionListener="#{loyerMb.afficherMensuel()}"
+                                                     update=":f:tbl" immediate="true"/>
+
+                                </div>
+
+                                <br/>
+
+
+                                <div class="form-group">
+                                    <h:outputText value="Nom du bénéficiaire :" />
+                                    <h:outputText class="value_dis" value="#{loyerMb.mensuel.nom}"/>
+
+                                </div>
+
+                                <div class="form-group">
+
+                                    <h:outputText value="Prénom du bénéficiaire :" />
+                                    <h:outputText  value="#{loyerMb.mensuel.prenom}"/>
+
+                                </div>
+
+                                <div class="form-group">
+
+
+                                    <h:outputText value="Matricule Bénéficiare :" />
+                                    <h:outputText class="value_dis"   value="#{loyerMb.mensuel.matricule}"/>
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <h:outputText value="Bénéficiaire secondaire : " />
+                                    <p:panel id="liste">
+                                        <ui:repeat value="#{loyerMb.l_mensuelSec}" var="l">
+                                            <div class="row">
+                                                <h:outputText id="o1" value="#{l.matricule} - #{l.nom} - #{l.prenom}" /> 
+
+                                            </div>
+
+                                        </ui:repeat>
+                                    </p:panel>
+
+
+                                </div>
+                                <div>
+
+
+                                    <p:commandButton style="width: 100%" class="btn btn-default" value="Rechercher salarié Secondaire" onclick="PF('dlg_recherche_sec').show();" />
+
+                                </div>
+
+                                <hr/>
+
+                            </div>
+
+                            <div class="col-lg-1">
+                                <div class="verticalLine">
+
+                                </div>
+                            </div>
+
+                            <div class="col-lg-offset-1 col-lg-4">
+
+
+                                <div class="row">
+
+                                    <h:outputText class="col-lg-4 detailProprietairePadding"  value="Date de Début" />
+
+                                    <div class="col-lg-8">
+                                        <p:calendar pattern="dd/MM/yyyy" required="true" 
+                                                    requiredMessage="la date de debut est obligatoire" 
+                                                    id="button"  
+                                                    showOn="button" 
+                                                    maxdate="#{operationStock.dateOfToday}"
+                                                    value="#{loyerMb.date_Debut_Loyer_Salarie}"
+                                                    mindate="#{loyerMb.ls.dateFin}"/>
+                                    </div>
+
+                                </div>
+
+                                <br/>
+
+                                <div class="row">
+
+                                    <h:outputText class="col-lg-4 detailProprietairePadding"  value="Date de Fin" />
+
+                                    <div class="col-lg-8">
+                                        <p:calendar pattern="dd/MM/yyyy" required="true" 
+                                                    requiredMessage="la date de fin est obligatoire" 
+                                                    id="buttonFin"  
+                                                    showOn="button"                                                     
+                                                    value="#{loyerMb.date_Fin_Loyer_Salarie}"
+                                                    />
+                                    </div>
+
+                                </div>
+
+                                <br/>
+                                <br/>
+                                <div class="row">
+                                    <h:outputText class="col-lg-4 detailProprietairePadding"  value="Nom du propriétaire" />
+                                    <div class="col-lg-8">
+                                        <p:inputText  required="true" requiredMessage="le nom est obligatoire" value="#{loyerMb.ls.nomproprietaire}"/>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="row">
+                                    <h:outputText class="col-lg-4 detailProprietairePadding" 
+                                                  value="Prénom du propriétaire" />
+                                    <div class="col-lg-8">
+                                        <p:inputText 
+                                            required="true"
+                                            requiredMessage="le prenom est obligatoire"
+                                            value="#{loyerMb.ls.prenomproprietaire}" />
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="row">
+                                    <h:outputText class="col-lg-4 detailProprietairePadding" value="Numéro Contrat" />
+                                    <div class="col-lg-8">                                        
+                                        <p:selectOneMenu filter="true"  filterMatchMode="contains" 
+                                            id="numproprietaire" class="col-lg-6 detailProprietairePadding" 
+                                            value="#{loyerMb.ls.numcontrat}" >               
+                                            <f:selectItems value="#{loyerMb.proprietaires}" var="p" itemValue="#{p.numproprietaire}" itemLabel="#{p.numproprietaire} | #{p.nomproprietaire}"/> 
+
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="row">
+                                    <h:outputText class="col-lg-4 detailProprietairePadding"  value="Ville" />
+                                    <div class="col-lg-8">
+                                        <p:inputText  value="#{loyerMb.ls.ville}"/>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="row">
+                                    <h:outputText class="col-lg-4 detailProprietairePadding" 
+                                                  value="Adresse Propriéte" />
+                                    <div class="col-lg-8">
+                                        <p:inputText value="#{loyerMb.ls.adresseproprietaire}"/>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="row">
+                                    <h:outputText class="col-lg-4 detailProprietairePadding" 
+                                                  value="Téléphone du propriétaire" />
+                                    <div class="col-lg-8">
+                                        <p:inputMask  value="#{loyerMb.ls.numtelephone}"  mask="99 99 99 99 99"/>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="row">
+                                    <h:outputText class="col-lg-4 detailProprietairePadding" value="Montant du loyer" />
+                                    <div class="col-lg-8">
+                                        <p:inputText label="Montant" value="#{loyerMb.ls.montantloyer}"
+                                                     required="true" requiredMessage=" le montant est  obligatoire" >
+                                            <f:convertNumber integerOnly="true" type="number" />
+                                            <f:validateDoubleRange minimum="0" maximum="9999999999999" />
+                                        </p:inputText>dhs
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="row">
+                                    <h:outputText class="col-lg-4 detailProprietairePadding" value="Mode de paiement" />
+                                    <div class="col-lg-8">
+                                        <p:selectOneMenu 
+                                            id="output3" class="col-lg-4 detailProprietairePadding" 
+                                            value="#{loyerMb.ls.modepaiment}" >               
+                                            <f:selectItem itemValue="Espece" itemLabel="Espece"/>
+                                            <f:selectItem itemValue="Virement" itemLabel="Virement"/>
+                                            <f:selectItem itemValue="Cheque" itemLabel="Chèque"/>
+
+                                            <p:ajax update="rib_id" listener="#{loyerMb.disbledRibLoyerSalarie()}" />
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="row">
+                                    <h:outputText class="col-lg-4 detailProprietairePadding" value="RIB de Propriétaire" />
+
+                                    <div class="col-lg-8">
+                                        <p:inputText id="rib_id" disabled="#{loyerMb.disable_rib == false}" 
+                                                     value="#{loyerMb.ls.rib}">
+
+
+                                            <f:validateLength minimum="24"  />
+
+                                        </p:inputText>
+                                    </div>
+                                </div>
+                                <hr/>
+                                <p:commandButton id="button_affect" 
+                                                 actionListener="#{loyerMb.saveLoyerSalarie()}" 
+                                                 disabled="#{loyerMb.disable_buttonaffectSalrie == false}"
+                                                 update=":formA" style="width: 100%"
+                                                 class="btn btn-switch active"
+                                                 value="Affecter Loyer" />
+                            </div>
+
+                        </div>
+                    </h:form>
+                    <!--Dialog Salarie-->
+                    <p:dialog header="Rechercher Salarié Par " width="80%" widgetVar="dlg" minHeight="40" >
+                        <h:form id="f"> 
+                            <br /><br />
+                            <p:dataTable id="tbl" style="width:100%;" var="mensuelIt" value="#{loyerMb.mensuels}" rowKey="#{mensuelIt.id}"
+                                         rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"  
+                                         scrollable="true" scrollHeight="150" >
+                                <p:ajax event="rowSelect"/>
+                                <p:column headerText="Matricule" filterBy="#{mensuelIt.matricule}"  filterFunction="#{filterMb.filterByX}">
+                                    <h:outputText value="#{mensuelIt.matricule}" />
+                                </p:column>
+
+                                <p:column headerText="Nom"    filterBy="#{mensuelIt.nom}"  filterFunction="#{filterMb.filterByX}">
+                                    <h:outputText  value="#{mensuelIt.nom}"/>
+                                </p:column>
+
+
+                                <p:column headerText="Prénom" filterBy="#{mensuelIt.prenom}"  filterFunction="#{filterMb.filterByX}">
+                                    <h:outputText  value="#{mensuelIt.prenom}"/>
+                                </p:column>
+
+                                <p:column headerText="Date Début" filterBy="#{mensuelIt.dateCreation}" footerText="contains" filterMatchMode="contains"   >
+                                    <h:outputText  value="#{modem3gMb.convertDateFormat(mensuelIt.dateCreation)}"/>
+                                </p:column>
+
+                                <p:column>
+                                    <p:commandButton icon="ui-icon-check" onclick="PF('dlg').hide();" update=":formA , :form_rech_sec:tbl_sec" action="#{loyerMb.redirectMensuel(mensuelIt)}"/>
+                                </p:column>
+
+                            </p:dataTable>
+                            <h:panelGrid columns="2" cellpadding="5">
+
+                                <p:commandButton value="Annuler"  onclick="PF('dlg').hide();"  ajax="true"/>
+                            </h:panelGrid>     
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog header="Rechercher Salarié Par " width="80%" widgetVar="dlg_recherche_sec" minHeight="40" >
+                        <h:form id="form_rech_sec"> 
+
+                            <br /><br />
+                            <p:dataTable id="tbl_sec" style="width:100%;"  var="mensuelIt"  value="#{loyerMb.mensuelsChekBox}" 
+                                         rowKey="#{mensuelIt.id}"
+                                         selection="#{loyerMb.l_mensuelSec}"
+                                         rows="10"  paginator="true"  paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"  
+                                         scrollable="true" scrollHeight="150" >
+                                <p:ajax event="rowSelect"/>
+
+                                <p:column selectionMode="multiple" style="width:40px;text-align:center"/>
+
+                                <p:column filterBy="#{mensuelIt.matricule}"  filterFunction="#{filterMb.filterByX}" headerText="Matricule"  footerText="contains" filterMatchMode="contains" >
+                                    <h:outputText value="#{mensuelIt.matricule}" />
+                                </p:column>
+
+                                <p:column filterBy="#{mensuelIt.nom}"   filterFunction="#{filterMb.filterByX}"  headerText="Nom" footerText="contains" filterMatchMode="contains"  >
+                                    <h:outputText  value="#{mensuelIt.nom}"/>
+                                </p:column>
+
+
+                                <p:column filterBy="#{mensuelIt.prenom}"   filterFunction="#{filterMb.filterByX}" headerText="Prénom" footerText="contains" filterMatchMode="contains"  >
+                                    <h:outputText  value="#{mensuelIt.prenom}"/>
+                                </p:column>
+
+
+                                <p:column filterBy="#{mensuelIt.cin}"   filterFunction="#{filterMb.filterByX}"  headerText="Cin" footerText="contains" filterMatchMode="contains"  >
+                                    <h:outputText  value="#{mensuelIt.cin}"/>
+                                </p:column>
+
+                                <p:column headerText="Date Début" filterBy="#{mensuelIt.dateCreation}"  filterFunction="#{filterMb.filterByX}" footerText="contains" filterMatchMode="contains" >
+                                    <h:outputText  value="#{mensuelIt.dateCreation}"/>
+                                </p:column>
+                                <f:facet name="footer">
+                                    <p:commandButton  process="tbl_sec" oncomplete="PF('dlg_recherche_sec').hide()" value="Ajouter" update=":formA" />
+                                </f:facet>
+                            </p:dataTable>
+                        </h:form>
+                    </p:dialog>
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+
+    </body>
+
+</html>

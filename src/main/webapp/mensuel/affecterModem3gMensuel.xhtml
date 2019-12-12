@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+    <h:head>
+        <title>Affectation de 3g</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+
+            #{modem3g_ServMb}
+
+            <ui:define name="arborescence">
+
+
+                <h:form>
+                    Mensuel ><strong> Affecter Le 3G à un salarié </strong> 
+                </h:form>
+
+            </ui:define>
+            <ui:define name="content">
+                <p:panel id="pannel">
+
+                    <h:form id="form">
+                        <p:messages id="msgsM" closable="true"/>
+                        <!--                    <h:form>
+                                            <h:panelGrid columns="2" cellpadding="20">
+                                                    <h:commandLink action="/mensuel/consulter3g.xhtml">Consulter 3G des mensuels</h:commandLink>
+                                            </h:panelGrid>
+                                            </h:form>-->
+
+                        <br />
+
+
+
+                        <br /><br />
+
+
+
+
+
+
+                        <br /><br />
+
+                        <div class="row">
+
+                            <div class="col-lg-offset-1 col-lg-4">
+
+                                <div>
+                                    <p:commandButton style="width: 100%" class="btn btn-default"
+                                                     value="Rechercher salarié" update=":formA" 
+                                                     action="#{modem3gMb.afficherMensuelRechercher()}"
+                                                     oncomplete ="PF('dlg').show();" immediate="true" />
+                                </div>
+
+                                <div class="spacer30"></div>
+
+                                <div class="form-group">
+                                    <h:outputText value="Nom de bénéficiaire : " />
+                                    <h:outputText class="value_dis"  value="#{modem3gMb.mensuel.nom}"/>
+                                </div>
+
+                                <div class="form-group">
+                                    <h:outputText value="Prénom de bénéficiaire : " />
+                                    <h:outputText class="value_dis"  value="#{modem3gMb.mensuel.prenom}"/>
+                                </div>
+
+                                <div class="form-group">
+
+                                    <h:outputText value="Matricule de bénéficiaire : " />
+                                    <h:outputText class="value_dis" value="#{modem3gMb.mensuel.matricule}"/>
+
+                                </div>
+
+
+
+                            </div>
+
+
+                            <div class="col-lg-1">
+                                <div class="verticalLine">
+
+                                </div>
+                            </div>
+
+
+                            <div class="col-lg-offset-1 col-lg-4">
+
+                                <div>
+
+                                    <p:commandButton style="width: 100%" class="btn btn-default" 
+                                                     value="Rechercher 3G" action="#{modem3gMb.afficher3gRechercher()}"
+                                                     update=":form_3g" oncomplete="PF('dlg1_3G').show();"
+                                                     immediate="true"/>
+
+                                </div>
+
+                                <div class="spacer30"></div>
+
+
+
+
+                                <div class="form-group">
+
+
+
+                                    <p:outputLabel value="Imei :" />
+                                    <h:outputText class="value_dis"  value="#{modem3gMb.mg.imei}" />
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <p:outputLabel value="Numero Serie : " />
+                                    <h:outputText class="value_dis"  value="#{modem3gMb.mg.serie_numero}" />
+
+                                </div>
+
+
+                                <div class="form-group">
+
+
+
+                                    <p:outputLabel value="Operateur :" />
+                                    <h:outputText class="value_dis"  value="#{modem3gMb.mg.operateur}" />
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <p:outputLabel value="Numero Tel : " />
+                                    <h:outputText class="value_dis"  value="#{modem3gMb.mg.numero}" />
+
+                                </div>
+
+                                <hr />
+
+
+                                <div class="row">
+                                    <h:outputText  value="Date d'affectation :" />
+
+                                    <p:calendar pattern="dd/MM/yyyy"  style="width: 80%"  id="button" required="true" 
+                                                 requiredMessage="date d'affectation est obligatoire "
+                                                  showOn="button" 
+                                                  value="#{modem3gMb.dateDebutModem}"
+                                                 mindate="#{modem3gMb.mg.dateRendu}"
+                                                 maxdate="#{operationStock.dateOfToday}">
+                                       
+                                    </p:calendar>
+
+                                </div>
+
+                                <br/>
+
+
+
+
+
+                                <br/>
+
+
+                                <!--<hr />-->
+
+
+                                <br/>
+
+
+
+                                <div>
+                                    <p:commandButton id="button_affect" disabled="#{modem3gMb.mg.serie_numero == null ? true : false }" action="#{modem3gMb.save()}" style="width: 100%" class="btn btn-switch active" value="Affecter 3G" update=":form" ajax="true" />
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-lg-2">
+
+                            </div>
+
+                        </div>
+
+
+
+
+                        <br /><br />
+
+
+                        <br /><br />
+
+
+                    </h:form>  
+
+                    <p:dialog header="Rechercher Salarié Par " width="80%" modal="true" widgetVar="dlg" minHeight="40" >
+                        <h:form id="formA">
+
+
+
+                            <br /><br />
+
+                            <p:dataTable id="tbl" style="width:100%;"  var="m" value="#{modem3gMb.mensuels}"
+                                         rowKey="#{m.id}" 
+                                         rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" scrollable="true" scrollHeight="150" >
+
+                                <p:ajax event="rowSelect"   /> 
+
+                                <p:column headerText="Matricule" filterBy="#{m.matricule}" filterFunction="#{filterMb.filterByX}">
+                                    <h:outputText  value="#{m.matricule}"/>
+                                </p:column>
+
+                                <p:column headerText="Nom"  filterBy="#{m.nom}" filterFunction="#{filterMb.filterByX}" >
+                                    <h:outputText  value="#{m.nom}"/>
+                                </p:column>
+
+
+                                <p:column headerText="Prénom"   filterBy="#{m.prenom}" filterFunction="#{filterMb.filterByX}">
+                                    <h:outputText value="#{m.prenom}" />
+                                </p:column>
+
+                                <p:column headerText="Date Début"   filterBy="#{m.dateCreation}" filterFunction="#{filterMb.filterByX}">
+                                    <h:outputText value="#{modem3gMb.convertDateFormat(m.dateCreation)}" />
+                                </p:column>
+
+                                <p:column>
+                                    <p:commandButton icon="ui-icon-check" onclick="PF('dlg').hide();" update=":form" action="#{modem3gMb.redirectMensuel(m)}">
+                                        <f:setPropertyActionListener value="#{mensuelIt}"  target="#{modem3gMb.mensuel}" />
+                                    </p:commandButton>
+                                </p:column>
+
+                            </p:dataTable>
+
+                            <p:commandButton value="Annuler"  onclick="PF('dlg').hide();"  ajax="true"/>
+
+
+                        </h:form>
+
+                    </p:dialog>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    <!-- ******************************************************************************************** -->
+
+
+
+                    <p:dialog header="Rechercher 3g " widgetVar="dlg1_3G" width="80%" modal="true" minHeight="40" >
+                        <h:form id="form_3g"> 
+                            
+
+
+                         
+                            <p:dataTable id="tbl_3g" style="width:100%;" var="gIt" value="#{modem3gMb.l_3g_toAffectes}" rowKey="#{gIt.id}"
+                                         rows="10"  paginator="true"  paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" 
+                                         scrollable="true" scrollHeight="150" >
+
+                                <p:column headerText="Imei" filterBy="#{gIt.imei}" filterFunction="#{filterMb.filterByX}"  >
+                                    <h:outputText value="#{gIt.imei}" />
+                                </p:column>
+
+
+
+                                <p:column headerText="numero Serie"  filterBy="#{gIt.serie_numero}" filterFunction="#{filterMb.filterByX}"  >
+                                    <h:outputText  value="#{gIt.serie_numero}"/>
+                                </p:column>
+
+                                <p:column headerText="Operateur"  filterBy="#{gIt.operateur}" filterFunction="#{filterMb.filterByX}"  >
+                                    <h:outputText  value="#{gIt.operateur}"/>
+                                </p:column>
+
+
+                                <p:column headerText="Numero Telephone" filterBy="#{gIt.numero}" filterFunction="#{filterMb.filterByX}"  >
+                                    <h:outputText  value="#{gIt.numero}"/>
+                                </p:column>
+
+
+                                
+
+
+
+
+                                <p:column>
+                                    <p:commandButton icon="ui-icon-check" onclick="PF('dlg1_3G').hide();" update=":form" action="#{modem3gMb.redirect_to_affecte(gIt)}">
+                                        <f:setPropertyActionListener value="#{gIt}"  target="#{modem3gMb.mg}"/>
+                                    </p:commandButton>
+                                </p:column>
+
+
+                            </p:dataTable>
+
+
+                        </h:form>
+                    </p:dialog>
+
+
+
+
+
+                </p:panel>
+            </ui:define>
+
+
+        </ui:composition>
+
+    </body>
+
+
+
+
+
+</html>

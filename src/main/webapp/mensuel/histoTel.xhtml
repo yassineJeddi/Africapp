@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+    <h:head>
+        <title>Telephone</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+
+            <ui:define name="arborescence">
+
+
+                <h:form>
+                    Mensuel > <strong> gestion Téléphone </strong>
+                </h:form>
+
+            </ui:define>
+
+            <ui:define name="content">
+                <p:panel id="pannel">
+
+                    <h:form id="form">
+                        <br />
+                        <div class="affectation-switch">
+                            <div class="btn-group" data-toggle="buttons">
+                                <p:commandButton class="btn btn-default" 
+                                                 action="/mensuel/consultationtelephone.xhtml?faces-redirect=true" value="Consulter Téléthone" />
+                                <p:commandButton class="btn btn-default" value="Gestion Télephone" action="/mensuel/gestionTelephone.xhtml?faces-redirect=true"/>
+                                <p:commandButton class="btn btn-switch active" value="Historique Télephone" />
+                            </div>
+                        </div>
+                        <br />
+                        <p:messages id="msgsM" closable="true"/>
+
+                        <p:spacer width="5px"  height="1px"/>
+                        <p:outputLabel value="Recherche par date d'affectation : " />
+                        <br />
+                            <p:outputLabel for="button" value="De:" />
+                            <p:calendar pattern="dd/MM/yyyy" id="button" style="display: flex; width: 200px;" value="#{telephoneMb.dateFrom}" showOn="button"   />
+                            <p:spacer width="50px"  height="1px"/>
+                            <p:outputLabel for="button2" value="à:" />
+                            <p:calendar pattern="dd/MM/yyyy" id="button2" style="display: flex; width: 200px;" value="#{telephoneMb.dateTo}"  showOn="button"   />
+                            <p:spacer width="20px"  height="1px"/>
+
+                        <p:commandButton class="btn btn-switch active" value="Rechercher" update=":form:tbl" icon="ui-icon-arrowthickstop-1-s" action="#{telephoneMb.searchByDate}" />
+
+                         <p:commandButton class="btn btn-switch active" value="Reinitialiser" update=":form:tbl, :form" icon="ui-icon-arrowthickstop-1-s" action="#{telephoneMb.reinitSearch}" />
+
+                         
+                         <p:spacer width="20px"  height="20px"/>
+                         <br/><br/>
+                       
+
+                        <p:dataTable id="tbl" var="telephoneIt" value="#{telephoneMb.telephonesH}"
+                                     rows="10"  paginator="true"  paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+
+
+                            <p:column headerText="Date affectation">
+                                <h:outputText value="#{telephoneMb.format(telephoneIt.dateAffectation)}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Date Rendu">
+                                <h:outputText value="#{telephoneMb.format(telephoneIt.dateDesaffectation)}"/>
+                            </p:column>
+                            
+                              <p:column headerText="Matricule Mesnuel" filterBy="#{telephoneIt.mensuel.matricule}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{telephoneIt.mensuel.matricule}"/>
+                            </p:column>
+
+                            
+                            <p:column headerText="Nom Mesnuel" filterBy="#{telephoneIt.mensuel.nom}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{telephoneIt.mensuel.nom}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Prénom Mesnuel" filterBy="#{telephoneIt.mensuel.prenom}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{telephoneIt.mensuel.prenom}" />
+                            </p:column>
+                            
+                          
+                            <p:column headerText="Serie Telephone " filterFunction="#{filterMb.filterByX}" filterBy="#{telephoneIt.telephone.numSerieTel}">
+                                <h:outputText value="#{telephoneIt.telephone.numSerieTel}"/>
+                            </p:column>
+                            
+                             <p:column headerText="Marque " filterFunction="#{filterMb.filterByX}" filterBy="#{telephoneIt.telephone.marque}">
+                                 <h:outputText value="#{telephoneIt.telephone.marque}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Modèle " filterFunction="#{filterMb.filterByX}" filterBy="#{telephoneIt.telephone.modele}">
+                                 <h:outputText value="#{telephoneIt.telephone.modele}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Montant " filterFunction="#{filterMb.filterByX}" filterBy="#{telephoneIt.telephone.montantTel}">
+                                <h:outputText value="#{telephoneIt.telephone.montantTel}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Numero de ligne " filterFunction="#{filterMb.filterByX}" filterBy="#{telephoneIt.telephone.numLigneTel}">
+                                <h:outputText value="#{telephoneIt.telephone.numLigneTel}"/>
+                            </p:column>
+
+                            <p:column style="width:32px">
+                        
+                            </p:column>
+
+                        </p:dataTable>
+                    </h:form>
+
+
+
+
+
+                    <!-- ******************************************************************************
+                    ****************************** ajouter Telephone **********************************-->
+
+                    <p:dialog header="Nouvel Téléphone" widgetVar="dlg_Ajouter" minHeight="40" >
+                        <h:form id="formA">
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <h:outputText value="Numero Serie Téléphone" />
+                                <p:inputText required="true" requiredMessage="numero serie est obligatoir" value="#{gestion_telephone.telephoneToAdd.numSerieTel}"/>
+
+                                <h:outputText value="Marque Téléphone" />
+                                <p:inputText required="true"  requiredMessage="marque est obligatoir" value="#{gestion_telephone.telephoneToAdd.marque}"/>
+
+                                <h:outputText value="Modéle Téléphone" />
+                                <p:inputText required="true" requiredMessage="model est obligatoir*" value="#{gestion_telephone.telephoneToAdd.modele}"/>
+
+
+                            </h:panelGrid>
+
+                            <p:commandButton value="Ajouter" action="#{gestion_telephone.ajouter_Telephone()}" oncomplete="PF('dlg_Ajouter').hide()" ajax="true"  update=":form:tbl,:pannel"/>
+
+                        </h:form>
+                    </p:dialog>
+
+
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

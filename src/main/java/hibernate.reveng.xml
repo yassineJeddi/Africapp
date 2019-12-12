@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd">
+<hibernate-reverse-engineering>
+  <schema-selection match-catalog="Bilan"/>
+  <table-filter match-name="PPTEMP"/>
+  <table-filter match-name="ENGIN"/>
+  <table-filter match-name="CHANTIER_LOT"/>
+  <table-filter match-name="UTILISATEUR"/>
+  <table-filter match-name="DOSSIERSALARIE"/>
+  <table-filter match-name="ETAT_ENGIN"/>
+  <table-filter match-name="COULEURCASQUE"/>
+  <table-filter match-name="LOT"/>
+  <table-filter match-name="TYPEDOCUMENT"/>
+  <table-filter match-name="CIVILITE"/>
+  <table-filter match-name="NATIONALITE"/>
+  <table-filter match-name="FONCTION_TYPEDOCUMENT"/>
+  <table-filter match-name="PAYS"/>
+  <table-filter match-name="CHANTIER_ZONE"/>
+  <table-filter match-name="MODEPAIEMENT"/>
+  <table-filter match-name="POINTAGE_ENGIN"/>
+  <table-filter match-name="POINTAGE_ENGIN_LOT"/>
+  <table-filter match-name="SALARIE"/>
+  <table-filter match-name="CHANTIER_UTILISATEUR"/>
+  <table-filter match-name="FONCTION_LOT"/>
+  <table-filter match-name="SITUATIONFAMILIALE"/>
+  <table-filter match-name="CHANTIER_SALARIE"/>
+  <table-filter match-name="COULEURGILET"/>
+  <table-filter match-name="CHANTIER"/>
+  <table-filter match-name="ETAT"/>
+  <table-filter match-name="TAILLEHABILLEMENT"/>
+  <table-filter match-name="POINTURE"/>
+  <table-filter match-name="ZONE"/>
+  <table-filter match-name="TYPE"/>
+</hibernate-reverse-engineering>

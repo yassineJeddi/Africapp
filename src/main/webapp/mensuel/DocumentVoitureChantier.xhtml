@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="./mensuelTemplate.xhtml">
+            <ui:define name="arborescence">
+
+
+                <h:form>
+                    Mensuel > <h:commandLink action="/mensuel/AffecterVoitureChantier.xhtml"> Affecter une voiture à un chantier </h:commandLink> > <h:commandLink action="/mensuel/consultationVoitureChantier.xhtml">Consultation</h:commandLink> > <strong>Documents</strong>
+                </h:form>
+
+            </ui:define>
+
+
+            <ui:define name="content">
+                <p:panel id="pannel">
+
+                    <h4>Matricule du véhicule : <h:outputText value="#{vehiculeDocVoitureChantierMb.selectedVoitureChantier.matriculevoiture}">  </h:outputText></h4>
+                    <br />
+
+
+                    <h:form id="f1">
+                        
+                        <p:messages id="msgsM" closable="true" />
+
+
+                        <p:commandButton value="Ajouter un document" onclick="PF('dlg').show();" />
+
+
+                        <br /><br />
+
+                        <p:dataTable id="table"
+                                     rows="10"  paginator="true"  var="docIt" value="#{vehiculeDocVoitureChantierMb.lis_document_Voiture_Chantiers}"
+                                     rowKey="#{docIt.id}"  
+                                     editable="true" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}"  rowsPerPageTemplate="5,10,15" >
+
+                            <p:column headerText="Nom de document"   >
+
+                                <h:outputText value="#{docIt.titre}"/>
+
+                            </p:column>
+
+
+                            <p:column headerText="Commentaire"   >
+
+                                <h:outputText value="#{docIt.commentaire}"/>
+
+                            </p:column>
+
+
+
+                            <p:column headerText="Consulter">
+                                <p:commandButton icon="ui-icon-document"
+                                                 title ="Consulter Document" 
+                                                 action="#{vehiculeDocVoitureChantierMb.visualiser(docIt.chemin)}" 
+                                                 oncomplete="PF('consulterDoc').show()" update=":visuliser_id"/>
+                            </p:column>
+
+                            <p:column headerText="Document Téléchargé"   >
+                                <h:commandButton value="Download PDF" action="#{vehiculeDocVoitureChantierMb.downLoad(docIt)}" />
+                            </p:column>
+
+
+                            <p:column headerText="Supprimer"   >
+                                <p:commandButton icon="ui-icon-trash" action="#{vehiculeDocVoitureChantierMb.remove(docIt)}" update=":f1">
+                                    <p:confirm header="Confirmation" message=" Voulez Vous Vraiment Supprimer Ce Document ?" icon="ui-icon-alert" />
+                                </p:commandButton>
+
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                    <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                </p:confirmDialog>
+                            </p:column>
+
+                        </p:dataTable>
+                    </h:form>
+
+                    <p:dialog header="Nouveau Document" widgetVar="dlg" modal="true" showEffect="fade" 
+                              hideEffect="fade" resizable="false">
+
+                        <h:form id="form"  enctype="multipart/form-data">
+
+                            <h:panelGrid columns="3" cellpadding="5" >
+                                <h:outputText value="Titre" />
+                                <h:inputText value="#{vehiculeDocVoitureChantierMb.titre_doc_voitureChantier}"/>
+
+
+                                <p:fileUpload value="#{vehiculeDocVoitureChantierMb.uploadedFile_doc_voitureChantier}"
+                                              mode="simple"></p:fileUpload>
+                                <p:separator/>
+                            </h:panelGrid>
+
+                            <h:panelGrid columns="2" cellpadding="7"  >
+
+                                <h:outputText value="Commentaire" />
+                                <p:inputTextarea id= "Commentaire" value="#{vehiculeDocVoitureChantierMb.commentaire_doc_voitureChantier}" rows="5" cols="30"  maxlength="255" 
+                                                 counterTemplate="{0} characters remaining." autoResize="false" />
+
+                            </h:panelGrid>
+                            <p:commandButton value="Ajouter"  
+                                             actionListener="#{vehiculeDocVoitureChantierMb.saveDocumentChantier(vehiculeDocVoitureChantierMb.selectedVoitureChantier.id)}"
+                                             oncomplete="PF('dlg').hide()" ajax="false" update=":f1:tablem :f1:msgsM"/>
+                        </h:form>
+                    </p:dialog>
+                    <p:dialog  width="800px" resizable="false" modal="true" widgetVar="consulterDoc">
+                        <h:form id="visuliser_id">
+                           
+                             <p:media value="#{imageBean.documentMensuel}" width="1000px" height="500px" player="pdf"> 
+                                <f:param name="path" value="#{vehiculeDocVoitureChantierMb.selectedDoc}" />
+                            </p:media>
+                            
+                             
+
+                        </h:form>
+                    </p:dialog>
+
+                </p:panel>
+            </ui:define>
+
+
+        </ui:composition>
+    </h:body>
+</html>
+

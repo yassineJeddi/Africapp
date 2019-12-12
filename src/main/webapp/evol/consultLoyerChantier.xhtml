@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Consultation des loyers</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./Template.xhtml">
+            <ui:define name="arborescence">
+                <h:form>
+                    Mensuel > <h:commandLink action="/evol/affectLoyerChantier.xhtml"> Affecter Loyer à un chantier </h:commandLink> > <strong>Consultation</strong> 
+                </h:form>
+            </ui:define>
+            <ui:define name="content">
+                <p:panel id="pannel">
+                    <h:form id="f1">
+                        <p:messages id="msgsM" />
+                        <br />
+                        <div class="affectation-switch">
+                            <div class="btn-group" data-toggle="buttons">
+                                <p:commandButton class="btn btn-default" 
+                                                 value="Loyer Affectées à un Salarié "
+                                                 action="/evol/consultLoyer.xhtml?faces-redirect=true"
+                                                 actionListener="#{loyer_SalarieMb.afficherListeLoyerSalarie()}"
+                                                 update=":f1:table"/>
+                                <p:commandButton 
+                                    class="btn btn-switch active" 
+                                    value="Loyer Affectées à un Chantier"
+                                    />
+                                <p:commandButton  action="/evol/histoLoyerS.xhtml?faces-redirect=true"
+                                                  class="btn btn-default"                                                  
+                                                  actionListener="#{loyer_SalarieMb.loadHisto()}"
+                                                  value="Historique des affectations"
+                                                  />
+                            </div>
+                        </div>
+                        <br />
+                        <p:commandButton value="Rechercher chantier" 
+                                         onclick="PF('dlg').show();"
+                                         actionListener="#{loyer_ChantierMb.afficherChantiers()}"
+                                         update=":formA:tbl"/>
+                        <p:commandButton value="Réinitialiser"
+                                         actionListener="#{loyer_ChantierMb.afficherLoyerChantier()}" 
+                                         update=":f1:table, :f1" />
+                        <p:spacer width="50"/>
+                        <p:outputLabel value="Date Debut " />
+                        <p:spacer width="10"/>
+                        <p:calendar pattern="dd/MM/yyyy" id="btnDate" style="display: flex; width: 300px;" showOn="button" value="#{loyer_ChantierMb.date_Debut_Loyer_Chantier_To_Search}"/>
+                        <p:spacer width="10"/>
+                        <p:commandButton value="OK" update=":f1:table" actionListener="#{loyer_ChantierMb.rechercheParDateC()}"/>
+                        <p:spacer width="10"/>
+                        <br /><br />
+                            <h:commandLink>
+                                <!--<p:graphicImage style="width: 21px" value="../resources/img/excel.png" />-->
+                                <p:commandButton class="btn btn-switch active" value="Exporter" icon="ui-icon-arrowthickstop-1-s"/>
+                                <p:dataExporter type="xls" target=":f1:table" fileName="Affecter Loyer à un chantier" pageOnly="false"/>
+                            </h:commandLink>
+                        <p:dataTable id="table"
+                                     widgetVar="tableau"
+                                     rows="10"  paginator="true" rowKey="#{loyerCIt.id}"
+                                     editable="true" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" var="loyerCIt" value="#{loyer_ChantierMb.listeLChantier}" 
+                                     rowsPerPageTemplate="5,10,15"
+                                     rowStyleClass="#{loyerCIt.isEstArchive() eq true ? 'old' : null}">
+
+                            <p:column headerText="Identifiant" filterBy="#{loyerCIt.id}" filterFunction="#{filterMb.filterByX}"   >
+                                <h:outputText value="#{loyerCIt.id}"/>
+                            </p:column>
+                            <p:column headerText="N° Contrat"  filterBy="#{loyerCIt.numcontrat}" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{loyerCIt.numcontrat}"/>
+                            </p:column>
+                            <p:column headerText="Date Debut"    filterBy="#{loyerCIt.datedebut}" filterMatchMode="contains"  >
+                                <h:outputText value="#{loyerCIt.datedebut}">
+                                    <f:convertDateTime pattern="dd-MM-yyyy" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Date Fin"     filterBy="#{loyerCIt.dateFinContrat}" filterMatchMode="contains"  >
+                                <h:outputText value="#{loyerCIt.dateFinContrat}">
+                                    <f:convertDateTime pattern="dd-MM-yyyy" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Nom Chantiers"  filterBy="#{loyerCIt.chantier.get(0).code}" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{loyerCIt.chantier.get(0).code}"/>
+                            </p:column>
+                            <p:column headerText="Région"  filterBy="#{loyer_ChantierMb.selectChantier.region}" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{loyer_ChantierMb.selectChantier.region}"/>
+                            </p:column>
+                            <p:column headerText="Montant" filterBy="#{loyerCIt.montantloyer}" filterFunction="#{filterMb.filterByX}"   >
+                                <h:outputText value="#{loyerCIt.montantloyer}"/>
+                            </p:column>
+                            <p:column headerText="Nom du propriétaire" filterBy="#{loyerCIt.nomproprietaire}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{loyerCIt.nomproprietaire}" />
+                            </p:column>
+
+                            <p:column headerText="Mode de paiemenet"  filterBy="#{loyerCIt.modepaiment}" filterFunction="#{filterMb.filterByX}"  >
+                                <h:outputText value="#{loyerCIt.modepaiment}" />
+                            </p:column>
+                            <p:column headerText="Actions" class="text-center" style="width:250px;"   >
+                                <p:commandButton  title="Documents Loyer" 
+                                                  icon="ui-icon-folder-collapsed" 
+                                                  update=":formDocs" 
+                                                  oncomplete="PF('dlg4').show();" 
+                                                  actionListener="#{loyer_ChantierMb.initLoyerChantierToShowDocs(loyerCIt)}" />
+                                <p:commandButton title="Anuuler l'affectation"
+                                                 oncomplete="PF('addDatRenduDlg').show();" 
+                                                 update=":f1:table, :f1:msgsM, :formC"
+                                                 disabled="#{loyerCIt.isEstArchive() eq true}"
+                                                 icon="ui-icon-circle-close"  
+                                                 actionListener="#{loyer_ChantierMb.setSelectedLoyerC(loyerCIt)}"
+                                                 />
+                                
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+
+
+                    <p:dialog header="ajouter date de fin" widgetVar="addDatRenduDlg" resizable="false" minHeight="50" modal="true">
+                        <h:form id="formC">
+                            <h:panelGrid columns="3">
+                                <p:outputLabel for="button22" value="Date Rendu:" />
+                                <p:calendar pattern="dd/MM/yyyy" id="button22" 
+                                            maxdate="#{operationStock.dateOfToday}"
+                                            mindate="#{loyer_ChantierMb.dateDebutChan}" 
+                                            required="true" requiredMessage="veuillez entrer une date de fin" 
+                                            value="#{loyer_ChantierMb.dateRenduC}"  
+                                            showOn="button"   />
+                                <p:commandButton value="Valider"  oncomplete="PF('tableau').clearFilters()" action="#{loyer_ChantierMb.annulerAffectLoyerC()}" update=":f1:table, :f1:msgsM" onclick="PF('addDatRenduDlg').hide();" />
+                            </h:panelGrid>   
+                        </h:form>
+                    </p:dialog>
+
+
+                    
+                    
+                    <p:dialog header="Documents Loyer" widgetVar="dlg4" modal="true" resizable="false" width="1000">
+                        <h:form id="formDocs">          
+                            <p:growl id="msgsM" />
+                            <p:commandButton value="Ajouter un document" onclick="PF('dlgAjoutDoc').show();" />
+                            <br /><br />
+                            <p:dataTable id="table" var="docIt" value="#{loyer_ChantierMb.listDoc}"   rowKey="#{docIt.id}"  >
+                                <p:column headerText="Nom de document"   >
+                                    <h:outputText value="#{docIt.titre}"/>
+                                </p:column>
+                                <p:column headerText="Commentaire"   >
+                                    <h:outputText value="#{docIt.commentaire}"/>
+                                </p:column>
+                                <p:column headerText="Consulter">
+                                    <p:commandButton icon="ui-icon-document"
+                                                     title ="Consulter Document" 
+                                                     action="#{loyer_ChantierMb.visualiser(docIt.chemin)}" 
+                                                     oncomplete="PF('consulterDoc').show()" update=":visuliser_id"/>
+                                </p:column>
+                                <p:column headerText="Document Téléchargé"   >
+                                    <h:commandButton value="Download" action="#{vehiculeDocMb.downLoad(docIt)}"></h:commandButton>
+                                </p:column>
+                                <p:column headerText="Supprimer"   >
+                                    <p:commandButton icon="ui-icon-trash" action="#{loyer_ChantierMb.removeGest(docIt)}" update=":formDocs:table" >
+                                        <p:confirm header="Confirmation" message=" Voulez Vous Vraiment Supprimer Ce Document ?" icon="ui-icon-alert" />
+                                    </p:commandButton>
+                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                        <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                        <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                    </p:confirmDialog>
+                                </p:column>
+                            </p:dataTable>
+                        </h:form>
+                    </p:dialog>
+                    
+                    <p:dialog  width="800px" resizable="false" modal="true" widgetVar="consulterDoc">
+                        <h:form id="visuliser_id">
+                            <p:media value="#{imageBean.documentMensuel}" width="1000px" height="500px" player="pdf"> 
+                                <f:param name="path" value="#{loyer_ChantierMb.selectedDoc}" />
+                            </p:media>
+                        </h:form>
+                    </p:dialog>
+                    
+                    
+                    
+                    <p:dialog header="Nouveau Document" widgetVar="dlgAjoutDoc" modal="true" showEffect="fade" 
+                              hideEffect="fade" resizable="false">
+                        <h:form id="form5"  enctype="multipart/form-data">
+                            <h:panelGrid columns="3" cellpadding="5" >
+                                <h:outputText value="Titre" id="titre"/>
+                                <h:inputText value="#{vehiculeDocMb.titre}" 
+                                             />
+                                <p:fileUpload value="#{vehiculeDocMb.uploadedFile}" 
+                                              mode="simple"></p:fileUpload>
+                                <p:separator/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="2" cellpadding="7"  >
+                                <h:outputText value="Commentaire" />
+                                <p:inputTextarea id= "Commentaire" value="#{vehiculeDocMb.commentaire}" rows="5" cols="30"  maxlength="255" 
+                                                 counterTemplate="{0} characters remaining." autoResize="false" />
+                            </h:panelGrid>
+                            <p:commandButton value="Ajouter"
+                                             actionListener="#{vehiculeDocMb.saveDocumentLoyer(loyer_ChantierMb.loyerToShow)}"
+                                             oncomplete="PF('dlgAjoutDoc').hide()"
+                                             ajax="false" update=":formDocs, :formDocs:table" />
+                        </h:form>
+                    </p:dialog>
+                    
+                    
+
+                    <p:dialog header="Rechercher Chantier Par " width="80%" widgetVar="dlg" minHeight="40" >
+                        <h:form id="formA">
+
+                            <br /><br />
+                            <p:dataTable id="tbl" style="width:100%;" var="chantierIt" value="#{loyer_ChantierMb.chantiers}" 
+                                         rowKey="#{chantierIt.prjapId}"
+                                         rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" 
+                                         scrollable="true" scrollHeight="150"    >
+                                <p:ajax event="rowSelect"/>
+
+                                <p:column headerText="Code Chantier"  filterBy="#{chantierIt.codeNovapaie}" filterFunction="#{filterMb.filterByX}"  >
+                                    <h:outputText  value="#{chantierIt.codeNovapaie}"/>
+                                </p:column>
+
+
+                                <p:column headerText="Nom Chantier"  filterBy="#{chantierIt.code}" filterFunction="#{filterMb.filterByX}"  >
+                                    <h:outputText  value="#{chantierIt.code}"/>
+                                </p:column>
+
+                                <p:column headerText="Région" filterBy="#{chantierIt.region}" filterFunction="#{filterMb.filterByX}"   >
+                                    <h:outputText  value="#{chantierIt.region}"/>
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton icon="ui-icon-search" onclick="PF('dlg').hide();" 
+                                                     update=":f1" 
+                                                     actionListener="#{loyer_ChantierMb.consultLoyerChantier(chantierIt)}">
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                            <p:commandButton value="Annuler"  onclick="PF('dlg').hide();"  ajax="true"/>
+
+
+                        </h:form>
+
+                    </p:dialog>
+
+                </p:panel>
+            </ui:define>
+
+
+
+        </ui:composition>
+
+    </body>
+
+
+
+
+
+</html>

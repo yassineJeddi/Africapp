@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+    <h:head>
+        <title>Consultation des loyers</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+
+            <ui:define name="arborescence">
+
+
+
+                <h:form>
+                    Mensuel > <strong> visualiser les absences des mensuels </strong>
+                </h:form>
+
+            </ui:define>
+
+            <ui:define name="content">
+                <p:panel id="pannel">
+                    <h:form id="f1">
+
+                        <p:commandButton value="Rechercher salarié" class="btn btn-switch active" onclick="PF('dlg').show();" />
+                        <p:spacer width="10"/>
+
+
+                        <p:outputLabel for="button" 
+                                       value="Date d'affectation :" 
+                                       />
+                        <p:calendar pattern="dd/MM/yyyy" 
+                                    id="button" 
+                                    class="cust_calendar"
+                                    value="#{absenceMb.date}" 
+                                    showOn="button" 
+                                    />
+
+                        <p:spacer width="10"/>
+                        <p:commandButton value="OK" update=":pannel, :f1:table" actionListener="#{absenceMb.searchByDate()}"/>
+                        <p:commandButton value="Reinitialiser" update=":pannel, :f1:table" actionListener="#{absenceMb.reinitSearch()}"/>
+                        <br /><br />
+
+                        <p:dataTable id="table"
+                                     rows="10"  paginator="true" rowKey="#{absenceIt.id}" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" var="absenceIt" value="#{absenceMb.absences}" rowsPerPageTemplate="5,10,15"
+                                     rowStyleClass="#{absenceIt.checked == 2 ? 'old' : null }"
+                                     >
+
+                            <p:column headerText="Date de début" filterBy="#{absenceIt.dateDebut}"   >
+                                <h:outputText value="#{absenceIt.dateDebut}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+
+
+                            <p:column headerText="Nom"  filterBy="#{absenceIt.salarie.nom}" >
+                                <h:outputText value="#{absenceIt.salarie.nom}"/>
+                            </p:column>
+
+                            <p:column headerText="Prénom"  filterBy="#{absenceIt.salarie.prenom}" >
+                                <h:outputText value="#{absenceIt.salarie.prenom}"/>
+                            </p:column>
+
+
+
+                            <p:column headerText="Fonction" filterBy="#{absenceIt.salarie.fonction.fonction}" filterFunction="#{filterMb.filterByX}"  >
+                                <h:outputText  value="#{absenceIt.salarie.fonction.fonction}">
+
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Jour de début" filterBy="#{absenceMb.converdateDay(absenceIt.dateDebut)}"  >
+                                <h:outputText value="#{absenceMb.converdateDay(absenceIt.dateDebut)}" >
+                                </h:outputText>
+                            </p:column>
+                            
+                            <p:column headerText="Heure de début" filterBy="#{absenceMb.converdateHour(absenceIt.dateDebut)}"  >
+                                <h:outputText value="#{absenceMb.converdateHour(absenceIt.dateDebut)}h" >
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Jour de fin" filterBy="#{absenceMb.converdateDay(absenceIt.dateFin)}">
+                                <h:outputText value="#{absenceMb.converdateDay(absenceIt.dateFin)}" >
+                                </h:outputText>
+                            </p:column>
+                            
+                            <p:column headerText="Heure de fin" filterBy="#{absenceMb.converdateHour(absenceIt.dateFin)}"  >
+                                <h:outputText value="#{absenceMb.converdateHour(absenceIt.dateFin)}h" >
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Type" filterBy="#{absenceIt.checked == 1 ? 'Validé' : 'Annulé' }">
+                                <h:outputText value="#{absenceIt.checked == 1 ? 'Validé' : 'Annulé' }" >
+                                </h:outputText>
+                            </p:column>
+
+                        </p:dataTable>
+                    </h:form>
+
+
+
+                    <p:dialog resizable="false" header="Rechercher Salarié Par " widgetVar="dlg" minHeight="40" width="1000px" modal="true">
+                        <h:form id="formA">                          
+
+
+                            <br /><br />
+                            <p:dataTable id="tbl"  var="mensuelIt" value="#{absenceMb.searchMensuelList}" 
+                                         rowKey="#{mensuelIt.id}" rows="10"  paginator="true"  paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"  
+                                         scrollable="true" scrollHeight="150" >
+                                <p:ajax event="rowSelect"/>
+
+
+                                <p:column headerText="Matricule Bénéficiaire" filterBy="#{mensuelIt.matricule}" filterFunction="#{filterMb.filterByX}"  >
+                                    <h:outputText value="#{mensuelIt.matricule}" />
+                                </p:column>
+
+
+                                <p:column headerText="Nom Bénéficiaire" filterBy="#{mensuelIt.nom}"  filterFunction="#{filterMb.filterByX}">
+                                    <h:outputText value="#{mensuelIt.nom}" />
+                                </p:column>
+
+                                <p:column headerText="Prénom Bénéficiaire" filterBy="#{mensuelIt.prenom}"  filterFunction="#{filterMb.filterByX}" >
+                                    <h:outputText value="#{mensuelIt.prenom}" />
+                                </p:column>
+
+                                <p:column headerText="Date Début"  >
+                                    <h:outputText value="#{constanteMb.getDateFormatFR(mensuelIt.dateCreation)}" />
+                                </p:column>
+                                <p:column headerText="Action">
+                                    <p:commandButton icon="ui-icon-check" onclick="PF('dlg').hide();" update=":f1:table" actionListener="#{absenceMb.absenceByIdMesuel(mensuelIt.id)}" >
+                                        <f:setPropertyActionListener value="#{mensuelIt}"  target="#{absenceMb.mensuel}" />
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                            <p:commandButton value="Annuler"  onclick="PF('dlg').hide();"  ajax="true" update=":f1"/>
+
+
+                        </h:form>
+
+                    </p:dialog>
+
+                </p:panel>
+            </ui:define>
+
+
+
+        </ui:composition>
+
+    </body>
+
+
+
+
+
+</html>

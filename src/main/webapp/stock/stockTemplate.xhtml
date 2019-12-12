@@ -1,0 +1,295 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>TGCC-INTEGRATION</title>
+        <meta charset="UTF-8"></meta>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" ></meta>
+        <meta http-equiv="refresh" content="#{session.maxInactiveInterval};url=#{request.contextPath}/login.xhtml"/>        <link rel="stylesheet" type="text/css" href="../resources/bower_components/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="../resources/bower_components/bootstrap/dist/css/bootstrap-theme.min.css" />
+        <link rel="stylesheet" type="text/css" href="../resources/css/main.css" />
+        <link rel="stylesheet" type="text/css" href="../resources/lib/font-awesome-4.3.0/css/font-awesome.min.css" />
+        <link rel="stylesheet" type="text/css" href="../resources/bower_components/bootstrap-submenu/dist/css/bootstrap-submenu.min.css" />
+        <link rel="stylesheet" type="text/css" href="../resources/bower_components/bootstrap-submenu/dist/css/bootstrap-submenu.min.css.map" />
+        <link rel="icon" type="img/ico" href="../resources/img/logo.ico" />
+        <style type="text/css">
+            body .ui-buttonset .ui-button {
+
+                background-color: #712D35;
+                border-color: #712D35;
+                color: #FFF;
+            }
+        </style>
+    </h:head>
+
+    <h:body>
+        <div id="wrapper">
+
+            <!-- Sidebar -->
+            <div id="sidebar-wrapper">
+
+                <div id="logo-zone">
+                    <img class="logo-img center center-block" alt="logo-tgcc" src="../resources/img/logo.png" />
+                </div>
+
+                <div>
+                    <ul class="sidebar-nav">
+
+                        <li>
+                            <div>
+                                <span>
+                                    <div class="row user_connected">
+
+                                        <div class="col-lg-3 user"></div>
+                                        <div style="margin-left: -35px;color:#fff;" class="col-lg-9">#{authentification.get_connected_user().nom} #{authentification.get_connected_user().prenom}</div>
+
+                                    </div>
+
+
+
+                                </span>
+
+                            </div>
+
+                        </li>
+                        <li>
+                            <a href="../projet/chantier.xhtml">Chantier 
+                                <div class="icon-arrow-menu"></div>
+                            </a>
+                        </li>
+                        <li >
+                            <a href="../achat/nouvelledemandeappro.xhtml">Achat 
+                                <div class="icon-arrow-menu"></div>
+                            </a>
+                        </li>
+                        <li>
+                            <div>
+                                <a href="../evol/salaries.xhtml">Quinzainiers 
+                                    <div class="icon-arrow-menu"></div>
+                                </a>
+
+                            </div>
+
+                        </li>
+
+                        <li>
+                            <a href="../mensuel/mensuel.xhtml">Mensuels
+                                <div class="icon-arrow-menu"></div>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="../engin/pointage.xhtml">Engins
+                                <div class="icon-arrow-menu"></div>
+                            </a>
+                        </li>
+
+                        <li class="active">
+                            <a href="../stock/stock.xhtml">Stock
+                                <div class="icon-arrow-menu"></div>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="../administration/Importer.xhtml">Administration
+                                <div class="icon-arrow-menu"></div>
+                            </a>
+                        </li>
+                        
+                         <li>
+                            <a href="../config/Gestion_Citerne.xhtml">Configuration
+                                <div class="icon-arrow-menu"></div>
+                            </a>
+                        </li>
+
+
+                    </ul>
+                </div>
+
+            </div>
+            <!-- /#sidebar-wrapper -->
+
+            <!-- Page Content -->
+            <div id="page-content-wrapper">
+
+
+
+                <div class="menu-vertical">
+                    <div class="row">
+
+                             <div class="col-lg-1 col-sm-1 col-xs-1 col-md-1">
+                            <a href="#menu-toggle" id="menu-toggle">
+                                <div class="menu-ham">
+                                    <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+                                </div>
+                            </a>
+
+                        </div>
+
+
+
+                        <div class="col-lg-9 col-sm-9 col-xs-9 col-md-9">
+                            <div class="row nav-row">
+                                <ul class="nav nav-pills nav-tgcc" role="menu" aria-labelledby="dropdownMenu">
+
+                                    <li class="nav-divider nav-divider-atl-header"></li>
+
+                                    <li class="nav-tgcc  vertical-center" role="maintenance">
+
+                                        <a href="stock.xhtml" class="trigger right-caret" tabindex="0" aria-expanded="false" >
+                                            <span class="menu-logo"><img src="../resources/img/operation_stock.png" /></span> 
+                                            <span class="text-menu visible-lg visible-md"> Affectations &amp; Consommations</span> 
+                                        </a>
+
+                                    </li>
+
+
+                                    <li class="nav-divider nav-divider-atl-header"></li>
+
+                                    <li class="nav-tgcc  vertical-center" role="maintenance">
+
+                                        <a href="stock.xhtml" class="trigger right-caret" tabindex="0" data-toggle="dropdown" aria-expanded="false" >
+                                            <span class="menu-logo"><img src="../resources/img/Transfert_stock.png" /></span> 
+                                            <span class="text-menu visible-lg visible-md">Gestion des Transferts</span> 
+                                            <span class="fa fa-caret-down fa-fw" ></span>
+                                        </a>
+
+                                        <ul class="dropdown-menu">
+
+
+
+                                            <li > <a href="gestionTransferts.xhtml" tabindex="0">Effectuer des Transferts</a></li>
+                                            <li > <a href="receptionsTransferts.xhtml" tabindex="0">Transferts Recus</a></li>
+                                            <li > <a href="traitementTransferts.xhtml" tabindex="0">Administration Transferts</a></li>
+                                            <li > <a href="ecartStock.xhtml" tabindex="0">Gestion des Ecarts</a></li>
+
+
+
+                                        </ul>
+
+                                    </li>
+
+                                    <li class="nav-divider nav-divider-atl-header"></li>
+
+
+                                    <li class="nav-tgcc vertical-center" role="maintenance">
+
+
+                                        <a href="historique_affectations.xhtml" class="trigger right-caret" tabindex="0" aria-expanded="false" >
+                                            <span class="menu-logo"><img src="../resources/img/operation_stock.png" /></span> 
+                                            <span class="text-menu visible-lg visible-md"> Consultation de l'historique</span> 
+                                        </a>
+
+
+                                    </li>
+
+                                
+
+
+
+
+
+
+                                </ul>
+                            </div>
+                        </div>
+
+
+                        <form id="form1" action="${request.contextPath}/j_spring_security_logout" method="post">
+                            <div class="col-lg-2 col-sm-2 col-xs-2 col-md-2">
+                                <div class="logout">
+                                    <div style="color: #FFF;" class="visible-lg visible-md">
+
+                                        <a href="javascript:;" onclick="document.getElementById('form1').submit();">Logout</a>
+
+                                    </div>
+                                    <div class="logout-small visible-xs visible-sm">
+                                        <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+
+                <div class="arborescence">
+
+                </div>
+
+                <div class="content">
+                    <p:ajaxStatus  oncomplete=""/>
+                    <ui:insert name="content">Content</ui:insert>
+                    <p:dialog widgetVar="alerteDialog" closable="true">
+                        <div class="alert alert-danger alert-dismissable">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                            <h4><i class="icon fa fa-ban"></i> Oups!</h4>
+                            Veuillez choisir une date dans le calendrier.
+                        </div>
+                    </p:dialog>
+                </div>
+
+                <!--                <br />  
+                                <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">T</a>-->
+            </div>
+            <!-- /#page-content-wrapper -->
+
+        </div>
+        <!-- /#wrapper -->
+
+        <!-- jQuery -->
+        <!--<script src="resources/js/jquery.js"></script>-->
+
+        <!-- Bootstrap Core JavaScript -->
+        <!--<script src="../resources/js/bootstrap.min.js"></script>-->
+
+        <!-- jQuery -->
+        <!--<script type="text/javascript" src="resources/bower_components/jquery/dist/jquery.min.js"></script>-->        
+
+        <!-- Bootstrap Core JavaScript -->
+        <script src="../resources/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+        <!-- Menu Toggle Script -->
+        <script>
+                                            $("#menu-toggle").click(function (e) {
+                                                e.preventDefault();
+                                                $("#wrapper").toggleClass("toggled");
+                                            });
+
+                                            $("input[id$='filter']").on('keypress', function (event) {
+                                                if (event.keyCode === 13) {
+                                                    event.preventDefault();
+                                                    console.log('annuler');
+                                                }
+                                            });
+                                            
+                                            /*
+                                            $(document).ready(function () {
+                                                $("input.hasDatepicker").parent().css("display", "flex");
+                                                $("input.hasDatepicker").on('keyup keypress keydown', function (event) {
+                                                    event.preventDefault();
+                                                    PF('alerteDialog').show();
+                                                    console.log('annuler modifier date manualement ');
+                                                });
+                                            });
+                                            function updateDate() {
+                                                console.log("entrer after update");
+                                                $("input.hasDatepicker").parent().css("display", "flex");
+                                                $("input.hasDatepicker").on('keyup keypress keydown', function (event) {
+                                                    event.preventDefault();
+                                                    PF('alerteDialog').show();
+                                                    console.log('annuler modifier date manualement ');
+                                                });*/
+                                            }
+
+        </script>
+
+
+
+    </h:body>
+</html>

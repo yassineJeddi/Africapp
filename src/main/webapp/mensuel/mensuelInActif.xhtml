@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <h:head>
+        <link rel="stylesheet" type="text/css" href="../resources/css/main.css" />
+        <title>Liste des mensuels Inactif</title>
+    </h:head>
+    <body>
+        <ui:composition template="./mensuelTemplate.xhtml">
+            <ui:define name="arborescence">
+                <h:form>
+                    <strong> Mensuel  </strong>
+                </h:form>
+            </ui:define>
+            <ui:define name="content">
+                <p:panel id="pannelPE">
+                    <h:form id="form">
+                        <div class="row">
+                            <div class="col-lg-2">
+                                <p:outputLabel  value="Matricule : " />
+                                <p:inputText class="value_dis" value="#{inactifMensuelMb.mensuelToSearch.matricule}"/>
+                            </div>
+                            <div class="col-lg-2">
+                                <p:outputLabel value="Nom : " />
+                                <p:inputText class="value_dis" value="#{inactifMensuelMb.mensuelToSearch.nom}"/>
+                            </div>
+                            <div class="col-lg-2">
+                                <p:outputLabel  value="Prénom : " />
+                                <p:inputText class="value_dis"  value="#{inactifMensuelMb.mensuelToSearch.prenom}"/>
+                            </div>
+                            <div class="col-lg-2">
+                                <p:outputLabel value="Fonction : "  />
+                                <p:selectOneMenu class="value_dis" filter="true" filterMatchMode="contains" value="#{inactifMensuelMb.fonction}" style="width: 150px;">
+                                    <f:selectItem itemLabel="" itemValue="-1"/>
+                                    <f:selectItems value="#{fonctionServMb.fonctions}" var="f"
+                                                   itemLabel="#{f.fonction}" itemValue="#{f.fonction}"/>
+                                </p:selectOneMenu>
+                            </div>
+                            <div class=" col-lg-2">
+                                <br />
+                                <p:commandButton class="btn btn-switch active" update=":tablePE:tbl" value="Rechercher"  action="#{inactifMensuelMb.rechercherMensuelByFon()}"  />
+                            </div>
+                        </div>
+                    </h:form>
+                    <br /><br />
+                    <h:form id="tablePE">
+                        <p:messages id="msgsM" closable="true" />
+                        <p:dataTable id="tbl" var="mensuelIt" value="#{inactifMensuelMb.l_mensuels}" rowKey="#{mensuelIt.id}"
+                                     rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" paginatorPosition="bottom">
+                            <p:column sortBy="#{mensuelIt.matricule}" filterBy="#{mensuelIt.matricule}" headerText="Matricule"  filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{mensuelIt.matricule}" />
+                            </p:column>
+
+                            <p:column sortBy="#{mensuelIt.nom}" headerText="Nom" filterBy="#{mensuelIt.nom}"  filterFunction="#{filterMb.filterByX}"  >
+                                <h:outputText value="#{mensuelIt.nom}" />
+                            </p:column>
+
+                            <p:column sortBy="#{mensuelIt.prenom}" filterBy="#{mensuelIt.prenom}" headerText="Prénom" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{mensuelIt.prenom}" />
+                            </p:column>
+
+                            <p:column sortBy="#{mensuelIt.fonction.fonction}" filterBy="#{mensuelIt.fonction.fonction}"  headerText="Fonction" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{mensuelIt.fonction.fonction}" />
+                            </p:column>
+
+                            <p:column headerText="CIN" sortBy="#{mensuelIt.cin}" filterBy="#{mensuelIt.cin}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{mensuelIt.cin}" />
+                            </p:column>
+
+                            <p:column  headerText="CNSS" sortBy="#{mensuelIt.cnss}" filterBy="#{mensuelIt.cnss}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{mensuelIt.cnss}"  />
+                            </p:column>
+
+                            <!--                            <p:column headerText="Statut">
+                                                            <h:outputText value="# {mensuelIt.statut eq 0 ? 'inactif':'actif'}" />
+                                                        </p:column>-->
+
+                            <p:column headerText="Date de Début" sortBy="#{constanteMb.getDateFormatFR(mensuelIt.dateDebut)}" filterBy="#{constanteMb.getDateFormatFR(mensuelIt.dateDebut)}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{constanteMb.getDateFormatFR(mensuelIt.dateDebut)}" />
+                            </p:column>
+                            <p:column headerText="Actions">
+
+                                <p:commandButton title="Détails du mensuel" icon="ui-icon-extlink"  actionListener="#{documentMb.listDocuementsBy(mensuelIt)}" action="ficheMensuel.xhmtl?faces-redirect=true" >
+                                    <f:setPropertyActionListener value="#{mensuelIt}"  target="#{documentMb.mensuelAffect}" />
+                                </p:commandButton> 
+
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>
+
+
+
+

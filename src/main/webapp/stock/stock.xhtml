@@ -1,0 +1,798 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+
+    <h:head>
+        <title>Gestion Stock</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./enginTemplate.xhtml">
+            <ui:define name="content">
+
+
+                <p:panel id="pannelAF">
+
+                    <h:form id="header_f">
+
+                        <!--**********************************************************************************************
+                        ***********************    TOP BAR    ************************************************************
+                        ********************************************************************************************** -->
+
+                        <h:panelGrid id="panelf" columns="15" cellpadding="1">   
+                            <!--<p:commandButton disabled="true" value="Ajouter Article" icon="ui-icon-plus" type="button" onclick="PF('addStock_dialog').show();" />-->
+                            <p:outputLabel  value="Chantier" />
+                            <p:selectOneMenu id="chantierChanger" class="value_dis" value="#{operationStock.chantierGlobal}" 
+                                             filter="true" filterMatchMode="contains" >
+                                <p:ajax  event="change" listener="#{operationStock.globalChantielçrManager(8)}"
+                                         onstart="PF('blocker').show();"
+                                         oncomplete="PF('blocker').hide();"
+                                         update=" :tableAF:tbl2, :header_f,:searchStock " />
+                                <f:selectItem itemLabel="" itemValue="-1"/>
+                                <f:selectItems value="#{chantier.chantiers}" var="C"
+                                               itemLabel="#{C.code}" itemValue="#{C.id}"/>
+                            </p:selectOneMenu> 
+
+
+                            <p:spacer width="5px" />
+
+                            <!-- export to spreadsheet -->                    
+                            <h:commandLink>
+                                <p:commandButton disabled="#{operationStock.noChantierSelectedYet}" 
+                                                 class="btn btn-switch active" value="Exporter Excel" icon="ui-icon-arrowthickstop-1-s" type="button" />
+                                <p:dataExporter type="xls" target=" :tableAF:tbl2" fileName="Etat du Stock #{operationStock.chantierGlobal}" pageOnly="false" />
+                            </h:commandLink>
+
+                            <p:spacer width="5px" />
+
+
+
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                <p:commandButton value="Synchroniser" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                            </p:confirmDialog>
+
+
+                            <!-- chantier selection -->
+
+                            <p:spacer width="10px" />
+
+                            <p:blockUI widgetVar="blocker" block=" :tableAF:tbl2" >
+                                chargement en cours ... <br />
+                                <p:graphicImage url="https://upload.wikimedia.org/wikipedia/commons/5/53/Loading_bar.gif"/>
+                            </p:blockUI>
+
+
+
+
+
+                        </h:panelGrid>
+
+                        <p:spacer width="10px" />
+                        <!-- select one button switcher - utils[1] -->
+                    </h:form>
+
+                    <br />
+
+
+
+
+
+                    <h:form id="searchStock">
+
+                        <div class="row">
+                            <div class="col-lg-2">
+                                <p:outputLabel  value="Référence : " />
+                                <p:inputText class="value_dis"  style="width: 140px;" value="#{operationStock.searchCode}"/>
+                            </div>
+
+                            <div class="col-lg-2">
+                                <p:outputLabel value="Famille 1 : " />
+                                <p:inputText class="value_dis"  style="width: 140px;" value="#{operationStock.searchFam}"/>
+                            </div>
+
+                            <div class="col-lg-2">
+                                <p:outputLabel  value="Famille 2 : " />
+                                <p:inputText class="value_dis"  style="width: 140px;" value="#{operationStock.searchSFam}"/>
+                            </div>
+
+                            <div class="col-lg-2">
+                                <p:outputLabel  value="Famille 3 : " />
+                                <p:inputText class="value_dis"   style="width: 140px;" value="#{operationStock.searchSSFam}"/>
+                            </div>
+
+                            <div class="col-lg-2">
+                                <p:outputLabel  value="Designation : " />
+                                <p:inputText class="value_dis"  style="width: 140px;" value="#{operationStock.searchDes}"/>
+                            </div>
+
+
+                            <div class=" col-lg-2 row">
+                                <br />
+                                 <div class=" col-lg-5">
+                                <p:commandButton class="btn btn-switch active"
+                                                   style="width: 80px; font-size: 10px; margin-left: -12px !important; padding-left: 0px !important;"
+                                                 update=":tableAF:tbl2" value="Rechercher" 
+                                                 action="#{operationStock.rechercherArticles()}"                                                  
+                                                 disabled="#{operationStock.noChantierSelectedYet}" 
+                                                 />
+                                 </div>
+                                
+                                   <div class=" col-lg-5">
+                                  <p:commandButton class="btn btn-switch active" 
+                                                   style="width: 80px; font-size: 10px; margin-left: 5px !important; padding-left: 0px !important;"
+                                                 update=":tableAF:tbl2, :searchStock" value="Reinitialiser" 
+                                                 action="#{operationStock.rechercherArticlesInit()}"                                                  
+                                                 disabled="#{operationStock.noChantierSelectedYet}" 
+                                                 />
+                                   </div>
+                            </div>
+                        </div>
+
+
+                    </h:form>
+
+                    <!--**********************************************************************************************
+                    **************************************       BASE ARTICLES    **********************************
+                      ********************************************************************************************  -->
+
+                    <h:form id="tableAF">
+                        <p:messages id="msgsM" 
+                                    showDetail="true" 
+                                    closable="true" 
+                                    />
+
+                        <p:dataTable  id="tbl2" widgetVar="stockTable" var="articleIt"
+                                      value="#{operationStock.articlesInChantier}" 
+                                      emptyMessage="Pas d'articles sur ce chantier. Veuillez séléctionner un chantier ou synchroniser "
+                                      rows="10"  paginator="true"
+                                      filteredValue="#{operationStock.filteredArtsInChan}"
+                                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+
+                            <f:facet name="header">
+
+                            </f:facet>
+
+
+                            <p:column headerText="Réference Article" 
+
+                                      >
+                                <h:outputText 
+                                    value="#{articleIt.articleId.codeArticle}" 
+                                    />
+                            </p:column>
+
+                            <p:column headerText="Famille 1" 
+
+                                      >
+                                <h:outputText
+                                    value="#{articleIt.fam}" 
+                                    />
+                            </p:column>
+
+                            <p:column headerText="Famille 2"
+
+                                      >
+                                <h:outputText value="#{articleIt.sfam}" 
+                                              />
+                            </p:column> 
+
+                            <p:column headerText="Famille 3"
+
+                                      >
+                                <h:outputText value="#{articleIt.ssfam}" />
+                            </p:column>
+
+                            <p:column headerText="Designation"  >
+                                <h:outputText value="#{articleIt.articleId.designation}" 
+                                              />
+                            </p:column>   
+
+
+
+
+                            <p:column headerText="Quantité" >
+                                <h:outputText value="#{operationStock.convertToDoubleDecimals(articleIt.quantiteChantierStock)}" 
+                                              />
+                            </p:column> 
+
+                            <p:column headerText="Unité" >
+                                <h:outputText value="#{articleIt.articleId.unite}" 
+                                              />
+                            </p:column> 
+
+                            <p:column exportable="false" 
+                                      headerText="Actions" 
+                                      style="text-align: center"
+                                      >                       
+                                <p:commandButton style="width:32px; height: 32px" 
+                                                 process="tbl2" id="aff" 
+                                                 title="Afféctation"
+                                                 update=" :form_affectation:display,  :form_affectation"
+                                                 value="" icon="ui-icon-arrowthickstop-1-e" 
+                                                 oncomplete="PF('aff_dialog').show();" 
+                                                 actionListener="#{operationStock.updateCurrentArticle(articleIt,0)}"
+                                                 />
+
+                                <p:commandButton style="width:32px; height: 32px" 
+                                                 process="tbl2"  id="det" 
+                                                 title="Détail des affectations"
+                                                 update=" :form_detailz:tbl4"
+                                                 value="" icon="ui-icon-extlink"
+                                                 oncomplete="PF('detailz_dialog').show();"
+                                                 action="#{operationStock.updateCurrentArticle(articleIt,1)}" 
+                                                 />
+
+
+
+
+                            </p:column>
+
+                            <f:facet name="footer">  
+
+                            </f:facet>
+
+                        </p:dataTable>
+                    </h:form>
+
+
+                    <p:dialog closable="true" modal="true" 
+                              header="Ecart Stock" widgetVar="ecartDialog" 
+                              minHeight="40" width="800" resizable="false">
+                        <h:form id="form_ecart">
+                            <p:panelGrid columns="2" style="width:100%;margin:10px 0px" 
+                                         id="panel_ecart" layout="grid"
+                                         styleClass="ui-panelgrid-blank">
+                                <f:facet name="header">
+                                    <p:outputLabel value="Ecart de Stock" />
+                                </f:facet>
+
+                                <h:outputText value="Article: "/>
+                                <p:outputLabel value="#{operationStock.articleToCheck.articleId.codeArticle} -- #{operationStock.articleToCheck.articleId.designation}" />
+
+                                <h:outputText value="Chantier: "/>
+                                <p:outputLabel value="#{operationStock.articleToCheck.chantierId.codeNovapaie} -- #{operationStock.articleToCheck.chantierId.code}" />
+
+                                <h:outputText value="Quantité: "/>
+                                <p:outputLabel value="#{operationStock.articleToCheck.quantiteChantierStock} #{operationStock.articleToCheck.articleId.unite}"  />
+
+                                <h:outputText value="Quantité Divalto: "/>
+                                <p:outputLabel value="#{operationStock.qteDivaStock}" />
+
+                            </p:panelGrid>
+
+                        </h:form>                        
+                    </p:dialog>
+
+                    <!-- Affectation Dialog Box -->
+
+                    <p:dialog showEffect="fade" hideEffect="fade" header="Affectation" 
+                              modal="true" widgetVar="aff_dialog" minHeight="40" 
+                              width="500px"
+                              draggable="false"
+                              resizable="false"
+                              >
+                        <h:form id="form_affectation">                    
+                            <p:messages id="msgsAF" showDetail="true" autoUpdate="true" closable="true" />
+                            <h:panelGrid id="display" columns="3" cellpadding="4">
+                                <p:outputLabel value="code Article: " />
+                                <p:spacer width="20" />
+                                <p:outputLabel value="#{operationStock.article.codeArticle}" />
+
+                                <p:outputLabel value="Famille: " />
+                                <p:spacer width="20" />
+                                <p:outputLabel value="#{operationStock.articleIter.fam}" />
+
+                                <p:outputLabel value="Sous Famille: " />
+                                <p:spacer width="20" />
+                                <p:outputLabel value="#{operationStock.articleIter.sfam}" />
+
+                                <p:outputLabel value="Designation: " />
+                                <p:spacer width="20" />
+                                <p:outputLabel value="#{operationStock.article.designation}" />
+
+                                <p:outputLabel value="Quantité Disponible: " />
+                                <p:spacer width="20" />
+                                <p:outputLabel value="#{operationStock.qtePopup} #{operationStock.article.unite}" />
+
+                                <p:outputLabel for="number" value="Quantité:" style="font-weight:bold"/>   
+                                <p:spacer width="20" />
+                                <p:inputText requiredMessage="Veuillez spécifier une quantité" 
+                                             validatorMessage="La quantité specifiée n'est pas valide"
+                                             disabled="#{operationStock.isInputDisabled}" 
+                                             required="true" id="number" value="#{operationStock.quantiteToAffect}" label="Number">
+                                    <f:validateDoubleRange minimum="0.00001" maximum="#{operationStock.chantierArticleQSelected.quantiteChantierStock}" />
+                                </p:inputText>
+
+                                <p:outputLabel value="Zone: "  />
+                                <p:spacer width="20" />
+                                <p:selectOneMenu disabled="#{operationStock.isInputDisabled}"  
+                                                 requiredMessage="veuillez selectioner une zone!" 
+                                                 required="true" value="#{operationStock.zoneAffectId}">
+                                    <f:selectItems value="#{operationStock.zonesByChantier}" var="y"  
+                                                   itemLabel="#{y.libeleZone}" itemValue="#{y.idZone}" />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel value="Lot: "  />
+                                <p:spacer width="20px" />
+                                <p:selectOneMenu disabled="#{operationStock.isInputDisabled}" requiredMessage="veuillez selectioner un lot!" required="true" value="#{operationStock.lotAffectId}">
+                                    <f:selectItems value="#{LotCfg.lots}" var="l"   
+                                                   itemLabel="#{l.libelle}" itemValue="#{l.id}" />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="button" value="Date d'affectation:" />
+                                <p:spacer width="20" />
+                                <p:calendar  
+                                    disabled="#{operationStock.isInputDisabled}" 
+                                    requiredMessage="veuillez selectioner une date!" 
+                                    required="true" id="button" 
+                                    value="#{operationStock.dateAffect}" 
+                                    maxdate="#{operationStock.dateOfToday}"
+                                    mindate="#{operationStock.dateOfToday}"
+                                    showOn="button"  pattern="dd/MM/yyyy" />
+
+                            </h:panelGrid>                   
+
+                            <p:commandButton class="btn btn-switch active  pull-right" 
+                                             rendered="#{operationStock.isOKshown}" 
+                                             update=":form_affectation, :bonFormM" 
+                                             value="Génerer Bon" 
+                                             oncomplete="PF('consulterDocCC').show();"
+                                             action="#{operationStock.showBon}" >
+                            </p:commandButton>
+                            <p:commandButton class="btn btn-switch active pull-right"
+                                             rendered="#{operationStock.isOKshown}" 
+                                             value="Fermer" onclick="PF('aff_dialog').hide();">
+                            </p:commandButton>
+
+                            <p:commandButton class="btn btn-switch active pull-right" 
+                                             rendered="#{operationStock.isCommandShown}"
+                                             update=":tableAF:tbl2, :form_affectation" 
+                                             value="Valider l'affectation" 
+                                             action="#{operationStock.addAffectationStock()}">
+                            </p:commandButton>
+
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog showEffect="fade"  hideEffect="fade" modal="true" header="Bon d'affectation" widgetVar="consulterDocCC">
+                        <h:form id="bonFormM">
+                            <p:media value="#{imageBean.bon}" width="100%" height="500px" player="pdf"> 
+                                <f:param name="path" value="#{operationStock.codeCurrent}" />
+                            </p:media>
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- end of affectation dialog box -->
+
+                    <!-- TRANSFER DIALOG -->
+
+                    <p:dialog showEffect="fade"  hideEffect="fade" header="Transfer" modal="true" widgetVar="transfer_dialog" minHeight="40" >
+                        <h:form id="form_transfer">
+                            <p:messages id="msgsTR" />
+                            <h:panelGrid id="display" columns="2" cellpadding="4">
+
+                                <h:outputText value="code" />
+                                <h:outputText value="#{operationStock.article.codeArticle}" />
+
+                                <h:outputText value="Designation:" />
+                                <h:outputText value="#{operationStock.article.designation}" />
+
+                                <h:outputLabel for="number" value="Quantité" style="font-weight:bold"/>                    
+                                <p:inputText  disabled="#{operationStock.isInputDisabled}" required="true" id="number" 
+                                              value="#{operationStock.quantiteToTransfer}" label="Number">
+                                    <f:validateDoubleRange minimum="0.00001" maximum="#{operationStock.chantierArticleQSelected.quantiteChantierStock}" />
+                                </p:inputText>
+
+                                <h:outputText value="Chantier Client"  />
+                                <p:selectOneMenu disabled="#{operationStock.isInputDisabled}" required="true" value="#{operationStock.chantierRecepteurId}" filter="true" filterMatchMode="contains" >
+                                    <f:selectItems value="#{chantier.chantier}" var="y"   
+                                                   itemLabel="#{y.code}" itemValue="#{y.id}" />
+                                </p:selectOneMenu>                        
+
+                                <p:outputLabel for="button" value="Date de transfert :" />
+                                <p:calendar disabled="#{operationStock.isInputDisabled}" required="true" id="button" value="#{operationStock.dateTransfert}" maxdate="#{operationStock.dateOfToday}" showOn="button" pattern="dd/MM/yyyy" />
+
+                            </h:panelGrid>
+                            <p:commandButton class="btn btn-switch active" rendered="#{operationStock.isOKshown}" update="" value="OK" oncomplete="PF('transfer_dialog').hide();"  >
+                            </p:commandButton>
+                            <p:commandButton class="btn btn-switch active" rendered="#{operationStock.isCommandShown}" update=" :tableAF:tbl2,   :form_transfer:display,  :form_transfer,  :form_transfer:msgsTR" value="Transferer"  action="#{operationStock.addOneTransfer()}" >
+                            </p:commandButton>
+                        </h:form>
+                    </p:dialog>
+
+
+                    <!-- END OF TRANSFER DIALOG -->
+
+
+
+                    <p:dialog showEffect="fade" 
+                              hideEffect="fade" resizable="false" 
+                              width="1200px" modal="true" 
+                              header="Details d'affectations de l'article"
+                              widgetVar="detailz_dialog"
+                              draggable="false"
+                              minHeight="40"
+                              >
+                        <h:form id="form_detailz">
+                            <p:messages id="msgsM2" showDetail="true" closable="true"  />
+                            <p:dataTable  id="tbl4" widgetVar="detailsTable" 
+                                          var="zoneArticleQIt"                                   
+                                          value="#{operationStock.zoneArticleQs}"  
+                                          emptyMessage="Pas d'affectations pour cet article."
+                                          rows="10"  paginator="true"                                   
+                                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+
+                                <f:facet name="header">
+                                    Article : <h:outputText value="#{operationStock.article.designation}" />
+                                </f:facet>
+
+                                <p:ajax event="rowSelect"  />
+
+
+
+                                <p:column headerText="Zone" filterBy="#{zoneArticleQIt.zoneId.libeleZone}">
+                                    <h:outputText value="#{zoneArticleQIt.zoneId.libeleZone}" />
+                                </p:column>
+
+                                <p:column headerText="Lot" filterBy="#{zoneArticleQIt.lotId.libelle}">
+                                    <h:outputText value="#{zoneArticleQIt.lotId.libelle}" />
+                                </p:column>
+
+                                <p:column headerText="Quantité Disponible">
+                                    <h:outputText value="#{operationStock.convertToDoubleDecimals(zoneArticleQIt.quantiteZoneStock)} #{zoneArticleQIt.articleId.unite}" />
+                                </p:column>
+
+                                <p:column headerText="Action">
+                                    <p:commandButton process="tbl4"  update=" :form_conso_gs:display,  :form_conso_gs" value="Consommer"
+                                                     icon="ui-icon-check" oncomplete="PF('conso_dialog').show();"
+                                                     actionListener="#{operationStock.updateCurrentZoneArticleQ(zoneArticleQIt)}"  />
+                                    <p:commandButton process="tbl4"  update=" :form_retour_gs:display,  :form_retour_gs" 
+                                                     value="Reintegrer" icon="ui-icon-arrowthickstop-1-w"
+                                                     oncomplete="PF('retour_dialog').show();" 
+                                                     actionListener="#{operationStock.updateCurrentZoneArticleQ(zoneArticleQIt)}"  />
+                                </p:column>
+                            </p:dataTable>
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- Retour d'affectation dialog box -->            
+
+                    <p:dialog showEffect="fade" 
+                              draggable="false"
+                              modal="true"
+                              resizable="false" hideEffect="fade" header="Retour d'affectation" 
+                              widgetVar="retour_dialog" minHeight="40">
+                        <h:form id="form_retour_gs">
+                            <p:messages id="msgsRetour" autoUpdate="true" showDetail="true" closable="true"  />
+                            <h:panelGrid id="display" columns="2" cellpadding="4">
+
+                                <h:outputText value="Article"  />
+                                <h:outputText value="#{operationStock.zoneArticleQSelected.articleId.designation}" />
+
+                                <h:outputText value="Provenance de la Zone"  />
+                                <h:outputText value="#{operationStock.zoneArticleQSelected.zoneId.libeleZone}" />
+
+                                <h:outputText value="Provenance du Lot"  />
+                                <h:outputText value="#{operationStock.zoneArticleQSelected.lotId.libelle}" />
+
+
+                                <h:outputLabel for="number" value="Quantité à retourner *:" style="font-weight:bold"/>                    
+                                <p:inputText disabled="#{operationStock.isInputDisabled}" required="true" id="number" value="#{operationStock.quantiteToReturn}" label="Number">
+                                    <f:validateDoubleRange minimum="0.00001" maximum="#{operationStock.zoneArticleQSelected.quantiteZoneStock}" />
+                                </p:inputText>
+
+
+                                <p:outputLabel for="button" value="Date de Retour :" />
+                                <p:calendar disabled="#{operationStock.isInputDisabled}" 
+                                            mindate="#{operationStock.dateOfToday}"
+                                            required="true" id="button" value="#{operationStock.dateRetour}" 
+                                            pattern="dd/MM/yyyy" maxdate="#{operationStock.dateOfToday}" 
+                                            showOn="button" />
+
+                            </h:panelGrid>
+                            <p:commandButton class="btn btn-switch active"
+
+                                             rendered="#{operationStock.isOKshown}"  
+                                             value="OK"
+                                             oncomplete="PF('retour_dialog').hide();"  >
+                            </p:commandButton>
+                            <p:commandButton class="btn btn-switch active" rendered="#{operationStock.isCommandShown}"
+                                             update=" :form_detailz:tbl4,  :form_retour_gs:msgsRetour, :form_retour_gs,  :form_retour_gs:display,   :tableAF:tbl2" 
+                                             value="Retourner" action="#{operationStock.returnStock()}" />
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- Consommation dialog box -->            
+
+
+                    <p:dialog showEffect="fade"  resizable="false" hideEffect="fade" 
+                              modal="true" draggable="false"
+                              header="Consommation Stock" widgetVar="conso_dialog" minHeight="40">
+                        <h:form id="form_conso_gs">
+                            <p:messages id="msgsConso"  showDetail="true" closable="true"  />
+                            <h:panelGrid id="display" columns="2" cellpadding="4">
+
+                                <h:outputText value="Article"  />
+                                <h:outputText value="#{operationStock.zoneArticleQSelected.articleId.designation}" />
+
+                                <h:outputText value="Zone"  />
+                                <h:outputText value="#{operationStock.zoneArticleQSelected.zoneId.libeleZone}" />
+
+                                <h:outputText value="Lot"  />
+                                <h:outputText value="#{operationStock.zoneArticleQSelected.lotId.libelle}" />
+
+
+                                <h:outputLabel for="number" value="Quantité à consommer *:" style="font-weight:bold"/>                    
+                                <p:inputText disabled="#{operationStock.isInputDisabled}" required="true" id="number" value="#{operationStock.quantiteToConsomme}" label="Number">
+                                    <f:validateDoubleRange minimum="0.00001" maximum="#{operationStock.zoneArticleQSelected.quantiteZoneStock}" />
+                                </p:inputText>
+
+                                <p:outputLabel for="button" value="Date de Consommation :" />
+                                <p:calendar disabled="#{operationStock.isInputDisabled}" 
+                                            required="true" id="button" value="#{operationStock.dateConsommation}" 
+                                            requiredMessage="date de consommation est obligatoire"
+                                            pattern="dd/MM/yyyy" mindate="#{operationStock.dateOfToday}" maxdate="#{operationStock.dateOfToday}" 
+                                            showOn="button" />
+
+                            </h:panelGrid>
+                            <p:commandButton class="btn btn-switch active" 
+                                             rendered="#{operationStock.isOKshown}"
+                                             value="OK" 
+                                             oncomplete="PF('conso_dialog').hide();"
+                                             >
+                            </p:commandButton>
+                            <p:commandButton class="btn btn-switch active"
+                                             rendered="#{operationStock.isCommandShown}"
+                                             update=" :form_conso_gs,  :form_conso_gs:display,  :form_detailz:tbl4, :form_conso_gs:msgsConso,  :tableAF:tbl2"
+                                             value="Consommer"   
+                                             actionListener="#{operationStock.addConsommationStock()}" />
+                        </h:form>
+                    </p:dialog>
+
+
+
+
+
+                    <!-- transfert dialog box -->            
+
+
+
+                    <p:dialog showEffect="fade" resizable="false" hideEffect="fade" width="1000px" modal="true"  header="Articles à transférer" widgetVar="detailz2_dialog" minHeight="40" >
+                        <h:form id="form_detailz2">
+
+                            <p:messages id="msgsM3" showDetail="true" closable="true"  />
+
+                            <p:dataTable id="tbl5" 
+                                         emptyMessage="Veuillez ajouter des articles à ce transfert."
+                                         var="articleTr" 
+                                         value="#{operationStock.listOfArticleQuantite}"
+                                         style="margin-bottom:0"
+                                         rows="10"  paginator="true"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                                         rowsPerPageTemplate="5,10,15">
+
+                                <f:facet name="header">
+                                    Ajouter des articles au transfèrt: 
+                                </f:facet>
+
+                                <p:column headerText="Code Article">
+                                    <p:outputLabel value="#{articleTr.article.codeArticle}" />
+                                </p:column>
+
+                                <p:column headerText="Designation">
+                                    <p:outputLabel value="#{articleTr.article.designation}" />
+                                </p:column>
+
+                                <p:column headerText="Quantité à transférer">
+                                    <p:outputLabel value="#{articleTr.quantite}" />
+                                </p:column>
+
+                                <p:column headerText="Actions" style="text-align: center">                       
+                                    <p:commandButton style="width:30px; height: 30px" process="tbl5" id="af2f" update=" :form_detailz2:tbl5" value="" icon="ui-icon-circle-close" oncomplete="" action="#{operationStock.removeArticleTRM(articleTr)}"  />
+                                    <p:tooltip id="toolTipFade" for="af2f" value="Supprimer" />
+
+                                    <p:commandButton style="width:30px; height: 30px" process="tbl5"  id="d2et" update=" :form_detailz2:tbl5,  :form_transferM22:display" value="" icon="ui-icon-pencil" oncomplete="PF('transferM22_dialog').show();" actionListener="#{operationStock.initArticleTRMToEdit(articleTr)}"  />
+                                    <p:tooltip id="toolTipFade2" for="d2et" value="Modifier" />
+
+                                </p:column>
+
+                                <f:facet name="footer">
+                                    <p:commandButton process="tbl5" update=" :form_transferM:display" icon="ui-icon-plus" value="Ajouter un Article" oncomplete="PF('transferM_dialog').show()" actionListener="#{operationStock.initAddVars}" />
+                                    <p:commandButton process="tbl5" update=" :form_transferMV" icon="ui-icon-arrow-1-e" value="Procéder au Transfert" onclick="PF('detailz2_dialog').hide()" oncomplete="PF('transferMV_dialog').show()" disabled="#{operationStock.isReadyToTransfer eq false}" actionListener="#{operationStock.switchi}"/>
+                                </f:facet>
+                            </p:dataTable>
+                        </h:form>
+                    </p:dialog>
+
+
+
+                    <p:dialog showEffect="fade"  hideEffect="fade" header="Transfer" modal="true" widgetVar="transferM_dialog" minHeight="40" >
+                        <h:form id="form_transferM">
+                            <p:growl id="msgsTRM" showDetail="true" autoUpdate="false"  />
+
+                            <p:panelGrid id="display" columns="3">
+
+                                <p:outputLabel value="Code Article:" />
+                                <h:outputText  value="#{operationStock.designationToSearch2}" />
+                                <p:commandButton style="width:32px; height: 32px" process="" id="trM" update=" :form_transferM:display,  :form_detailz3:tbl6 " value="" icon="ui-icon-search" oncomplete="PF('multiArticleDialog').show()" actionListener="#{operationStock.loadArticlesByDes}" />
+
+
+                                <p:outputLabel value="Quantité Disponible:" style="font-weight: bold; padding-left: 0px !important;" />
+                                <h:outputText style="font-weight: bold" value="#{operationStock.chantierArticleQToTransferM.quantiteChantierStock}" />
+                                <p:tooltip id="toolTipFade" for="trM" value="Ajouter un autre article" /> 
+
+                                <p:outputLabel value="Quantité à transférer:" />
+                                <h:inputText required="true" requiredMessage="veuillez entrer une quantité" value="#{operationStock.quantiteToTransferM}">
+                                    <f:validateDoubleRange  minimum="0.00001" maximum="#{operationStock.chantierArticleQToTransferM.quantiteChantierStock}" />
+                                </h:inputText>
+                                <p:outputLabel/>
+
+                                <p:commandButton class="btn btn-switch active" style="width: 100%" update=" :form_detailz2:tbl5, :form_transferM:display,  :form_transferM:msgsTRM " value="Ajouter" action="#{operationStock.addToListOfTransferM}"  >
+                                </p:commandButton>
+
+                                <p:commandButton  class="btn btn-switch active" style="width: 100%" update="" value="Annuler" oncomplete="PF('transferM_dialog').hide()">
+                                </p:commandButton>
+                            </p:panelGrid>
+
+
+
+                        </h:form>
+                    </p:dialog>
+
+
+
+                    <p:dialog showEffect="fade"  hideEffect="fade" header="Modifier l'article" modal="true" widgetVar="transferM22_dialog" minHeight="40" >
+                        <h:form id="form_transferM22">
+                            <p:growl id="growlTRM" showDetail="true"   />
+
+                            <p:panelGrid styleClass="panelGridStyle" id="display" columns="2">
+
+                                <p:outputLabel value="Code Article:" />
+                                <p:outputLabel value="#{operationStock.articleTRM2.article.codeArticle}" />
+
+                                <p:outputLabel value="Quantité Disponible:" />
+                                <h:outputText value="#{operationStock.articleTRM2.quantiteTotalDispo}" />
+
+                                <p:outputLabel value="Quantité à transférer" />
+                                <h:inputText value="#{operationStock.quantiteToTransferM}" >
+                                    <f:validateDoubleRange minimum="0.00001" maximum="#{operationStock.articleTRM2.quantiteTotalDispo}" />
+                                </h:inputText>
+
+                                <p:commandButton class="btn btn-switch active" style="width: 100%"  oncomplete="PF('transferM22_dialog').hide()" update=" :form_detailz2:tbl5, :form_transferM22:display,  :form_transferM22:growlTRM " value="Ajouter" action="#{operationStock.addToListOfTransferMAfterEdit()}"  >
+                                </p:commandButton>
+
+                                <p:commandButton class="btn btn-switch active" style="width: 100%" update="" value="Annuler" oncomplete="PF('transferM22_dialog').hide()">
+                                </p:commandButton>
+
+                            </p:panelGrid>
+                        </h:form>
+                    </p:dialog>
+
+
+
+                    <p:dialog showEffect="fade"  hideEffect="fade" header="Transfer" modal="true" widgetVar="transferMV_dialog" minHeight="40" >
+                        <h:form id="form_transferMV">
+                            <p:growl id="msgsTRMV" autoUpdate="false" showDetail="true"  />
+
+                            <h:panelGrid id="display" columns="2" cellpadding="4">
+
+
+                                <h:outputText value="Chantier Client"  />
+                                <p:selectOneMenu required="true" value="#{operationStock.chantierRecepteurId}" filter="true" filterMatchMode="contains"  disabled="#{operationStock.isNotReadyToShowBon eq false}">
+                                    <f:selectItems value="#{chantierServMb.chantiers}" var="y"   
+                                                   itemLabel="#{y.code}" itemValue="#{y.id}" />
+                                </p:selectOneMenu>  
+
+                                <p:outputLabel for="button" value="Date de transfert :" />
+                                <p:calendar  disabled="#{operationStock.isNotReadyToShowBon eq false}" required="true" requiredMessage="la date est obligatoire"  id="button" value="#{operationStock.dateTransfert}" maxdate="#{operationStock.dateOfToday}" showOn="button" pattern="dd/MM/yyyy" />
+
+                            </h:panelGrid>
+
+
+
+                            <p:commandButton class="btn btn-switch active" disabled="#{operationStock.isNotReadyToShowBon eq false}" update=":form_transferMV,  :form_transferMV:msgsTRMV,  :tableAF:tbl2"  oncomplete="" value="Valider le transfert" action="#{operationStock.addTransferStock()}"  >
+                            </p:commandButton>
+
+                            <p:commandButton class="btn btn-switch active" update=" :bonFormR" disabled="#{operationStock.isNotReadyToShowBon}" oncomplete="PF('consulterDocCR').show()" value="Afficher Bon" actionListener="#{operationStock.bonTransfert()}"  >
+                            </p:commandButton>
+
+                            <p:commandButton  class="btn btn-switch active" update="" value="Annuler" oncomplete="PF('transferMV_dialog').hide()">
+                            </p:commandButton>
+
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog showEffect="fade"  hideEffect="fade" modal="true" header="Bon de transfert" widgetVar="consulterDocCR">
+                        <h:form id="bonFormR">
+                            <object type="application/pdf"  internalinstanceid="5"
+                                    height="500px" 
+                                    width="1000px" >
+
+                            </object>
+                        </h:form>
+                    </p:dialog>
+
+
+                    <p:dialog showEffect="fade"  resizable="false" hideEffect="fade" width="1000px" header="Ajouter Articles" widgetVar="multiArticleDialog" modal="true"   minHeight="50">
+                        <h:form id="form_detailz3">  
+                            <p:growl id="trang" showDetail="true" autoUpdate="false"/>
+                            <p:dataTable id="tbl6" 
+                                         emptyMessage="Pas d'article sur le chantier choisi."
+                                         var="article6" 
+                                         value="#{operationStock.articlesInChantier}"
+                                         style="margin-bottom:0"
+                                         selectionMode="single"                                
+                                         selection="#{operationStock.chantierArticleQToTransferM}"
+                                         rowKey="#{article6.codeChantierStockQ}"
+                                         rows="5"  paginator="true"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+
+                                <f:facet name="header">
+                                    Ajouter des articles au transfèrt: 
+                                </f:facet>
+
+                                <p:column headerText="Code Article" filterMatchMode="contains" filterBy="#{article6.articleId.codeArticle}">
+                                    <h:outputText value="#{article6.articleId.codeArticle}" />
+                                </p:column>
+
+                                <p:column headerText="Famille" filterMatchMode="contains" filterBy="#{article6.articleId.fam1}">
+                                    <h:outputText value="#{article6.articleId.fam1}" />
+                                </p:column>
+
+                                <p:column headerText="Sous Famille" filterMatchMode="contains" filterBy="#{article6.articleId.fam2}">
+                                    <h:outputText value="#{article6.articleId.fam2}" />
+                                </p:column>
+
+                                <p:column headerText="Designation" filterMatchMode="contains" filterBy="#{article6.articleId.designation}">
+                                    <h:outputText value="#{article6.articleId.designation}" />
+                                </p:column>
+
+                                <p:column headerText="Quantité Disponible" sortBy="#{article6.quantiteChantierStock}">
+                                    <h:outputText value="#{article6.quantiteChantierStock}" />
+                                </p:column>
+
+                                <f:facet name="footer">
+                                    <p:commandButton process="tbl6" update=" :form_transferM:display,  :form_detailz3:trang" icon="ui-icon-search" value="Ajouter" oncomplete="PF('multiArticleDialog').hide()" action="#{operationStock.initTransferM()}" />
+                                </f:facet>
+
+                            </p:dataTable>
+
+                        </h:form>
+                    </p:dialog>
+
+                </p:panel>
+
+
+                <!--                <p:tabView id="stockTabView">
+                
+                
+                                     TAB I: gestion de stock du chantier 
+                                    <ui:include src="gestionStock.xhtml">stock</ui:include>
+                                     END OF TAB I     
+                
+                                     TAB II: gestion des affectations intra-chantier 
+                                    <ui:include src="affectations.xhtml">affectations</ui:include>
+                                     END OF TAB II 
+                
+                                     TAB III: gestion des transfrts inter-chantiers 
+                                    <ui:include src="transferts.xhtml">transferts</ui:include>
+                                     END OF TAB III                     
+                
+                                </p:tabView>-->
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>
+
+
+
+

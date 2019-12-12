@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+    <h:head>
+        <title>Gestion Des Citerne</title>
+    </h:head>
+
+    <body>
+
+
+        <ui:composition template="./configTemplate.xhtml">
+
+            <ui:define name="arborescence">
+
+
+
+                <h:form>
+                    Configuration > <strong>Migration des documents (Admin)</strong> 
+                </h:form>
+
+            </ui:define>
+
+
+
+
+            <ui:define name="content">
+
+
+                <p:panel id="pannel">
+                    <h:form id="form">
+
+                        <p:messages id="msgsM" autoUpdate="false" closable="true" />
+
+                        <br /><br />
+
+                        <div class="row">
+
+                            <div class="col-lg-offset-1 col-lg-4">
+
+                                <div>
+                                    <p:commandButton style="width: 100%" 
+                                                      id="block4T"
+                                                     class="btn btn-default"
+                                                     value="Copier Documents" 
+                                                     action="#{mensuelMb.copyDocs()}"
+                                                     />
+                                   
+                                </div>
+                                <br/>
+                                <div>
+                                    <p:commandButton style="width: 100%" 
+                                                      id="blockTTT"
+                                                     class="btn btn-default"
+                                                     value="Copier Contrats Légalisés" 
+                                                     action="#{mensuelMb.copyContratsL()}"
+                                                     />
+                                </div>
+                                <br/>
+                                <div>
+                                    <p:commandButton style="width: 100%" 
+                                                      id="blockTT"
+                                                     class="btn btn-default"
+                                                     value="Copier Contrats Non-Légalisés" 
+                                                     action="#{mensuelMb.copyContratsNonL()}"
+                                                     />
+
+                                </div>
+                                <br/>
+                                <div>
+                                    <p:commandButton style="width: 100%"
+                                                     id="blockT"
+                                                     class="btn btn-default"
+                                                     value="Copier Bons de Livraisons" 
+                                                     action="#{achatMb.copyBL()}"
+                                                     onstart="PF('block').show;"
+                                                     oncomplete="PF('block').hide();"
+                                                     />
+
+                                </div>
+                                
+                                <p:blockUI block="form" trigger="blockT, blockTT, blockTTT, block4T" widgetVar="block">
+                                chargement en cours ... <br />
+                                <p:graphicImage url="https://upload.wikimedia.org/wikipedia/commons/5/53/Loading_bar.gif"/>
+                            </p:blockUI>
+                            </div>
+                        </div>
+
+                        <br /><br />
+
+
+
+                    </h:form>
+
+
+
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+
+        <script type="text/javascript">
+            function start() {
+                PF('startDocLoader').disable();
+
+                window['progress'] = setInterval(function () {
+                    var pbClient = PF('progress'),
+                            oldValue = pbClient.getValue(),
+                            newValue = oldValue + 10;
+
+                    pbClient.setValue(pbClient.getValue() + 10);
+
+                    if (newValue === 100) {
+                        clearInterval(window['progress']);
+                    }
+
+
+                }, 1000);
+            }
+
+            function cancel() {
+                clearInterval(window['progress']);
+                PF('progress').setValue(0);
+                PF('startDocLoader').enable();
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,340 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+
+    <h:head>
+        <title>Gestion Stock</title>
+
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./stockTemplate.xhtml">
+            <ui:define name="content">
+
+                <h:form>
+                    <h:panelGrid id="gridTR2" columns="15" cellpadding="1">
+                        <p:spacer width="10px" height="0px"/>
+                        <p:outputLabel  value="Chantier" />
+                        <p:selectOneMenu  class="value_dis" value="#{operationStock.chantierGlobal}" filter="true" filterMatchMode="contains" >
+                            <p:ajax listener="#{operationStock.globalChantierManager(20)}" update=":tableTR:tbl3R" />
+                            <f:selectItem itemLabel="" itemValue="-1"/>
+                            <f:selectItems value="#{chantier.chantiers}" var="C"
+                                           itemLabel="#{C.code}" itemValue="#{C.id}"/>
+                        </p:selectOneMenu> 
+                    </h:panelGrid>                    
+                </h:form>
+                <br/>
+
+
+                <p:panel id="pannelPE3">
+
+                    <h:form id="outside_form">
+                        <h:panelGrid id="gridTR" columns="15" cellpadding="1">
+
+                        </h:panelGrid> 
+
+                    </h:form>
+
+                    <br/>
+
+                    <h:form id="tableTR">
+                        <p:messages id="msgsM" showDetail="true" closable="true" />                       
+
+                        <p:dataTable id="tbl3R" var="entryIt" emptyMessage="Aucune réceptions récente" value="#{operationStock.transfersToProcess}"  
+                                     rowKey="#{entryIt.codeTransferManager}"
+                                     sortMode="multiple"
+                                     rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" 
+                                     >
+
+                            <f:facet name="header">
+                                Traitement des Transferts
+                            </f:facet>
+
+
+                            <p:column filterBy="#{entryIt.transferToManage.referenceTransfer}" 
+                                      headerText="Code Transfert">
+                                <h:outputText value="#{entryIt.transferToManage.referenceTransfer}" />
+                            </p:column>
+
+                            <p:column filterBy="#{entryIt.transferToManage.dateTransferStock}" 
+                                      headerText="Date Transfert">
+                                <h:outputText value="#{entryIt.transferToManage.dateTransferStock}" />
+                            </p:column>
+
+                            <p:column filterBy="#{entryIt.transferToManage.dateReceptionStock}" 
+                                      headerText="Date Réception">
+                                <h:outputText value="#{entryIt.transferToManage.dateTransferStock}" />
+                            </p:column>
+
+                            <p:column filterBy="#{entryIt.transferToManage.chantierEmetteurId.code}" 
+                                      headerText="Chantier Emetteur">
+                                <h:outputText value="#{entryIt.transferToManage.chantierEmetteurId.code}" />
+                            </p:column>
+
+                            <p:column filterBy="#{entryIt.transferToManage.chantierRecepteurId.code}" 
+                                      headerText="Chantier Récepteur">
+                                <h:outputText value="#{entryIt.transferToManage.chantierRecepteurId.code}" />
+                            </p:column>
+
+                            <p:column filterBy="#{entryIt.transferToManage.articleId.designation}" 
+                                      headerText="Désignation Article">
+                                <h:outputText value="#{entryIt.transferToManage.articleId.designation}" />
+                            </p:column>
+
+                            <p:column filterBy="#{entryIt.entryComment}" 
+                                      headerText="Commentaire">
+                                <h:outputText value="#{entryIt.entryComment}" />
+                            </p:column>
+                            
+                            
+                             <p:column filterBy="#{entryIt.isProcessed}" 
+                                      headerText="Difference">
+                                 <h:outputText value="#{operationStock.convertToDoubleDecimals(entryIt.transferToManage.quantite - entryIt.transferToManage.quantiteReception)}" />
+                            </p:column>
+                            
+                            <p:column  
+                                      headerText="Unité">
+                                <h:outputText value="#{entryIt.transferToManage.articleId.unite}" />
+                            </p:column>
+
+
+                            <p:column filterBy="#{entryIt.isProcessed}" 
+                                      headerText="Traité"
+                                      >
+                                <h:outputText value="#{entryIt.isProcessed eq 'true'? 'oui' : 'non'}" />
+                            </p:column>
+                            
+                            
+
+                            <p:column headerText="Actions" exportable="false">     
+
+                                <p:commandButton disabled="#{entryIt.isProcessed}"
+                                                 title="Traiter ce transfert" 
+                                                 style="width:30px; height: 30px" 
+                                                 process="tbl3R"  id="d2en00"
+                                                 update=":form_reception,    :form_reception:display, :tableTR:tbl3R"
+                                                 value="" icon="ui-icon-check" 
+                                                 oncomplete="PF('rec_dialog').show();" 
+                                                 actionListener="#{operationStock.trait(entryIt)}" 
+                                                 />
+
+                               
+
+
+
+
+
+                            </p:column>
+
+                            <f:facet name="footer">
+                            </f:facet>
+
+                        </p:dataTable>
+
+
+                    </h:form>
+
+
+                    <p:dialog modal="true" header="Bon de transfert" widgetVar="consulterDocCRR">
+                        <h:form id="bonFormRR">
+                            <p:media value="#{imageBean.bon}" width="100%" height="500px" player="pdf"> 
+                                <f:param name="path" value="#{operationStock.codeCurrent}" />
+                            </p:media>
+                        </h:form>
+                    </p:dialog>
+
+
+
+
+
+
+
+
+
+
+                    <p:dialog width="1000px" height="" resizable="false" modal="true" header="Articles du Transfert" widgetVar="detailsBon" minHeight="40">
+                        <h:form id="details_bon_tr">
+                            <p:dataTable id="tbl8" 
+                                         var="article8" 
+                                         value="#{operationStock.listOfArticlesInTransfer}"
+                                         style="margin-bottom:0"
+                                         rows="5"  paginator="true"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+
+                                <f:facet name="header">
+                                    Details du transfert 
+                                </f:facet>
+
+                                <p:column headerText="Code Article" filterMatchMode="contains" filterBy="#{article8.articleId.codeArticle}">
+                                    <h:outputText value="#{article8.articleId.codeArticle}" />
+                                </p:column>
+
+                                <p:column headerText="Designation" filterMatchMode="contains" filterBy="#{article8.articleId.designation}">
+                                    <h:outputText value="#{article8.articleId.designation}" />
+                                </p:column>
+
+                                <p:column headerText="Quantité" sortBy="#{article8.quantite}">
+                                    <h:outputText value="#{article8.quantite}" />
+                                </p:column>
+
+                                <p:column headerText="Quantité Rec." sortBy="#{article8.quantiteReception}">
+                                    <h:outputText value="#{article8.quantiteReception}" />
+                                </p:column>
+
+                                <p:column headerText="Quantité Ret." sortBy="#{article8.quantiteRetour}">
+                                    <h:outputText value="#{article8.quantiteRetour}" />
+                                </p:column>
+
+                                <p:column headerText="Chantier Destinataire" sortBy="#{article8.chantierRecepteurId.code}">
+                                    <h:outputText value="#{article8.chantierRecepteurId.code}" />
+                                </p:column>
+
+                                <p:column headerText="Status Réception Article" sortBy="#{article8.statusTransferId.libStatusTransfer}">
+                                    <h:outputText value="#{article8.statusTransferId.libStatusTransfer}" />
+                                </p:column>
+
+
+
+
+
+                                <f:facet name="footer">
+
+                                </f:facet>
+
+                            </p:dataTable>
+                        </h:form>
+                    </p:dialog>
+
+
+                    <p:dialog resizable="false" draggable="false" modal="true" header="Affecter à un chantier" widgetVar="rec_dialog" minHeight="40" >
+                        <h:form id="form_reception">
+                            <p:messages id="msgsRec" closable="true"/>
+                            <h:panelGrid id="display" columns="2" cellpadding="4">
+
+                                <p:outputLabel  value="Chantier" />
+                                <p:selectOneMenu  class="value_dis" value="#{operationStock.chantierToReaffect}" filter="true" filterMatchMode="contains" >
+                                    <f:selectItem itemLabel="" itemValue="-1"/>
+                                    <f:selectItems value="#{operationStock.chantiersTrait}" var="C"
+                                                   itemLabel="#{C.code}" itemValue="#{C.id}"/>
+                                </p:selectOneMenu> 
+
+                            </h:panelGrid>
+                            <br/>
+                            <p:commandButton class="btn btn-switch active pull-right"  update="" value="Annuler" onclick="PF('rec_dialog').hide();"  >
+                            </p:commandButton>
+                            <p:commandButton  class="btn btn-switch active pull-right"  oncomplete="PF('rec_dialog').hide();" update=" :tableTR:tbl3R :form_reception,  :form_reception:msgsRec, :tableTR:msgsM" value="Valider Affectation"  action="#{operationStock.processTransfer}" >
+                            </p:commandButton>
+
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog modal="true" header="Details du transfert" widgetVar="ret_dialog" minHeight="40" >
+                        <h:form id="form_retour">
+                            <p:messages id="msgsRet" closable="true"/>
+                            <h:panelGrid id="display" columns="2" cellpadding="4">                               
+
+
+                                <p:outputLabel value="Code Transfert:  " />
+                                <h:outputText value="#{operationStock.transferSelected.referenceTransfer}" />
+
+                                <p:outputLabel value=" Designation Article:  " />
+                                <p:outputLabel value="#{operationStock.transferSelected.articleId.designation}" />
+
+                                <p:outputLabel value="Quantité Envoyée:  " />
+                                <p:outputLabel value="#{operationStock.transferSelected.quantite}" />
+
+                                <p:outputLabel value=" Quantité à Récéptionner: " />
+                                <p:inputText required="true" requiredMessage="veuillez saisir une quanitité!"  value="#{operationStock.quantiteRec}" >
+                                    <f:validateDoubleRange minimum="0.00001" maximum="#{operationStock.transferSelected.quantite}" />                                   
+                                </p:inputText>
+
+
+                                <p:outputLabel value="Retourner la difference ? :  " />
+                                <p:selectBooleanCheckbox value="#{operationStock.hasRetourValue}">
+                                    <p:ajax update=":form_reception" listener="#{operationStock.hasRetourProcess}" />
+                                </p:selectBooleanCheckbox>
+
+
+
+                                <p:outputLabel value="Commentaire : " />
+                                <p:selectOneMenu  disabled="#{operationStock.isOKshown}" validatorMessage="Commentaire: valeur incorrecte" required="true" requiredMessage="veuillez indiquer une raison pour le retour!" class="value_dis" value="#{operationStock.reasonForRetour}">
+                                    <f:selectItem noSelectionOption="true" itemLabel="" itemValue="-1"/>
+                                    <f:selectItem itemLabel="Quantité manquante (sous quantité)" itemValue="sous"/>
+                                    <f:selectItem itemLabel="Quantité refusé (sur quantité)" itemValue="sur"/>
+                                    <f:selectItem itemLabel="Quantité refusé (Article non-conforme)" itemValue="non"/>
+                                </p:selectOneMenu> 
+
+                                <p:outputLabel for="button" value="Date de Retour :" />
+                                <p:calendar  required="true"  requiredMessage="veuillez indiquer une date" disabled="#{operationStock.isOKshown}" id="button" value="#{operationStock.dateRetour}" pattern="dd/MM/yyyy" mindate="#{operationStock.transferSelected.dateReceptionStock}" maxdate="#{operationStock.dateOfToday}" showOn="button" />
+
+                            </h:panelGrid>
+
+                            <p:commandButton class="btn btn-switch active" rendered="#{operationStock.isOKshown}" update=":bonFormM" value="Générer Bon" onclick="PF('consulterDocCC').show();" actionListener="#{operationStock.initBonRetour}"  >
+                            </p:commandButton>
+                            <p:commandButton class="btn btn-switch active" rendered="#{operationStock.isOKshown}" update="" value="Fermer" onclick="PF('ret_dialog').hide();"  >
+                            </p:commandButton>
+                            <p:commandButton  class="btn btn-switch active" rendered="#{operationStock.isCommandShown}"  update=" :tableTR:tbl3R :form_retour,:form_retour:msgsRet" value="Valider Retour"  action="#{operationStock.returnTransfer()}" >
+                            </p:commandButton>
+
+                        </h:form>
+                    </p:dialog>
+
+
+                    <p:dialog showEffect="fade"  hideEffect="fade" modal="true" header="Bon de retour de transfert" widgetVar="consulterDocCC">
+                        <h:form id="bonFormM">
+                            <p:media value="#{imageBean.bon}" width="100%" height="500px" player="pdf"> 
+                                <f:param name="path" value="#{operationStock.codeCurrent}" />
+                            </p:media>
+                        </h:form>
+                    </p:dialog>
+
+
+                    <h:form id="confirmform">
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                            <p:commandButton value="Oui" id="deleteTransferVVtn" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                            <p:commandButton value="Non" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                        </p:confirmDialog>
+                    </h:form>
+
+
+
+
+
+
+                </p:panel>
+
+
+                <!--                <p:tabView id="stockTabView">
+                
+                
+                                     TAB I: gestion de stock du chantier 
+                                    <ui:include src="gestionStock.xhtml">stock</ui:include>
+                                     END OF TAB I     
+                
+                                     TAB II: gestion des affectations intra-chantier 
+                                    <ui:include src="affectations.xhtml">affectations</ui:include>
+                                     END OF TAB II 
+                
+                                     TAB III: gestion des transfrts inter-chantiers 
+                                    <ui:include src="transferts.xhtml">transferts</ui:include>
+                                     END OF TAB III                     
+                
+                                </p:tabView>-->
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>
+
+
+
+

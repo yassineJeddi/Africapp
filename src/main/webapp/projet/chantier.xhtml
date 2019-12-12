@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Voiture</title>
+    </h:head>
+    <body>
+        <ui:composition template="./template.xhtml">
+            <ui:define name="arborescence"> 
+                <h:form id="formeSolde">
+                    Mensuel > <strong> Gestion De Caisse RH </strong>  SOLDE : 
+                    <strong id="solde">
+                        <h:outputText value="#{caisseMb.solde}" >
+                            <f:convertNumber pattern="#,##0.00" />
+                        </h:outputText>
+                    </strong> DH
+                </h:form>
+            </ui:define>
+            <ui:define name="content">
+                <p:panel id="pannel">
+                    <h:form id="form"> 
+                        <br />
+                        <p:growl id="msgsM" />
+                        <p:commandButton class="btn btn-switch active" value="Ajouter" icon="ui-icon-plus" 
+                                         oncomplete="PF('dlg_AjouterMvmt').show();" update=":formA,:formeSolde"
+                                         actionListener="#{caisseMb.preparAddMvmt()}" />
+                         
+                        <p:commandButton class="btn btn-switch active" value="Charger" icon="ui-icon-refresh" 
+                                         actionListener="#{caisseMb.chargerMvmtCaisse()}" update=":form:tbl,:formeSolde" />
+                        <br/><br/>
+                        <p:dataTable id="tbl" var="valueIt" value="#{caisseMb.mvmtCaisses}"
+                                     rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" >
+                            <p:column headerText="Type " filterBy="#{valueIt.type}" filterMatchMode="contains" >
+                                <h:outputText value="#{valueIt.type}" />
+                            </p:column>
+                            <p:column headerText="Nature"  filterBy="#{valueIt.nature}" filterMatchMode="contains"  >
+                                <h:outputText value="#{valueIt.nature}" />
+                            </p:column>
+                            <p:column headerText="Montant"  filterBy="#{valueIt.mtn}" filterMatchMode="contains"  >
+                                <h:outputText value="#{valueIt.mtn}" >
+                                    <f:convertNumber pattern="#,##0.00" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Date"  filterBy="#{valueIt.dateMvmt}" filterMatchMode="contains"  >
+                                <h:outputText value="#{valueIt.dateMvmt}" />
+                            </p:column>
+                            <p:column headerText="Chantier"  filterBy="#{(valueIt.chantier != null)?valueIt.chantier.code:''}" filterMatchMode="contains"  >
+                                <h:outputText value="#{(valueIt.chantier != null)?valueIt.chantier.code:''}" />
+                            </p:column>
+                            <p:column headerText="Salarie"  filterBy="#{(valueIt.salarie !=null)?valueIt.salarie.matricule:''} | #{(valueIt.salarie !=null)?valueIt.salarie.nom:''} #{(valueIt.salarie !=null)?valueIt.salarie.prenom:''}"  filterMatchMode="contains" >
+                                <h:outputText value="#{(valueIt.salarie !=null)?valueIt.salarie.matricule:''} | #{(valueIt.salarie !=null)?valueIt.salarie.nom:''} #{(valueIt.salarie !=null)?valueIt.salarie.prenom:''}" />
+                            </p:column> 
+                            <p:column headerText="Commentaire " filterBy="#{valueIt.comment}"  filterMatchMode="contains" >
+                                <h:outputText value="#{valueIt.comment}" />
+                            </p:column>
+                            <p:column headerText="Actions" style="width: 200px;"> 
+                                <p:commandButton  icon="ui-icon-trash"  update=":form:tbl,:pannel,:formeSolde" actionListener="#{caisseMb.remouveMvmtCaisse(valueIt)}" >
+                                    <p:confirm header="Confirmation" message=" Voulez Vous Vraiment Supprimer Cette Mouvement ?" icon="ui-icon-alert" />
+                                </p:commandButton>
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                    <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                </p:confirmDialog>
+                                <p:commandButton icon ="ui-icon-pencil" onclick="PF('dlg_ModifMvmt').show();" update=":formAE"  
+                                                 title="Modifier le détail de mouvement de la caisse"  >
+                                    <f:setPropertyActionListener value="#{valueIt}" target="#{caisseMb.mvmtCaisse}" />
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+
+                    <!--Detail Voiture-->
+
+                    <p:dialog header="Détail de la Caisse" widgetVar="detail" minHeight="40" modal="true">
+                        <h:form id="detail">
+                            <h:panelGrid columns="4" cellpadding="5">
+                                <p:outputLabel value="Numero Immatriculation" />
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.matriculevoiture}"/>
+                                <p:outputLabel value="WW" />
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.matricule_voiture_nouveau}"/>
+                                <p:outputLabel value="Premier Mise en service" />
+                                <h:outputText id="id_premier_m_service_ajoute" value="#{gestion_voitureMb.convertDateFormat(gestion_voitureMb.voitureSelected.premier_mise_circulation)}" >
+                                </h:outputText >
+                                <p:outputLabel value="M.C Au Maroc" />
+                                <h:outputText id="id_mc_maroc_ajouter" value="#{gestion_voitureMb.convertDateFormat(gestion_voitureMb.voitureSelected.mc_maroc)}">
+                                </h:outputText >
+                                <p:outputLabel value="Marque" />
+                                <h:outputText id="id_marque" value="#{gestion_voitureMb.voitureSelected.marque}"/>
+                                <p:outputLabel value="Model" />
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.model}"/>
+                                <p:outputLabel value="Type Carburant" />
+                                <h:outputText  value="#{gestion_voitureMb.voitureSelected.type_carburant}"/>
+                                <p:outputLabel value="N° châssis" />
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.num_chassis}"/>
+                                <p:outputLabel value="Puissance Fiscal" />
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.puissance_fiscal}"/>
+                                <p:outputLabel  value="Date de la prochaine visite technique" />
+                                <h:outputText id="button" value="#{gestion_voitureMb.convertDateFormat(gestion_voitureMb.voitureSelected.dateprochainetech)}">
+                                </h:outputText >
+                                <p:outputLabel value="N° de contrat d'assurance"/>
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.numcontrat}"/>
+                                <p:outputLabel value="Cout de Location/cout de leasing"/>
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.coutlocation}"/>
+                                <p:outputLabel value="Date de début du contrat d'assurance" />
+                                <h:outputText id="cass" value="#{gestion_voitureMb.convertDateFormat(gestion_voitureMb.voitureSelected.datedebutcontrat)}">
+                                </h:outputText >
+                                <p:outputLabel value="N° de la carte grise" />
+                                <h:outputText  value="#{gestion_voitureMb.voitureSelected.numcartegrise}"/>
+                                <p:outputLabel  value="Date de fin du contrat d'assurance" />
+                                <h:outputText id="dc" value="#{gestion_voitureMb.convertDateFormat(gestion_voitureMb.voitureSelected.datefincontrat)}">
+                                </h:outputText >
+                                <p:outputLabel  value="Date d'acquisition" />
+                                <h:outputText id="aqui"  value="#{gestion_voitureMb.convertDateFormat(gestion_voitureMb.voitureSelected.dateacquisition)}" >
+                                </h:outputText >
+                                <p:outputLabel  value="Propriétaire" />
+                                <h:outputText   value="#{gestion_voitureMb.voitureSelected.proprietaire}" >
+                                </h:outputText >
+                                <p:outputLabel  value="Statut" />
+                                <h:outputText   value="#{gestion_voitureMb.voitureSelected.statut}" >
+                                </h:outputText >
+                                <p:outputLabel  value="Date Statut" />
+                                <h:outputText   value="#{gestion_voitureMb.voitureSelected.dateStatut}" >
+                                </h:outputText >
+                            </h:panelGrid>
+                            <p:commandButton value="Quitter"  oncomplete="PF('detail').hide()" ajax="true"/>
+                        </h:form>
+                    </p:dialog>
+                    <!-- ******************************************************************************
+                    ****************************** Modifier Voiture **********************************-->
+                    <p:dialog header="Modifier le détail de la Voiture" widgetVar="update" minHeight="40" modal="true">
+                        <h:form id="formUp">
+                            <h:panelGrid columns="4" cellpadding="5">
+                                <h:outputText value="Numero Immatriculation" />
+                                <p:inputText value="#{gestion_voitureMb.voitureSelected.matriculevoiture}" />
+                                <h:outputText value="Immatriculation provisoire" />
+                                <p:inputText value="#{gestion_voitureMb.voitureSelected.matricule_voiture_nouveau}" />
+                                <h:outputText value="Premier Mise en service" />
+                                <p:calendar pattern="dd/MM/yyyy" id="id_premier_m_service_ajoute"  
+                                            showOn="button" 
+                                            value="#{gestion_voitureMb.voitureSelected.premier_mise_circulation}" >
+                                    <p:ajax event="dateSelect" update="id_mc_maroc_ajouter"/>
+                                </p:calendar>
+                                <h:outputText value="M.C Au Maroc" />
+                                <p:calendar pattern="dd/MM/yyyy" id="id_mc_maroc_ajouter"  showOn="button" 
+                                            value="#{gestion_voitureMb.voitureSelected.mc_maroc}" 
+                                            mindate="#{gestion_voitureMb.voitureSelected.premier_mise_circulation}"
+                                            />
+                                <h:outputText value="Marque" />
+                                <p:autoComplete id="id_marque" value="#{gestion_voitureMb.voitureSelected.marque}" completeMethod="#{gestion_voitureMb.completeText}" />
+                                <h:outputText value="Model" />
+                                <p:inputText value="#{gestion_voitureMb.voitureSelected.model}"/>
+                                <h:outputText value="Type Carburant" />
+                                <p:selectOneMenu id="type_carburant" value="#{gestion_voitureMb.voitureSelected.type_carburant}" style="width:125px">
+                                    <f:selectItem itemLabel="Diesel" itemValue="Diesel" />
+                                    <f:selectItem itemLabel="Essence" itemValue="Essence" />
+                                </p:selectOneMenu>
+                                <h:outputText value="N° châssis" />
+                                <p:inputText value="#{gestion_voitureMb.voitureSelected.num_chassis}"/>
+                                <h:outputText value="Puissance Fiscal" />
+                                <p:inputText value="#{gestion_voitureMb.voitureSelected.puissance_fiscal}"/>
+                                <h:outputText  value="Date de la prochaine visite technique" />
+                                <p:calendar pattern="dd/MM/yyyy" id="button"  showOn="button" value="#{gestion_voitureMb.voitureSelected.dateprochainetech}"/>
+                                <h:outputText value="N° de contrat d'assurance" />
+                                <p:inputText value="#{gestion_voitureMb.voitureSelected.numcontrat}"/>
+                                <h:outputText value="Cout de Location/cout de leasing" />
+                                <p:inputText value="#{gestion_voitureMb.voitureSelected.coutlocation}"/>
+
+                                <h:outputText  value="Date de début du contrat d'assurance" />
+                                <p:calendar pattern="dd/MM/yyyy" id="cass"  showOn="button" value="#{gestion_voitureMb.voitureSelected.datedebutcontrat}">
+                                    <p:ajax event="dateSelect" update="dc"/>
+                                </p:calendar>
+                                <h:outputText value="N° de la carte grise" />
+                                <p:inputText  value="#{gestion_voitureMb.voitureSelected.numcartegrise}"/>
+                                <h:outputText  value="Date de fin du contrat d'assurance" />
+                                <p:calendar pattern="dd/MM/yyyy" id="dc"  showOn="button" value="#{gestion_voitureMb.voitureSelected.datefincontrat}" mindate="#{gestion_voitureMb.voitureSelected.datedebutcontrat}">
+                                </p:calendar>
+                                <h:outputText  value="Date d'acquisition" />
+                                <p:calendar pattern="dd/MM/yyyy" id="aqui"  showOn="button" value="#{gestion_voitureMb.voitureSelected.dateacquisition}"/>
+                                <h:outputText value="Propriétaire" />
+                                <p:selectOneMenu  value="#{gestion_voitureMb.voitureSelected.proprietaire}" style="width:125px">
+                                    <f:selectItem itemLabel="TGCC" itemValue="TGCC" />
+                                    <f:selectItem itemLabel="Personnelle" itemValue="Personnelle" />
+                                    <f:selectItem itemLabel="Location" itemValue="Location" />
+                                </p:selectOneMenu>
+                                <h:outputText value="Statut" />
+                                <p:selectOneMenu  value="#{gestion_voitureMb.voitureSelected.statut}" style="width:125px">
+                                    <f:selectItem itemLabel="" itemValue="" />
+                                    <f:selectItem itemLabel="Vendu" itemValue="Vendu" />
+                                    <f:selectItem itemLabel="Réformé" itemValue="Réformé" />
+                                </p:selectOneMenu>
+                                <h:outputText  value="" />
+                                <h:outputText  value=""  style="width:125px"/>
+                                
+                                <h:outputText  value="Date Statut" />
+                                <p:calendar pattern="dd/MM/yyyy" id="date_statut_edit"  showOn="button" value="#{gestion_voitureMb.voitureSelected.dateStatut}"/>
+                                
+                            </h:panelGrid>
+                            <p:commandButton value="Valider" 
+                                             action="#{gestion_voitureMb.modifierVoiture()}"
+                                             oncomplete="PF('update').hide()" 
+                                             update=":form:tbl,:form:msgsM" />
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- ******************************************************************************
+                    ****************************** ajouter Caisse **********************************-->
+
+                    <p:dialog header="Nouvelle Caisse" widgetVar="dlg_Ajouter" minHeight="40" modal="true">
+                        <h:form id="formAB">
+                            <h:panelGrid columns="4" cellpadding="5">
+                                <h:outputText value="Nom (*)" />
+                                <p:inputText value="#{caisseMb.caisse.nom}" required="true" requiredMessage="Nom est obligatoire" />
+                                <h:outputText value="Type (*)" />
+                                <p:inputText value="#{caisseMb.caisse.type}" required="true" requiredMessage="Type est obligatoire" />
+                                <h:outputText value="Chantier " />
+                                <p:selectOneMenu  value="#{caisseMb.caisse.chantier}" style="width:200px"  filter="true" filterMatchMode="contains">
+                                    <f:selectItem itemLabel="" itemValue="" />
+                                    <f:selectItems value="#{caisseMb.chantiers}" var="c" itemLabel="#{c.code}" itemValue="#{c}" />
+                                </p:selectOneMenu>
+                                <h:outputText value="Salarier " />
+                                <p:selectOneMenu  value="#{caisseMb.caisse.salarie}" style="width:200px" filter="true" filterMatchMode="contains">
+                                    <f:selectItem itemLabel="" itemValue="" />
+                                    <f:selectItems value="#{caisseMb.salaries}" var="c" itemLabel="#{c.matricule} | #{c.nom} #{c.prenom}" itemValue="#{c}" />
+                                </p:selectOneMenu>
+                                <h:outputText value="Commentaire " />
+                                <p:inputText  value="#{caisseMb.caisse.comment}"  />
+                            </h:panelGrid>
+                            <p:commandButton value="Ajouter" action="#{caisseMb.addCaisse()}"
+                                             oncomplete="PF('dlg_Ajouter').hide()" ajax="true"  
+                                             update=":form:tbl,:pannel"/>
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- ******************************************************************************
+                    ****************************** ajouter MvmtCaisse **********************************-->
+
+                    <p:dialog header="Nouvelle Mouvement Caisse" widgetVar="dlg_AjouterMvmt" minHeight="140" modal="true">
+                        <h:form id="formA">
+                            <h:panelGrid columns="4" cellpadding="5">
+                                <h:outputText value="Type (*)" />
+                                <p:inputText value="#{caisseMb.mvmtCaisse.type}" required="true" requiredMessage="Type est obligatoire" />
+                                <h:outputText value="Nature (*)" />
+                                <p:inputText value="#{caisseMb.mvmtCaisse.nature}" required="true" requiredMessage="Nature est obligatoire" />
+                                <h:outputText value="Montant (*)" />
+                                <p:inputText value="#{caisseMb.mvmtCaisse.mtn}" required="true" requiredMessage="Montant est obligatoire" />
+                                <h:outputText  value="Date" />
+                                <p:calendar pattern="dd/MM/yyyy" id="aqui"  showOn="button" value="#{caisseMb.mvmtCaisse.dateMvmt}" required="true" requiredMessage="Date est obligatoire"/>
+                                <h:outputText value="Chantier " />
+                                <p:selectOneMenu  value="#{caisseMb.idChantier}" style="width:200px"  filter="true" filterMatchMode="contains">
+                                    <f:selectItem itemLabel="" itemValue="0" />
+                                    <f:selectItems value="#{caisseMb.chantiers}" var="c" itemLabel="#{c.code}" itemValue="#{c.id}" />
+                                </p:selectOneMenu>
+                                <h:outputText value="Salarier " />
+                                <p:selectOneMenu  value="#{caisseMb.idSalarie}" style="width:200px" filter="true" filterMatchMode="contains">
+                                    <f:selectItem itemLabel="" itemValue="0" />
+                                    <f:selectItems value="#{caisseMb.salaries}" var="c" itemLabel="#{c.matricule} | #{c.nom} #{c.prenom}" itemValue="#{c.id}" />
+                                </p:selectOneMenu>
+                                <h:outputText value="Commentaire " />
+                                <p:inputText  value="#{caisseMb.mvmtCaisse.comment}"  />
+                            </h:panelGrid>
+                            <p:commandButton value="Ajouter" action="#{caisseMb.addMvmtCaisse()}"
+                                             oncomplete="PF('dlg_AjouterMvmt').hide()" ajax="true"  
+                                             update=":form:tbl,:pannel,:formeSolde"/>
+                        </h:form>
+                    </p:dialog>
+                    <br/>
+                    <!-- ******************************************************************************
+                    ****************************** Modifier MvmtCaisse **********************************-->
+
+                    <p:dialog header="Modifier Mouvement Caisse" widgetVar="dlg_ModifMvmt" minHeight="140" modal="true">
+                        <h:form id="formAE">
+                            <h:panelGrid columns="4" cellpadding="5">
+                                <h:outputText value="Type (*)" />
+                                <p:inputText value="#{caisseMb.mvmtCaisse.type}" required="true" requiredMessage="Type est obligatoire" />
+                                <h:outputText value="Nature (*)" />
+                                <p:inputText value="#{caisseMb.mvmtCaisse.nature}" required="true" requiredMessage="Nature est obligatoire" />
+                                <h:outputText value="Montant (*)" />
+                                <p:inputText value="#{caisseMb.mvmtCaisse.mtn}" required="true" requiredMessage="Montant est obligatoire" />
+                                <h:outputText  value="Date" />
+                                <p:calendar pattern="dd/MM/yyyy" id="aqui"  showOn="button" value="#{caisseMb.mvmtCaisse.dateMvmt}" required="true" requiredMessage="Date est obligatoire"/>
+                                <h:outputText value="Chantier " />
+                                <p:selectOneMenu  value="#{caisseMb.idChantier}" style="width:200px"  filter="true" filterMatchMode="contains">
+                                    <f:selectItem itemLabel="" itemValue="0" />
+                                    <f:selectItems value="#{caisseMb.chantiers}" var="c" itemLabel="#{c.code}" itemValue="#{c.id}" />
+                                </p:selectOneMenu>
+                                <h:outputText value="Salarier " />
+                                <p:selectOneMenu  value="#{caisseMb.idSalarie}" style="width:200px" filter="true" filterMatchMode="contains">
+                                    <f:selectItem itemLabel="" itemValue="0" />
+                                    <f:selectItems value="#{caisseMb.salaries}" var="c" itemLabel="#{c.matricule} | #{c.nom} #{c.prenom}" itemValue="#{c.id}" />
+                                </p:selectOneMenu>
+                                <h:outputText value="Commentaire " />
+                                <p:inputText  value="#{caisseMb.mvmtCaisse.comment}"  />
+                            </h:panelGrid>
+                            <p:commandButton value="Modifier" action="#{caisseMb.editMvmtCaisse()}"
+                                             oncomplete="PF('dlg_ModifMvmt').hide()" ajax="true"  
+                                             update=":form:tbl,:pannel,:formeSolde"/>
+                        </h:form>
+                    </p:dialog>
+                    <br/>
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

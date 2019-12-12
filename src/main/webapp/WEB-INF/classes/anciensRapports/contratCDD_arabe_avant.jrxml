@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="contratCDD_arabe" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="282ca5fe-feab-4318-bb26-dc9c0e45a24a">
+    <property name="ireport.zoom" value="1.0"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+    <parameter name="ADRESSE_SALARIE" class="java.lang.String"/>
+    <parameter name="FONCTION_SALARIE" class="java.lang.String"/>
+    <parameter name="DATE_EMBAUCHE" class="java.lang.String"/>
+    <parameter name="VILLE" class="java.lang.String"/>
+    <parameter name="CIN" class="java.lang.String"/>
+    <parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA["C:\\Users\\n.bourjila\\Desktop\\JasperReport\\"]]></defaultValueExpression>
+    </parameter>
+    <parameter name="NOM_PRENOM" class="java.lang.String"/>
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    <title>
+        <band splitType="Stretch"/>
+    </title>
+    <detail>
+
+        <band height="750" splitType="Stretch">
+            <image>
+                <reportElement uuid="77d07940-9981-4410-ad10-7792fb5d93f6" x="9" y="16" width="540" height="683"/>
+                <imageExpression><![CDATA["C:\\Users\\n.bourjila\\Desktop\\JasperReport\\20121105143448102_Page_1.jpg"]]></imageExpression>
+            </image>
+            <textField>
+                <reportElement uuid="005164ea-3ca7-4e99-8f59-93e4a3b2e9fe" x="26" y="159" width="214" height="17"/>
+                <textElement>
+                    <font pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{ADRESSE_SALARIE}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement uuid="7769deac-6b2a-4985-b4a8-3faf6e1e52e4" x="255" y="177" width="43" height="17"/>
+                <textElement>
+                    <font pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{CIN}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement uuid="0d106ca1-5545-4a4f-b151-c85eef02dc8c" x="37" y="177" width="183" height="20"/>
+                <textElement>
+                    <font pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{FONCTION_SALARIE}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement uuid="5344c121-ada8-43ed-8288-e2a35e98a04d" x="223" y="256" width="169" height="20"/>
+                <textElement/>
+                <textFieldExpression><![CDATA[$P{DATE_EMBAUCHE}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement uuid="7d14139c-6ff9-4d76-a739-800ddfbd51f7" x="103" y="366" width="74" height="20"/>
+                <textElement>
+                    <font pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{VILLE}]]></textFieldExpression>
+            </textField>
+            <subreport>
+                <reportElement uuid="9bdcdb99-7f80-4885-b17b-4d48bcd031c6" x="2" y="650" width="200" height="100"/>
+                <dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
+                <subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sous1ContratCDD_arabe.jasper"]]></subreportExpression>
+            </subreport>
+            <textField>
+                <reportElement uuid="c9b54ed3-79ef-420a-85cc-930c8d68a718" x="272" y="156" width="100" height="17"/>
+                <textElement>
+                    <font fontName="Arial" pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{NOM_PRENOM}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement uuid="5399e2c3-19ac-440e-a48c-4418b4cedb7b" x="177" y="236" width="95" height="20"/>
+                <textElement>
+                    <font pdfFontName="contratCDD_arabe\arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{NOM_PRENOM}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+    <pageFooter>
+        <band splitType="Stretch"/>
+    </pageFooter>
+</jasperReport>

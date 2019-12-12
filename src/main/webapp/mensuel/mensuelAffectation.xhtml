@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+    <h:head>
+        <title>Liste des mensuels</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+
+
+
+
+            <ui:define name="content">
+
+                <p:panel id="pannelPE">
+                    <h:form>
+                        <h:panelGrid columns="8" cellpadding="5">
+                            <p:outputLabel  value="Matricule" />
+                            <p:inputText value="#{mensuelMb.mensuelToSearch.matricule}"/>
+
+                            <h:outputText value="Nom" />
+                            <p:inputText value="#{mensuelMb.mensuelToSearch.nom}"/>
+
+
+                            <p:outputLabel  value="Prénom " />
+                            <p:inputText value="#{mensuelMb.mensuelToSearch.prenom}"/>
+
+                            <h:outputText value="Fonction"  />
+                            <p:selectOneMenu value="#{mensuelMb.fonction}" >
+                                <f:selectItem itemLabel="" itemValue="-1"/>
+                                <f:selectItems value="#{mensuelMb.fonctions}" var="f"
+                                               itemLabel="#{f.fonction}" itemValue="#{f.fonction}"/>
+                            </p:selectOneMenu>
+
+                            <p:commandButton update=":tablePE:tbl" icon="ui-icon-extlink"  action="#{mensuelMb.rechercherEngin()}"  />
+                        </h:panelGrid>
+                    </h:form>
+                    <br /><br />
+                    <h:form id="tablePE">
+                        <p:dataTable id="tbl" var="mensuelIt" value="#{mensuelMb.mensuels}"   rowKey="#{mensuelIt.id}"
+                                     rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                     selectionMode="single"  >
+
+
+                            <p:column headerText="Nom"   >
+                                <h:outputText value="#{mensuelIt.nom}" />
+                            </p:column>
+
+                            <p:column headerText="Prénom">
+                                <h:outputText value="#{mensuelIt.prenom}" />
+                            </p:column>
+
+                            <p:column headerText="Fonction">
+                                <h:outputText value="#{mensuelIt.fonction.fonction}" />
+                            </p:column>
+
+
+                            <p:column headerText="CIN">
+                                <h:outputText value="#{mensuelIt.cin}" />
+                            </p:column>
+
+                            <p:column headerText="CNSS">
+                                <h:outputText value="#{mensuelIt.cnss}" />
+                            </p:column>
+
+                            <p:column headerText="Statut">
+                                <h:outputText value="#{mensuelIt.etat.etat}" />
+                            </p:column>
+
+
+                            <p:column headerText="Date de Début">
+                                <h:outputText value="#{constanteMb.getDateFormatFR(mensuelIt.dateCreation)}" />
+                            </p:column>
+
+                            <p:column headerText="Action">
+                                <p:commandButton value="Action" update=":tablePE:Mise" oncomplete="PF('dlgAF').show();" >
+                                    <f:setPropertyActionListener value="#{mensuelIt}"  target="#{mensuelMb.mensuelAffect}" />
+                                </p:commandButton>   
+                            </p:column>
+                        </p:dataTable>
+
+                        <p:dialog header="Affectation Financière" widgetVar="dlgAF" modal="true" showEffect="fade" 
+                                  hideEffect="fade" resizable="false">
+                            <p:outputPanel id="Mise">
+
+                                <h:panelGrid columns="2" cellpadding="7"  >                                                         
+
+                                    <h:outputText value="Nom/Prénom" />
+                                    <h:outputText id="des" value="#{mensuelMb.mensuelAffect.nom}" />
+
+
+                                    <h:outputText value="Fonction" />
+                                    <h:outputText id="marq" value="#{mensuelMb.mensuelAffect.fonction.fonction}"/>
+
+
+                                    <h:outputText value="Date d'effet" />
+                                    <p:inputText id="cpt" value="#{mensuelMb.mensuelAffect.dateCreation}"/>
+
+                                    <h:outputText id="output" value="#{mensuelMb.libChantier}" />
+                                    <h:inputText id="pourcentageAff" />
+                                    <p:commandButton value="+" process="@this output"/>
+
+
+
+                                    <p:selectOneMenu id="chantier" value="#{mensuelMb.libChantier}">               
+                                        <f:selectItem itemLabel="" itemValue="" noSelectionOption="true" />
+                                        <f:selectItems value="#{mensuelMb.chantier}" var="C"
+                                                       itemLabel="#{C.code}" itemValue="#{C.code}"/>
+                                    </p:selectOneMenu>
+
+
+                                    <p:inputText  />
+
+                                    <h:outputText  />
+                                    <h:outputText  />
+                                    <p:inputText id="affec"/>
+
+                                    <p:commandButton value="Valider" action="#{mensuelMb.validateAffect()}" update=":tablePE:tbl, :pannelPE" oncomplete="PF('dlgAF').hide()"/>
+                                </h:panelGrid>
+                            </p:outputPanel>
+                        </p:dialog>
+                    </h:form>
+                </p:panel>
+            </ui:define>
+
+
+
+        </ui:composition>
+
+    </body>
+
+
+
+
+
+</html>
+
+
+
+

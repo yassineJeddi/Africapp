@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+>
+    <h:head>
+        <title>Ordinateur</title>
+        <!--<a href="gestionOrdinateur.xhtml"></a>-->
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+
+            <ui:define name="arborescence">
+
+
+
+
+                <h:form>
+                    Mensuel > <strong> gestion Ordinateur </strong>
+                </h:form>
+
+            </ui:define>
+
+            <ui:define name="content">
+                <p:panel id="pannel">
+
+                    <h:form id="form">
+                        <br />
+                        <div class="affectation-switch">
+                            <div class="btn-group" data-toggle="buttons">
+                                <p:commandButton class="btn btn-default" 
+                                                 action="/mensuel/consultOrdinateurs.xhtml?faces-redirect=true"
+                                                 value="Consulter Ordinateurs" 
+                                                 actionListener="#{ordinateurMb.afficherOrdinateurAffecter()}"/>
+                                <p:commandButton class="btn btn-switch active" 
+                                                 value="Gestion Ordinateurs"
+                                                 actionListener="#{ordinateurMb.afficherOrdinateurRechercher()}"                                                  
+                                                 update=":form:tbl"/>
+                                <p:commandButton class="btn btn-default" 
+                                                 value="Historique Ordinateurs"
+                                                 action="/mensuel/histoOrdinateur.xhtml?faces-redirect=true"
+                                                 actionListener="#{ordinateurMb.afficherOrdinateurRechercher()}" 
+                                                 update=":form:tbl"/>
+                            </div>
+                        </div>
+                        <br />
+
+                        <p:messages id="msgsM" closable="true"/>
+
+                        <p:commandButton value="Ajouter" icon="ui-icon-plus" onclick="PF('dlg_Ajouter').show();" />
+
+
+                        <br/><br/>
+
+
+                        <p:dataTable id="tbl" var="ordinateurIt" value="#{gestion_ordinateur.ordinateurs}"
+                                     rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                     >
+
+
+                            <p:ajax event="rowEdit" listener="#{gestion_ordinateur.onRowEdit}" update=":form:msgsM,:form:tbl" />
+                            <p:ajax event="rowEditCancel" listener="#{gestion_ordinateur.onRowCancel}"  update=":form:msgsM,:form:tbl" />
+
+
+                            <p:column headerText="Numero serie Ordinateur" filterBy="#{ordinateurIt.numeroSerieOrd}" filterFunction="#{filterMb.filterByX}"  >
+                                <p:cellEditor>
+                                    <f:facet name="output"><h:outputText value="#{ordinateurIt.numeroSerieOrd}" /></f:facet>
+                                    <f:facet name="input"><p:inputText value="#{ordinateurIt.numeroSerieOrd}" style="width:100%"/></f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+
+                            <p:column headerText="Marque Ordinateur" filterBy="#{ordinateurIt.marque}" filterFunction="#{filterMb.filterByX}"  >
+                                <p:cellEditor>
+                                    <f:facet name="output"><h:outputText value="#{ordinateurIt.marque}" /></f:facet>
+                                    <f:facet name="input"><p:autoComplete id="id_marque" value="#{ordinateurIt.marque}" completeMethod="#{gestion_ordinateur.completeText}" style="width:100%"/>
+                                    </f:facet>
+
+                                </p:cellEditor>
+                            </p:column>
+                            <p:column headerText="Affectation">
+                                <h:outputText value="#{ordinateurIt.mensuel eq null ?'Non Affecté' :ordinateurIt.mensuel.nom}"/>
+                            </p:column>
+
+                            <p:column>
+                                <p:commandButton  icon="ui-icon-trash"  update=":form:tbl,:pannel" action="#{gestion_ordinateur.delete(ordinateurIt)}"  ajax="true">
+                                    <p:confirm header="Confirmation" message=" Voulez vous vraiment supprimer cet ordinateur ?" icon="ui-icon-alert" />
+                                </p:commandButton>
+
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                    <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                </p:confirmDialog>
+                            </p:column>
+
+                            <p:column style="width:32px">
+                                <p:rowEditor />
+                            </p:column>
+
+                        </p:dataTable>
+                    </h:form>
+
+
+
+
+
+                    <!-- ******************************************************************************
+                    ****************************** ajouter Ordinateur **********************************-->
+
+                    <p:dialog header="Nouvel Ordinateur" widgetVar="dlg_Ajouter" minHeight="40" >
+                        <h:form id="formA">
+                            <h:panelGrid columns="4" cellpadding="5">
+                                <h:outputText value="Numero Serie Ordinateur" />
+                                <p:inputText required="true" requiredMessage="numero serie  est obligatoir"  value="#{gestion_ordinateur.ordinateurToAdd.numeroSerieOrd}"/>
+
+                                <h:outputText value="Marque Ordinateur" />
+
+                                <p:autoComplete required="true" requiredMessage="marque est obligatoir" id="id_marque" value="#{gestion_ordinateur.ordinateurToAdd.marque}" completeMethod="#{gestion_ordinateur.completeText}" />
+
+                            </h:panelGrid>
+
+                            <p:commandButton value="Ajouter" action="#{gestion_ordinateur.ajouter_ordinateur()}" oncomplete="PF('dlg_Ajouter').hide()" ajax="true"  update=":form:tbl,:pannel"/>
+
+                        </h:form>
+                    </p:dialog>
+
+
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

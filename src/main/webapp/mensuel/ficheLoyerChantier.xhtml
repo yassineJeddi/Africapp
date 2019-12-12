@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Parc Engins</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+            <ui:define name="arborescence">
+
+
+
+                <h:form>
+                    Mensuel > <h:commandLink action="/mensuel/affectLoyerChantier.xhtml"> Affecter Loyer à un chantier </h:commandLink> > <h:commandLink action="/mensuel/consultLoyerChantier.xhtml"> Consultation Loyer à un chantier </h:commandLink> > <strong>Consultation fiche loyer</strong> 
+                </h:form>
+
+            </ui:define>
+
+            <ui:define name="content">
+                <p:panel id="pannel">
+                    <h:form id="form">
+                        <p:growl id="msgsM" showDetail="true" />
+
+                        <br /><br />
+
+
+                        <h:panelGrid columns="4" id="grid" cellspacing="5" cellpadding="10">
+
+                            <h:outputText value="Identifiant :" />
+                            <p:outputLabel value="#{control_fiche_loyer_Mb.loyerChantierFicheLoyer.id}"/>
+
+                            <h:outputText value="Nom de Propriétiare :" />
+                            <p:inputText disabled="#{control_fiche_loyer_Mb.updateSalarie}" 
+                                         value="#{control_fiche_loyer_Mb.loyerChantierFicheLoyer.nomproprietaire}"/>     
+
+
+
+                            <h:outputText value=" N° de contrat :" />
+                            <p:outputLabel value="#{control_fiche_loyer_Mb.loyerChantierFicheLoyer.numcontrat}"/>
+
+                            <h:outputText value="Prénom de propriétaire  :" />
+
+                            <p:inputText disabled="#{control_fiche_loyer_Mb.updateSalarie}" value="#{control_fiche_loyer_Mb.loyerChantierFicheLoyer.prenomproprietaire}"/>     
+
+
+
+                            <h:outputText value="Ville :" />
+                            <p:inputText disabled="#{control_fiche_loyer_Mb.updateSalarie}" value="#{control_fiche_loyer_Mb.loyerChantierFicheLoyer.ville}"/> 
+
+                            <h:outputText value="Adresse Du propriétaire  :" />
+                            <p:inputText disabled="#{control_fiche_loyer_Mb.updateSalarie}"
+                                         value="#{control_fiche_loyer_Mb.loyerChantierFicheLoyer.adresseproprietaire}"/>     
+
+                        
+                            <h:outputText value=" Region :" />
+                            <p:outputLabel value="#{loyer_ChantierMb.selectChantier.region}"/>     
+
+
+                            <h:outputText value="Date Debut :" />
+                            <p:outputLabel value="#{loyer_ChantierMb.date_debut_loyer_ChantierString}" />     
+
+                            
+
+
+                            <h:outputText value="Montant De loyer :" />
+
+                            <p:inputText disabled="#{control_fiche_loyer_Mb.updateSalarie}" value="#{control_fiche_loyer_Mb.loyerChantierFicheLoyer.montantloyer}"/>     
+
+
+                          
+
+
+
+
+                            <h:outputText value="Mode Paiement :" />
+
+                            <p:outputLabel value="#{control_fiche_loyer_Mb.loyerChantierFicheLoyer.modepaiment}"/> 
+
+
+                            <h:outputText value="Rib du Propriétaire :" />
+
+                            <p:inputText disabled="#{control_fiche_loyer_Mb.updateSalarie}" value="#{control_fiche_loyer_Mb.loyerChantierFicheLoyer.rib}"/>     
+
+                            
+                           <p:spacer width="50px" height="1px"></p:spacer>
+                            <p:spacer width="50px" height="1px"></p:spacer>
+                            <p:commandButton value="Modifier les infos" actionListener="#{control_fiche_loyer_Mb.setUpdateSalarie(false)}" update=":form:grid" />  
+                            <p:commandButton value="Terminer la modification" 
+                                             actionListener="#{control_fiche_loyer_Mb.initUpdateLC()}"
+                                             update=":form:grid, :form:msgsM" />  
+
+
+                        </h:panelGrid>
+
+
+
+
+
+                    </h:form>
+
+                </p:panel>
+            </ui:define>
+
+
+
+        </ui:composition>
+
+    </body>
+
+
+
+
+
+</html>

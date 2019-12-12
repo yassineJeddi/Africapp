@@ -1,0 +1,202 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="./adminTemplate.xhtml">
+
+            <ui:define name="content">
+
+                <br />
+
+                <p:panel id="panel1">
+
+                    <p>Gestion de chantier</p>
+                    <h:form id="form1">
+                        <p:messages id="msgs2" closable="true"/>
+
+
+                        <p:dataTable  var="chantierIt" id="pdataTable1" value="#{chantier.chantiers}" 
+
+                                      rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                      {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                      {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                      editable="true"
+                                      >
+
+
+                            <p:ajax event="rowEdit" listener="#{chantier.onRowEdit}" update=":form1:msgs2" />
+                            <p:ajax event="rowEditCancel" listener="#{chantier.onRowCancel}" update=":form1:msgs2" />
+                            <p:ajax event="rowEditInit" listener="#{chantier.onRowInit}" />
+
+
+
+
+                            <p:column filterBy="#{chantierIt.code}" filterMatchMode="contains" filterFunction="#{filterMb.filterByX}"  headerText="Chantier">
+                                <p:cellEditor>
+                                    <f:facet name="output"><h:outputText value="#{chantierIt.code}" /></f:facet>
+                                    <f:facet name="input"><p:inputText id="modelInput" value="#{chantierIt.code}" style="width:100%"/></f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+                            <p:column filterBy="#{chantierIt.region}"
+                                      filterMatchMode="contains" 
+                                      filterFunction="#{filterMb.filterByX}"  
+                                      headerText="Région"
+                                      >
+
+                                <h:outputText value="#{chantierIt.region}" />
+
+                            </p:column>
+                            <!--p:column headerText="Affinite">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputText value="{chantierIt.liste_Nom_Affinites}"/>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:selectCheckboxMenu id="menu" value="{chantierIt.idChantiers}" 
+                                                              label=" affinité
+                                                              filter="true" 
+                                                              filterMatchMode="contains" 
+                                                              panelStyle="width:500px" >
+                                            <f:selectItems value="{chantierServMb.chantiers}" var="aff" 
+                                                           itemLabel="{aff.code}" itemValue="{aff.id}"/>
+                                        </p:selectCheckboxMenu>
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column-->
+
+                            <p:column filterBy="#{chantierIt.heureEntree}" filterMatchMode="contains" filterFunction="#{filterMb.filterByX}"  headerText="Heure d'entrée">
+
+                                <p:cellEditor>
+                                    <f:facet name="output"><h:outputText value="#{chantierIt.heureEntree}" /></f:facet>
+                                    <f:facet name="input"><p:inputText  value="#{chantierIt.heureEntree}" style="width:100%"/></f:facet>
+                                </p:cellEditor>
+
+                            </p:column>
+
+                            <p:column filterBy="#{chantierIt.heureSortie}" 
+                                      filterMatchMode="contains"
+                                      filterFunction="#{filterMb.filterByX}" 
+                                      headerText="Heure de sortie"
+                                      >
+
+                                <p:cellEditor>
+                                    <f:facet name="output"><h:outputText value="#{chantierIt.heureSortie}" /></f:facet>
+                                    <f:facet name="input"><p:inputText  value="#{chantierIt.heureSortie}" style="width:100%"/></f:facet>
+                                </p:cellEditor>
+
+                            </p:column>
+
+                            <p:column filterBy="#{chantierIt.nombreHeures}" 
+                                      filterMatchMode="contains"                                      
+                                      filterFunction="#{filterMb.filterByX}"  
+                                      headerText="Heures par jour">
+
+                                <h:outputText value="#{chantierIt.nombreHeures}h #{chantierIt.nombreMinutes}m " />
+
+                            </p:column>
+
+
+
+
+
+                            <p:column headerText="Action">
+
+                                <p:commandButton  icon="ui-icon-trash"  
+                                                  action="#{chantier.deleteZone(chantierIt)}" 
+                                                  update=":form1:pdataTable1, :panel1" 
+                                                  ajax="true"
+                                                  />
+
+                                <p:commandButton  icon="ui-icon-plus"  
+                                                  action="#{chantier.rempliIdChantier(chantierIt)}" 
+                                                  oncomplete ="PF('affinite').show();" 
+                                                  update=":Affinite" 
+                                                  title="Ajouter un chantier d'affinité"
+                                                  >
+                                    
+                                    <f:setPropertyActionListener 
+                                        value="#{chantierIt}" 
+                                        target="#{chantier.chanSelected}" 
+                                        />
+                                </p:commandButton>
+
+                            </p:column>
+
+
+
+                            <p:column style="width:32px">
+                                <p:rowEditor />
+                            </p:column>
+                        </p:dataTable>
+
+                    </h:form>
+
+                    <p:dialog header="Ajouter" widgetVar="dlg30" minHeight="40" closable="true">
+                        <h:form id="Ajouter1">
+                            <h:panelGrid columns="2" cellpadding="5">
+
+                                <h:outputText value="Libelle Chantier" />
+                                <p:inputText value="#{chantier.chantierAdd.code}"  />
+
+
+                            </h:panelGrid>
+
+
+                            <p:commandButton value="Ajouter" id="addButton" onclick="PF('dlg30').hide();" action="#{chantier.addChantier()}" update=":form1:pdataTable1" ajax="true"/>
+                        </h:form>
+
+                    </p:dialog>
+
+
+
+                    <p:dialog header="Affinité Chantier" widgetVar="affinite" minHeight="40" closable="true">
+                        <h:form id="Affinite">
+                            <h:panelGrid columns="2" cellpadding="5">
+
+                                <h:outputText value="Libelle Chantier" />
+                                
+                                <p:selectCheckboxMenu id="menu" 
+                                                      value="#{chantier.chanSelected.idChantiers}" 
+                                                      label="--- affinité ---"
+                                                      filter="true" 
+                                                      filterMatchMode="contains" 
+                                                      panelStyle="width:500px" 
+                                                      >
+                                    
+                                    <f:selectItems value="#{chantierServMb.chantiers}"
+                                                   var="aff"
+                                                   itemLabel="#{aff.code}" 
+                                                   itemValue="#{aff.id}"
+                                                   />
+                                </p:selectCheckboxMenu>
+
+                            </h:panelGrid>
+
+
+                            <p:commandButton value="Valider" 
+                                             update=":form1:pdataTable1"
+                                             id="addButtonAff" 
+                                             oncomplete="PF('affinite').hide();" 
+                                             action="#{chantier.addAffinite}"
+                                             />
+                        </h:form>
+
+                    </p:dialog>
+
+                </p:panel>
+
+            </ui:define>
+
+        </ui:composition>        
+    </h:body>
+</html>
+

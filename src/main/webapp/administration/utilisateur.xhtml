@@ -1,0 +1,366 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <title>Liste des Utilisateurs</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./adminTemplate.xhtml">
+            <ui:define name="content">
+                <p:panel id="panel">
+                    <h:form id="form">
+                        <p:commandButton value="Ajouter Utilisateur" 
+                                         icon="ui-icon-user" 
+                                         oncomplete="PF('add_utilisateur').show()"
+                                         actionListener="#{utilisateur.addNewUser()}"
+                                         update=":addForm" />
+                        <p:spacer width="120px" height="0px"/>
+
+                        <p:outputLabel for="grpDrop" value="Groupes : " />
+                        <p:spacer width="10px" height="0px" />
+                        <p:selectOneMenu id="grpDrop" value="#{utilisateur.grpToFilterBy}" style="width:150px">
+                            <p:ajax listener="#{utilisateur.onGrpSelectFilter()}" update=":form:pdataTable, :form:lab" />
+                            <f:selectItem itemLabel="Tous les groupes" itemValue="tous" />
+                            <f:selectItems value="#{groupe.groupes}" var="grp" itemLabel="#{grp.groupe}" itemValue="#{grp.groupe}"  />
+                        </p:selectOneMenu>
+
+                        <p:spacer width="320px" height="0px"/>
+                        <p:outputLabel  id="lab" value="#{utilisateur.grpToFilterBy}" />
+
+
+                        <br /><br />
+
+                        <p:growl id="msgsM" autoUpdate="false"  showDetail="true" life="5000"/>
+                        <p:dataTable  var="utilisateurIt" id="pdataTable" 
+                                      value="#{utilisateur.users}" 
+                                      widgetVar="tabb"
+                                      rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                      {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                      {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                      >
+
+                            <p:column headerText="Login"  filterBy="#{utilisateurIt.login}" filterFunction="#{filterMb.filterByX}"  >
+                                <h:outputText value="#{utilisateurIt.login}" />
+                            </p:column>
+
+                            <p:column headerText="Nom" filterBy="#{utilisateurIt.nom}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{utilisateurIt.nom}" />
+                            </p:column>
+
+                            <p:column headerText="Prénom" filterBy="#{utilisateurIt.prenom}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{utilisateurIt.prenom}" />
+                            </p:column>
+
+                            <p:column headerText="Action" width="280px;">
+
+                                <p:commandButton  icon="ui-icon-person" 
+                                                  oncomplete="PF('gestion_grp_utilisateur').show();"
+                                                  actionListener="#{utilisateur.prepareGroups(utilisateurIt)}"
+                                                  update=":recherche"
+                                                   disabled="#{!utilisateurIt.isActive}"
+                                                  >
+                                    <f:setPropertyActionListener target="#{utilisateur.utilisateurToAdd}" value="#{utilisateurIt}" />
+                                </p:commandButton>
+
+                                <p:commandButton icon="ui-icon-locked" 
+                                                 title="permissions utilisateur"
+                                                 oncomplete="PF('gestion_perm_utilisateur').show();"
+                                                 actionListener="#{utilisateur.preparePermissions(utilisateurIt)}"
+                                                 update=":grpuser"
+                                                 disabled="#{!utilisateurIt.isActive}"
+                                                 ajax="true"
+                                                 >
+                                    <f:setPropertyActionListener target="#{utilisateur.utilisateurToAdd}" value="#{utilisateurIt}" />
+                                </p:commandButton>
+
+                                <p:commandButton icon="ui-icon-trash"
+                                                 title="supprimer utilisateur" 
+                                                 action="#{utilisateur.deleteUser(utilisateurIt)}"
+                                                 disabled="#{!utilisateurIt.isActive}"
+                                                 update=":form:pdataTable, :form:msgsM" 
+                                                 ajax="true" >
+                                    <p:confirm header="Confirmation" message="Êtes-vous sûr?" icon="ui-icon-alert" />
+                                </p:commandButton>
+
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                    <p:commandButton value="Non" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                </p:confirmDialog>
+
+                                <p:commandButton icon= "ui-icon-plus"
+                                                 title="affectation chantier" 
+                                                  disabled="#{!utilisateurIt.isActive}"
+                                                  onclick="PF('tableChantiers').clearFilters();"
+                                                 oncomplete="PF('gestion_ch_utilisateur').show(); "
+                                                 actionListener="#{utilisateur.prepareChantiersUser(utilisateurIt)}"
+                                                 update=":hello"
+                                                 >
+                                    <f:setPropertyActionListener target="#{utilisateur.utilisateurToAdd}" value="#{utilisateurIt}" />
+                                </p:commandButton>
+
+                                <p:commandButton icon= "ui-icon-minus" 
+                                                  disabled="#{!utilisateurIt.isActive}"
+                                                 title = "desaffectation chantier"     
+                                                 onclick="PF('tableDesafect').clearFilters();"
+                                                 oncomplete="PF('gestion_chd_utilisateur').show();"
+                                                 actionListener="#{utilisateur.listOfChByUser(utilisateurIt)}"
+                                                 update=":chantierdes"
+                                                 ajax="true" 
+                                                 >
+                                    <f:setPropertyActionListener target="#{utilisateur.utilisateurToAdd}" 
+                                                                 value="#{utilisateurIt}" />
+                                </p:commandButton>
+
+                                <p:commandButton icon= "ui-icon-refresh" 
+                                                  disabled="#{!utilisateurIt.isActive}"
+                                                 title = "reinitialiser mot de passe" 
+                                                 actionListener="#{utilisateur.reinitPwd(utilisateurIt)}"   
+                                                 update=":form:pdataTable, :form:msgsM" 
+                                                 ajax="true"
+
+                                                 >
+
+                                </p:commandButton>
+                                <p:commandButton icon= "ui-icon-pencil" 
+                                                 title = "modifier les infos"  
+                                                  disabled="#{!utilisateurIt.isActive}"
+                                                 ajax="true" 
+                                                 oncomplete="PF('edit_utilisateur').show();"
+                                                 update=":editForm"
+                                                 >
+                                    <f:setPropertyActionListener target="#{utilisateur.userCurrent}" value="#{utilisateurIt}" />
+                                </p:commandButton>
+
+                            </p:column>
+                        </p:dataTable>
+
+                    </h:form>
+
+                    <p:dialog modal="true" header="Ajouter Utilisateur" widgetVar="add_utilisateur" minHeight="40" closable="true" resizable="false">
+                        <h:form id="addForm">
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <p:outputLabel value="Login" />
+                                <p:inputText value="#{utilisateur.utilisateurToAdd.login}" required="true" requiredMessage="le login est obligatoire"/>
+                                <p:outputLabel value="Mot de passe" />
+                                <p:inputText type="password" value="#{utilisateur.utilisateurToAdd.password}" required="true" requiredMessage="le mot de passe est obligatoire"/>
+                                <p:outputLabel value="Email" />
+                                <p:inputText value="#{utilisateur.utilisateurToAdd.email}" type="email" />
+                                <p:outputLabel value="Nom" />
+                                <p:inputText value="#{utilisateur.utilisateurToAdd.nom}" />
+                                <p:outputLabel value="Prénom" />
+                                <p:inputText value="#{utilisateur.utilisateurToAdd.prenom}" />
+                                <p:outputLabel value="CIN" />
+                                <p:inputText value="#{utilisateur.utilisateurToAdd.cin}"/>
+                                <p:outputLabel value="Mobile" />
+                                <p:inputText value="#{utilisateur.utilisateurToAdd.mobile}"/>
+                                <p:outputLabel value="Mensuel" />
+                                <p:selectOneMenu id="mensuelL" value="#{utilisateur.intMensuel}"
+                                                     filter="true" filterMatchMode="contains" 
+                                                     style="width: 150px;">
+                                    <f:selectItem itemLabel="-- Mensuel Lié --"
+                                                  noSelectionOption="true" 
+                                                  />
+                                        <f:selectItems value="#{mensuelServMb.l_mensuels}"
+                                                       var="m" 
+                                                       itemLabel="#{m.nom} #{m.prenom}"
+                                                       itemValue="#{m.id}" />
+                                    </p:selectOneMenu>
+
+                            </h:panelGrid>
+                            <p:commandButton 
+                                value="Valider" 
+                                actionListener="#{utilisateur.addUutilisateur()}"
+                                onclick="PF('add_utilisateur').hide();"
+                                update=":form:msgsM, :form:pdataTable"/>
+
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog modal="true" header="Modifier Utilisateur" widgetVar="edit_utilisateur" minHeight="40" closable="true" resizable="false">
+                        <h:form id="editForm">
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <p:outputLabel value="Email" />
+                                <p:inputText value="#{utilisateur.userCurrent.email}" type="email" />
+                                <p:outputLabel value="Nom" />
+                                <p:inputText value="#{utilisateur.userCurrent.nom}" />
+                                <p:outputLabel value="Prénom" />
+                                <p:inputText value="#{utilisateur.userCurrent.prenom}" />
+                                <p:outputLabel value="CIN" />
+                                <p:inputText value="#{utilisateur.userCurrent.cin}"/>
+                                <p:outputLabel value="Mobile"/>
+                                <p:inputText value="#{utilisateur.userCurrent.mobile}"/>
+                                
+                                
+                                <p:selectOneMenu id="mensuelL2" value="#{utilisateur.intMensuel}"
+                                                     filter="true" filterMatchMode="contains" 
+                                                     style="width: 150px;">
+                                    <f:selectItem itemLabel="-- Mensuel Lié --"
+                                                  noSelectionOption="true" 
+                                                  />
+                                        <f:selectItems value="#{mensuelServMb.l_mensuels}"
+                                                       var="m" 
+                                                       itemLabel="#{m.nom} #{m.prenom}"
+                                                       itemValue="#{m.id}" />
+                                    </p:selectOneMenu>
+
+                            </h:panelGrid>
+                            <p:commandButton 
+                                value="Valider" 
+                                actionListener="#{utilisateur.editUser()}"
+                                onclick="PF('edit_utilisateur').hide();"
+
+                                update=":form:msgsM, :form:pdataTable"/>                            
+                        </h:form>
+                    </p:dialog>
+
+
+
+
+
+
+                    <p:dialog modal="true" header="Groupes Utilisateur" widgetVar="gestion_grp_utilisateur" minHeight="40" closable="true" resizable="false">
+
+                        <h:form id="recherche">
+
+                            <h:panelGrid columns="3" cellpadding="5">
+
+                                <p:selectManyCheckbox id="grid" value="#{utilisateur.groupIds}" layout="grid" columns="3">
+                                    <f:selectItems value="#{groupe.groupes}" var="grp" itemLabel="#{grp.groupe}" itemValue="#{grp.groupe}" />
+                                </p:selectManyCheckbox>                             
+
+                            </h:panelGrid>
+
+                            <p:commandButton 
+                                value="Modifier" 
+                                actionListener="#{utilisateur.addGrpToUser()}" 
+                                onclick="PF('gestion_grp_utilisateur').hide();"
+
+
+                                update=":form:msgsM" />
+
+                        </h:form>
+
+                    </p:dialog>
+
+                    <p:dialog header="Chantiers Utilisateur" modal="true" widgetVar="gestion_ch_utilisateur" minHeight="40" width="800" closable="true" resizable="false">
+
+                        <h:form id="hello">
+                            <p:messages id="msgsMH" autoUpdate="false" showIcon="true" showDetail="true" closable="true"/>
+                            <p:dataTable  var="chantierIt" id="tbb" value="#{utilisateur.listDiffChan}" 
+                                          rows="10"  paginator="true" widgetVar="tableChantiers" paginatorTemplate="{CurrentPageReport} 
+                                          {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                          {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                          >
+
+                                <p:column headerText="code Chantier" filterBy="#{chantierIt.code}" filterFunction="#{filterMb.filterByX}">
+                                    <h:outputText value="#{chantierIt.code}" />
+                                </p:column>
+
+                                <p:column headerText="Action">
+                                    <p:commandButton icon="ui-icon-check" 
+                                                     title="affecter chantier" 
+                                                     actionListener="#{utilisateur.addChantierToUser(chantierIt)}" 
+                                                     oncomplete="PF('tabb').clearFilters();PF('tableChantiers').clearFilters();"
+                                                     update=":hello, :form"
+
+                                                     />
+                                </p:column>
+
+                            </p:dataTable>
+
+                        </h:form>
+
+                    </p:dialog>
+
+                    <p:dialog header="Permissions Utilisateur"
+                              modal="true" 
+                              widgetVar="gestion_perm_utilisateur" 
+                              minHeight="40" 
+                              height="500"                              
+                              width="800" 
+                              closable="true"   
+                              resizable="false"
+                              >
+
+                        <h:form id="grpuser">    
+                            <h5 style="margin-right: 100px;">Selectionez les droits : </h5>
+
+                            <p:tree value="#{utilisateur.userPermTree}" 
+                                    var="node"
+                                    style="width: 500px; border: none;"
+                                    selection="#{utilisateur.selectedUserNodes}"
+                                    dynamic="true"                                    
+                                    id="permTree"
+                                    selectionMode="checkbox"                                    
+                                    >                                
+                                <p:treeNode icon="ui-icon-key">
+                                    <h:outputText value="#{node}"/>
+                                </p:treeNode>                                
+                            </p:tree>
+                            <p:commandButton value="modifier" 
+                                             actionListener="#{utilisateur.modifyUserPermissions()}" 
+                                             onclick="PF('gestion_perm_utilisateur').hide();"
+                                             update=":form:msgsM"
+                                             class="btn-switch active btn-lg"
+                                             />
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog header="Chantiers Utilisateur" 
+                              modal="true" 
+                              widgetVar="gestion_chd_utilisateur" 
+                              minHeight="40" width="800" 
+                              closable="true" resizable="false">
+
+                        <h:form id="chantierdes">
+                            <p:messages id="msgsMH" autoUpdate="false" showIcon="true" showDetail="true" closable="true"/>
+
+                            <p:dataTable  var="chantierIt" id="tab" value="#{utilisateur.listOfChantiersByUser}" 
+                                          rows="10"  paginator="true" 
+                                          widgetVar="tableDesafect"
+                                          paginatorTemplate="{CurrentPageReport} 
+                                          {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                          {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                          >
+
+                                <p:column headerText="code Chantier"  filterBy="#{chantierIt.code}" filterFunction="#{filterMb.filterByX}">
+                                    <h:outputText value="#{chantierIt.code}" />
+                                </p:column>
+
+                                <p:column headerText="Action" >
+
+                                    <p:commandButton icon="ui-icon-minus" 
+                                                     title="desaffecter chantier"
+                                                     actionListener="#{utilisateur.removeChantierFromUser(chantierIt)}"
+                                                     oncomplete="PF('tabb').clearFilters();PF('tableDesafect').clearFilters();"
+                                                     update=":form, :chantierdes"
+                                                     />
+
+                                </p:column>
+
+                            </p:dataTable>
+
+                        </h:form>
+
+                    </p:dialog>
+
+                </p:panel>
+
+            </ui:define>
+
+
+
+        </ui:composition>
+
+    </body>
+
+</html>
+

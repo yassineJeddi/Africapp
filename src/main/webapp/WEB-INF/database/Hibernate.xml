@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+           
+    <bean id="sessionFactory" 
+          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+
+        <property name="dataSource">
+            <ref bean="dataSource" />
+        </property>
+      
+        <property name="packagesToScan" value="ma.bservices" />
+
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.hbm2ddl.auto">none</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+                <!--<prop key="hibernate.dialect">org.hibernate.dialect.SQLServer2008Dialect</prop>-->
+                <prop key="hibernate.show_sql">true</prop>
+				
+            </props>
+        </property>
+         
+        <property name="annotatedClasses">
+            <list>
+                
+                <value>ma.bservices.tgcc.Entity.Engin</value>
+                <value>ma.bservices.tgcc.Entity.Chantier</value>
+                <value>ma.bservices.tgcc.Entity.ChantierEngin</value>
+                <value>ma.bservices.tgcc.Entity.ChantierEnginPK</value>
+                <value>ma.bservices.tgcc.Entity.Civilite</value>
+                <value>ma.bservices.tgcc.Entity.Couleurcasque</value>
+                <value>ma.bservices.tgcc.Entity.Couleurgilet</value>
+                <value>ma.bservices.tgcc.Entity.Dossiersalarie</value>
+                <value>ma.bservices.tgcc.Entity.Etat</value>
+                <value>ma.bservices.tgcc.Entity.EtatEngin</value>
+                <value>ma.bservices.tgcc.Entity.Lot</value>
+                <value>ma.bservices.tgcc.Entity.Modepaiement</value>
+                <value>ma.bservices.tgcc.Entity.Nationalite</value>
+                <value>ma.bservices.tgcc.Entity.Pays</value>
+                <value>ma.bservices.tgcc.Entity.Poee</value>
+                <value>ma.bservices.tgcc.Entity.PoeePK</value>
+                <value>ma.bservices.tgcc.Entity.PointageEngin</value>
+                <value>ma.bservices.tgcc.Entity.Pointure</value>
+                <value>ma.bservices.tgcc.Entity.Pptemp</value>
+                <value>ma.bservices.tgcc.Entity.Salarie</value>
+                <value>ma.bservices.tgcc.Entity.Situationfamiliale</value>
+                <value>ma.bservices.tgcc.Entity.Taillehabillement</value>
+                <value>ma.bservices.tgcc.Entity.Type</value>
+                <value>ma.bservices.tgcc.Entity.Typedocument</value>
+                <value>ma.bservices.tgcc.Entity.Utilisateur</value>
+                <value>ma.bservices.tgcc.Entity.Zone</value>
+                <value>ma.bservices.tgcc.Entity.Groupe</value>
+                <value>ma.bservices.tgcc.Entity.Permission</value>
+                
+            </list>
+        </property>
+        
+      
+    
+    </bean>        
+
+</beans>

@@ -1,0 +1,468 @@
+<!--<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+    Etat engin
+    
+    
+        <bean id="etatEnginService" class="ma.bservices.tgcc.Engin.service.EtatEnginServiceImpl">
+         <property name="etatEnginDAO" ref="etatEnginDAO" /> 
+     </bean>
+    
+    <bean id="etatEnginDAO" class="ma.bservices.tgcc.dao.engin.EtatEnginDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />    
+    </bean>
+       
+    
+    Documents
+   
+    <bean id="documentService" class="ma.bservices.tgcc.service.Mensuel.DocumentServiceImpl">
+        <property name="documentDAO" ref="documentDAO" /> 
+    </bean>
+  
+    <bean id="documentDAO" class="ma.bservices.tgcc.dao.Mensuel.DocumentDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    
+    
+    Etat
+    
+    
+    <bean id="etatService" class="ma.bservices.tgcc.service.Engin.EtatServiceImpl">
+        <property name="etatDAO" ref="etatDAO" /> 
+    </bean>
+   
+    <bean id="etatDAO" class="ma.bservices.tgcc.dao.engin.EtatDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />    
+    </bean>
+    
+    
+    Pointage Engin
+    
+    
+    <bean id="pointageEnginService" class="ma.bservices.tgcc.service.Engin.PointageEnginServicesImpl">
+        <property name="pointageEnginDAO" ref="pointageEnginDAO" /> 
+        <property name="zoneDAO" ref="zoneDAO" /> 
+        <property name="lotDAO" ref="lotDAO" /> 
+        <property name="etatEnginDAO" ref="etatEnginDAO" /> 
+    </bean>
+   
+    <bean id="pointageEnginDAO" class="ma.bservices.tgcc.dao.engin.PointageEnginDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />    
+    </bean>
+        
+    CHANTIER
+    
+    
+    <bean id="chantierService" class="ma.bservices.tgcc.service.Engin.ChantierServiceImpl">
+        <property name="chantierDAO" ref="chantierDAO" /> 
+    </bean>
+   
+    <bean id="chantierDAO" class="ma.bservices.tgcc.dao.engin.ChantierDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    
+    
+    Engin
+    
+        
+    <bean id="enginService" class="ma.bservices.tgcc.service.Engin.EnginServiceImpl">
+        <property name="enginDAO" ref="enginDAO" /> 
+        <property name="chantierDAO" ref="chantierDAO" /> 
+    </bean>
+   
+    <bean id="enginDAO" class="ma.bservices.tgcc.dao.engin.EnginDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    
+    TYPOLOGIE
+    
+    <bean id="typologieConsoService" class="ma.bservices.tgcc.service.stock.TypologieConsoServiceImpl">
+        <property name="typologieDAO" ref="typologieDAO" /> 
+    </bean>
+   
+    <bean id="typologieDAO" class="ma.bservices.tgcc.dao.stock.TypologieDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    STATUS TRANSFER
+    
+    <bean id="statusTransferService" class="ma.bservices.tgcc.service.stock.StatusTransferServiceImpl">
+        <property name="statusTransferDAO" ref="statusTransferDAO" /> 
+    </bean>
+   
+    <bean id="statusTransferDAO" class="ma.bservices.tgcc.dao.stock.StatusTransferDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    
+    Article
+    
+        
+    <bean id="articleService " class="ma.bservices.tgcc.service.stock.ArticleServiceImpl">
+        <property name="articleDAO" ref="articleDAO" /> 
+    </bean>
+   
+    <bean id="articleDAO" class="ma.bservices.tgcc.dao.stock.ArticleDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    
+     Famille Stock 
+    
+    
+    
+    
+    
+    AFFECTATION STOCK 
+    
+    <bean id="affectationStockService" class="ma.bservices.tgcc.service.stock.AffectationStockServiceImpl">
+        <property name="affectationStockDAO" ref="affectationStockDAO" /> 
+    </bean>
+       
+    <bean id="affectationStockDAO" class="ma.bservices.tgcc.dao.stock.AffectationStockDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>    
+    
+     TRANSFER STOCK 
+    
+    <bean id="transferStockService" class="ma.bservices.tgcc.service.stock.TransferStockServiceImpl">
+        <property name="transferStockDAO" ref="transferStockDAO" /> 
+    </bean>
+       
+    <bean id="transferStockDAO" class="ma.bservices.tgcc.dao.stock.TransferStockDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+     
+    
+    
+    Zone
+    
+    
+    
+    <bean id="zoneServices" class="ma.bservices.tgcc.service.Engin.ZoneServicesImpl">
+        <property name="zoneDAO" ref="zoneDAO" /> 
+        <property name="chantierDAO" ref="chantierDAO" />
+    </bean>
+   
+    <bean id="zoneDAO" class="ma.bservices.tgcc.dao.engin.ZoneDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    
+    
+    Lot
+    
+    
+    
+    <bean id="lotService" class="ma.bservices.tgcc.service.Engin.LotServiceImpl">
+        <property name="lotDAO" ref="lotDAO" /> 
+    </bean>
+   
+    <bean id="lotDAO" class="ma.bservices.tgcc.dao.engin.LotDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    
+    
+    User
+    
+    
+    <bean id="utilisateurService" class="ma.bservices.tgcc.service.Engin.UtilisateurServiceImpl">
+        <property name="utilisateurDAO" ref="utilisateurDAO" /> 
+    </bean>
+   
+    <bean id="utilisateurDAO" class="ma.bservices.tgcc.dao.engin.UtilisateurDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    
+    GROUPE
+    
+    <bean id="groupeService" class="ma.bservices.tgcc.service.Engin.GroupeServiceImpl">
+        <property name="groupeDAO" ref="groupeDAO" /> 
+        <property name="permissionDAO" ref="permissionDAO" /> 
+    </bean>
+   
+    <bean id="groupeDAO" class="ma.bservices.tgcc.dao.engin.GroupeDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    
+    PERMISSIONS
+    
+    <bean id="permissionService" class="ma.bservices.tgcc.service.Engin.PermissionServiceImpl">
+        <property name="permissionDAO" ref="permissionDAO" /> 
+    </bean>
+   
+    <bean id="permissionDAO" class="ma.bservices.tgcc.dao.engin.PermissionDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    
+    
+    AFFECTATION
+    
+    <bean id="affectationService" class="ma.bservices.tgcc.service.Mensuel.AffectationServiceImpl">
+        <property name="affectDAO" ref="affectDAO" /> 
+    </bean>
+       
+    <bean id="affectDAO" class="ma.bservices.tgcc.dao.Mensuel.AffectationDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+     
+    Mensuel
+    
+    <bean id="mensuelService" class="ma.bservices.tgcc.service.Mensuel.MensuelServiceImpl">
+        <property name="mensuelDAO" ref="mensuelDAO" /> 
+        <property name="affectDAO" ref="affectDAO" /> 
+    </bean>
+   
+    <bean id="mensuelDAO" class="ma.bservices.tgcc.dao.Mensuel.MensuelDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    Fonction
+    <bean id="fonctionService" class="ma.bservices.tgcc.service.Mensuel.FonctionServiceImpl">
+        <property name="fonctionDAO" ref="fonctionDAO" /> 
+    </bean>
+   
+    <bean id="fonctionDAO" class="ma.bservices.tgcc.dao.Mensuel.FonctionDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+     Telephone 
+    <bean id="telephoneService" class="ma.bservices.tgcc.service.Mensuel.TelephoneServiceImpl">
+        <property name="telephoneDAO" ref="telephoneDAO" />  
+    </bean>
+    
+    
+   
+    <bean id="telephoneDAO" class="ma.bservices.tgcc.dao.Mensuel.TelephoneDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    
+    
+    
+    
+    
+     Element 
+    <bean id="elementService" class="ma.bservices.tgcc.service.Mensuel.ElementServiceImpl">
+        <property name="elementDao" ref="elementDao" />  
+    </bean>
+    
+    
+   
+    <bean id="elementDao" class="ma.bservices.tgcc.dao.Mensuel.ElementDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    
+     ordinateur mensuel 
+    <bean id="ordinateurService" class="ma.bservices.tgcc.service.Mensuel.OrdinateurServiceImpl">
+        <property name="ordinateurDAO" ref="ordinateurDAO" /> 
+    </bean>
+  
+    <bean id="ordinateurDAO" class="ma.bservices.tgcc.dao.Mensuel.OrdinateurDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+   
+     Loyer 
+    <bean id="loyerService" class="ma.bservices.tgcc.service.Mensuel.LoyerServiceImpl">
+        <property name="loyerDAO" ref="loyerDAO" /> 
+        <property name="mensuelDAO" ref="mensuelDAO" />
+    </bean>
+   
+    <bean id="loyerDAO" class="ma.bservices.tgcc.dao.Mensuel.LoyerDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    
+    Voiture
+    <bean id="voitureService" class="ma.bservices.tgcc.service.Mensuel.VoitureServiceImpl">
+        <property name="voitureDAO" ref="voitureDAO" /> 
+    </bean>
+  
+    <bean id="voitureDAO" class="ma.bservices.tgcc.dao.Mensuel.VoitureDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    VoitureSalarie
+    <bean id="voituresalarieService" class="ma.bservices.tgcc.service.Mensuel.VoitureSalarieServiceImpl">
+        <property name="voituresDAO" ref="voituresDAO" /> 
+    </bean>
+  
+    <bean id="voituresDAO" class="ma.bservices.tgcc.dao.Mensuel.VoitureSalarieDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    
+    VoitureChantier
+    <bean id="voitureChantierService" class="ma.bservices.tgcc.service.Mensuel.VoitureChantierServiceImpl">
+        <property name="voitureChantierDAO" ref="voitureChantierDAO" /> 
+    </bean>
+  
+    <bean id="voitureChantierDAO" class="ma.bservices.tgcc.dao.Mensuel.VoitureChantierDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    
+     bon caissse 
+    <bean id="boncaisseservice" class="ma.bservices.tgcc.service.Mensuel.BonCaisseServiceImpl">
+        <property name="boncaisseDAO" ref="boncaisseDAO" /> 
+    </bean>
+   
+    <bean id="boncaisseDAO" class="ma.bservices.tgcc.dao.Mensuel.BonCaisseDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    
+    
+     Gestion Carte Gasoil  
+    <bean id="carteGasoilService" class="ma.bservices.tgcc.service.Mensuel.CarteGasoilServiceImpl">
+        <property name="carteGasoilDAO" ref="carteGasoilDAO" /> 
+    </bean>
+   
+    <bean id="carteGasoilDAO" class="ma.bservices.tgcc.dao.Mensuel.CarteGasoilDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    
+     carte Gasoil Chantier  
+    <bean id="carteGasoilChantierService" class="ma.bservices.tgcc.service.Mensuel.CarteGasoilChantierServiceImpl">
+        <property name="carteGasoilChantierDAO" ref="carteGasoilChantierDAO" /> 
+    </bean>
+   
+    <bean id="carteGasoilChantierDAO" class="ma.bservices.tgcc.dao.Mensuel.CarteGasoilChantierDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    
+    
+     3g   
+    <bean id="modem3gService" class="ma.bservices.tgcc.service.Mensuel.Modem3gServiceImpl">
+        <property name="modem3gDAO" ref="modem3gDAO" /> 
+    </bean>
+   
+    <bean id="modem3gDAO" class="ma.bservices.tgcc.dao.Mensuel.Modem3GDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    
+     Pointage Mensuel    
+    <bean id="pointageMensuelQuinzinierService" class="ma.bservices.tgcc.service.Mensuel.PointageMensuelQuinzinierServiceImpl">
+        <property name="pointageMensuelQuinzinierDAO" ref="pointageMensuelQuinzinierDAO" /> 
+    </bean>
+   
+    <bean id="pointageMensuelQuinzinierDAO" class="ma.bservices.tgcc.dao.Mensuel.PointageMensuelQuinzinierDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    
+    
+    
+    CarteGS
+    <bean id="cartegsService" class="ma.bservices.tgcc.service.Mensuel.CarteGSServiceImpl">
+        <property name="cartegsDAO" ref="cartegsDAO" /> 
+    </bean>
+  
+    <bean id="cartegsDAO" class="ma.bservices.tgcc.dao.Mensuel.CarteGSDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+   
+   
+   
+    Absence
+    <bean id="absenceService" class="ma.bservices.tgcc.service.Mensuel.AbsenceServiceImpl">
+        <property name="absenceDAO" ref="absenceDAO" /> 
+    </bean>
+  
+    <bean id="absenceDAO" class="ma.bservices.tgcc.dao.Mensuel.AbsenceDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    Pointage des mensuel
+    <bean id="pointageService" class="ma.bservices.tgcc.service.Mensuel.PointageServiceImpl">
+        <property name="pointageDAO" ref="pointageDAO" /> 
+    </bean>
+   
+    <bean id="pointageDAO" class="ma.bservices.tgcc.dao.Mensuel.PointageDAOImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
+    
+    
+    <bean id="transactionManager"
+          class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory">
+            <ref bean="sessionFactory" />
+        </property>
+    </bean> 
+    
+    
+    <bean 
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location">
+            <value>/WEB-INF/properties/database.properties</value>
+        </property>
+    </bean>
+    
+    
+    <bean id="sessionFactory" 
+          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource">
+            <ref bean="dataSource" />
+        </property>
+        <property name="packagesToScan" value="ma.bservices" />
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+                <prop key="hibernate.dialect">${hibernate.dialect}</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.SQLServer2008Dialect</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.format_sql">true</prop>
+				
+            </props>
+        </property>
+        
+        <property name="annotatedClasses">
+            <list>
+                <value>ma.bservices.tgcc.Entity.Engin</value>
+            </list>
+        </property>
+    </bean>        
+    
+   
+       
+        <bean id="dataSource" 
+          class="ma.bservices.tgcc.utilitaire.RunzDriverManagerDataSource">
+        <property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
+        <property name="url" value="jdbc:sqlserver://172.16.172.2;databaseName=BilanTgccTestUnitaire" />
+        <property name="username" value="bservices" />
+        <property name="password" value="bservices" />
+    </bean>
+    
+   
+  <bean id="dataSource" 
+          class="ma.bservices.tgcc.utilitaire.RunzDriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://localhost:8889/BilanTgccTestUnitaire" />
+        <property name="username" value="root" />
+        <property name="password" value="root" />
+    </bean>
+    
+     <bean id="dataSource" 
+          class="ma.bservices.tgcc.utilitaire.RunzDriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://localhost:3306/BilanTgccTestUnitaire" />
+        <property name="username" value="root" />
+        <property name="password" value="" />
+    </bean>
+    
+</beans>-->

@@ -1,0 +1,1249 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets" 
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Detail Salarie</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="Template.xhtml">
+            <ui:define name="arborescence">
+                <h:outputText value="RH > Consultation Salaries > Détail Salaries" styleClass="arborescence"/>
+            </ui:define>    
+            <ui:define name="content" >
+
+                <p:blockUI block="formUp" widgetVar="blockUp">
+                    Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                </p:blockUI>
+
+                
+                <h:form id="formUp" >
+
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <p:fileUpload allowTypes="/(\.|\/)(gif|jpe?g|png)$/" 
+                                          label="Upload photo"
+                                          mode="advanced"
+                                          auto="true"
+                                          onstart="PF('blockUp').show()"
+                                          oncomplete="PF('blockUp').hide()"
+                                          uploadLabel="Photo Salarie"
+                                          update=":formUp"
+                                          fileUploadListener="#{detailMb.savePhotoServer}">
+                            </p:fileUpload>   
+                            <p:graphicImage value="#{imageBean.image}" width="150px" height="150px">
+                                <f:param name="path" value="#{detailMb.salarie.cheminPhoto}" />
+                            </p:graphicImage>
+
+
+                        </div>
+                        <div class="col-lg-4 ">
+                            <h:panelGrid columns="2" cellpadding="8px" class="without-border">
+
+
+
+                                <h:outputText value="Matricule"/>
+                                <h:outputText value="#{detailMb.salarie.matricule}" />
+                                <h:outputText value="Civilité"/>
+                                <h:outputText value="#{detailMb.salarie.civilite!=null ?detailMb.salarie.civilite.civilite:'---'}"/>
+                                <h:outputText value="Nom"/>
+                                <h:outputText value="#{detailMb.salarie.nom}" />
+
+                                <h:outputText value="Nom Arabe"/>
+                                <h:outputText  value="#{detailMb.salarie.nomArabe}" />
+
+                                <h:outputText value="Prénom"/>
+                                <h:outputText value="#{detailMb.salarie.prenom}" />
+
+                                <h:outputText value="Prénom Arabe"/>
+                                <h:outputText value="#{detailMb.salarie.prenomArabe}" />
+
+                                <h:outputText value="Situation Familiale :"/>
+                                <h:outputText value="#{detailMb.salarie.situationFamiliale!=null ?detailMb.salarie.situationFamiliale.situationFamiliale:'---'}"/>
+                            </h:panelGrid>
+                        </div>
+                        <div class="col-lg-4">
+                            <h:panelGrid class="without-border" cellpadding="8px" columns="3" id="infos1">
+
+                                <h:outputText value="Matricule Nova"/>
+                                <h:outputText value="#{detailMb.salarie.matriculeDivalto}" />
+                                <h:outputText  />
+
+
+                                <h:outputText value="CIN"/>
+                                <h:outputText value="#{detailMb.salarie.cin}" />
+                                <h:outputText  />
+
+                                <h:outputText value="Fonction :"/>
+                                <h:outputText value="#{detailMb.salarie.fonction!=null ?detailMb.salarie.fonction.fonction:'---'}"/>
+                                <h:outputText  />
+
+                                <h:outputText value="Type :"/>
+                                <h:outputText value="#{detailMb.salarie.type!=null ?detailMb.salarie.type.type:'---'}"/>
+                                <h:outputText  />
+
+                                <h:outputText value="Etat :"/>
+                                <h:outputText value="#{detailMb.salarie.etat!=null ?detailMb.salarie.etat.etat :'---'}"/>
+                                <c:if test="#{authentification.hasPermission(constanteMb.modifierEtat)}">
+                                    <p:commandButton value="modifier Etat" onclick="PF('updateEtat').show()" process="@none"/>
+                                </c:if>
+                                <c:if test="#{authentification.hasPermission(constanteMb.modifierEtat)==false}">
+                                    <h:outputText />
+                                </c:if>
+                                <h:outputText value="Mode Paiement :"/>
+                                <h:outputText value="#{detailMb.salarie.modePaiement!=null ?detailMb.salarie.modePaiement.modePaiement:'---'}"/>
+                                <h:outputText  />
+                            </h:panelGrid>
+
+                        </div>
+                    </div>
+                </h:form> 
+                <h:form id="form" >
+                    <p:growl showDetail="true" id="growlId" sticky="true"   showSummary="true"  autoUpdate="true" />
+                    <p:tabView id="tabs" style="margin-top: 40px;">
+                        <p:tab id="ficheSalarie" title="Fiche Salarie">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <h:panelGrid columns="2" class="without-border">
+                                        <h:outputText value="Matricule"/>
+                                        <p:inputText value="#{detailMb.salarie.matricule}" disabled="true"/>
+
+                                        <h:outputText value="Civilité"/>
+                                        <p:selectOneMenu id="civilite" value="#{detailMb.id_Civilite}" styleClass="widthChamp"
+                                                         filter="true" filterMatchMode="contains">
+                                            <f:selectItem itemLabel="#{detailMb.salarie.civilite.civilite}" itemValue="#{detailMb.salarie.civilite.id}" /> 
+                                            <f:selectItems value="#{civiliteMb.civilites}" var="c" itemLabel="#{c.civilite}" itemValue="#{c.id}" />
+                                        </p:selectOneMenu>
+
+
+                                        <h:outputText value="Nom"/>
+                                        <p:inputText value="#{detailMb.salarie.nom}"
+                                                     required="true"                                                     
+                                                     requiredMessage="Code 1101 : Le nom ne peut être vide "/>
+
+                                        <h:outputText value="Nom Arabe"/>
+                                        <p:keyboard closeLabel="أغلق" backspaceLabel="إحدف" clearLabel="مسح" value="#{detailMb.salarie.nomArabe}" layout="custom" layoutTemplate="آ-1234567890-space,ضصثقفغعهخحج-back,شسيبلاتنمكط-clear,ئءؤرإأىةوزظ-close,space-space-spacebar-دذ" />
+
+                                        <h:outputText value="Prénom"/>
+                                        <p:inputText value="#{detailMb.salarie.prenom}" 
+                                                     required="true"
+                                                     requiredMessage="Code 1101 : Le prénom ne peut être vide "/>
+
+                                        <h:outputText value="Prénom Arabe"/>
+                                        <p:keyboard closeLabel="أغلق" backspaceLabel="إحدف" clearLabel="مسح" value="#{detailMb.salarie.prenomArabe}" layout="custom" layoutTemplate="آ-1234567890-space,ضصثقفغعهخحج-back,شسيبلاتنمكط-clear,ئءؤرإأىةوزظ-close,space-space-spacebar-دذ" />
+
+                                        <h:outputText value="Situation Familiale :"/>
+                                        <p:selectOneMenu id="situation" value="#{detailMb.id_Situation}" styleClass="widthChamp"> 
+                                            <f:selectItems value="#{situationMb.situations}" var="t" itemLabel="#{t.situationFamiliale}" itemValue="#{t.id}" />
+                                        </p:selectOneMenu>
+                                    </h:panelGrid>
+                                </div>
+                                <div class="col-lg-6">
+                                    <h:panelGrid class="without-border" columns="2">
+
+                                        <h:outputText value="Matricule Nova"/>
+                                        <p:inputText value="#{detailMb.salarie.matriculeDivalto}" />
+
+                                        <h:outputText value="CIN"/>
+                                        <p:inputText id="cinInput" value="#{detailMb.salarie.cin}"
+                                                     required="true"
+                                                     requiredMessage="Code 1101 : Le CIN ne peut être vide ">
+                                            <f:validateRegex for="msgCin" pattern="^[a-zA-Z][a-zA-Z0-9]{1,8}[0-9]$" />
+                                            <f:ajax event="change" render="msgCin" listener="#{detailMb.checkCin(detailMb.salarie.cin)}"/>
+                                        </p:inputText>
+                                        <h:outputText/>
+                                        <p:message id="msgCin" for="cinInput" />
+
+                                        <h:outputText value="Statut"/>
+                                        <p:selectOneMenu id="statut" required="true"
+                                                         requiredMessage="Code 1101 : Statut ne peut être vide" 
+                                                         value="#{detailMb.idStatut}" styleClass="widthChamp"
+                                                         filter="true" filterMatchMode="contains" > 
+                                            <p:ajax listener="#{detailMb.updateFontion()}" 
+                                                    onstart="PF('block').show()" oncomplete="PF('block').hide();" update="fonction" />
+                                            <f:selectItem itemLabel="" itemValue="" noSelectionOption="true" />
+                                            <f:selectItems value="#{statutMb.statuts}" var="s" itemLabel="#{s.statut}" itemValue="#{s.codeDiva}" />
+                                            <p:ajax update="fonction" 
+                                                    onstart="PF('block').show();" 
+                                                    oncomplete="PF('block').hide();"
+                                                    listener="#{detailMb.fonctionByStatut(detailMb.idStatut)}" event="change" />
+                                            <p:ajax update='' />
+                                        </p:selectOneMenu>
+
+
+                                        <h:outputText value="Fonction :"/>
+                                        <p:selectOneMenu id="fonction" value="#{detailMb.salarie.fonction.id}" styleClass="widthChamp"
+                                                         filter="true" filterMatchMode="contains"> 
+                                            <f:selectItems value="#{detailMb.fonctions}" var="f" itemLabel="#{f.fonction}" itemValue="#{f.id}" />
+                                        </p:selectOneMenu>
+
+                                        <h:outputText value="Type :"/>
+                                        <p:selectOneMenu id="type" value="#{detailMb.typeID}" styleClass="widthChamp"> 
+                                            <f:selectItems value="#{typeMb.types}" var="t" itemLabel="#{t.type}" itemValue="#{t.id}" />
+                                        </p:selectOneMenu>
+
+                                        <h:outputText value="Mode Paiement :"/>
+                                        <p:selectOneMenu id="modep" value="#{detailMb.id_ModeP}" styleClass="widthChamp"> 
+                                            <f:selectItems value="#{modeMb.modes}" var="m" itemLabel="#{m.modePaiement}" itemValue="#{m.id}" />
+                                        </p:selectOneMenu> 
+
+                                    </h:panelGrid>
+
+                                </div>
+                            </div>
+                            <hr/>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <h:panelGrid class="without-border" columns="2" >
+                                        <h:outputText value="Date de Naissance"/>
+                                         <p:calendar pattern="dd/MM/yyyy" id="dateN"  value="#{detailMb.salarie.dateNaissance}"     />
+                                        <h:outputText value="Ville de Naissance"/>
+                                        <p:inputText  value="#{detailMb.salarie.lieuNaissance}"/>
+                                        <h:outputText value="Nationalité :"/>
+                                        <p:selectOneMenu id="nationalite" value="#{detailMb.id_Nationalite}" styleClass="widthChamp"> 
+                                            <f:selectItems value="#{nationaliteMb.nationalites}" var="m" itemLabel="#{m.nationalite}" itemValue="#{m.id}" />
+                                        </p:selectOneMenu>
+                                        <h:outputText class="label label-danger" value="Adresse"/><h:outputText value=""/>
+                                        <h:outputText value="Adresse :"/>
+                                        <p:inputTextarea  value="#{detailMb.salarie.adresse}" styleClass="widthChamp"/>
+                                        <h:outputText value="Adresse Arabe"/>
+                                        <p:keyboard style="height: 55px" closeLabel="أغلق" backspaceLabel="إحدف" clearLabel="مسح" value="#{detailMb.salarie.adresseArabe}" layout="custom" layoutTemplate="آ-1234567890-space,ضصثقفغعهخحج-back,شسيبلاتنمكط-clear,ئءؤرإأىةوزظ-close,space-space-spacebar-دذ" />
+                                        <h:outputText value="Ville"/>
+                                        <p:inputText  value="#{detailMb.salarie.ville}" required="true"
+                                                      requiredMessage="Code 1101 : la ville ne peut être vide"/>
+                                        <h:outputText value="Pays"/>
+                                        <p:selectOneMenu id="pays" value="#{detailMb.id_Pays}" styleClass="widthChamp"> 
+                                            <f:selectItems value="#{paysMb.pays}" var="pa" itemLabel="#{pa.pays}" itemValue="#{pa.id}" />
+                                        </p:selectOneMenu>
+
+                                        <h:outputText value="Téléphone "/>
+                                        <p:inputText  id="tel" label="GSM" maxlength="20" validatorMessage="veuillez saisir un numero de téléphone valide"
+                                                      value="#{detailMb.salarie.telephone}">
+                                            
+                                            <f:validateRegex pattern="^[+0-9 ]{10,20}$"/>
+                                            <f:ajax event="change" render="telMsg"/>
+                                        </p:inputText>
+                                        <h:outputText/>
+                                        <p:message for="tel" id="telMsg" />
+
+                                        <h:outputText value="GSM "/>
+                                        <p:inputText  id="gsm" label="GSM" maxlength="20" value="#{detailMb.salarie.gsm}">
+                                            <f:validateRegex pattern="^[+0-9 ]{10,20}$"/>
+                                            <f:ajax event="change" render="gsmMsg"/>
+                                        </p:inputText>
+                                        <h:outputText/>
+                                        <p:message for="gsm" id="gsmMsg" />
+
+                                        <h:outputText value="Email"/>
+                                        <p:inputText id="email" label="email" value="#{detailMb.salarie.email}">
+                                            <f:validateRegex for="email" pattern="^[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,4})$" />
+                                            <f:ajax event="change" render="emailMsg"/>
+                                        </p:inputText>
+                                        <h:outputText/>
+                                        <p:message for="email" id="emailMsg"/>
+                                    </h:panelGrid>
+                                </div>
+                                <div class="col-lg-6">
+                                    <!--<p:message id="ribmsg" for="rib"/>-->
+                                    <h:panelGrid  columns="2" class=" without-border" >
+                                        <h:outputText value="CNSS"/>
+                                        <p:inputText id="cnss" value="#{detailMb.salarie.cnss}">
+                                            <f:ajax event="change"  render="msg_cnss" listener="#{detailMb.checkCNSS(detailMb.salarie.cnss,detailMb.salarie.matricule)}" />
+                                            <f:validateRegex for="cnss" pattern="^$|^[0-9]{9,9}$" />
+                                            <p:clientValidator  />
+                                        </p:inputText>
+                                        <p:message id="msg_cnss" for="cnss" />   
+                                        <h:outputText/>
+                                        <h:outputText value="RIB"/>
+                                        <p:inputText id="rib" value="#{detailMb.salarie.rib}" readonly="#{authentification.hasPermission(constanteMb.modifierRIB)==false}">
+                                            <f:ajax event="change" render="msg_rib"  listener="#{detailMb.checkRIB(detailMb.salarie.rib,detailMb.salarie.matricule)}" />
+                                              <f:validateRegex for="rib" pattern="^$|^[0-9]{24,24}$" />
+                                            <p:clientValidator event="change" />
+                                        </p:inputText>
+                                        <p:message id="msg_rib" for="rib" />
+                                        <h:outputText/>
+                                        <h:outputText value="Banque"/>
+                                        <p:selectOneMenu style="width: 100%" id="banque" value="#{detailMb.salarie.nomBanque}">
+                                            <f:selectItem itemValue="SGMB" itemLabel="SGMB"/>
+                                            <f:selectItem itemValue="BP" itemLabel="BP"/>
+                                            <f:selectItem itemValue="ATTIJARIWAFABANK" itemLabel="ATTIJARIWAFABANK"/>
+                                            <f:selectItem itemValue="LA POSTE" itemLabel="LA POSTE"/>
+                                            <f:selectItem itemValue="BMCI" itemLabel="BMCI"/>
+                                            <f:selectItem itemValue="BMCE" itemLabel="BMCE"/>
+                                            <f:selectItem itemValue="CREDIT AGRICOLE" itemLabel="CREDIT AGRICOLE"/>
+                                            <f:selectItem itemValue="CREDIT DU MAROC" itemLabel="CREDIT DU MAROC"/>
+                                            <f:selectItem itemValue="C.I.H" itemLabel="C.I.H"/>
+                                            <f:selectItem itemValue="WAFACASH" itemLabel="WAFACASH"/>
+                                        </p:selectOneMenu>
+                                        <h:outputText value="Agence"/>
+                                        <p:inputText  value="#{detailMb.salarie.nomAgence}"/>
+                                        <section class="label label-danger">Autres</section>
+                                        <h:outputText />
+                                        <h:outputText value="Pointure"/>
+                                        <p:selectOneMenu id="pointure" value="#{detailMb.id_Pointure}"> 
+                                            <f:selectItem itemLabel="--Pointure--" itemValue="" />
+                                            <f:selectItems value="#{pointureMb.pointures}" var="p" itemLabel="#{p.pointure}" itemValue="#{p.id}" />
+                                        </p:selectOneMenu>
+                                        <h:outputText value="Taille d'habillement"/>
+                                        <p:selectOneMenu id="taille" value="#{detailMb.id_Taille}"> 
+                                            <f:selectItem itemLabel="--Taille--" itemValue="" />
+                                            <f:selectItems value="#{tailleMb.tailles}" var="t" itemLabel="#{t.tailleHabillement}" itemValue="#{t.id}" />
+                                        </p:selectOneMenu>
+
+                                        <h:outputText value="Couleur de Gilet"/>
+                                        <p:selectOneMenu id="gilet" value="#{detailMb.id_Gilet}"> 
+                                            <f:selectItem itemLabel="--Couleur Gilet--" itemValue="" />
+                                            <f:selectItems value="#{couleurGiletMb.gilets}"  var="g" itemLabel="#{g.couleurGilet}" itemValue="#{g.id}" />
+                                        </p:selectOneMenu>
+
+                                        <h:outputText value="Couleur de Casque"/>
+                                        <p:selectOneMenu id="casque" value="#{detailMb.id_Casque}" > 
+                                            <f:selectItem itemLabel="--Couleur Casque--" itemValue="" />
+                                            <f:selectItems value="#{couleurCasqueMb.casques}" var="c" itemLabel="#{c.couleurCasque}" itemValue="#{c.id}" />
+                                        </p:selectOneMenu>
+
+                                        <h:outputText/>
+                                        <c:if test="#{authentification.hasPermission(constanteMb.modifierSalarie)}">
+                                            <p:commandButton disabled="#{detailMb.salarie.etat.etat eq 'Blacklist'}" action="#{detailMb.modifier()}" 
+                                                             class="btn btn-switch active" update=":formUp, :form:growlId"  value="Modifier"
+                                                             onstart="PF('block').show()" oncomplete="PF('block').hide();" >
+                                                <f:ajax render=":infos1" />
+                                            </p:commandButton>
+                                        </c:if>
+                                    </h:panelGrid>
+                                </div>
+                            </div>
+                        </p:tab>
+                        <p:tab title="Enfant" id="tabEnfant">
+                            <p:dataTable var="enf" value="#{detailMb.enfants}" rowKey="#{enf.id}"
+                                         paginator="true" rows="10"
+                                         paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                         paginatorPosition="bottom"
+                                         editable="true"
+                                         rowsPerPageTemplate="5,10,15" lazy="true" id="enfantTable" >
+                                <f:facet name="header">
+                                    <p:commandButton style="display: #{detailMb.salarie.situationFamiliale.situationFamiliale eq 'Célibataire'? 'none' :'block'}"
+                                                     process="@this" icon="ui-icon-circle-check" value="Ajouter"
+                                                     onclick="PF('addenf').show();" />
+                                </f:facet>
+                                <p:ajax event="rowEdit" listener="#{detailMb.onRowEdit}"  />
+                                <p:ajax event="rowEditCancel" listener="#{detailMb.onRowCancel}" />
+                                <p:column headerText="Prenom">
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{enf.prenom}" /></f:facet>
+                                        <f:facet name="input">
+                                            <p:inputText id="modelInput" value="#{enf.prenom}" style="width:100%"/>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+                                <p:column headerText="Date de Naissance"  >
+                                    <p:cellEditor> 
+                                        <f:facet name="output">
+                                            <h:outputText value="#{constanteMb.getDateFormatFR(enf.dateNaissance)}" />
+                                        </f:facet> 
+                                        <f:facet name="input" >
+                                             <p:calendar pattern="dd/MM/yyyy"  value="#{enf.dateNaissance}"     style="width:50px"/>
+                                        </f:facet> 
+                                    </p:cellEditor>
+                                </p:column>
+                                <p:column  headerText="Actions">
+                                    <p:rowEditor />
+                                </p:column>
+                                <p:column >
+                                    <c:if test="#{authentification.hasPermission(constanteMb.supprimerUnEnfant)}">
+                                        <p:commandButton process="@this" validateClient="false" icon="ui-icon-trash" action="#{detailMb.supprimerEnfant(enf)}" update=":form:tabs:enfantTable">
+                                            <f:setPropertyActionListener value="#{enf}" target="#{detailMb.enf}" />
+                                            <p:confirm header="Confirmation" message="Vous êtes sur de vouloir supprimer cet enfant ? " icon="ui-icon-alert" />
+                                        </p:commandButton> 
+                                    </c:if>
+
+                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                        <p:commandButton value="Oui" validateClient="false"  type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                        <p:commandButton value="Annuler" validateClient="false"  type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                    </p:confirmDialog>
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab> 
+                        <p:tab title="Document">
+                            <p:dataTable id="document" value="#{detailMb.docs}" var="doc">
+                                <f:facet name="header">
+                                    <c:if test="#{detailMb.nombreDocumentsNonAjoutes != 0}">
+                                        <p:commandButton icon="ui-icon-plus" disabled="#{detailMb.salarie.etat.etat == 'Désactivé' || detailMb.salarie.etat.etat == 'Sorti'}" value="Completez dossier salarie"
+                                                         action="#{dossierSalarieDocMb.documentSalarie(detailMb.salarie.id)}" process="@this">
+                                        </p:commandButton>
+                                        <p:spacer width="30px"/>
+                                    </c:if>
+                                    <p:commandButton icon="ui-icon-plus" disabled="#{detailMb.salarie.etat.etat == 'Désactivé' || detailMb.salarie.etat.etat == 'Sorti'}" value="Ajouter" update=":addDocForm" 
+                                                     onclick="PF('addDocument').show()" process="@this">
+                                        <f:setPropertyActionListener target="#{detailMb.docStatus}"  value="Ajouter"/>
+                                    </p:commandButton>
+                                </f:facet>
+                                <p:column headerText="Titre">
+                                    <h:outputText value="#{doc.titre}"/>
+                                </p:column>
+                                <p:column headerText="Ajouter Par">
+                                    <h:outputText value="#{doc.creePar}"/>
+                                </p:column>
+                                <p:column headerText="Date Création">
+                                    <h:outputText value="#{constanteMb.getDateFormatFR(doc.dateCreation)}"/>
+                                </p:column>
+                                <p:column headerText="Action">
+                                    <p:commandButton process="@this" value="Visualiser" icon="ui-icon-clipboard" update=":detailDocuments" oncomplete="PF('detailDocument').show()" actionListener="#{detailMb.initDocToShow(doc)}" rendered="#{imageBean.fileExists(doc.chemin)}"/>
+                                    <p:commandButton process="@this" value="Modifier" icon="ui-icon-pencil" update=":addDocForm " oncomplete="PF('addDocument').show()" actionListener="#{detailMb.initDocToEdit(doc)}" />
+                                   
+                                    <p:commandButton process="@this" value="Download" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s" rendered="#{imageBean.fileExists(doc.chemin)}">
+                                        <p:fileDownload value="#{imageBean.getFile(doc.chemin,doc.titre)}" />
+                                    </p:commandButton>
+                                   
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab>
+                        <p:tab title="Contrat">
+                            <p:dataTable id="contrat" value="#{detailMb.contrats}" var="contrat">
+                                <f:facet name="header">
+                                    <p:commandButton  icon="ui-icon-circle-check" value="Ajouter" 
+                                                      process="@this" update=":ajouterContrat"
+                                                      actionListener="#{detailMb.initialContratToAdd()}"
+                                                      oncomplete="PF('addContrat').show()"/>
+                                </f:facet>
+                                <p:column headerText="Etat">
+                                    <h:outputText value="#{contrat.etatContrat.etatContrat}"/>
+                                </p:column>
+                                <p:column headerText="Type">
+                                    <h:outputText value="#{contrat.typeContrat.typeContrat}"/>
+                                </p:column>                                                                                       
+                  
+                                <p:column headerText="Fonction">
+                                    <h:outputText value="#{contrat.fonction.fonction}"/>
+                                </p:column>
+                                <p:column headerText="Date d'embauche">                                                                                                             
+                                    <h:outputText value="#{constanteMb.getDateFormatFR(contrat.dateEmbauche)}"/>
+                                </p:column>
+                                <p:column headerText="Durée">
+                                    <h:outputText value="#{contrat.duree.dureeContrat}"/>
+                                </p:column>
+                                <p:column headerText="Action">
+                                    <p:commandButton process="@this" 
+                                                     icon="ui-icon-document" 
+                                                     update=":detailContrat,:addContratForm, :modifTFcontrat, :btnContratActions" 
+                                                     oncomplete="PF('detailContrat').show()" actionListener="#{detailMb.initContratToShow(contrat)}"/>
+                               
+                                  <p:commandButton process="@this" value="Telecharger" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s" rendered="#{imageBean.fileExists(contrat.nodeRefLegalise)}" >
+                                      <p:fileDownload value="#{imageBean.getFile(contrat.nodeRefLegalise,contrat.salarie.nom)}" />
+                                    </p:commandButton>
+                                 <p:commandButton process="@this" value="Telecharger" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-arrowthick-1-s" rendered="#{imageBean.fileExists(contrat.nodeRefNonLegalise) and !imageBean.fileExists(contrat.nodeRefLegalise)}" >
+                                    <p:fileDownload value="#{imageBean.getFile(contrat.nodeRefNonLegalise,contrat.salarie.nom)}" />
+                                 </p:commandButton>
+                                    <c:if test="#{authentification.hasPermission(constanteMb.modifierEtat)}">
+                                        <p:commandButton process="@this" 
+                                                         icon="ui-icon-trash" 
+                                                         update=":form:tabs:contrat" 
+                                                         disabled="#{(contrat.etatContrat.etatContrat eq 'Non légalisé')? false:true}"
+                                                         action="#{detailMb.deleteContrat(contrat)}"
+                                                         >
+                                            <p:confirm header="Confirmation" message="Voulez-vous vraiment supprimé contrat ?"
+                                                               icon="ui-icon-alert" />
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                <p:commandButton value="Oui" process="@this" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                <p:commandButton value="Annuler" process="@none" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                            </p:confirmDialog>
+                                        </p:commandButton>
+                                    </c:if>
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab>
+                        <p:tab title="Chantiers">
+                            <p:dataTable id="chantier" value="#{detailMb.chantiers}" var="chantier">
+                                <f:facet name="header">
+                                   
+                                    <p:commandButton  icon="ui-icon-plus" value="Affectation" 
+                                                      validateClient="false" immediate="true"
+                                                      rendered="#{authentification.hasPermission(constanteMb.ajouterChantier)}"
+                                                      style="display: #{detailMb.salarie.etat.etat eq 'Sorti' ?'none':
+                                                                        detailMb.salarie.etat.etat eq 'Désactivé' ? 'none':
+                                                                        detailMb.salarie.etat.etat eq 'Blacklist' ?'none':'inline'}" 
+                                                      title="#{detailMb.salarie.fonction.id.intValue() == 268 ? 'Affectation Chef Equipe' : 'Affectation'}"
+                                                      action="#{dialogAffectationMb.updateChantierNonAffecter(detailMb.salarie.id)}"
+                                                      onstart="PF('block').show()" oncomplete="PF('block').hide();#{detailMb.salarie.fonction.id.intValue() == 268 ? 'PF(\'affecterCE\').show();' : 'PF(\'affecter\').show();'}" 
+                                                      update="#{detailMb.salarie.fonction.id.intValue() == 268 ? ':formAffectCE:nonAffectCE':':formAffect:nonAffect'}"/>
+                                    
+                                </f:facet>
+                                <p:column headerText="Chantier">
+                                    <h:outputText value="#{chantier.code}"/>
+                                </p:column>
+                                <p:column headerText="Région">
+                                    <h:outputText value="#{chantier.region}"/>
+                                </p:column>
+                                <p:column headerText="Action">
+                                    <p:commandButton value="Désaffectation" 
+                                                     process="@this"
+                                                     action="#{detailMb.desAffectation(chantier.id)}"
+                                                     update="chantier, :formAffect:nonAffect"
+                                                     
+                                                     />
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab>
+                        <p:tab title="Présences" id="presenceId">
+                            <p:dataTable id="presence" 
+                                         value="#{presenceMb.presences}" 
+                                         var="presence" 
+                                         rows="10"
+                                         >
+                                <f:facet name="header">
+                                    <h:outputText value="#{presenceMb.sum}"/>
+                                    <p:spacer width="20px"/>
+                                    <p:commandButton  icon="ui-icon-search"
+                                                     value="rechercher" 
+                                                     update="formSearch"                                                     
+                                                     actionListener="#{presenceMb.initFind()}"
+                                                     oncomplete="PF('findPresence').show()" />
+                                     <p:commandButton  icon="ui-icon-refresh"
+                                                     value="Reinitialiser" 
+                                                     actionListener="#{presenceMb.reinitSearchPresence()}"
+                                                     update="form:tabs:presence"/>
+                                </f:facet>
+                                
+                                   <f:facet name="footer">
+                                    <h:panelGrid columns="9">
+                                        <p:commandButton onstart="PF('block').show()"
+                                                         oncomplete="PF('block').hide()" 
+                                                         id="first" 
+                                                         icon="ui-icon-triangle-1-w" 
+                                                         class="ui-paginator-first ui-state-default ui-corner-all"
+                                                         disabled="#{presenceMb.first}"
+                                                         action="#{presenceMb.onFirst()}" 
+                                                         update="form:tabs:presence"
+                                                         />
+
+                                        <p:commandButton onstart="PF('block').show()" 
+                                                         oncomplete="PF('block').hide()" 
+                                                         id="prev" icon="ui-icon-carat-1-w" 
+                                                         disabled="#{presenceMb.prev}"
+                                                         action="#{presenceMb.onPrevious()}" 
+                                                         update="form:tabs:presence"
+                                                         />
+
+<!--                                        <p:spinner id="page" 
+                                                   value="#{presenceMb.page}" 
+                                                   disabled="#{presenceMb.pageId}" 
+                                                   min="1" max="#{presenceMb.var}"
+                                                   >
+                                            
+                                            <p:ajax onstart="PF('block').show()" 
+                                                    oncomplete="PF('block').hide()" 
+                                                    listener="#{presenceMb.onPaginate()}" 
+                                                    event="change" update="form:tabs:presence" />
+                                        </p:spinner>-->
+
+                                        <h:outputText value="#{presenceMb.page} / #{presenceMb.var}"/>
+
+                                        <p:commandButton onstart="PF('block').show()" 
+                                                         oncomplete="PF('block').hide()"  
+                                                         id="next" disabled="#{presenceMb.next}"
+                                                         icon="ui-icon-carat-1-e"
+                                                         update="form:tabs:presence" 
+                                                         action="#{presenceMb.onNext()}"/>
+
+                                        <p:commandButton onstart="PF('block').show()"
+                                                         oncomplete="PF('block').hide()" 
+                                                         id="last" disabled="#{presenceMb.last}" 
+                                                         icon="ui-icon-triangle-1-e" 
+                                                         update="form:tabs:presence"
+                                                         action="#{presenceMb.onLast()}" />
+
+                                        <h:outputText value="Nombre Total" style="padding-right:  7px ; color:  white"/>
+
+                                        <h:outputText value="#{presenceMb.i}"/>
+
+                                        <h:outputText value="#{presenceMb.page ==1 or presenceMb.page ==0 ?
+                                                               '1 -10': ''.concat((presenceMb.page-1) * 10 +1).concat('-').concat((presenceMb.page-1) * 10 +10) }"
+                                                      style="color:  white"/>
+                                    </h:panelGrid>
+                                </f:facet>
+                                
+                                
+                                <p:column headerText="Chantier">
+                                    <h:outputText value="#{presence.chantier.code}"/>
+                                </p:column>
+                                <p:column headerText="Date">
+                                    <h:outputText value="#{constanteMb.getDateFormatFR(presence.date)}"/>
+                                </p:column>
+                                <p:column headerText="Heure d'entrée">
+                                    <h:outputText value="#{presence.heureEntree}"/>
+                                </p:column>
+                                <p:column headerText="Heure de sortie">
+                                    <h:outputText value="#{presence.heureSortie}"/>
+                                </p:column>
+                                <p:column headerText="Durée">
+                                    <h:outputText value="#{presence.nombreHeures }#{presence.nombreHeures  eq null ? '' :'h'} #{presence.nombreMinutes} #{presence.nombreMinutes eq null ? '' : 'min'}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab>
+                        <p:tab title="Absences" id="tabAbsence">
+                            <p:dataTable id="absence" value="#{evol_absenceMb.absences}" 
+                                         var="absence" editable="true">
+                                <f:facet name="header">
+                                    <p:commandButton process="@this" type="button" icon="ui-icon-circle-check" 
+                                                     value="Ajouter" onclick="PF('addAbsence').show()" />
+                                </f:facet>
+
+                                <f:facet name="footer">
+                                    <h:panelGrid columns="9">
+                                        <p:commandButton onstart="PF('block').show()" oncomplete="PF('block').hide()" id="first" icon="ui-icon-triangle-1-w" class="ui-paginator-first ui-state-default ui-corner-all" disabled="#{evol_absenceMb.first}"
+                                                         action="#{evol_absenceMb.onFirst()}" update="form:tabs:absence"/>
+
+                                        <p:commandButton onstart="PF('block').show()" oncomplete="PF('block').hide()" id="prev" icon="ui-icon-carat-1-w" disabled="#{evol_absenceMb.prev}"
+                                                         action="#{evol_absenceMb.onPrevious()}" update="form:tabs:absence"/>
+
+                                        <p:spinner id="page" value="#{evol_absenceMb.page}" disabled="#{evol_absenceMb.pageId}" 
+                                                   min="1" max="#{evol_absenceMb.var}"  >
+                                            <p:ajax onstart="PF('block').show()" oncomplete="PF('block').hide()" listener="#{evol_absenceMb.onPaginate()}"  event="change" update="form:tabs:absence" />
+                                        </p:spinner>
+
+                                        <h:outputText value="/ #{evol_absenceMb.var}"/>
+
+                                        <p:commandButton onstart="PF('block').show()" oncomplete="PF('block').hide()"  id="next" disabled="#{evol_absenceMb.next}" icon="ui-icon-carat-1-e" update="form:tabs:absence" action="#{evol_absenceMb.onNext()}"/>
+
+                                        <p:commandButton onstart="PF('block').show()" oncomplete="PF('block').hide()" id="last" disabled="#{evol_absenceMb.last}" icon="ui-icon-triangle-1-e" update="form:tabs:absence" action="#{evol_absenceMb.onLast()}" />
+
+                                        <h:outputText value="Nombre Total" style="padding-right:  7px ; color:  white"/>
+
+                                        <h:outputText value="#{evol_absenceMb.i}"/>
+
+                                        <h:outputText value="#{evol_absenceMb.page ==1 or evol_absenceMb.page ==0 ?
+                                                               '1 -10': ''.concat((evol_absenceMb.page-1) * 10 +1).concat('-').concat((evol_absenceMb.page-1) * 10 +10) }"
+                                                      style="color:  white"/>
+                                    </h:panelGrid>
+                                </f:facet>
+                                <p:ajax event="rowEdit" listener="#{evol_absenceMb.onRowEdit}" update="form:tabs:absence" />
+                                <p:ajax event="rowEditCancel" listener="#{evol_absenceMb.onRowCancel}" update="form:tabs:absence" />
+
+                                <p:column headerText="Type Absence">
+                                    <p:cellEditor>
+                                        <f:facet name="output">
+                                            <h:outputText value="#{absence.typeAbsence.typeAbsence}"/>
+                                        </f:facet>
+                                        <f:facet name="input">
+                                            <p:selectOneMenu id="typeAbsence" value="#{absence.typeAbsence.id}" required="true">
+                                                <f:selectItems value="#{typeAbsenceMb.typeAbsences}" var="t" itemLabel="#{t.typeAbsence}" itemValue="#{t.id}" />
+                                            </p:selectOneMenu>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+                                <p:column headerText="Date de début">
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{constanteMb.getDateFormatFR(absence.dateDebut)}  #{absence.heureDebut}" /></f:facet>
+                                        <f:facet name="input">
+                                            <div style="width: 100%" class="row">
+                                                 <p:calendar pattern="dd/MM/yyyy" class="col-lg-12" value="#{absence.dateDebut}" />
+                                                <div class="col-lg-6"><p:spinner value="#{absence.heuredeb}" label="Heure Début" placeholder="hh" min="0" max="23"/> h</div>
+                                                <div style="margin-left: -5%; width: 54%;" class="col-lg-6"><p:spinner value="#{absence.mindeb}" label="min Début" placeholder="mm" min="0" max="59"/> min</div>
+                                            </div>
+
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+
+                                <p:column headerText="Date de fin">
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{constanteMb.getDateFormatFR(absence.dateFin)} #{absence.heureFin}"/></f:facet>
+                                        <f:facet name="input">
+                                            <div style="width: 100%" class="row">
+                                                 <p:calendar pattern="dd/MM/yyyy" class="col-lg-12" value="#{absence.dateFin}" />
+                                                <div class="col-lg-6"><p:spinner value="#{absence.heureF}" label="Heure Début" placeholder="hh" min="0" max="23"/> h</div>
+                                                <div style="margin-left: -5%; width: 54%;" class="col-lg-6"><p:spinner value="#{absence.minF}" label="min Début" placeholder="mm" min="0" max="59"/> min</div>
+                                            </div>
+
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column headerText="Commentaire">
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{absence.commentaire}"/></f:facet>
+                                        <f:facet name="input">
+                                            <div style="width: 80%; margin-left: 5px;" class="row">
+                                                <p:inputTextarea id="comment" rows="4"  value="#{absence.commentaire}" />
+                                            </div>
+
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column  headerText="Actions">
+                                    <c:if test="#{authentification.hasPermission('modification salarié')}">
+                                        <p:rowEditor />
+                                    </c:if>
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab>
+                        <p:tab title="Outils de travail"> 
+                            <p:dataTable id="outils" value="#{detailMb.outils}" var="outil">
+                                <f:facet name="header">
+                                    <p:commandButton validateClient="false" icon="ui-icon-circle-check" value="Ajouter" type="button" onclick="PF('addOutil').show()" />
+                                </f:facet>
+                                <p:column headerText="Outil de travail">
+                                    <h:outputText value="#{outil.categorieOutilTravail.categorieOutilTravail}"/>
+                                </p:column>
+                                <p:column headerText="Références">
+                                    <h:outputText value="#{outil.reference}"/>
+                                </p:column>
+                                <p:column headerText="Date d'affectation">
+                                    <h:outputText value="#{constanteMb.getDateFormatFR(outil.dateAffectation)}" />
+                                </p:column>
+                                 <p:column headerText="Commentaire">
+                                     <h:outputText value="#{outil.commentaire}" />
+                                </p:column>
+                                <p:column headerText="Actions">
+                                    <p:commandButton  process="@this" value="supprimer" action="#{detailMb.supprimerOutil(outil)}" update=":form:tabs:outils"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab>
+                    </p:tabView>
+                </h:form>
+                <p:dialog header="Ajouter Enfant" widgetVar="addenf" modal="true" minHeight="300" >
+                    <h:form id="addEnfant">
+                        <h:panelGrid columns="3" cellpadding="8">
+                            <p:outputLabel for="prenomEnf" value="Prénom"/>
+                            <p:inputText id="prenomEnf" label="prenom" value="#{detailMb.newEnfant.prenom}" required="true" requiredMessage="Veuillez saisir le Prénom"  >
+                                <f:validateLength minimum="3" />
+                                <f:ajax event="blur" render="prenomMsg"/>
+                            </p:inputText>
+                            <p:message for="prenomEnf" id="prenomMsg" /> 
+                            <p:outputLabel for="dateNaisEnf" value="Date Naissance"/>
+                             <p:calendar pattern="dd/MM/yyyy" id="dateNaisEnf" label="date naissance"   
+                                        value="#{detailMb.newEnfant.dateNaissance}" 
+                                        required="true"  
+                                        requiredMessage="Veuillez choisir la date de naissance " />
+                            <p:message for="dateNaisEnf" /> 
+                        </h:panelGrid>
+                        <p:commandButton process="@form" value="Ajouter" action="#{detailMb.ajouterEnfant()}"
+                                         update=":form:tabs:enfantTable,:addEnfant" icon="ui-icon-chek"
+                                         oncomplete="PF('addenf').hide()"/>
+                    </h:form>
+                </p:dialog>
+                <p:dialog header="Nouvelle Absence" widgetVar="addAbsence" modal="true" minHeight="300" >
+                    <h:form id="addForm">
+                        <h:panelGrid columns="3" cellpadding="8">
+
+                            <p:outputLabel for="typeAbsence" value="Type d'absence "/>
+                            <p:selectOneMenu id="typeAbsence" value="#{evol_absenceMb.idtypeAbs}" required="true">
+                                <f:selectItem itemLabel="-- Type Absences--" itemValue="" />
+                                <f:ajax event="change" render="typeAbsenceMsg"/>
+                                <f:selectItems value="#{typeAbsenceMb.typeAbsences}" var="t" itemLabel="#{t.typeAbsence}" itemValue="#{t.id}" />
+                            </p:selectOneMenu>
+                            <p:message for="typeAbsence" id ="typeAbsenceMsg"/> 
+
+                            <p:outputLabel for="dateDe" value="Date de début"/>
+                             <p:calendar pattern="dd/MM/yyyy" id="dateDe" value="#{evol_absenceMb.newAbsence.dateDebut}" required="true"/>
+                            <h:panelGrid columns="4">
+                                <p:spinner value="#{evol_absenceMb.heureDebut}" label="Heure Début" placeholder="hh" min="0" max="23"/>h
+                                <p:spinner value="#{evol_absenceMb.minDebut}" label="min Début" placeholder="mm" min="0" max="59"/>min
+                            </h:panelGrid>
+
+                            <p:outputLabel for="dateFn" value="Date de fin"/>
+                             <p:calendar pattern="dd/MM/yyyy" id="dateFn" value="#{evol_absenceMb.newAbsence.dateFin}" required="true"/>
+
+                            <h:panelGrid columns="4">
+                                <p:spinner value="#{evol_absenceMb.heureFin}" label="Heure Fin" placeholder="hh" min="0" max="23"/>h
+                                <p:spinner value="#{evol_absenceMb.minFin}" label="min Fin" placeholder="mm" min="0" max="59"/>min
+                            </h:panelGrid>
+
+                            <p:outputLabel for="comment" value="Commentaire"/>
+                            <p:inputTextarea id="comment" rows="6" value="#{evol_absenceMb.newAbsence.commentaire}" />
+                            <p:message for="comment" />
+                        </h:panelGrid>
+                        <p:commandButton value="Ajouter" action="#{evol_absenceMb.ajouterAbsence()}" 
+                                         update=":form:tabs:absence, :addForm" 
+                                         oncomplete="PF('addAbsence').hide()" 
+                                         icon="ui-icon-chek"/>
+                    </h:form>
+                </p:dialog>
+
+                <p:dialog modal="true"  header="Chantier non affectés au Chef Equipe" widgetVar="affecterCE" width="500" minHeight="300">
+                    <h:form id="formAffectCE">
+                        <p:dataTable  id="nonAffectCE" value="#{dialogAffectationMb.nonAffectChantier}" var="ch" paginator="true" rows="10">
+                            <f:facet name="header">
+                                <p:selectOneMenu id="chantierlist" filter="true" value="#{dialogAffectationMb.idchantier}" filterMatchMode="contains">
+                                    <f:selectItem itemLabel="--Chantier--" itemValue="" />
+                                    <f:selectItems value="#{chantier.chantiers}" var="c" itemLabel="#{c.code}" itemValue="#{c.id}" />
+                                    <p:ajax listener="#{dialogAffectationMb.filterChantier}" update="nonAffectCE" />
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <p:column headerText="Chantier"> 
+                                <h:outputText value="#{ch.code}"/>
+                            </p:column>
+                            <p:column headerText="Région">
+                                <h:outputText value="#{ch.region}"/>
+                            </p:column>
+                            <p:column headerText="Actions">
+                                <p:commandButton process="@form" update=":form:tabs:chantier" onstart="PF('block').show();PF('affecterCE').hide()"
+                                                 oncomplete="#{detailMb.updateAffectation()};PF('block').hide();" 
+                                                 icon="ui-icon-circle-check" 
+                                                 action="#{dialogAffectationMb.affectationCE(ch.id,'detail')}" />
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </p:dialog>
+                <p:dialog modal="true"  header="Chantier non affectés" widgetVar="affecter" width="500" minHeight="300">
+                    <h:form id="formAffect">
+                        <p:dataTable  id="nonAffect" value="#{dialogAffectationMb.nonAffectChantier}" var="ch" paginator="true" rows="10">
+                            <f:facet name="header">
+                                <p:selectOneMenu id="chantierlist" filter="true" value="#{dialogAffectationMb.idchantier}" filterMatchMode="contains">
+                                    <f:selectItem itemLabel="--Chantier--" itemValue="" />
+                                    <f:selectItems value="#{chantier.chantiers}" var="c" itemLabel="#{c.code}" itemValue="#{c.id}" />
+                                    <p:ajax listener="#{dialogAffectationMb.filterChantier}" update="nonAffect" />
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <p:column headerText="Chantier"> 
+                                <h:outputText value="#{ch.code}"/>
+                            </p:column>
+                            <p:column headerText="Région">
+                                <h:outputText value="#{ch.region}"/>
+                            </p:column>
+                            <p:column headerText="Actions">
+                                <p:commandButton process="@this" onstart="PF('block').show();" 
+                                                 oncomplete="PF('block').hide();PF('ListChef').show()" icon="ui-icon-circle-check" 
+                                                 action="#{dialogAffectationMb.chefsBy(ch.id)}" update=":formChefE" />
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </p:dialog>
+                <p:dialog widgetVar="ListChef" modal="true">
+                    <h:form id="formChefE">
+                        <h:panelGrid columns="2">
+
+                            <h:outputText value="Chef Equipe:"/>
+                            <p:selectOneMenu value="#{dialogAffectationMb.idChefEquipe}" label="Chef Equipe" 
+                                             style="width:250px">
+                                <f:selectItem itemLabel="-- Chef d'équipe --"  itemValue=""/>
+                                <f:selectItems  value="#{dialogAffectationMb.chefEquipes}" var="c"
+                                                itemLabel="#{c.nom} #{c.prenom}" itemValue="#{c.id}"/>
+                            </p:selectOneMenu>
+
+                            <h:outputText/>
+                            <p:commandButton process="@form" class="btn btn-switch active" value="Ajouter" 
+
+                                             action="#{dialogAffectationMb.affectation('detail')}"
+                                             update=":form:tabs:chantier" 
+                                             onsuccess="#{detailMb.updateAffectation()}"
+                                             oncomplete ="PF('ListChef').hide();PF('affecter').hide();"
+                                             />
+                        </h:panelGrid>
+                    </h:form>
+                </p:dialog>
+
+
+                <p:dialog width="1000px" showEffect="fade"  hideEffect="fade" modal="true" header="Document Salarie" widgetVar="detailDocument">
+                
+                    <h:form id="detailDocuments" enctype="multipart/form-data">
+                        
+                        <p:media value="#{imageBean.image}" width="100%" height="500px" player="pdf" >
+                            <f:param name="path" value="#{detailMb.codeCurrent}" />
+                        </p:media>
+
+                    </h:form>
+                </p:dialog>
+
+                <p:dialog resizable="false" widgetVar="addDocument" modal="true" minHeight="300" header="Nouveau Document">
+                    <h:form id="addDocForm" enctype="multipart/form-data">
+                        <p:panelGrid id="gridDoc" columns="2">
+                            <p:outputLabel value="titre" />
+                            <p:inputText  value="#{detailMb.docToAdd.titre}"
+                                          required="true"
+                                          requiredMessage="Code 1302 : champ(s) non valide(s)" />
+                          
+                            <p:outputLabel value="Commenaire" />
+                            <p:inputTextarea rows="7" cols="40" value="#{detailMb.docToAdd.commentaire}" />
+
+                            <p:outputLabel value="Document" />
+                            <p:fileUpload id="uploadDoc"
+                                          value="#{detailMb.docUploaded}" uploadLabel="Document Salarie"
+                                          label="Upload Document" allowTypes="/(\.|\/)(pdf|PDF)$/"
+                                          invalidFileMessage="document doit être un PDF" required="true"                                
+                                          mode="simple"
+                                          >
+                                <!--<f:ajax event="change" render="docPDF"/>-->
+                            </p:fileUpload>
+                            <p:message id="docPDE" for="uploadDoc" />
+                            <p:commandButton value="#{detailMb.docStatus}" ajax="false" action="#{detailMb.saveDocSalarie()}" process="@form" />
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
+                
+                <p:dialog  id="legaldoc" modal="true" header="Ajouter Contrat légalisé" widgetVar="addContratLegal" closable="true">
+                    <div class="col-lg-12">
+                        <h:form>
+                            <p:outputLabel value="Date de début" />
+                             <p:calendar pattern="dd/MM/yyyy"  id="dateDebutContratLegalise" 
+                                         style="padding-left:15px;display:flex" 
+                                        value="#{detailMb.contratToEdit.dateEmbauche}"  
+                                         mindate="#{detailMb.contratToEdit.dateEmbauche}"  
+                                         showOn="button" required="true">
+                                <p:ajax event="dateSelect" listener="#{detailMb.testDate()}"/>
+                            </p:calendar>
+                            
+                            <br/>
+                            <p:outputLabel value="Contrat Légalisé" />
+                            <p:fileUpload id="fileupContrat"
+                                          fileUploadListener="#{detailMb.editContratSalarie}"
+                                          label="Upload Document"  mode="advanced" 
+                                          allowTypes="/(\.|\/)(PDF|pdf)$/" uploadLabel="Contrat Salarie" 
+                                          process="@form, dateDebutContratLegalise"
+                                          update="uploadmsg, :formUp,:btnContratActions,:detailContrat,:addContratForm, :form"
+                                          oncomplete="PF('addContratLegal').hide()" >
+                            </p:fileUpload>
+                            <p:message id="uploadmsg" for="fileupContrat"  />
+                        </h:form>
+                    </div>
+                </p:dialog>
+                <p:dialog modal="true" header="Modification de contrat" widgetVar="changeTaux">
+                    <p:blockUI block="modifTFcontrat" widgetVar="dialogmodifTFcontrat">
+                        Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                    </p:blockUI>
+                    <h:form id="modifTFcontrat">
+                        <div class="col-lg-12">
+                            <h:panelGrid columns="2" cellpadding="8px">
+                                <p:outputLabel value="Catégorie" />
+                                <p:selectOneMenu filter="true" value="#{detailMb.contratStatutCode}" 
+                                                 filterMatchMode="contains" 
+                                                 required="true" requiredMessage="veillez choisir un motif" label="outil" >
+                                    <f:selectItem itemLabel="--categorie--" itemValue="" />
+                                    <f:selectItems value="#{statutMb.statuts}" var="s" itemLabel="#{s.statut}" itemValue="#{s.codeDiva}" />
+                                    <p:ajax event="change" listener="#{detailMb.fonctionByStatut()}" update="contratFonction" />
+                                </p:selectOneMenu>
+                                <p:outputLabel value="Fonction" />
+                                <p:selectOneMenu id="contratFonction" filter="true" value="#{detailMb.contratFonctionId}" filterMatchMode="contains" 
+                                                 required="true" requiredMessage="veillez choisir une valuer" label="outil" >
+                                    <f:selectItem itemLabel="--Fonction--" itemValue="" />
+                                    <f:selectItems value="#{fonctionServMb.fonctions}" var="f" itemLabel="#{f.fonction}" itemValue="#{f.id}" />
+                                    <p:ajax event="blur" rendered="Attoutil" />
+                                </p:selectOneMenu>
+                                <p:outputLabel value="Taux" />
+                                <p:inputText validatorMessage="Code 1402 : Le taux doit être supérieur à 9 et inférieur à 14" value="#{detailMb.taux_a_modifer}" id="tauxToUpdate" required="true">
+                                    <f:validateLongRange maximum="14" minimum="9" />
+                                    <f:ajax event="blur" render="msg_TauxToUpdate"/>
+                                </p:inputText>
+                                <h:outputText/>
+                            
+                            </h:panelGrid>
+                            <div class="pull-right">
+                                <p:commandButton process="@form" value="modifier" 
+                                                 action="#{detailMb.modifierFTcontrat()}" 
+                                                 update=":btnContratActions,:addContratForm,:form,:formUp,:detailContrat"
+                                                 onstart="PF('dialogmodifTFcontrat').show()"
+                                                 oncomplete="PF('changeTaux').hide();PF('dialogmodifTFcontrat').hide()"/>
+                            </div> 
+                        </div>
+                    </h:form>
+                </p:dialog>
+                <p:dialog modal="true" header="Reglé salarié" closable="true" widgetVar="regleOvrier">
+                    <h:form>
+                        <div class="col-lg-12">
+                            <h:panelGrid columns="2" cellpadding="8px">
+                                <h:outputText value="Date de fin" />
+                                 <p:calendar pattern="dd/MM/yyyy" required="true" value="#{detailMb.dateFinContrat_modifier}" label="date de fin" requiredMessage="veuillez saisir date" mindate="#{detailMb.contratToEdit.dateEmbauche}"/>
+                                <h:outputText value="Motif"/>
+                                <p:selectOneMenu filter="true"  filterMatchMode="contains" value="#{detailMb.motif_FinContrat_Id}"
+                                                 required="true" requiredMessage="veillez choisir un Motif" label="outil" >
+                                    <f:selectItem itemLabel="--Motif--" itemValue="" />
+                                    <f:selectItems value="#{motifSortirMb.motifs}" var="m" itemLabel="#{m.motif}" itemValue="#{m.id}" />
+                                </p:selectOneMenu>
+                            </h:panelGrid>
+                        </div>
+                        <div class="pull-right">
+                            <p:commandButton process="@form" value="modifier" update=":btnContratActions,:addContratForm,:form,:formUp,:detailContrat"
+                                             oncomplete="PF('regleOvrier').hide()" action="#{detailMb.modifierDateFinContratSalarie()}"/>
+                        </div> 
+                    </h:form>
+                </p:dialog>
+                <p:dialog modal="true" header="Statut Contrat" closable="true" widgetVar="changerStatut">
+                    <h:form>
+                        <div class="col-lg-12">
+                            <h:panelGrid columns="2" cellpadding="8px">
+                                <h:outputText value="Etat"/>
+                                <p:selectOneMenu filter="true"  filterMatchMode="contains" value="#{detailMb.idEtatContrat}"
+                                                 required="true" requiredMessage="veillez choisir une etat" label="etat" >
+                                    <f:selectItem itemLabel="--Etat--" itemValue="" />
+                                    <f:selectItems value="#{etatContratMb.etats}" var="e" itemLabel="#{e.etatContrat}" itemValue="#{e.id}" />
+                                </p:selectOneMenu>
+                            </h:panelGrid>
+                        </div>
+                        <div class="pull-right">
+                            <p:commandButton process="@form" value="modifier" 
+                                             action="#{detailMb.modifierEtat()}"
+                                             update=":btnContratActions,:addContratForm,:form,:formUp,:detailContrat" oncomplete="PF('changerStatut').hide()"/>
+                        </div> 
+                    </h:form>
+                </p:dialog>
+                <p:dialog width="1000px" showEffect="fade"  hideEffect="fade" modal="true" header="Contrat Salarie" widgetVar="detailContrat" >
+                    <div class="col-lg-12">
+                        <div class="panel" style="overflow: auto; height: 700px">
+                            <p:growl showDetail="true"  id="contrat_messages"/>
+                            <div class="panel-heading" style="height: 80px; background-color: #712D35">
+                                <h:form id="btnContratActions">
+                                    <ul class="nav navbar navbar-nav">
+                                        <li style="display: #{detailMb.addContratLegal}">
+                                            <p:commandButton oncomplete="PF('addContratLegal').show()"  process="legaldoc" update="legaldoc"
+                                                             value="Ajouter Contrat légalisé" >
+                                                <i class="fa fa-2x fa-fw fa-file-pdf-o"></i>
+                                            </p:commandButton>
+                                        </li>
+                                        <li style="display: #{detailMb.changeTaux}">
+                                            <p:commandButton onclick="PF('changeTaux').show()" 
+                                                             rendered="#{authentification.hasPermission(constanteMb.changerTauxFonction)}"
+                                                             process="@none" 
+                                                             value="Changer Taux/Fonction">
+                                                <i class="fa fa-2x fa-fw fa-file-text"></i>
+                                            </p:commandButton>
+                                        </li>
+                                        <li style="display: #{detailMb.regleOvrier}">
+                                            <p:commandButton onclick="PF('regleOvrier').show()" 
+                                                             rendered="#{authentification.hasPermission(constanteMb.reglerOuvrier)}"
+                                                             process="@none" 
+                                                             value="Régler l'ouvrier">
+                                                <i class="fa fa-2x fa-fw fa-user-plus"></i>
+                                            </p:commandButton>
+                                        </li>
+                                        <li style="display: #{detailMb.reinitialiser}">
+                                            <p:commandButton  process="@this" action="#{detailMb.reinitialiserDateFinContrat()}"
+                                                              update=":btnContratActions,:addContratForm,:form,:formUp,:detailContrat"
+                                                              rendered="#{authentification.hasPermission(constanteMb.reinitialiserDateFinContrat)}"
+                                                              value="Reinitialiser la date de Fin">
+                                                <i class="fa fa-2x fa-fw fa-refresh"></i>
+                                                <p:confirm header="Confirmation" message="Etes-vous sûr de vouloir réinitialiser la date du contrat ?"
+                                                           icon="ui-icon-alert" />
+                                            </p:commandButton> 
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                <p:commandButton value="Oui" process="@this" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                <p:commandButton value="Annuler" process="@none" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                            </p:confirmDialog>
+                                        </li>
+                                        <li style="display: flex">
+                                            <p:commandButton onclick="PF('changerStatut').show()" 
+                                                             rendered="#{authentification.hasPermission(constanteMb.changerStatutContrat)}"
+                                                             process="@none" 
+                                                             value="Changer Statut Contrat">
+                                                <i class="fa fa-2x fa-fw fa-edit"></i>
+                                            </p:commandButton>
+                                        </li>
+                                    </ul>
+                                </h:form>
+                            </div>
+                            <div class="panel-body">
+                                <div class="col-lg-7">
+                                    <h:form id="detailContrat" enctype="multipart/form-data">
+                                        <p:media value="#{imageBean.contrat}" width="100%" height="500px" player="pdf">
+                                            <f:param name="path" value="#{detailMb.codeCurrent}"/>
+                                        </p:media>
+                                    </h:form>
+                                </div>
+                                <div class="col-lg-5">
+                                    <h:form id="addContratForm" >
+                                        <h:panelGrid id="gridContrat" columns="2">
+                                            <p:outputLabel value="Date d'embauche : "/>
+                                            <p:outputLabel value="#{constanteMb.getDateFormatFR(detailMb.contratToEdit.dateEmbauche)}"/>
+                                            <p:outputLabel value="Date de Fin : "/>
+                                            <p:outputLabel value="#{constanteMb.getDateFormatFR(detailMb.contratToEdit.dateFin)}"/>
+                                            <p:outputLabel value="Type Contrat : "/>
+                                            <p:outputLabel value="#{detailMb.contratToEdit.typeContrat.typeContrat}"/>
+                                            <p:outputLabel value="Fonction : "/>
+                                            <p:outputLabel value="#{detailMb.contratToEdit.fonction.fonction}"/>
+                                            <p:outputLabel value="Etat: "/>
+                                            <p:outputLabel value="#{detailMb.contratToEdit.etatContrat.etatContrat}"/>
+                                            <p:outputLabel value="Durée : "/>
+                                            <p:outputLabel value="#{detailMb.contratToEdit.duree.dureeContrat}"/>
+                                            <p:outputLabel value="Taux Horaire : " rendered="#{authentification.hasPermission(constanteMb.modifierTauxHoraire)}" />
+                                            <p:outputLabel value="#{detailMb.contratToEdit.tauxHoraire}" rendered="#{authentification.hasPermission(constanteMb.modifierTauxHoraire)}" />
+                                        </h:panelGrid>
+                                        <br/>
+                                        <br/>
+                                        <p:dataTable value="#{detailMb.histoContrat}" var="hc" paginator="true" rows="5">
+                                            <p:column headerText="Taux">
+                                                <h:outputText value="#{hc.tauxHoraire}" rendered="#{authentification.hasPermission(constanteMb.modifierTauxHoraire)}"/>
+                                            </p:column>
+                                            <p:column headerText="Fonction">
+                                                <h:outputText value="#{hc.fonction.fonction}"/>
+                                            </p:column>
+                                            <p:column headerText="Modifier Le">
+                                                <h:outputText value="#{constanteMb.getDateFormatFR(hc.date)}"/>
+                                            </p:column>
+                                            <p:column headerText="Modifier Par">
+                                                <h:outputText value="#{hc.utilisateur.login}"/>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </h:form> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </p:dialog>
+
+                <p:dialog widgetVar="addOutil" modal="true" minHeight="300" header="Nouveau Outil de travail">
+                    <h:form>
+                        <h:panelGrid columns="3" cellspacing="10">
+                            <p:outputLabel for="Attoutil" value="Outil de travail"/>
+                            <p:selectOneMenu id="Attoutil" filter="true" value="#{detailMb.idCAT}" filterMatchMode="contains" 
+                                             required="true" requiredMessage="veillez choisir l'outil de travail" label="outil" >
+                                <f:selectItem itemLabel="--Outils--" itemValue="" />
+                                <f:selectItems value="#{outilTravailMb.outils}" var="c" itemLabel="#{c.categorieOutilTravail}" itemValue="#{c.id}" />
+                                <p:ajax event="blur" rendered="Attoutil" />
+                            </p:selectOneMenu>
+                            <p:message for="Attoutil" id="msgOutil" />
+
+                            <p:outputLabel for="reference" value="Référence"/>
+                            <p:inputText  id="reference" value="#{detailMb.newOutil.reference}" />
+                            <p:message for="Attoutil" />
+
+                            <p:outputLabel for="dateAffOutil" value="Date Affectation d'outil"/>
+                             <p:calendar pattern="dd/MM/yyyy" required="true" requiredMessage="veillez saisir la date d'affectation"  
+                                        id="dateAffOutil" value="#{detailMb.newOutil.dateAffectation}" >
+                                <p:ajax rendered="dateMsg" event="blur"/>
+                            </p:calendar>
+                            <p:message for="dateAffOutil" id='dateMsg' />
+
+                            <p:outputLabel for="commentaire" value="Commentaire"/>
+                            <p:inputText  id="commentaire" value="#{detailMb.newOutil.commentaire}" />
+                            <p:message for="commentaire" />
+                        </h:panelGrid>
+                        <p:commandButton process="@form" onstart="PF('block').show()" oncomplete="PF('block').hide();PF('addOutil').hide()" 
+                                         value="Ajouter" action="#{detailMb.ajouterOutil()}" update=":form:tabs:outils" />
+                    </h:form>
+                </p:dialog>
+                <p:dialog modal="true" widgetVar="findPresence" header="Recherche">
+                    <h:form id="formSearch">
+                        <h:panelGrid columns="3" cellspacing="5">
+                            <h:outputText value="Chantier"/>
+                            <p:spacer width="10px"/>
+                            <p:selectOneMenu id="chantierlistPresence" filter="true"
+                                             value="#{presenceMb.idchantierPresence}" filterMatchMode="contains">
+                                <f:selectItem itemLabel="--Chantier--" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{chantier.chantiers}" 
+                                               var="c"                                               
+                                               itemLabel="#{c.code}"
+                                               itemValue="#{c.id}" 
+                                               />
+                            </p:selectOneMenu>
+
+                            <h:outputText value="De "/>
+                            <p:spacer width="10px"/>
+                             <p:calendar pattern="dd/MM/yyyy" value="#{presenceMb.de}"/>
+
+                            <h:outputText value="A "/>
+                            <p:spacer width="10px"/>
+                             <p:calendar pattern="dd/MM/yyyy" value="#{presenceMb.a}"/>
+                        </h:panelGrid>
+                        <br/>
+                        <p:commandButton process="@form"
+                                         onstart="PF('block').show()"
+                                         oncomplete="PF('block').hide();PF('findPresence').hide()"
+                                         value="Rechercher" action="#{presenceMb.findPresence()}" 
+                                         update=":form:tabs:presence"/>
+                        <p:spacer width="10px"/>
+                        <p:commandButton process="@none"
+                                         onclick="PF('findPresence').hide()" 
+                                         value="Annuler" update=":form:tabs:presence"/>
+                    </h:form>
+                </p:dialog>
+                <p:dialog modal="true" widgetVar="addContrat" header="Nouveau Contrat">
+                    <h:form id="ajouterContrat">
+                        <h:panelGrid columns="3" cellspacing="10">
+                            <h:outputText value="Model de contrat" />
+                            <p:selectOneMenu id="modeleContrat" value="#{detailMb.idModel}" required="true" label="Model de Contrat">
+                                <f:selectItem itemLabel="-- Modeles --" itemValue="" /> 
+                                <f:selectItems value="#{modelContrat.modeles}" var="mc" itemLabel="#{mc.intitule}" itemValue="#{mc.id}" />
+                                <f:ajax event="blur" render="msgModelContrat"/>
+                            </p:selectOneMenu>
+                            <p:message id="msgModelContrat" for="modeleContrat" />
+                            <h:outputText value="Type de contrat" />
+                            <p:selectOneMenu id="typeContrat"  value="#{detailMb.idTypeContrat}" required="true" label="Type de Contrat"  >
+                                <f:selectItem itemLabel="-- Types --" itemValue=""  /> 
+                                <f:selectItems value="#{typeContratMb.typeContrats}" var="tc" itemLabel="#{tc.typeContrat}" itemValue="#{tc.id}" />
+                                <f:ajax event="blur" render="msgTypeContrat"/>
+                            </p:selectOneMenu>
+                            <p:message id="msgTypeContrat" for="typeContrat" />
+                            <h:outputText value="Statut :"/>
+                            <p:selectOneMenu id="statut" value="#{detailMb.idStatut}" styleClass="widthChamp" 
+                                             filter="true" filterMatchMode="contains" > 
+                                <p:ajax listener="#{detailMb.updateFontion()}" onstart="PF('block').show()" oncomplete="PF('block').hide();" update="fonction" />
+                                <f:selectItem itemLabel="" itemValue="" />
+                                <f:selectItems value="#{statutMb.statuts}" var="s" itemLabel="#{s.statut}" itemValue="#{s.codeDiva}" />
+                            </p:selectOneMenu>
+                            <h:outputText/>
+                            <h:outputText value="Fonction :"/>
+                            <p:selectOneMenu id="fonction" value="#{detailMb.idFonctContrat}"  disabled="#{detailMb.activeChampContrat}" 
+                                             filter="true" filterMatchMode="contains"> 
+                                <f:selectItems value="#{detailMb.fonctions}" var="f" itemLabel="#{f.fonction}" itemValue="#{f.id}"  />
+                                <f:ajax event="change" render="msgFonction" listener="#{detailMb.changeFunction()}"  />
+                                <p:ajax event="itemSelect" update=":ajouterContrat:TauxContrat,:ajouterContrat:addContratBtnActive_id"/>
+                            </p:selectOneMenu>
+                            <p:message id="msgFonction" for="fonction"/>
+                            <h:outputText value="Date de début"/>
+                             <p:calendar pattern="dd/MM/yyyy"  id="dateContrat" value="#{detailMb.newContrat.dateEmbauche}" maxdate="#{constanteMb.maxDate}"    
+                                         required="true" label="date de début" >
+                            </p:calendar>
+                            <p:message id="msgDate" for="dateContrat"/>
+                            <h:outputText value="Durée :"/>
+                            <p:selectOneMenu  id="dureeContrat" value="#{detailMb.idDuree}" required="true"  
+                                              label="Durée"  requiredMessage="Champ Obligatoire">
+                                <f:selectItem itemLabel="-- Durée --" itemValue="" /> 
+                                <f:selectItems value="#{dureeMb.durees}" var="d" itemLabel="#{d.dureeContrat}" itemValue="#{d.id}" />
+                                <f:ajax event="blur" render="msgDuree" />
+                            </p:selectOneMenu>
+                            <p:message id="msgDuree" for="dureeContrat" />
+                            <h:outputText value="Période d'essai :"/>
+                            <p:selectOneMenu id="periodeContrat" value="#{detailMb.idPeriode}" required="true"   
+                                             label="Période d'essai"  requiredMessage="Champ Obligatoire">
+                                <f:selectItem itemLabel="-- Période --" itemValue="" /> 
+                                <f:selectItems value="#{periodeEssaiMb.periodeEssais}" var="p" itemLabel="#{p.periodeEssai}" itemValue="#{p.id}" />
+                                <f:ajax event="blur" render="msgPeriode" />
+                            </p:selectOneMenu>
+                            <p:message id="msgPeriode" for="periodeContrat" />
+                            <h:outputText value="Préavis :"/>
+                            <p:selectOneMenu id="preavisContrat" value="#{detailMb.idPreavis}" required="true"  
+                                             label="Préavis"  requiredMessage="Champ Obligatoire">
+                                <f:selectItem itemLabel="-- Préavis --" itemValue="" /> 
+                                <f:selectItems value="#{preavisMb.preavises}" var="p" itemLabel="#{p.preavis}" itemValue="#{p.id}" />
+                                <f:ajax event="blur" render="msgPreavis" />
+                            </p:selectOneMenu>
+                            <p:message id="msgPreavis" for ="preavisContrat"/>
+                            <h:outputText value="Taux horaire" rendered="#{authentification.hasPermission(constanteMb.modifierTauxHoraire)}"/>
+                            <p:inputText label="taux contrat" id="TauxContrat"
+                                    rendered="#{authentification.hasPermission(constanteMb.modifierTauxHoraire)}"
+                                         value="#{detailMb.newContrat.tauxHoraire}" required="true" disabled="true">
+                                <f:ajax event="blur" render="msgTaux"/>
+                                <f:validateLongRange maximum="16" minimum="9"/>
+                            </p:inputText>
+                            <p:message id="msgTaux" for="TauxContrat"/>
+                        </h:panelGrid>
+                        <p:commandButton process="@form" onstart="PF('block').show()" oncomplete="PF('block').hide();"
+                                         id="addContratBtnActive_id" 
+                                         value="Ajouter" action="#{detailMb.addContrat()}" update=":form:tabs:contrat" />
+                    </h:form>
+                </p:dialog>
+                <p:dialog widgetVar="updateEtat">
+                    <h:form>
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Etat"/>
+                            <p:selectOneMenu id="etat" value="#{detailMb.id_Etat}" styleClass="widthChamp">
+                                <f:selectItems value="#{etatMb.etats}" var="e" itemLabel="#{e.etat}" itemValue="#{e.id}" />
+                            </p:selectOneMenu>
+                            <p:commandButton value="Modifier Etat" action="#{detailMb.updateEtat()}" process="@form"
+                                             update=":formUp,:form" oncomplete="PF('updateEtat').hide()"/>
+                        </h:panelGrid>
+                    </h:form>
+                </p:dialog>
+                <p:blockUI block="form" widgetVar="block">
+                    Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                </p:blockUI>
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

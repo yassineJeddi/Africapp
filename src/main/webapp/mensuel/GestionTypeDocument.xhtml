@@ -1,0 +1,156 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Parametre Type Document</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="./mensuelTemplate.xhtml">
+
+            <ui:define name="arborescence">
+
+
+
+                <h:form>
+                    Mensuel > <strong> Document Par Fonction </strong>
+                </h:form>
+
+            </ui:define>
+
+            <ui:define name="content">
+
+                <br />
+
+                <p:panel id="panel1">
+
+                    <p>Parametre Document Par Fonction</p>
+                    <h:form id="form">
+                        <p:messages id="msgs2" closable="true"/>
+
+
+                        <p:dataTable  var="docIt" id="pdataTable1" value="#{paramTypeDocsMb.l_Type_documents}" 
+
+                                      rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                      {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                      {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                      editable="true"
+                                      >
+
+
+
+                            <p:column headerText="Id">
+                                <p:outputLabel  value="#{docIt.id}" style="width:100%"/>
+                            </p:column>
+
+
+                            <p:column headerText="Type Document ">
+                                <p:cellEditor>
+                                    <f:facet name="output"><h:outputText value="#{docIt.typeDocument}" /></f:facet>
+                                    <f:facet name="input"><p:inputText id="modelInput" value="#{docIt.typeDocument}" style="width:100%"/></f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+
+
+
+                            <p:column headerText="Ajouter document ">
+                                <p:commandButton  icon="ui-icon-plus"  action="#{paramTypeDocsMb.redirectToAdd(docIt)}" oncomplete="PF('dlg_ajouter_f').show()"  />
+                            </p:column>
+
+
+
+
+
+
+
+                            <p:column headerText="Detail fonction">
+                                <p:commandButton oncomplete="PF('dlg_detail').show()" icon="ui-icon-document-b"  action="#{paramTypeDocsMb.visualiserDetail(docIt)}" update=":id_detail_form:tbl"/>
+
+
+                            </p:column>
+
+
+                        </p:dataTable>
+
+                    </h:form>
+
+
+                    <!-- ************************************************ dialog ajouter **********************-->
+
+
+                    <p:dialog header="Ajouter" widgetVar="dlg_ajouter_f" >
+                        <h:form id="id_ajouter_fonction">
+                            <h:panelGrid columns="2" cellpadding="5">
+
+                                <h:outputText value="Fonction" />
+                                <p:selectCheckboxMenu id="menu" value="#{paramTypeDocsMb.t_intg_selected}" label="--- selection Fonction ---"
+                                                      filter="true" filterMatchMode="contains" panelStyle="width:500px" >
+                                    <f:selectItems value="#{fonctionServMb.fonctions}" var="aff"
+                                                   itemLabel="#{aff.fonction}" itemValue="#{aff.id}"/>
+                                </p:selectCheckboxMenu>
+
+
+
+                            </h:panelGrid>
+
+
+                            <p:commandButton value="Ajouter"  onclick="PF('dlg_ajouter_f').hide();" action="#{paramTypeDocsMb.ajouterDocumentObligatoirFonction()}" update=":form:pdataTable1" ajax="true"/>
+                        </h:form>
+
+                    </p:dialog>
+
+
+                    <!-- ***************************************************************************************** -->
+
+                    <p:dialog header="Detail" widgetVar="dlg_detail" width="50%">
+                        <h:form id="id_detail_form">
+
+
+
+                            <p:dataTable  var="fonIt" id="tbl" value="#{paramTypeDocsMb.l_fonctionByDocs}" 
+
+                                          rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                          {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                          {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+
+                                          >
+
+
+
+
+                                <p:column headerText="Id">
+                                    <p:outputLabel  value="#{fonIt.id}" style="width:100%"/>
+                                </p:column>
+
+
+                                <p:column headerText="fonction  ">
+                                    <p:outputLabel  value="#{fonIt.fonction}" style="width:100%"/>
+
+                                </p:column>
+
+
+
+                            </p:dataTable>
+
+                        </h:form>
+
+                    </p:dialog>
+
+
+
+
+
+                </p:panel>
+
+            </ui:define>
+
+        </ui:composition>        
+    </h:body>
+</html>
+

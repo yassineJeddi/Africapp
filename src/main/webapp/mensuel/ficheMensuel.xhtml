@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+
+
+    <h:head>
+        <link rel="stylesheet" type="text/css" href="../resources/css/main.css" />
+        <title>Historique des pointages des engins</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+
+            <ui:define name="arborescence">
+
+                <h:form>
+                    Mensuel > <h:commandLink action="/mensuel/mensuel.xhtml"> La liste Des Mensuel</h:commandLink> > <strong> fiche Mensuel </strong>
+                </h:form>
+
+            </ui:define>
+
+
+            <ui:define name="content">
+
+                <p:panel id="panel">
+
+                    <h:form id="formTable">
+                        <p:messages id="msgsM" closable="true"/>
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <h:outputText value="Matricule :" />
+                                <h:outputText class="value_dis" value="#{documentMb.mensuelAffect.matricule}"  />
+                            </div>
+
+                            <div class="col-lg-3">
+                                <h:outputText value="fonction :" />
+                                <h:outputText class="value_dis" value="#{documentMb.mensuelAffect.fonction.fonction}"  />
+                            </div>
+
+                            <div class="col-lg-3">
+                                <h:outputText value="Civilite :" />
+                                <h:outputText class="value_dis" value="#{documentMb.mensuelAffect.civiliteDiva}" />
+                            </div>
+
+                            <div class="col-lg-3">
+                                <h:outputText value="Etat :" />
+                                <h:outputText class="value_dis"  value="#{documentMb.mensuelAffect.statut eq '0' ? 'inActif':'Actif'}"   />
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <div class="col-lg-3">
+
+                                <h:outputText value="Nom :" />
+                                <h:outputText class="value_dis" value="#{documentMb.mensuelAffect.nom}" />
+
+                            </div>
+                            <div class="col-lg-3">
+                                <h:outputText value="Prenom :" />
+                                <h:outputText class="value_dis" value="#{documentMb.mensuelAffect.prenom}" />
+                            </div>
+
+                            <div class="col-lg-3">
+
+
+                                <h:outputText value="Cin :" />
+                                <h:outputText class="value_dis" value="#{documentMb.mensuelAffect.cin}" />
+                            </div>
+
+                            <div class="col-lg-3">
+
+                                <h:outputText value="Cnss :" />
+                                <h:outputText class="value_dis" value="#{documentMb.mensuelAffect.cnss}"  />
+                            </div>
+
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <div class="col-lg-3">
+
+                                <h:outputText value="Date embauche :" />
+                                <h:outputText class="value_dis" value="#{constanteMb.getDateFormatFR(documentMb.mensuelAffect.dateCreation)}" />
+
+                            </div>
+                            <div class="col-lg-3">
+                                <h:outputText value="Type affectation :" />
+                                <h:outputText class="value_dis"  value="#{documentMb.mensuelAffect.typeAffectationDiva}"   />
+                            </div>
+                            <div class="col-lg-3">
+
+                                <h:outputText value="Type Contrat :" />
+                                <h:outputText class="value_dis" value="#{documentMb.mensuelAffect.typeContrat}" />
+
+                            </div>
+                            
+                            <div class="col-lg-3">
+
+                            <h:outputText value="Etablissement :" />
+                            <h:outputText class="value_dis" value="#{documentMb.mensuelAffect.etablissement}" />
+
+                        </div>
+
+                        </div>
+                        <br/>
+                        <div class="row">
+
+                            <div class="col-lg-6">
+
+                                <h:outputText value="Type Fonction :" />
+                                <h:outputText class="value_dis" value="#{documentMb.mensuelAffect.typeFonction}" />
+                            </div>
+                            <div class="col-lg-6">
+
+                                <h:outputText value="Chantier :" />
+                                <h:outputText class="value_dis" value="#{documentMb.chantierDivaltoMensuel}" />
+
+                            </div>
+                        </div>
+
+                        <br/>
+
+                        <p:tabView id="tabview_1">
+                            <p:tab title="Document">
+                                <c:if test="#{documentMb.mensuelAffect.statut == '1' }">
+                                    <p:commandButton disabled="#{documentMb.mensuelAffect.statut == '0' ? true : false }" 
+                                                     value="Ajouter Autre Document "
+                                                     oncomplete="PF('AjouterDialog').show()" 
+                                                     />
+                                    <ui:repeat var="c" value="#{documentMb.findTypesByFonction()}">
+                                        <p:commandButton value="Document #{c.typeDocument}"
+                                                         oncomplete="PF('AjouterDialogObligatoir').show()"
+                                                         disabled="#{c.display_Cin(documentMb.documents) == true}"
+                                                         update=":panel" 
+                                                         actionListener="#{documentMb.display_button_add()}"
+                                                         >
+                                            <f:setPropertyActionListener
+                                                target="#{documentMb.item_Type_Doc}" 
+                                                value="#{c}"
+                                                />
+                                        </p:commandButton>
+                                    </ui:repeat>
+                                </c:if>
+                                <br /><br />
+                                <h:form id="form11">
+                                    <p:dataTable id="tbl" var="documentIt" value="#{documentMb.documents}" 
+                                                 rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                                 {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                                 {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+
+                                        <p:ajax event="rowEdit" 
+                                                listener="#{documentMb.onRowEdit}"
+                                                update=":formTable:msgsM" 
+                                                />
+                                        <p:ajax event="rowEditCancel" 
+                                                listener="#{documentMb.onRowCancel}"
+                                                update=":formTable:msgsM"
+                                                />
+
+                                        <p:column headerText="Titre"  filterBy="#{documentIt.titre}" 
+                                                  sortBy="#{documentIt.titre}" 
+                                                  filterFunction="#{filterMb.filterByX}"  >
+                                            <p:cellEditor>
+                                                <f:facet name="output"><h:outputText value="#{documentIt.titre}"  /></f:facet>
+                                                <f:facet name="input"><p:inputText value="#{documentIt.titre}"  /></f:facet>
+                                            </p:cellEditor>
+                                        </p:column>
+
+
+                                        <p:column headerText="Type Document"   >
+                                            <h:outputText value="#{documentIt.typeDocument.typeDocument}" />
+                                        </p:column>
+
+
+                                        <p:column headerText="Ajouter Par"   >
+                                            <h:outputText value="#{documentIt.creePar}" />
+                                        </p:column>
+
+                                        <p:column headerText="Date de Creation"  filterBy="#{constanteMb.getDateFormatFR(documentIt.dateCreation)}" 
+                                                  filterFunction="#{filterMb.filterByX}">
+                                            <h:outputText value="#{constanteMb.getDateFormatFR(documentIt.dateCreation)}" >
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column headerText="Commentaire"   >
+                                            <h:outputText value="#{documentIt.commentaire}" />
+                                        </p:column>
+
+                                        <p:column headerText="Consulter">
+                                            <p:commandButton icon="ui-icon-document" title ="Consulter Document" 
+                                                             action="#{documentMb.visualiser(documentIt.chemin)}" 
+                                                             oncomplete="PF('consulterDoc').show()" update=":panel"/>
+                                        </p:column>
+                                        <p:column headerText="Télecharger">
+                                            <p:commandButton icon="ui-icon-arrowthick-1-s"
+                                                             title ="Télecharger Document" 
+                                                             action="#{documentMb.downLoad(documentIt)}" 
+                                                             ajax="false"
+                                                             >
+                                            </p:commandButton>
+                                        </p:column>
+                                        <p:column headerText="Supprimer">
+
+                                            <p:commandButton  icon="ui-icon-trash" disabled="#{documentMb.mensuelAffect.statut == '0' ? true : false }" 
+                                                              action="#{documentMb.delete}" update=":formTable:tabview_1:form11:tbl" ajax="true" >
+                                                <f:setPropertyActionListener value="#{documentIt}" target="#{documentMb.document_to_delete}" />
+                                                <p:confirm header="Confirmation" message="Voulez vous vraiment supprimer ce document ?" />
+                                            </p:commandButton>
+
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update=":formTable:tabview_1:form11:tbl"/>
+                                                <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" update=":formTable:tabview_1:form11:tbl"/>
+                                            </p:confirmDialog>
+
+                                        </p:column>
+                                        <c:if test="#{documentMb.mensuelAffect.statut == '1'}">
+
+                                            <p:column style="width:32px">
+                                                <p:rowEditor />
+                                            </p:column>
+
+                                        </c:if>
+                                    </p:dataTable>
+                                </h:form>
+                            </p:tab>
+                            <p:tab title="Affectation">
+
+                                <h:panelGrid columns="5" cellpadding="3">
+                                    <h:outputText value="De :" />
+                                    <p:calendar pattern="dd/MM/yyyy"    id="button_De" value="#{documentMb.date_to}" showOn="button" >
+                                        <p:ajax event="dateSelect" update="button_a"/>
+                                    </p:calendar>
+
+                                    <h:outputText value="à  :" />
+                                    <p:calendar pattern="dd/MM/yyyy"    id="button_a"   value="#{documentMb.date_from}"  showOn="button" mindate="#{documentMb.date_to}" />
+
+                                    <p:commandButton value="Rechercher" update=":formTable:tabview_1:t_affectation_id" actionListener="#{documentMb.rechercherMensuelsAffecter()}" />
+
+                                </h:panelGrid>
+                                <br/>
+
+                                <p:dataTable id="t_affectation_id" var="affectationIt" rowIndexVar="rowIndex"
+                                             value="#{documentMb.list_Date_affectation}" 
+                                             rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                             {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                             {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+
+
+                                    <p:column headerText="Date d'effet"   >
+                                        <h:outputText value="#{modem3gMb.convertDateFormat(affectationIt.dateeffect)}"   ></h:outputText>
+
+                                    </p:column>
+
+                                    <p:column style="text-align: center">
+
+                                        <p:commandButton oncomplete="PF('affectation_info').show()" icon="ui-icon-search" update=":form_info:tabl_info" actionListener="#{documentMb.redirect_Togle_Affectation(affectationIt)}" />
+                                        <p:commandButton disabled="#{documentMb.mensuelAffect.statut == '0' || rowIndex > 0 ? true : false}" title="modifier une affectation" update=":tablePE" icon="ui-icon-pencil" oncomplete="PF('dlgAF').show();" actionListener="#{ affectationMB.show_popup_affectation_forMensuel(affectationIt.mensuel, affectationIt) }"></p:commandButton> 
+                                        <p:commandButton disabled="#{documentMb.mensuelAffect.statut == '0' || rowIndex > 0 ? true : false}" title="supprimer une affectation"  update=":formTable:tabview_1:t_affectation_id" icon="ui-icon-trash" actionListener="#{ affectationMB.deleteAffectation(affectationIt) }">
+                                        <p:confirm header="Confirmation" message="Voulez vous vraiment supprimer cette affectation ?" />
+                                        </p:commandButton> 
+
+
+                                    </p:column>
+
+
+                                </p:dataTable>
+
+
+                            </p:tab>
+                        </p:tabView>
+
+                    </h:form>
+
+                    <p:dialog header="Nouveau Document"  widgetVar="AjouterDialog" modal="true" showEffect="fade" 
+                              hideEffect="fade" resizable="false" >
+
+                        <h:form id="form"  enctype="multipart/form-data">
+
+                            <h:panelGrid columns="5" cellpadding="5" >
+
+                                <h:outputText value="Titre :" />
+
+
+                                <p:inputText required="true" requiredMessage="le tite est obligatoire" value="#{documentMb.document.titre}" />
+
+
+
+                                <!--                                <h:outputText value="Type Document :" />
+                                
+                                                                <p:selectOneMenu required="true" requiredMessage="veuillez selectionner un type" id="id_titre" value="#{documentMb.titre}" style="width:125px">
+                                                                    <f:selectItem itemLabel="" itemValue="" noSelectionOption="true" />
+                                                                    <f:selectItems var="docs" value="#{type_documentServMb_.l_type_docs}" itemDisabled="#{docs.display(documentMb.documents) == false }"
+                                                                                   itemLabel="#{docs.typedocument}" itemValue="#{docs.typedocument}" />
+                                                                </p:selectOneMenu>-->
+
+
+                                <p:fileUpload  required="true" requiredMessage="veuillez selectionner un fichier" value="#{documentMb.uploadedFile}" mode="simple"></p:fileUpload>
+
+                            </h:panelGrid>
+
+                            <h:panelGrid columns="2" cellpadding="7"  >
+
+                                <h:outputText value="Commentaire" />
+                                <p:inputTextarea id= "Commentaire" value="#{documentMb.document.commentaire}" rows="5" cols="30"  maxlength="255" 
+                                                 counterTemplate="{0} characters remaining." autoResize="false" />
+
+                            </h:panelGrid>
+
+                            <p:commandButton  update=":formTable:tabview_1:form11:tbl, :formTable:msgsM " value="Ajouter" action="#{documentMb.save()}" oncomplete="PF('AjouterDialog').hide()" ajax="false"/>
+
+
+
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- ajouter document Obligatoir -->
+                    <p:dialog header="#{documentMb.item_Type_Doc.typeDocument}" widgetVar="AjouterDialogObligatoir" modal="true" showEffect="fade" 
+                              hideEffect="fade" resizable="false" >
+
+                        <h:form id="formCin"  enctype="multipart/form-data">
+
+                            <p:messages id="Msg_Doc"/>
+
+
+
+                            <h:panelGrid columns="4" cellpadding="5" >
+
+                                <h:outputText value="Titre " />
+
+
+                                <p:inputText required="true" requiredMessage="le titre est obligatoire" value="#{documentMb.document.titre}" />
+
+
+
+                                <p:outputLabel value="#{documentMb.item_Type_Doc.typeDocument}" />
+                                <p:fileUpload  requiredMessage="le fichier est obligatoire" value="#{documentMb.uploadedFile}"  required="true"   mode="simple" />
+
+
+                            </h:panelGrid>
+
+                            <h:panelGrid columns="2" cellpadding="7"  >
+
+                                <p:outputLabel value="Commentaire" />
+                                <p:inputTextarea id= "CommentaireCin" value="#{documentMb.document.commentaire}" rows="5" cols="30"  maxlength="255" 
+                                                 counterTemplate="{0} characters remaining." autoResize="false" />
+
+                            </h:panelGrid>
+                            <p:commandButton update=":formTable:tabview_1:form11:tbl" value="Ajouter" action="#{documentMb.saveObligatoir()}" oncomplete="PF('AjouterDialog').hide()" ajax="false" styleClass="button_ajouter" />
+
+
+
+                        </h:form>
+                    </p:dialog>
+
+
+                    <!-- end document -->
+
+
+                    <p:dialog header="affectation Info" modal="true" widgetVar="affectation_info"  >
+
+                        <h:form id="form_info">
+                            <p:dataTable id="tabl_info" var="afec" value="#{documentMb.list_Affect_By_Date}" 
+                                         rowKey="#{afec.id}" style="margin-bottom:0;width:500px;"  
+                                         rows="5"  paginator="true"  paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+
+                                <p:column headerText="chantier "   >
+                                    <h:outputText value="#{afec.chantier.code}" />
+                                </p:column>
+
+                                <p:column headerText=" % Pourcentage  "   >
+                                    <h:outputText value="#{afec.pourcentage}" />
+                                </p:column>
+
+
+                            </p:dataTable>
+                        </h:form>
+
+                    </p:dialog>
+
+
+                    <p:dialog  width="800px" resizable="false" modal="true" widgetVar="consulterDoc">
+                        <h:form id="visuliser_id">
+
+                            <p:media value="#{imageBean.documentMensuel}" width="1000px" height="500px" player="pdf"> 
+                                <f:param name="path" value="#{documentMb.selectedDoc}" />
+                            </p:media>
+
+
+
+
+                        </h:form>
+                    </p:dialog>
+
+
+                    <h:form id="tablePE">
+                        <p:dialog header="Affectation Financière" height="600px" width="600px"
+                                  closable="true" widgetVar="dlgAF"  showEffect="fade" 
+                                  hideEffect="fade" resizable="true" id="id_dialo_affec" draggable="true" >
+                            <p:outputPanel id="Mise">
+                                <div class="row">
+                                    <div class="col-lg-6">  
+                                        <div class="row"> 
+                                            <h:outputText class="col-lg-4" value="Nom/Prénom" />
+                                            <h:outputText class="col-lg-8" id="des" value="#{documentMb.mensuelAffect.nom}" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="row"> 
+                                            <h:outputText class="col-lg-4" value="Fonction" />
+                                            <h:outputText class="col-lg-8" id="marq" value="#{documentMb.mensuelAffect.fonction.fonction}"/>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <br />
+
+                                <h:panelGrid columns="3" cellpadding="7"  >  
+
+                                    <h:outputText value="Date d'affection" />
+                                    <p:calendar pattern="dd/MM/yyyy"    id="cpt" value="#{affectationMB.creation_date}" maxdate="#{affectationMB.today_date}" mindate="#{affectationMB.affecServInter.minDateForAffectaionInInterface}" readonlyInput="true" />
+                                    <h:outputText  />
+
+                                </h:panelGrid>
+
+                                <p:panel id="liste" style="width: 500px;">
+
+                                    <ui:repeat  value="#{affectationMB.affecServInter.l_sous_affectation}" var="l">
+                                        <div class="row">
+                                            <div class="col-lg-7"> <h:outputText id="o1" value="#{l.chantier.code}" /> </div>
+                                            <div class="col-lg-3"> <h:outputText id="o2" value="#{l.pourcentage} %"/> </div>
+
+                                            <div class="col-lg-2"> <p:commandButton icon="ui-icon-trash" action="#{affectationMB.deleteAffectation_fromTheList(l)}" update=":tablePE:liste, :tablePE:affec, :tablePE:inAffect, :tablePE:chantier, :tablePE:genButton" /><p:spacer width="3"/> </div>
+                                        </div>
+                                        <hr />
+                                    </ui:repeat>
+                                    <h:outputText /><br></br>
+
+                                </p:panel>
+
+                                <br />
+
+                                <h:panelGrid columns="4">
+
+                                    <p:selectOneMenu id="chantier" value="#{affectationMB.selected_chantier_id}" filter="true">               
+                                        <f:selectItem itemLabel="" itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{affectationMB.affecServInter.l_chanier}" var="C" itemDisabled="#{C.display == false}"
+                                                       itemLabel="#{C.code}" itemValue="#{C.id}"/>
+                                        <!--<p:ajax update="Btnplus"/>-->
+                                    </p:selectOneMenu>
+
+                                    <p:inputText  id="inAffect" readonly="#{documentMb.mensuelAffect.typeAffectation == true ? false : true}" value="#{affectationMB.pourcentage_affectation}" />
+                                    <h:outputText  value="%"/>
+
+                                    <p:commandButton id="Btnplus" value="+" 
+                                                     action="#{affectationMB.addChantier_toAffectations()}" 
+                                                     update =":tablePE:liste, :tablePE:affec, :tablePE:chantier, :tablePE:inAffect, :tablePE:genButton"
+
+                                                     />
+
+
+                                    <br />
+                                </h:panelGrid>
+
+
+
+                                <div class="pull-right">
+                                    <h:outputText id="affec" value="Somme des affectations : #{affectationMB.affecServInter.get_somme_affectation()} %"/>
+                                </div>
+
+
+                                <p:commandButton value="Annuler" id="button_valide" update="tablePE:Mise" onclick="PF('dlgAF').hide()" /><p:spacer width="15"/>
+
+                                <p:commandButton value="Valider" update=":formTable:tabview_1:t_affectation_id" id="genButton" action="#{affectationMB.validate(true)}"  oncomplete="PF('dlgAF').hide()" disabled = "#{affectationMB.affecServInter.get_somme_affectation() != 100}"/>
+
+
+                            </p:outputPanel>
+
+
+                        </p:dialog>
+                    </h:form>
+
+
+
+
+
+
+
+                    <!--             dialog consultation document                        -->
+
+
+
+
+
+
+
+
+
+                </p:panel>
+
+            </ui:define>
+
+
+
+        </ui:composition>
+
+    </body>
+
+</html>

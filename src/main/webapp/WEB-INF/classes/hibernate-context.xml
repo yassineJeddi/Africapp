@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.connection.username">sa</property>
+        <property name="hibernate.connection.password">tgcc2013#</property>
+        <property name="hibernate.connection.driver_class">com.microsoft.sqlserver.jdbc.SQLServerDriver</property>
+        <property name="hibernate.connection.url">jdbc:sqlserver://192.168.21.4:1433;databaseName=Bpaie</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property>
+        <property name="hibernate.show_sql">true</property>
+        <mapping class="ma.bservices.beans.Salarie" />
+        <mapping class="ma.bservices.beans.Civilite" />
+        <mapping class="ma.bservices.beans.ModePaiement" />
+        <mapping class="ma.bservices.beans.Pays" />
+        <mapping class="ma.bservices.beans.Nationalite" />
+        <mapping class="ma.bservices.beans.Fonction" />
+        <mapping class="ma.bservices.beans.Type" />
+        <mapping class="ma.bservices.beans.Pointure" />
+        <mapping class="ma.bservices.beans.TailleHabillement" />
+        <mapping class="ma.bservices.beans.CouleurGilet" />
+        <mapping class="ma.bservices.beans.DossierSalarie" />
+        <mapping class="ma.bservices.beans.SituationFamiliale" />
+        <mapping class="ma.bservices.beans.CouleurCasque" />
+        <mapping class="ma.bservices.beans.Etat" />
+        <mapping class="ma.bservices.beans.Contrat" />
+        <mapping class="ma.bservices.beans.ModelContrat" />
+        <mapping class="ma.bservices.beans.Duree" />
+        <mapping class="ma.bservices.beans.Preavis" />
+        <mapping class="ma.bservices.beans.EtatContrat" />
+        <mapping class="ma.bservices.beans.TypeContrat" />
+        <mapping class="ma.bservices.beans.PeriodeEssai" />
+        <mapping class="ma.bservices.beans.TypeDocument" />
+        <mapping class="ma.bservices.beans.Document" />
+        <mapping class="ma.bservices.beans.Enfant" />
+        <mapping class="ma.bservices.beans.OutilTravail" />
+        <mapping class="ma.bservices.beans.CategorieOutilTravail" />
+        <mapping class="ma.bservices.beans.Motif" />
+    </session-factory>
+</hibernate-configuration>

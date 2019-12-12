@@ -1,0 +1,228 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <body>
+        <ui:composition template="./Template.xhtml">
+            <ui:define name="arborescence">
+                Pointage -> Pointage par lot
+            </ui:define>
+            <ui:define name="content">
+                <p:growl showDetail="true" id="messages"   />
+                <p:blockUI widgetVar="block" block="form" >
+                    Chargement<br /> <h:graphicImage value="../images/loading.gif" />
+                </p:blockUI>
+                <h:form id="form">
+                    <br/>
+                    <h:panelGrid columns="8" id="filtre">
+                        <p:spacer width="50px"/>
+                        <p:calendar pattern="dd/MM/yyyy" maxdate="#{constanteMb.maxDate}"                                    
+                                    id="dateP" value="#{pointageLotMb.datePointage}" >
+                            <p:ajax onstart="PF('block').show()" 
+                                    oncomplete="PF('block').hide()" 
+                                    event="dateSelect" listener="#{pointageLotMb.onChangeChef()}" 
+                                    update=":form:codeFiche, :pointageLot" 
+                                    />
+
+                        </p:calendar>
+
+                        <p:spacer width="20px"/>
+
+                        <p:selectOneMenu id="chantier" filter="true" 
+                                         filterMatchMode="contains"
+                                         value="#{pointageLotMb.idChantier}">
+                            <f:selectItem itemLabel="--Chantier--" itemValue=""/>
+                            <f:selectItems value="#{chantier.chantiers}" var="c" itemLabel="#{c.code}" itemValue="#{c.id}"/>
+                            <p:ajax onstart="PF('block').show()" oncomplete="PF('block').hide()" listener="#{pointageLotMb.onChangeChantier()}" 
+                                    update="chef, :form:codeFiche,:pointageLot"/> 
+                        </p:selectOneMenu>
+
+                        <p:spacer width="20px"/>
+
+                        <p:selectOneMenu id="chef" value="#{pointageLotMb.idChef}">
+                            <f:selectItem itemLabel="--Chef Equipe--" itemValue=""/>
+                            <f:selectItems value="#{pointageLotMb.chefs}" 
+                                           var="ch" itemLabel="#{ch.nom} #{ch.prenom}" 
+                                           itemValue="#{ch.id}"
+                                           />
+                            <p:ajax onstart="PF('block').show()" 
+                                    oncomplete="PF('block').hide()" 
+                                    listener="#{pointageLotMb.onChangeChef()}"
+                                    update=":pointageLot, :form:codeFiche, :form:btnFichee"
+                                    /> 
+                        </p:selectOneMenu>
+
+                        <p:spacer width="20px"/>
+
+                        <p:commandButton  oncomplete="PF('viewPdf').show();" 
+                                        id="btnFichee"
+                                        class="btn btn-switch active"  
+                                        value="Telecharger Fiche Pointage Lot" 
+                                        disabled="#{pointageLotMb.ficheGenere}"                                                
+                                        update=":showFiche, :form:codeFiche, filtre, :pointageLot, :form:btnUpload"
+                                        actionListener="#{pointageLotMb.downLoad_Fiche_Pointage_Lot()}"
+                                        />
+
+                    </h:panelGrid>
+                    <br/>
+                    <h:panelGrid columns="10" id="codeFiche">
+                        <p:spacer width="50px"/>
+                        <h:outputText value="Code " />
+                        <p:spacer width="20px"/>
+                        <p:inputText id="acMinLength" value="#{pointageLotMb.codeFiche}"  />
+                        <p:spacer width="30px"/>
+                        <p:commandButton id="btnFiche" value="Rechercher" 
+                                         action="#{pointageLotMb.findChantierAndChefAndDateByCodeFiche()}" 
+                                         update="filtre,:pointageLot, btnUpload" 
+                                         onstart="PF('block').show()" oncomplete="PF('block').hide()"/>
+                        <p:spacer width="30px"/>
+                        <c:if test="#{(pointageLotMb.visible == false)}">
+                            <p:commandButton update=":showFiche"
+                                             value="Consulter Fiche" 
+                                             onclick="PF('viewPdf').show()"/>
+                        </c:if>
+                        <p:spacer width="20px"/>
+                        <p:commandButton id="btnUpload" value="Importer" 
+                                         onclick="PF('addPdf').show()"/>
+                    </h:panelGrid>
+                </h:form>
+                <br/>
+                <h:form id="pointageLot">
+                    <p:tabView id="tabs" class="col-lg-12" activeIndex="#{pointageLotMb.tabId}">
+                        <p:tab title="Pointer">
+                            <c:if test="#{pointageLotMb.messagePointage eq ''}">
+                                <p:dataTable id="tableau" value="#{pointageLotMb.salariesData}" 
+                                             var="s" paginator="true" rowKey="#{s.id}"
+                                             rows="10" rowsPerPageTemplate="5,10,15,30,50,100" 
+                                             class="table table-hover table-responsive" rowIndexVar="rowIndex"
+                                             paginatorAlwaysVisible="true"
+                                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                             >
+                                    <p:column headerText="Matricule" width="75">
+                                        <h:outputText value="#{s.matricule}"/>
+                                    </p:column>
+                                    <p:column headerText="Nom Prénom">
+                                        <h:outputText value="#{s.nom}" /> <h:outputText value=" #{s.prenom}" /> 
+                                    </p:column>
+                                    <p:column headerText="Type" width="80">
+                                        <h:outputText value="#{s.type.type}"/>
+                                    </p:column>
+                                    <p:column headerText="Fonction">
+                                        <h:outputText value="#{s.fonction.fonction}"/>
+                                    </p:column>
+                                    <p:column headerText="Zone" width="115">
+                                        <p:selectCheckboxMenu id="zone" value="#{s.idZone}" 
+                                                              label="Zones" required="true" style="width: 100px"
+                                                              panelStyle="width:200px" >
+                                            <f:selectItems value="#{pointageLotMb.zones}" var="z"
+                                                           itemLabel="#{z.libeleZone}" itemValue="#{z.idZone}"/>
+                                            <p:ajax event="change" listener="#{pointageLotMb.SelectedZonesString(s)}"
+                                                    update="zoneConsult"/>
+                                        </p:selectCheckboxMenu>
+                                        <br/>
+                                        <h:outputText id="zoneConsult" value="#{s.zonePointeConsult}"/>
+                                    </p:column>
+                                    <c:forEach items="#{pointageLotMb.lots}" var="l" varStatus="loop">
+                                        <p:column width="35" >
+                                            <f:facet name="header">
+                                                <p:graphicImage url="#{l.cheminIcon}" title="#{l.libelle}" width="20px" height="20px"/>
+                                            </f:facet>
+                                            <p:selectBooleanCheckbox disabled="#{s.lotAutoriser[loop.index]}" value="#{s.check[loop.index]}">
+                                                <p:ajax event="change" />
+                                            </p:selectBooleanCheckbox>
+                                        </p:column>
+                                    </c:forEach>
+                                    <f:facet name="footer">
+                                        <p:commandButton disabled="#{pointageLotMb.btnEtat}" value="Pointer" 
+                                                         action="#{pointageLotMb.valider()}" 
+                                                         update=":pointageLot"
+                                                         />
+                                    </f:facet>
+                                </p:dataTable>
+                            </c:if>
+                            <c:if test="#{pointageLotMb.messagePointage!= ''}">
+                                <div class="alert alert-danger">
+                                    <h:outputText value="#{pointageLotMb.messagePointage}"/>
+                                </div>
+                            </c:if>
+                        </p:tab>
+                        <p:tab title="Consulter">
+                            <c:if test="#{pointageLotMb.messageConsult eq ''}">
+                                <p:dataTable id="tableauConsulter" rowIndexVar="index"
+                                             value="#{pointageLotMb.salariesData}" var="s" 
+                                             paginator="true"
+                                             rowKey="#{s.id}"
+                                             rows="10" rowsPerPageTemplate="5,10,15" class="table table-hover"
+                                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                             >
+                                    <p:column headerText="Matricule">
+                                        <h:outputText value="#{s.matricule}"/>
+                                    </p:column>
+                                    <p:column headerText="Nom Prénom">
+                                        <h:outputText value="#{s.nom}" /> <h:outputText value=" #{s.prenom}" /> 
+                                    </p:column>
+                                    <p:column headerText="Type">
+                                        <h:outputText value="#{s.type.type}"/>
+                                    </p:column>
+                                    <p:column headerText="Fonction">
+                                        <h:outputText value="#{s.fonction.fonction}"/>
+                                    </p:column>
+                                    <p:column headerText="Zone">
+                                        <h:outputText value="#{s.zonePointeConsult}"/>
+                                    </p:column>
+                                    <c:forEach items="#{pointageLotMb.lots}" var="l" varStatus="loop">
+                                        <p:column width="35">
+                                            <f:facet name="header">
+                                                <p:graphicImage url="#{l.cheminIcon}" title="#{l.libelle}" width="20px" height="20px"/>
+                                            </f:facet>
+                                            <p:selectBooleanCheckbox value="#{s.check[loop.index]}"/>
+                                        </p:column>
+                                    </c:forEach>
+                                </p:dataTable>
+                            </c:if>
+                            <c:if test="#{pointageLotMb.messageConsult != ''}">
+                                <div class="alert alert-danger">
+                                    <h:outputText value="#{pointageLotMb.messageConsult}"/>
+                                </div>
+                            </c:if>
+                        </p:tab>
+                    </p:tabView>
+
+                </h:form>          
+                <p:dialog widgetVar="viewPdf" width="600px" modal="true" resizable="false" closable="true">
+                    <h:form id="showFiche">
+                        <p:media value="#{imageBean.bon}" 
+                                 width="100%" 
+                                 height="500px" 
+                                 player="pdf"> 
+                            <f:param name="path" value="#{pointageLotMb.pdfview}" />
+                        </p:media>
+                    </h:form>
+                </p:dialog>
+                <p:dialog widgetVar="addPdf" width="500px"  modal="true" resizable="false" closable="true">
+                    <h:form id="fiche" enctype="multipart/form-data" prependId="false">
+                        <h:panelGrid columns="4" id="codeFiche">
+                            <h:outputText value="Code " />
+                            <p:spacer width="15px"/>
+                            <p:outputLabel id="acMinLength" value="#{pointageLotMb.codeFiche}"/>
+                            <p:spacer width="15px"/>
+
+                            <h:outputText value="Importer La Fiche : " />
+                            <p:spacer width="15px"/>
+                            <p:fileUpload value="#{pointageLotMb.uploadedFile}"  label="Choisir Fiche de Pointage"  mode="simple" ></p:fileUpload>
+                            <p:spacer width="15px"/>
+
+                            <p:spacer width="15px"/>
+                            <p:spacer width="15px"/>
+                            <p:commandButton ajax="false" value="Importer la fiche" action="#{pointageLotMb.upload()}"/>
+                        </h:panelGrid>
+                    </h:form>     
+                </p:dialog>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <body>
+
+        <ui:composition template="./Template.xhtml">
+
+            <ui:define name="arborescence">
+                Fiche Pointage -> Consultation 
+            </ui:define>
+
+            <ui:define name="content">
+                <div class="col-lg-12">
+                    <p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false" closable="false" resizable="false">
+                        <p:graphicImage value ="/images/loading.gif" />
+                    </p:dialog>
+                    <h:form id="form">
+                        <p:dataTable id="tableau" value="#{ficheMb.fiches}" var="f" 
+                                             paginator="true"                                             
+                                             rows="10" rowsPerPageTemplate="5,10,15" class="table table-hover"
+                                   paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                            >
+                            <f:facet name="header">
+                            </f:facet>
+                            <p:column headerText="Code Fiche" filterBy="#{f.id}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{f.id}"/>
+                            </p:column>
+                            <p:column headerText="Chantier" filterBy="#{f.chantier.code}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{f.chantier.code}"/>
+                            </p:column>
+                            <p:column headerText="Chef d'équipe" filterBy="#{f.salarieSupp.nom}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{f.salarieSupp.nom} #{f.salarieSupp.prenom}"/>
+                            </p:column>
+                            <p:column headerText="Date Pointage" sortBy="#{f.date}" filterBy="#{constanteMb.getDateFormatFR(f.date)}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{constanteMb.getDateFormatFR(f.date)}"/>
+                            </p:column>
+                            <p:column headerText="Visualiser">
+                                <p:commandButton update=":showFiche"
+                                                 oncomplete="PF('showFiche').show()"
+                                                 icon="ui-icon-arrowthick-1-s" 
+                                                 actionListener="#{ficheMb.showFiche(f)}"
+                                                 />
+                            </p:column>
+
+                        </p:dataTable>
+                    </h:form>
+                </div>
+                <p:dialog width="800px" showEffect="fade"  hideEffect="fade" modal="true" closable="true"
+                          header="Fiche de Pointage" widgetVar="showFiche">
+                    <h:form id="showFiche" enctype="multipart/form-data">
+
+                        <p:media value="#{imageBean.bon}" 
+                                 width="100%" 
+                                 height="500px" 
+                                 player="pdf"> 
+                            <f:param name="path" value="#{ficheMb.chemin}" />
+                        </p:media>
+
+                    </h:form>
+                </p:dialog>
+
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"     
+
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Ordinateur</title>
+        <!--<a href="gestionOrdinateur.xhtml"></a>-->
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+
+            <ui:define name="arborescence">
+
+
+
+
+                <h:form>
+                    Mensuel > <strong> gestion Ordinateur </strong>
+                </h:form>
+
+            </ui:define>
+
+            <ui:define name="content">
+                <p:panel id="pannel">
+
+                    <h:form id="form">
+                        <br />
+                        <div class="affectation-switch">
+                            <div class="btn-group" data-toggle="buttons">
+                                <p:commandButton class="btn btn-default" 
+                                                 action="/mensuel/consultOrdinateurs.xhtml?faces-redirect=true"
+                                                 value="Consulter Ordinateurs" 
+                                                 actionListener="#{ordinateurMb.afficherOrdinateurAffecter()}"/>
+                                <p:commandButton class="btn btn-default" 
+                                                 value="Gestion Ordinateurs"
+                                                 action="/mensuel/gestionOrdinateur.xhtml?faces-redirect=true"
+                                                 actionListener="#{ordinateurMb.afficherOrdinateurRechercher()}" 
+                                                 update=":form:tbl"/>
+                                <p:commandButton class="btn btn-switch active" 
+                                                 value="Historique Ordinateurs"                                                 
+                                                 actionListener="#{ordinateurMb.afficherOrdinateurRechercher()}" 
+                                                 update=":form:tbl"/>
+                            </div>
+                        </div>
+                        <br />
+
+                        <p:messages id="msgsM" closable="true"/>
+
+
+
+                          <p:spacer width="5px"  height="1px"/>
+                          
+                          <p:outputLabel value="Recherche par date d'affectation: " />
+                          <br />
+                          
+                            <p:outputLabel for="button" value="De:" />
+                            <p:calendar pattern="dd/MM/yyyy" id="button" value="#{ordinateurMb.dateFrom}" showOn="button"   >
+                               
+                            </p:calendar>
+                            <p:spacer width="50px"  height="1px"/>
+                            <p:outputLabel for="button2" value="à:" />
+                            <p:calendar pattern="dd/MM/yyyy" id="button2" value="#{ordinateurMb.dateTo}" showOn="button"   />
+                            <p:spacer width="20px"  height="1px"/>
+
+                        <p:commandButton class="btn btn-switch active" value="Rechercher" update=":form:tbl" icon="ui-icon-arrowthickstop-1-s" action="#{ordinateurMb.searchByDate}" />
+
+                        
+                        <p:commandButton class="btn btn-switch active" value="Reinitialiser" update=":form:tbl, :form" icon="ui-icon-arrowthickstop-1-s" action="#{ordinateurMb.reinitSearch}" />
+
+                         <p:spacer width="20px"  height="20px"/>
+                         <br/><br/>
+
+                        <p:dataTable id="tbl" var="ordinateurIt" value="#{ordinateurMb.ordisH}"
+                                     rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                     >
+
+
+
+                          
+                            <p:column headerText="Date Affectation">
+                                <h:outputText value="#{ordinateurMb.convertDateFormat(ordinateurIt.dateAffectation)}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Date Rendu">
+                                <h:outputText value="#{ordinateurMb.convertDateFormat(ordinateurIt.dateDesaffectation)}"/>
+                            </p:column>
+                            <p:column headerText="Matricule Salarie" filterMatchMode="exact" filterBy="#{ordinateurIt.mensuel.matricule}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{ordinateurIt.mensuel.matricule}"/>
+                            </p:column>
+                            <p:column headerText="Nom Salarie" filterBy="#{ordinateurIt.mensuel.nom}" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{ordinateurIt.mensuel.nom}"/>
+                            </p:column>
+                            <p:column headerText="Prénom Salarie" filterBy="#{ordinateurIt.mensuel.prenom}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{ordinateurIt.mensuel.prenom}"/>
+                            </p:column>
+                            <p:column headerText="Num. Serie Ordinateur" filterBy="#{ordinateurIt.ordinateur.numeroSerieOrd}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{ordinateurIt.ordinateur.numeroSerieOrd}"/>
+                            </p:column>
+
+                            <p:column headerText="Marque Ordinateur" filterBy="#{ordinateurIt.ordinateur.marque}" filterFunction="#{filterMb.filterByX}">
+                               <h:outputText value="#{ordinateurIt.ordinateur.marque}"/>
+                            </p:column>
+
+                            <p:column style="width:32px">
+                               
+                            </p:column>
+
+                        </p:dataTable>
+                    </h:form>
+
+
+
+
+
+
+
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

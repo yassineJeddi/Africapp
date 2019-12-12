@@ -1,0 +1,256 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets" >
+    <h:head>
+        <title>Nouvelle Demande D'appro</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="Template.xhtml">
+            <ui:define name="arborescence">
+                <h:outputText value="Achat > Nouvelle demande d'appro" style="color:#000066; margin-left: -920px; font-size: 14px;  font-family: Times New Roman, Georgia, Serif;"/>
+            </ui:define>
+            <ui:define name="content">
+                <h:form id="form">
+                    <p:blockUI block="form" widgetVar="block">
+                        Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                    </p:blockUI>
+                    <div class="row">
+                        <div class="col-lg-10 col-lg-offset-1">
+                            <p:messages id="msgsMR" autoUpdate="true" closable="true"/>
+                        </div>
+                    </div>
+
+                    <p:panel header="Nouvelle demande d'approvisionnement" >
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <h:panelGrid columns="2">
+                                    <h:outputText value="Chantier : (*)"/>
+                                    <p:selectOneMenu required="true" requiredMessage="champ obligatoire" id="chan" value="#{nouveauDaMb.idChantier}" 
+                                                     filter="true" filterMatchMode="contains">
+                                        <f:selectItem /> 
+                                        <f:selectItems value="#{chantier.chantiers}" var="c" itemLabel="#{c.code}" itemValue="#{c.id}" />
+                                        <p:ajax event="change" update="dmdAppr:addAr" listener="#{nouveauDaMb.btnAjoutArticleDisable()}" />
+                                    </p:selectOneMenu>
+
+                                    <h:outputText value="Demandeur : (*)"/>
+                                    <p:inputText class="form-control" value="#{nouveauDaMb.demand}" readonly="true"/>
+
+                                    <h:outputText value="Date de livraison souhaitée : (*)"/>
+                                    <p:calendar mindate="#{constanteMb.maxDate}" class="form-control" 
+                                                showOn="button" pattern="dd/MM/yyyy"
+                                                style="padding: 0px 0px 0px 0px;border: 0px solid #ccc; display: flex"
+                                                required="true" requiredMessage="date de livraison est obligatoire" 
+                                                id="date" value="#{nouveauDaMb.demandeApp.dateLivraisonSouhaitee}">
+                                        <p:ajax event="change" update="dmdAppr:addAr" listener="#{nouveauDaMb.btnAjoutArticleDisable()}" />
+                                        <p:ajax event="dateSelect" update="dmdAppr:addAr" listener="#{nouveauDaMb.btnAjoutArticleDisable()}" />
+                                    </p:calendar>
+                                </h:panelGrid>
+                            </div>
+                            <div class="col-lg-4 col-lg-offset-1">
+                                <h:panelGrid columns="2">
+                                    <h:outputText value="Destination DA : "/>
+                                    <p:selectOneMenu id="destination" value="#{nouveauDaMb.demandeApp.destinationDA}">               
+                                        <f:selectItem itemValue="Direction Achat" itemLabel="Direction Achat"/>
+                                        <f:selectItem itemValue="Département Logistique" itemLabel="Département Logistique"/>
+                                    </p:selectOneMenu>
+                                    <h:outputText value="Commentaire: "/>
+                                    <p:inputTextarea value="#{nouveauDaMb.demandeApp.commentaire}" styleClass="widthChamp"/>
+                                </h:panelGrid>
+                            </div>
+                        </div>
+                    </p:panel>
+                    <p:dataTable id="dmdAppr" value="#{nouveauDaMb.listArticle}" var="lda" >
+                        <f:facet name="header">
+                            <p:commandButton id="addAr" value="Ajouter Article" icon="ui-icon-plus" type="button" onclick="PF('add').show();" disabled="#{nouveauDaMb.buttonDis}"/>
+                        </f:facet>
+                        <p:column headerText="Code Article">
+                            <h:outputText value="#{lda.article.codeArticle}"/>
+                        </p:column>
+
+                        <p:column headerText="Désignation">
+                            <h:outputText value="#{lda.article.designation}"/>
+                        </p:column>
+
+                        <p:column headerText="Quantité">
+                            <h:outputText value="#{lda.quantiteArticle}"/>
+                        </p:column>
+
+                        <p:column headerText="Unité">
+                            <h:outputText value="#{lda.article.unite}"/>
+                        </p:column>
+
+                        <p:column headerText="Actions">
+                            <p:commandButton icon="ui-icon-trash" action="#{nouveauDaMb.deleteArticleDA()}" 
+                                             update=":form:dmdAppr" disabled="#{nouveauDaMb.btnEtat}">
+                                <f:setPropertyActionListener value="#{lda}" target="#{nouveauDaMb.ADA}" />
+                                <p:confirm header="Confirmation" message="Voulez vous vraiment supprimer l'articleDA ?" />
+                            </p:commandButton>
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update=":form:dmdAppr"/>
+                                <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" update=":form:dmdAppr"/>
+                            </p:confirmDialog>
+                        </p:column>
+                    </p:dataTable>
+                    <br/>
+                    <br/>
+                    <div class="col-lg-2 col-lg-offset-4">
+                        <p:commandButton id="btnDA" disabled="#{nouveauDaMb.btnEtat}" 
+                                         onstart="PF('block').show()" oncomplete="PF('block').hide()"
+                                         value="Envoyer" class="btn btn-switch active" 
+                                         action="#{nouveauDaMb.envoyerArticleDA()}" update=":form"/>
+                    </div>
+                </h:form>
+                <p:dialog header="Ajouter un Article" widgetVar="add" modal="true">
+                    <h:form id="addArti">
+                        <h:panelGrid columns="4" >
+                            <h:outputText value="Article :"/>
+                            <p:inputText value="#{nouveauDaMb.arti.codeArticle}" id="codeA">
+                                <p:ajax update=":addArti" event="change" listener="#{nouveauDaMb.findArticle()}"/>
+                            </p:inputText>
+                            <p:commandButton icon="ui-icon-search" onclick="PF('search').show();"/>
+                            <h:outputText value="#{nouveauDaMb.arti.designation}"  id="quanA"/>
+
+                            <h:outputText value="Quantité :"/>
+                            <p:inputText value="#{nouveauDaMb.quantite}" label="Quantité saisir "/>
+                            <h:outputText value="#{nouveauDaMb.arti.unite}" id="unite"/>
+                            <h:outputText/>
+
+                            <p:commandButton id="btnOK"
+                                             value="Ajouter" action="#{nouveauDaMb.ajouterNouvelleDA()}" update=":form:dmdAppr,:form:btnDA,:addArti" onclick="PF('add').hide();"/>
+                        </h:panelGrid>
+                    </h:form>
+
+                </p:dialog>
+
+                <p:dialog header="Article" modal="true" position="top" resizable="false"
+                          widgetVar="search" width="50%" closable="true" >
+                    <p:blockUI block="panelD" widgetVar="blockDialog">
+                        Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                    </p:blockUI>
+                    <p:panel id="panelD" style="overflow: auto; height: 500px"> 
+                        <h:form id="dialog">
+                            <div class="col-lg-12">
+                                <p:messages id="msgsRe" />
+                                <div class="row">
+                                    <div class="col-lg-3">
+                                        <h:outputText value="Famille 1 :"/>
+                                    </div>
+                                    <div class="col-lg-9">
+                                        <p:selectOneMenu style="width:100%" id="fam1" value="#{nouveauDaMb.valueFam1}"
+                                                         filter="true" filterMatchMode="contains">
+                                            <f:selectItem /> 
+                                            <f:selectItems value="#{nouveauDaMb.fam1}" var="c" itemLabel="#{c.famille}" itemValue="#{c.fam}" />
+                                            <p:ajax onstart="PF('blockDialog').show()" 
+                                                    oncomplete="PF('blockDialog').hide()"
+                                                    event="change" update="fam2,fam3, idArticle" 
+                                                    listener="#{nouveauDaMb.fam2ByFam1()}" /> 
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-3">
+                                        <h:outputText value="Famille 2 :"/>
+                                    </div>
+
+                                    <div class="col-lg-9">
+                                        <p:selectOneMenu id="fam2" style="width:100%" value="#{nouveauDaMb.valueFam2}"
+                                                         filter="true" filterMatchMode="contains"  >
+                                            <f:selectItem /> 
+                                            <f:selectItems value="#{nouveauDaMb.fam2}" var="c" itemLabel="#{c.famille}" itemValue="#{c.fam}" />
+                                            <p:ajax onstart="PF('blockDialog').show()" 
+                                                    oncomplete="PF('blockDialog').hide()"
+                                                    
+                                                    event="change" update="fam3, idArticle" 
+                                                    listener="#{nouveauDaMb.fam3ByFam2()}" /> 
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-3">
+                                        <h:outputText value="Famille 3 :"/>
+                                    </div>
+                                    <div class="col-lg-9">
+                                        <p:selectOneMenu id="fam3" style="width:100%" value="#{nouveauDaMb.valueFam3}"
+                                                         filter="true" filterMatchMode="contains" >
+                                            <f:selectItem />
+                                            <f:selectItems value="#{nouveauDaMb.fam3}" var="c" itemLabel="#{c.famille}" itemValue="#{c.fam}" />
+                                            <p:ajax onstart="PF('blockDialog').show()" 
+                                                    oncomplete="PF('blockDialog').hide()"                                                    
+                                                    event="change" update=" idArticle" 
+                                                    listener="#{nouveauDaMb.articleByFam()}" />
+                                        </p:selectOneMenu>
+                                        <h:outputText/>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-3">          
+                                        <h:outputText value="Réference :"/>
+                                    </div>
+                                    <div class="col-lg-9">
+                                        <p:inputText class="form-control" value="#{nouveauDaMb.reference}" />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-3">  
+                                        <h:outputText value="Designation :"/>
+                                    </div>
+                                    <div class="col-lg-9">
+                                        <p:inputText class="form-control" value="#{nouveauDaMb.des}"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-12">
+                                <br/>
+                                <div class="pull-right">
+                                    <p:commandButton onstart="PF('blockDialog').show()" 
+                                                     oncomplete="PF('blockDialog').hide()"
+                                                     value ="Rechercher" 
+                                                     actionListener="#{nouveauDaMb.articleByFam()}"
+                                                     update="idArticle,msgsRe"/>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-12">
+                                <br/>
+                                <p:dataTable id="idArticle" var="art" value="#{nouveauDaMb.listeArticle}" rowKey="#{art.id}"
+                                             paginator="true" rows="10"  rowsPerPageTemplate="5,10,15"
+                                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                             paginatorPosition="bottom" class="table table-bordered" >
+                                    <p:column headerText="Code Article" filterBy="#{art.codeArticle}" filterFunction="#{filterMb.filterByX}">
+                                        <h:outputText value="#{art.codeArticle}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Désignation" filterBy="#{art.codeArticle}" filterFunction="#{filterMb.filterByX}">
+                                        <h:outputText value="#{art.designation}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Actions">
+                                        <p:commandButton value="OK" update=":addArti"
+                                                         onstart="PF('blockDialog').show();" 
+                                                         oncomplete="PF('blockDialog').hide();PF('search').hide()" >
+                                            <f:setPropertyActionListener value="#{art}" target="#{nouveauDaMb.arti}" />
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>  
+                        </h:form>                         
+                    </p:panel>
+                </p:dialog> 
+                <script type="text/javascript">
+                    $('.ui-inputfield').addClass('form-control');
+                </script>
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+

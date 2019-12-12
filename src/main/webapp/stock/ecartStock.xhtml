@@ -1,0 +1,157 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+
+    <h:head>
+        <title>Gestion Ecart Stock</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./stockTemplate.xhtml">
+            <ui:define name="content">
+
+
+                <p:panel id="pannelAF">
+
+                    <h:form id="header_f">
+
+                        <!--**********************************************************************************************
+                        ***********************    TOP BAR    ************************************************************
+                        ********************************************************************************************** -->
+
+                        <h:panelGrid id="panelf" columns="15" cellpadding="1">   
+                            <!--<p:commandButton disabled="true" value="Ajouter Article" icon="ui-icon-plus" type="button" onclick="PF('addStock_dialog').show();" />-->
+                            <p:outputLabel  value="Chantier" />
+                            <p:selectOneMenu id="chantierChanger" class="value_dis" value="#{operationStock.chantierGlobal}" filter="true" filterMatchMode="contains" >
+                                <p:ajax  listener="#{operationStock.globalChantierManager(8)}" update=" :header_f:panelf,  , :tableAF:tbl2" />
+                                <f:selectItem itemLabel="" itemValue="-1"/>
+                                <f:selectItems value="#{chantier.chantiers}" var="C"
+                                               itemLabel="#{C.code}" itemValue="#{C.id}"/>
+                            </p:selectOneMenu> 
+
+
+                            <p:spacer width="5px" />
+
+                            <!-- export to spreadsheet -->                    
+                            <h:commandLink>
+                                <p:commandButton disabled="#{operationStock.noChantierSelectedYet}" class="btn btn-switch active" value="Exporter Excel" icon="ui-icon-arrowthickstop-1-s" type="button" />
+                                <p:dataExporter type="xls" target=" :tableAF:tbl2" fileName="Etat du Stock #{operationStock.chantierGlobal}" pageOnly="false" />
+                            </h:commandLink>
+                            <p:spacer width="5px" />
+
+
+
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                <p:commandButton value="Synchroniser" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                            </p:confirmDialog>
+
+
+                            <!-- chantier selection -->
+
+                            <p:spacer width="10px" />
+
+                            <p:blockUI block=" :tableAF" trigger=":tableAF:tbl2" >
+                                chargement en cours ... <br />
+                                <p:graphicImage url="https://upload.wikimedia.org/wikipedia/commons/5/53/Loading_bar.gif"/>
+                            </p:blockUI>
+
+
+
+
+
+                        </h:panelGrid>
+
+                        <p:spacer width="10px" />
+                        <!-- select one button switcher - utils[1] -->
+                    </h:form>
+
+                    <br />
+
+                    <!--**********************************************************************************************
+                    **************************************       BASE ARTICLES    **********************************
+                      ********************************************************************************************  -->
+
+                    <h:form id="tableAF">
+                        <p:messages id="msgsM" showDetail="true" closable="true"  />
+
+                        <p:dataTable id="tbl2" widgetVar="stockTable" var="articleIt" value="#{operationStock.articlesInChantier}" 
+                                     emptyMessage="Pas d'articles sur ce chantier. Veuillez séléctionner un chantier ou synchroniser "
+                                     rows="10"  paginator="true"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+
+                            <f:facet name="header">
+
+                                <p:outputPanel>
+                                    <p:outputLabel value="Recherche par mot-clé : " />
+                                    <p:inputText id="globalFilter" onkeyup="PF('stockTable').filter()" style="width:150px" placeholder="Entrez un mot-clé"/>
+                                </p:outputPanel>
+                            </f:facet>
+                            <p:ajax event="rowSelect"  />
+
+                            <p:column headerText="Réference Article" filterBy="#{articleIt.articleId.codeArticle}">
+                                <h:outputText value="#{articleIt.articleId.codeArticle}" />
+                            </p:column>
+
+                            <p:column headerText="Famille 1" filterFunction="#{filterMb.filterByX}" filterBy="#{articleIt.articleId.fam1}">
+                                <h:outputText value="#{articleIt.articleId.fam1}" />
+                            </p:column>
+
+                            <p:column headerText="Famille 2" filterFunction="#{filterMb.filterByX}" filterBy="#{articleIt.articleId.fam2}">
+                                <h:outputText value="#{articleIt.articleId.fam2}" />
+                            </p:column> 
+
+                            <p:column headerText="Famille 3" filterFunction="#{filterMb.filterByX}" filterBy="#{articleIt.articleId.fam3}">
+                                <h:outputText value="#{articleIt.articleId.fam3}" />
+                            </p:column>
+
+                            <p:column headerText="Designation"  filterFunction="#{filterMb.filterByX}" filterBy="#{articleIt.articleId.designation}">
+                                <h:outputText value="#{articleIt.articleId.designation}" />
+                            </p:column>   
+
+                            <p:column headerText="Nature"  filterFunction="#{filterMb.filterByX}" filterBy="#{articleIt.articleId.natureArticle}">
+                                <h:outputText value="#{articleIt.articleId.natureArticle}" />
+                            </p:column>  
+
+
+                            <p:column headerText="Quantité">
+                                <h:outputText value="#{operationStock.findTotalQteUpsit(articleIt)}" />
+                            </p:column>
+                            
+                              <p:column headerText="Quantité Divalto">
+                                  <h:outputText value="#{operationStock.callEcartWS(articleIt)}" />
+                            </p:column>
+                              <p:column headerText="Unité">
+                                  <h:outputText value="#{articleIt.articleId.unite}" />
+                            </p:column> 
+
+
+
+                        </p:dataTable>
+                    </h:form>
+
+
+              
+
+             
+
+                </p:panel>
+
+
+             
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>
+
+
+
+

@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+        <link rel="stylesheet" type="text/css" href="../resources/css/main.css" />
+    </h:head>
+    <h:body>
+        <ui:composition template="Template.xhtml">
+            <ui:define name="arborescence">
+                <h:outputText value="Achat > Consultation Des Bons de Livraison" style="color:#000066; margin-left: -920px; font-size: 14px;  font-family: Times New Roman, Georgia, Serif;"/>
+            </ui:define>
+            <ui:define name="content"> 
+                <p:blockUI block="form" widgetVar="block">
+                    Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                </p:blockUI>
+                <h:form id="form">
+                    <div class="col-lg-12">
+                        <div class="row">
+                            <div class="col-lg-2 col-lg-offset-3">
+                                <p:commandButton onstart="PF('block').show()" oncomplete="PF('block').hide()" class="btn btn-switch active" value="Ajouter BL" icon="ui-icon-plus" action="newBL.xhmtl?faces-redirect=true"  />
+                            </div>
+                            <div class="col-lg-2 col-lg-offset-1">
+                                <p:commandButton onstart="PF('block').show()" oncomplete="PF('block').hide()" class="btn btn-switch active" value="Rechercher" icon="ui-icon-search" onclick="PF('find').show()"  />
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <div class="col-lg-10 col-lg-offset-1">
+                                <p:dataTable id="dmdAppr" rowKey="#{bl.id}" value="#{bonLivraisonMb.bls}" var="bl">
+                                    <p:column headerText="N°BL" >
+                                        <h:outputText value="#{bl.numeroBL}"/>
+                                    </p:column>
+                                    <p:column headerText="N°BC" >
+                                        <h:outputText value="#{bl.numeroBC}"/>
+                                    </p:column>
+                                    <p:column headerText="Fournisseur" >
+                                        <h:outputText value="#{bl.fournisseur}"/>
+                                    </p:column>
+                                    <p:column headerText="Chantier" >
+                                        <h:outputText value="#{bl.chantier.code}"/>
+                                    </p:column>
+                                    <p:column headerText="Date livraison">
+                                        <h:outputText value="#{constanteMb.getDateFormatFR(bl.dateLivraison)}"/>
+                                    </p:column>
+                                    <p:column headerText="Responsable" >
+                                        <h:outputText value="#{bl.responsable.login}"/>
+                                    </p:column>
+                                    <p:column headerText="Actions">
+                                        <p:commandButton  onclick="window.open('detailBL.xhtml?idBL=#{bl.id}')" icon="ui-icon-document" />
+                                    </p:column>
+                                    <f:facet name="footer">
+                                        <h:panelGrid columns="9">
+                                            <p:commandButton onstart="PF('block').show()" oncomplete="PF('block').hide()" id="first" icon="ui-icon-triangle-1-w" class="ui-paginator-first ui-state-default ui-corner-all" disabled="#{bonLivraisonMb.first}"
+                                                             action="#{bonLivraisonMb.onFirst()}" update="dmdAppr"/>
+                                            <p:commandButton onstart="PF('block').show()" oncomplete="PF('block').hide()" id="prev" icon="ui-icon-carat-1-w" disabled="#{bonLivraisonMb.prev}"
+                                                             action="#{bonLivraisonMb.onPrevious()}" update="dmdAppr"/>
+                                            <p:spinner id="page" value="#{bonLivraisonMb.page}" disabled="#{bonLivraisonMb.pageId}"
+                                                       min="1" max="#{bonLivraisonMb.var}"  >
+                                                <p:ajax onstart="PF('block').show()" oncomplete="PF('block').hide()" listener="#{bonLivraisonMb.onPaginate()}"  event="change" update="dmdAppr" />
+                                            </p:spinner>
+                                            <h:outputText value="/ #{bonLivraisonMb.var}"/>
+                                            <p:commandButton onstart="PF('block').show()" oncomplete="PF('block').hide()"  id="next" disabled="#{bonLivraisonMb.next}" icon="ui-icon-carat-1-e" update="dmdAppr" action="#{bonLivraisonMb.onNext()}"/>
+                                            <p:commandButton onstart="PF('block').show()" oncomplete="PF('block').hide()" id="last" disabled="#{bonLivraisonMb.last}" icon="ui-icon-triangle-1-e" update="dmdAppr" action="#{bonLivraisonMb.onLast()}" />
+
+                                            <h:outputText value="Nombre Total" style="padding-right:  7px ; color:  white"/>
+                                            <h:outputText value="#{bonLivraisonMb.nbr}"/>
+
+                                            <h:outputText value="#{bonLivraisonMb.page ==1 or bonLivraisonMb.page ==0 ?
+                                                                   '1 -10': ''.concat((bonLivraisonMb.page-1) * 10 +1).concat('-').concat((bonLivraisonMb.page-1) * 10 +10) }"
+                                                          style="color:  white"/>
+                                        </h:panelGrid>
+                                    </f:facet>
+                                </p:dataTable>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <p:dialog widgetVar="find" modal="true" closable="true" header="Recherche BL">
+                    <h:form>
+                        <p:panelGrid columns="2" >
+                            <h:outputText value="Numéro BC :"/>
+                            <p:inputText value="#{bonLivraisonMb.bonLivraisonFind.numeroBC}" />
+                            <h:outputText value="Numéro BL :"/>
+                            <p:inputText value="#{bonLivraisonMb.bonLivraisonFind.numeroBL}" />
+                            <h:outputText value="Chantier :"/>
+                            <p:selectOneMenu id="chantier" value="#{bonLivraisonMb.idChantier}" styleClass="widthSelectChan" filter="true" filterMatchMode="contains"> 
+                                <f:selectItem itemLabel="-- chantiers --" itemValue="" /> 
+                                <f:selectItems value="#{chantier.chantiers}" var="c" itemLabel="#{c.code}" itemValue="#{c.id}" />
+                            </p:selectOneMenu>
+                            <h:outputText value="Date :"/>
+                            <p:calendar pattern="dd/MM/yyyy" value="#{bonLivraisonMb.bonLivraisonFind.dateLivraison}" style="display: flex" showOn="button" />
+                            <h:outputText value="Responsable :"/>
+                            <p:selectOneMenu id="users" value="#{bonLivraisonMb.idUser}" styleClass="widthSelectChan" filter="true" filterMatchMode="contains"> 
+                                <f:selectItem itemLabel="-- Responsable --" itemValue="" /> 
+                                <f:selectItems value="#{usersMb.utilisateurs}" var="u" itemLabel="#{u.login}" itemValue="#{u.id}" />
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+                        <br/>
+                        <p:commandButton onstart="PF('block').show()" oncomplete="PF('find').hide();PF('block').hide()" value="Recherche" action="#{bonLivraisonMb.recherche()}" update=":form:dmdAppr" />
+                    </h:form>
+                </p:dialog>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

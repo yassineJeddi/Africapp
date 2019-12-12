@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Affecter une zone (s) à un salarie Chef d'équipe</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="Template.xhtml">
+            <ui:define name="arborescence">
+                <h:outputText value="Affecter une zone (s) à un salarie Chef d'équipe" style="color:#000066; font-size: 14px;  font-family: Times New Roman, Georgia, Serif; margin-left: -920px;"/>
+            </ui:define>
+            <ui:define name="content">
+
+                <p:growl showDetail="true" id="msg"  autoUpdate="true"/>
+                <p:blockUI block=":tablePE:salarieTable" widgetVar="block">
+                    Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                </p:blockUI>
+                <h:form id="tablePE">
+
+                    <div class="row" style="text-align: center; margin: auto; margin-right: 150px;">
+                        
+                        <p:selectOneMenu id="cha" value="#{zoneChefEquipeMb.codeChantier}"
+                                         filter="true" filterMatchMode="contains" style="width: 150px"> 
+                            <f:selectItem itemLabel="-- Chantier --" itemValue="" noSelectionOption="true" /> 
+                            <f:selectItems value="#{evol_chantierMb.chantiers}" var="c" itemLabel="#{c.code}" itemValue="#{c.id}" />
+                            <p:ajax event="change" update=":tablePE:salarieTable"                                                     
+                                    listener="#{zoneChefEquipeMb.findByChantier()}" /> 
+                        </p:selectOneMenu> 
+
+                    </div>
+
+
+
+                    <div class=" col-lg-10 col-md-10  col-sm-10 ">
+                        <p:dataTable var="sal" value="#{zoneChefEquipeMb.salarieChefEquipe}" rowKey="#{sal.id}"
+                                     rows="10" class="table table-bordered " widgetVar="salarieTable"
+                                     rowsPerPageTemplate="5,10,15" id="salarieTable" 
+                                     paginator="true" 
+                                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                     paginatorPosition="bottom">
+                           
+                            <p:column headerText="Matricule" sortBy="#{sal.matricule}" filterBy="#{sal.matricule}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{sal.matricule}" />
+                            </p:column>
+                            <p:column headerText="Type" sortBy="#{sal.type.type}" filterBy="#{sal.type.type}" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{sal.type.type}" />
+                            </p:column>
+                            <p:column headerText="Nom" sortBy="#{sal.nom}" filterBy="#{sal.nom}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{sal.nom}" />
+                            </p:column>
+                            <p:column headerText="Prenom" sortBy="#{sal.prenom}" filterBy="#{sal.prenom}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{sal.prenom}" />
+                            </p:column>
+                            <p:column headerText="Operation"> 
+                                <p:commandButton  title="Affectation Zone" update=":affecterZone:cha" icon="ui-icon-plus" action="#{zoneChefEquipeMb.chantiersOf()}"
+                                                  style="margin-top: 3px; " onstart="PF('block').show()" oncomplete ="PF('block').hide(); PF('affecter').show();">
+                                    <f:setPropertyActionListener value="#{sal}" target="#{zoneChefEquipeMb.salaroeToAffect}" />
+                                </p:commandButton>
+                                <p:commandButton title="Liste" icon="ui-icon-document" update=":form" action="#{zoneChefEquipeMb.zoneBySalarie(sal)}"
+                                                 onstart="PF('block').show()" oncomplete ="PF('block').hide(); PF('zonesCE').show();"/>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+
+                </h:form>
+
+                <p:dialog header="Affecter une zone(s) à un salarie" widgetVar="affecter" modal="true">
+                    <h:form id="affecterZone">
+                        <p:panelGrid columns="2">
+                            <h:outputText value="Chantier :"/>
+                            <p:selectOneMenu id="cha" value="#{zoneChefEquipeMb.idChantier}"
+                                             filter="true" filterMatchMode="contains"> 
+                                <f:selectItem itemLabel="-- Chantier --" itemValue="" /> 
+                                <f:selectItems value="#{zoneChefEquipeMb.chantiersBySalarie}" var="c" itemLabel="#{c.code}" itemValue="#{c.id}" />
+                                <p:ajax onstart="PF('block').show()" oncomplete="PF('block').hide()" 
+                                        event="change" update="zone"
+                                        listener="#{zoneChefEquipeMb.listeZoneByChantier()}" /> 
+                            </p:selectOneMenu>
+
+                            <h:outputText value="Zone :"/>
+                            <p:selectCheckboxMenu onHide="executeOnOnhide();" id="zone" value="#{zoneChefEquipeMb.idZones}" 
+                                                  label="#{zoneChefEquipeMb.zonesString}" required="true"
+                                                  filter="true" filterMatchMode="contains" panelStyle="width:250px" >
+                                <f:selectItems value="#{zoneChefEquipeMb.zones}" var="z"
+                                               itemLabel="#{z.libeleZone}" itemValue="#{z.idZone}"/>
+                            </p:selectCheckboxMenu>
+                            <p:remoteCommand  name="executeOnOnhide"
+                                              update=":affecterZone:zone" process="@this zone"
+                                              action="#{zoneChefEquipeMb.SelectedZonesString()}"/>
+
+                            <h:outputText/> 
+                            <p:commandButton value="Ajouter" action="#{zoneChefEquipeMb.affectSalarietoZone()}" update=":tablePE"
+                                             onstart="PF('block').show();" 
+                                             oncomplete ="PF('affecter').hide();PF('salarieTable').clearFilters();PF('block').hide(); "/>
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
+
+                <p:dialog header="Recherche" widgetVar="find" modal="true">
+                    <h:form >
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Matricule :"/>
+                            <p:inputText value="#{zoneChefEquipeMb.findSalarie.matricule}" />
+                            <h:outputText value="Matricule Nova :"/>
+                            <p:inputText value="#{zoneChefEquipeMb.findSalarie.matriculeDivalto}" />
+                            <h:outputText value="CIN :"/>
+                            <p:inputText value="#{zoneChefEquipeMb.findSalarie.cin}" />
+                            <h:outputText value="CNSS :"/>
+                            <p:inputText value="#{zoneChefEquipeMb.findSalarie.cnss}" />
+                            <h:outputText value="Nom :"/>
+                            <p:inputText value="#{zoneChefEquipeMb.findSalarie.nom}" />
+                            <h:outputText value="Prénom :"/>
+                            <p:inputText value="#{zoneChefEquipeMb.findSalarie.prenom}" />
+                            <h:outputText value="Chantier :"/>
+                            <p:selectOneMenu id="chantier" value="#{zoneChefEquipeMb.chantier}" filter="true" filterMatchMode="contains"> 
+                                <f:selectItem itemLabel="--Chantier --" itemValue=""/>
+                                <f:selectItems value="#{evol_chantierMb.chantiers}" var="c" itemLabel="#{c.code}" itemValue="#{c.id}"/>
+                            </p:selectOneMenu>
+                            <p:commandButton value="Recherche" update=":tablePE:salarieTable" action="#{zoneChefEquipeMb.rechercheSalarie()}" onstart="PF('block').show()" oncomplete="PF('salarieTable').clearFilters();PF('block').hide();PF('find').hide();"/>
+                        </h:panelGrid>
+                    </h:form>
+                </p:dialog>
+                <p:dialog closable="true" widgetVar="zonesCE" modal="true">
+                    <p:blockUI block=":form" widgetVar="blockDialog">
+                        Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                    </p:blockUI>
+                    <h:form id="form">
+                        <div class="col-lg-12">
+                            <table class="table table-bordered">
+                                <c:if test="#{zoneChefEquipeMb.chantierWithZone.size()>0}">
+                                    <c:forEach items="#{zoneChefEquipeMb.chantierWithZone}" var="chan" varStatus="loop">
+                                        <tr>
+                                            <td rowspan="#{chan.zoneOfChefEquipe.size() +1}">
+                                                <h:outputText value="#{chan.code}"/>
+                                            </td>
+                                        </tr>
+                                        <c:forEach items="#{chan.zoneOfChefEquipe}" var="zone" varStatus="index">
+                                            <tr>
+                                                <td >
+                                                    <h:outputText value="#{zone.libeleZone}"/>
+                                                </td>
+                                                <td>
+                                                    <p:commandButton icon="ui-icon-minus" title="Désaffecter" action="#{zoneChefEquipeMb.desaffecter(zone)}"
+                                                                     oncomplete="PF('salarieTable').clearFilters();PF('blockDialog').hide()"
+                                                                     update=":form" onstart="PF('blockDialog').show()"/>
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
+                                    </c:forEach> 
+                                </c:if>
+                                <c:if test="#{zoneChefEquipeMb.chantierWithZone.size()==0}">
+                                    <tr>
+                                        <td>
+                                            <p class="label label-warning">ce chef d'équipe n'est pas affécté à aucun chantiers</p>
+                                        </td>
+                                    </tr>
+                                </c:if>
+                            </table>
+                        </div>
+                    </h:form>
+                </p:dialog>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

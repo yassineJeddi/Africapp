@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="raportPresences" pageWidth="1000" pageHeight="1240" columnWidth="990" leftMargin="0" rightMargin="10" topMargin="5" bottomMargin="20" isIgnorePagination="true" uuid="7bd3b831-8bbe-49e9-abc7-a65f57a2205f">
+    <property name="ireport.zoom" value="1.0"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+    <parameter name="CHANTIER" class="java.lang.String"/>
+    <parameter name="DATE_POINTAGE" class="java.lang.String"/>
+    <parameter name="VILLE" class="java.lang.String"/>
+    <queryString language="SQL">
+		<![CDATA[]]>
+    </queryString>
+    <field name="matricule" class="java.lang.String"/>
+    <field name="nom" class="java.lang.String"/>
+    <field name="prenom" class="java.lang.String"/>
+    <field name="cnss" class="java.lang.String"/>
+    <field name="cin" class="java.lang.String"/>
+    <field name="code" class="java.lang.String"/>
+    <field name="totalHeures" class="java.lang.String"/>
+    <field name="totalMinutes" class="java.lang.String"/>
+    <field name="chantier" class="java.lang.String"/>
+    <field name="fonction" class="java.lang.String"/>
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    <title>
+        <band height="93" splitType="Stretch">
+            <textField>
+                <reportElement uuid="2ff6ca28-5262-4373-8647-60e5eec0c944" x="0" y="4" width="906" height="20" forecolor="#931212"/>
+                <textElement>
+                    <font size="12" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{CHANTIER}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement uuid="bee5515c-67ed-4b6c-95c8-7a2b1c1799f9" x="0" y="29" width="906" height="20" forecolor="#931212"/>
+                <textElement>
+                    <font size="12" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{DATE_POINTAGE}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement uuid="02f5b200-d513-4ad3-bf2c-f73f725fc831" x="0" y="52" width="906" height="20" forecolor="#931212"/>
+                <textElement>
+                    <font size="12" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{VILLE}]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+    <pageHeader>
+        <band height="38" splitType="Stretch"/>
+    </pageHeader>
+    <columnHeader>
+        <band height="33" splitType="Stretch">
+            <staticText>
+                <reportElement uuid="16b84048-5b0f-44e4-8d89-cd1dbd74edb5" x="0" y="2" width="68" height="20" backcolor="#FFCCCC"/>
+                <textElement>
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[MATRICULE]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="ca633d64-c858-4dc9-adee-3261732b7bab" x="68" y="2" width="94" height="20"/>
+                <textElement>
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[NOM]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="b5119d22-e9c0-46bc-b4a0-7814820b9993" x="162" y="2" width="99" height="20"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[PRENOM]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="50135d44-d523-4ae2-993b-ffad73e0c8d4" x="261" y="2" width="70" height="20"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[CNSS]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="44f66feb-b200-4405-88f3-22c707b06c49" x="331" y="2" width="77" height="20"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[CIN]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="00c4c148-301c-447f-86a9-be6af7797a71" x="408" y="2" width="105" height="20"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[CODE FONCTION]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="00c4c148-301c-447f-86a9-be6af7797a71" x="712" y="2" width="117" height="20"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[TOTAL HEURES]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="00c4c148-301c-447f-86a9-be6af7797a71" x="829" y="2" width="77" height="20"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[MINUTES]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="00c4c148-301c-447f-86a9-be6af7797a71" x="513" y="2" width="86" height="20"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[FONCTION]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="00c4c148-301c-447f-86a9-be6af7797a71" x="599" y="2" width="113" height="20"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[CHANTIER]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+    <detail>
+        <band height="20" splitType="Stretch">
+            <textField>
+                <reportElement uuid="e6ea10a6-50aa-4b42-8abd-351dbb1a5174" x="0" y="4" width="68" height="15"/>
+                <textElement/>
+                <textFieldExpression><![CDATA[$F{matricule}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement uuid="07b1fcf7-91f9-4e5c-971e-4f68fb3a4b1a" x="68" y="4" width="94" height="15"/>
+                <textElement/>
+                <textFieldExpression><![CDATA[$F{nom}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement uuid="5c98821e-c370-43a4-bde1-4c700ff0235e" x="162" y="4" width="99" height="15"/>
+                <textElement/>
+                <textFieldExpression><![CDATA[$F{prenom}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement uuid="182e6948-18ac-475e-ae19-c39ce5b1b759" x="261" y="4" width="70" height="15"/>
+                <textElement/>
+                <textFieldExpression><![CDATA[$F{cnss}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement uuid="b4220f53-d4a5-412d-a618-bbbaba5a247b" x="331" y="4" width="77" height="15"/>
+                <textElement/>
+                <textFieldExpression><![CDATA[$F{cin}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement uuid="257a408b-d68b-4cde-80ab-fb11b2ad9477" x="408" y="4" width="105" height="15"/>
+                <textElement/>
+                <textFieldExpression><![CDATA[$F{code}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement uuid="257a408b-d68b-4cde-80ab-fb11b2ad9477" x="513" y="4" width="86" height="15"/>
+                <textElement/>
+                <textFieldExpression><![CDATA[$F{fonction}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement uuid="257a408b-d68b-4cde-80ab-fb11b2ad9477" x="599" y="4" width="113" height="15"/>
+                <textElement/>
+                <textFieldExpression><![CDATA[$F{chantier}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement uuid="9165eba4-70d0-4c12-9a61-0b78738d0f49" x="712" y="4" width="117" height="15"/>
+                <textElement/>
+                <textFieldExpression><![CDATA[$F{totalHeures}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement uuid="9165eba4-70d0-4c12-9a61-0b78738d0f49" x="829" y="4" width="77" height="15"/>
+                <textElement/>
+                <textFieldExpression><![CDATA[$F{totalMinutes}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+    <columnFooter>
+        <band height="44" splitType="Stretch"/>
+    </columnFooter>
+    <pageFooter>
+        <band height="54" splitType="Stretch"/>
+    </pageFooter>
+    <summary>
+        <band height="42" splitType="Stretch"/>
+    </summary>
+</jasperReport>

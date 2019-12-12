@@ -1,0 +1,452 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets" >
+    <h:head>
+        <title>Nouveau Salarie</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="Template.xhtml">
+            <ui:define name="arborescence">
+                <h:outputText value="RH > Nouveau Salarie" style="color:#000066; margin-left: -920px; font-size: 14px;  font-family: Times New Roman, Georgia, Serif;"/>
+            </ui:define>
+            <ui:define name="content">
+                <p:growl showDetail="true" id="msgsMR" autoUpdate="true"  />
+                <br/>   
+                <p:blockUI block="formNS" widgetVar="block">
+                    Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                </p:blockUI>
+                <h:form id='formNS'>
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading" style="height: 55px">
+                                <h3 class="label label-info">Etape 1 </h3>
+                                <div class="pull-right">
+                                    <a href="salaries.xhtml" class="btn btn-switch active" >Retour <i class="fa fa-reply fa-fw"></i></a>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <div class="col-lg-6">
+                                    <div class=" col-lg-12">
+                                        <table class="table">
+                                            <section class="label label-danger">État civil</section>
+                                            <tr>
+                                                <td>
+                                                    <p:outputLabel value="Civilité : (*)"/>
+                                                </td>
+                                                <td>
+                                                    <p:selectOneMenu filter="true" label="civilité"  class="form-control" style="width: 100%" id="civilite" value="#{nouveauSalarieMb.civiliteID}"
+                                                                     required="true" requiredMessage="Civilité est obligatoire">
+                                                        <f:selectItem itemLabel="--Civilité--" itemValue=""/> 
+                                                        <f:selectItems value="#{civiliteMb.civilites}" var="c" itemLabel="#{c.civilite}" itemValue="#{c.id}" />
+                                                        <f:ajax event="change" render="msg_civilite" />
+                                                    </p:selectOneMenu>
+                                                    <p:message for="civilite" id="msg_civilite" />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <p:outputLabel value="Nom (*)"/>
+                                                </td>
+                                                <td> 
+                                                    <p:inputText label="nom" id="inputNom" class="form-control" value="#{nouveauSalarieMb.addSalarie.nom}" 
+                                                                 required="true" requiredMessage="Nom est obligatoire">
+                                                        <f:ajax event="blur" render="msg_nom"/>
+                                                    </p:inputText>
+                                                    <p:message for="inputNom" id="msg_nom" />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <p:outputLabel value="Nom (arabe)"/>
+                                                </td>
+                                                <td>
+                                                    <p:keyboard class="form-control" closeLabel="أغلق" backspaceLabel="إحدف" clearLabel="مسح" value="#{nouveauSalarieMb.addSalarie.nomArabe}" 
+                                                                layout="custom" layoutTemplate="آ-1234567890-space,ضصثقفغعهخحج-back,شسيبلاتنمكط-clear,ئءؤرإأىةوزظ-close,space-space-spacebar-دذ" />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <p:outputLabel value="Prénom : (*)"/>
+                                                </td>
+                                                <td>
+                                                    <p:inputText label="prénom" id="inputPrenom" class="form-control" value="#{nouveauSalarieMb.addSalarie.prenom}"
+                                                                 required="true" requiredMessage="Prénom est obligatoire">
+                                                        <f:ajax event="blur" render="msg_prenom" />
+                                                    </p:inputText>
+                                                    <p:message for="inputPrenom" id="msg_prenom"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <p:outputLabel value="Prénom (arabe)"/>
+                                                </td>
+                                                <td>            
+                                                    <p:keyboard class="form-control" closeLabel="أغلق" backspaceLabel="إحدف" clearLabel="مسح" value="#{nouveauSalarieMb.addSalarie.prenomArabe}"
+                                                                layout="custom" layoutTemplate="آ-1234567890-space,ضصثقفغعهخحج-back,شسيبلاتنمكط-clear,ئءؤرإأىةوزظ-close,space-space-spacebar-دذ" />
+                                                </td>
+                                            </tr>
+
+
+                                            <tr>
+                                                <td>
+                                                    <p:outputLabel value="CIN : (*)"/>
+                                                </td>
+                                                <td>
+                                                    <p:inputText label="cin" id="inputCIN" class="form-control" value="#{nouveauSalarieMb.addSalarie.cin}"
+                                                                 required="true" requiredMessage="CIN est obligatoire">
+                                                        <f:validateRegex for="inputCIN" pattern="^[a-zA-Z][a-zA-Z0-9]{1,8}[0-9]$" />
+                                                        <p:ajax event="blur" update="msg_cin, btnAjouter"
+                                                                listener="#{nouveauSalarieMb.checkCin(nouveauSalarieMb.addSalarie.cin)}"/>
+                                                    </p:inputText>
+                                                    <p:message for="inputCIN" id="msg_cin" />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <p:outputLabel  value="Date de Naissance (*)" />
+                                                </td>
+                                                <td>
+                                                    <p:calendar id="dateNaissance" pattern="dd/MM/yyyy" showWeek="true" navigator="true" showOn="button" required="true"
+                                                                style="padding: 0px 0px 0px 0px;border: 0px solid #ccc; display: flex" 
+                                                                maxdate="#{constanteMb.minDateNaissance}" class="form-control" requiredMessage="Date Naissance est obligatoire" 
+                                                                value="#{nouveauSalarieMb.addSalarie.dateNaissance}" label="Date de Naissance" >
+                                                        <f:ajax event="blur" render="dateNaissance_Msg"/>
+                                                        <f:ajax event="dateSelect" render="dateNaissance_Msg"/>
+                                                    </p:calendar>
+                                                    <p:message for="dateNaissance" id="dateNaissance_Msg"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <p:outputLabel  value="Ville :"/>
+                                                </td>
+                                                <td>
+                                                    <p:autoComplete class="form-control"
+                                                                    style="padding: 0px 0px 0px 0px;border: 0px solid #ccc;" 
+                                                                    value="#{nouveauSalarieMb.addSalarie.lieuNaissance}"
+                                                                    completeMethod="#{nouveauSalarieMb.villes}"/>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>
+                                                    <p:outputLabel value="Nationalité : (*)"/>
+                                                </td>
+                                                <td>
+                                                    <p:selectOneMenu style="width: 100%" id="nationalite" value="#{nouveauSalarieMb.nationalite}" class="form-control"
+                                                                     required="true" label="nationalité" requiredMessage="Nationalité est obligatoire" filter="true">
+                                                        <f:selectItem /> 
+                                                        <f:selectItems value="#{nationaliteMb.nationalites}" var="n" itemLabel="#{n.nationalite}" itemValue="#{n.id}" />
+                                                        <f:ajax event="change" render="msg_nationalite" />
+                                                    </p:selectOneMenu>
+                                                    <p:message for="nationalite" id="msg_nationalite" />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <p:outputLabel value="Situation Familiale : (*)"/>
+                                                </td>
+                                                <td>
+                                                    <p:selectOneMenu class="form-control" style="width: 100%" id="situation" value="#{nouveauSalarieMb.situationFa}" 
+                                                                     label="Situation Familiale" required="true" filter="true" requiredMessage="Situation Familiale est obligatoire">
+                                                        <f:selectItem />
+                                                        <f:selectItems value="#{situationMb.situations}" var="s" itemLabel="#{s.situationFamiliale}" itemValue="#{s.id}" />
+                                                        <f:ajax event="change" render="msg_situation" />
+                                                    </p:selectOneMenu>
+                                                    <p:message for="situation" id="msg_situation" />
+                                                </td> 
+                                            </tr>
+                                        </table>
+                                        <table class="table">
+                                            <section class="label label-danger">Adresse</section>
+                                            <tr>
+                                                <td>
+                                                    <p:outputLabel value="GSM :"/>
+                                                </td>
+                                                <td>
+                                                    <p:inputText id="GSM" class="form-control" 
+                                                                 value="#{nouveauSalarieMb.addSalarie.gsm}"
+                                                                 validatorMessage="Format du Numéro de GSM saisi Incorrecte" >
+                                                        <f:validateRegex pattern="^[+0-9 ]{10,20}$" />
+                                                        <f:ajax event="change" render="msg_GSM"/>
+                                                    </p:inputText>
+                                                    <p:message for="GSM" id="msg_GSM" />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <p:outputLabel value="Telephone :"/>
+                                                </td>
+                                                <td>
+                                                    <p:inputText id="tel" class="form-control" value="#{nouveauSalarieMb.addSalarie.telephone}" validatorMessage="Format du Numéro de Telephone saisi est Incorrecte" >
+                                                        <f:validateRegex pattern="^[+0-9 ]{10,20}$" />
+                                                        <f:ajax event="change" render="msg_tel"/>
+                                                    </p:inputText>
+                                                    <p:message for="tel" id="msg_tel" />
+                                                </td>
+                                            </tr>
+
+
+                                            <tr>
+                                                <td>
+                                                    <p:outputLabel value="Email :"/>
+                                                </td>
+                                                <td>
+                                                    <p:inputText id="email" class="form-control" type="email" value="#{nouveauSalarieMb.addSalarie.email}" validatorMessage="Format de l'adresse email incorrecte" >
+                                                        <f:validateRegex for="email" pattern="^[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,4})$" />
+                                                        <f:ajax event="blur" render="msg_email" />
+                                                    </p:inputText>
+                                                    <p:message for="email" id="msg_email" />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <p:outputLabel value="Adresse : (*)"/>
+                                                </td>
+                                                <td>
+                                                    <p:inputTextarea id="adresse" class="form-control" value="#{nouveauSalarieMb.addSalarie.adresse}" required="true" requiredMessage="Adresse est obligatoire">
+                                                        <f:ajax event="blur" render="msg_adresse"/>
+                                                    </p:inputTextarea>
+                                                    <p:message for="adresse" id="msg_adresse" />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <p:outputLabel value="Adresse (arabe) :"/>
+                                                </td>
+                                                <td>
+                                                    <p:keyboard class="form-control" style="height: 55px; vertical-align: top" 
+                                                                closeLabel="أغلق" backspaceLabel="إحدف" clearLabel="مسح" value="#{nouveauSalarieMb.addSalarie.adresseArabe}" 
+                                                                layout="custom" layoutTemplate="آ-1234567890-space,ضصثقفغعهخحج-back,شسيبلاتنمكط-clear,ئءؤرإأىةوزظ-close,space-space-spacebar-دذ" />
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>
+                                                    <p:outputLabel value="Ville : (*)"/>
+                                                </td>
+                                                <td>
+                                                    <p:inputText id="ville" class="form-control" value="#{nouveauSalarieMb.addSalarie.ville}" required="true" requiredMessage="Ville est obligatoire" >
+                                                        <f:ajax event="blur" render="msg_ville" />
+                                                    </p:inputText>
+                                                    <p:message for="ville" id="msg_ville" />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <p:outputLabel value="Pays : (*)"/>
+                                                </td>
+                                                <td>
+                                                    <p:selectOneMenu style="width: 100%" id="pays" value="#{nouveauSalarieMb.pays}" class="form-control"
+                                                                     required="true" filter="true" requiredMessage="Pays est obligatoire">
+                                                        <f:selectItem /> 
+                                                        <f:selectItems value="#{paysMb.pays}" var="pp" itemLabel="#{pp.pays}" itemValue="#{pp.id}" />
+                                                        <f:ajax event="change" render="msg_pays" />
+                                                    </p:selectOneMenu>
+                                                    <p:message for="pays" id="msg_pays" />
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <table class="table">
+                                        <section class="label label-danger">Informations</section>
+                                        <tr>
+                                            <td>
+                                                <p:outputLabel value="Statut"/>
+                                            </td>
+                                            <td>
+                                                <p:selectOneMenu style="width: 100%"  id="statut" value="#{nouveauSalarieMb.idStatut}" 
+                                                                 filter="true" required="true" requiredMessage="attention! status obligatoire" filterMatchMode="contains" > 
+                                                    <f:selectItem itemLabel="-- Statuts --" itemValue="" noSelectionOption="true" /> 
+                                                    <f:selectItems value="#{statutMb.statuts}" var="s" itemLabel="#{s.statut}" itemValue="#{s.codeDiva}" />
+                                                    <p:ajax update="fonction" 
+                                                            onstart="PF('block').show();" 
+                                                            oncomplete="PF('block').hide();"
+                                                            listener="#{nouveauSalarieMb.fonctionByStatut()}" event="change"/>
+                                                </p:selectOneMenu>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <p:outputLabel value="Fonction (*)  "/>
+                                            </td>
+                                            <td>
+                                                <p:selectOneMenu id="fonction"  value="#{nouveauSalarieMb.fonction}" style="width: 100%"
+                                                                 filter="true" filterMatchMode="contains"
+                                                                 required="true" requiredMessage="fonction est obloigatoire"> 
+                                                    <f:selectItem itemLabel="-- Fonctions --" itemValue="" noSelectionOption="true" /> 
+                                                    <f:selectItems value="#{nouveauSalarieMb.fonctions}" var="f"
+                                                                   itemLabel="#{f.fonction}" itemValue="#{f.id}" />
+                                                    <f:ajax event="change" render="msg_fonction" />
+                                                </p:selectOneMenu>
+                                                <p:message for="fonction" id="msg_fonction" />
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>
+                                                <p:outputLabel value="Type (*)"/>
+                                            </td>
+                                            <td>
+                                                <p:selectOneMenu id="type" value="#{nouveauSalarieMb.typeID}" class="form-control" style="width: 100%"
+                                                                 filter="true" filterMatchMode="contains" required="true" requiredMessage="Type Salarie est obligatoire">
+                                                    <f:selectItem /> 
+                                                    <f:selectItems value="#{typeMb.types}" var="t" itemLabel="#{t.type}" itemValue="#{t.id}" />
+                                                    <f:ajax event="change" render="msg_type" />
+                                                </p:selectOneMenu>
+                                                <p:message for="type" id="msg_type" />
+                                            </td>
+                                        </tr>
+                                        <td>
+                                            <p:outputLabel value="CNSS "/>
+                                        </td> 
+                                        <td>
+                                            <p:inputText label="cnss" id="inputCNSS" class="form-control"
+                                                         onkeypress="if (event.keyCode === 13) {
+                                                                     this.blur();
+                                                                     return false;
+                                                                 }"
+                                                         value="#{nouveauSalarieMb.addSalarie.cnss}">
+                                                <f:validateLength minimum="9" maximum="9"/>
+                                                <p:ajax event="blur" update="msg_cnss, btnAjouter" listener="#{nouveauSalarieMb.checkCNSS(nouveauSalarieMb.addSalarie.cnss)}"/>
+                                            </p:inputText>
+                                            <p:message for="inputCNSS" id="msg_cnss" />
+                                        </td>
+                                        <tr>
+                                            <td>
+                                                <p:outputLabel value="Mode De Paiement "/>
+                                            </td>
+                                            <td>
+                                                <p:selectOneMenu id="modep" value="#{nouveauSalarieMb.modepaiement}" class="form-control"
+                                                                 filter="true" filterMatchMode="contains" style="width: 100%">
+
+                                                    <f:selectItems value="#{modeMb.modes}" var="m" itemLabel="#{m.modePaiement}" itemValue="#{m.id}" />
+                                                    <p:ajax onstart="PF('block').show()" oncomplete="PF('block').hide()" listener="#{nouveauSalarieMb.changeModePaiment()}" update="rib,banque,agence" event="change"/> 
+                                                </p:selectOneMenu>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <p:outputLabel value="RIB #{nouveauSalarieMb.disable eq false ?'(*)':''}"/>                                               
+                                            </td>
+                                            <td>
+                                                <p:inputText class="form-control" id ="rib"  label="rib"
+                                                             value="#{nouveauSalarieMb.addSalarie.rib}"
+                                                             maxlength="24"
+                                                             onkeypress="if (event.keyCode === 13) {
+                                                                         this.blur();
+                                                                         return false;
+                                                                     }"
+                                                             required="#{nouveauSalarieMb.disable eq false ? true:false}" 
+                                                             disabled="#{nouveauSalarieMb.disable}" readonly="#{authentification.hasPermission(constanteMb.modifierRIB)==false}">
+                                                    <f:validateLength minimum="24" maximum="24" />
+                                                    <p:ajax listener="#{nouveauSalarieMb.checkRIB(nouveauSalarieMb.addSalarie.rib)}"
+                                                            update="btnAjouter, msg_rib" event="blur" />
+                                                </p:inputText>
+                                                <p:growl showDetail="true" for="rib" id="msg_rib" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <p:outputLabel value="Banque "/>
+                                            </td>
+                                            <td>
+                                                <p:selectOneMenu filter="true" style="width: 100%" id="banque" disabled="#{nouveauSalarieMb.disable}" value="#{nouveauSalarieMb.addSalarie.nomBanque}" class="form-control">
+                                                    <f:selectItem itemValue="SGMB" itemLabel="SGMB"/>
+                                                    <f:selectItem itemValue="BP" itemLabel="BP"/>
+                                                    <f:selectItem itemValue="ATTIJARIWAFABANK" itemLabel="ATTIJARIWAFABANK"/>
+                                                    <f:selectItem itemValue="LA POSTE" itemLabel="LA POSTE"/>
+                                                    <f:selectItem itemValue="BMCI" itemLabel="BMCI"/>
+                                                    <f:selectItem itemValue="BMCE" itemLabel="BMCE"/>
+                                                    <f:selectItem itemValue="CREDIT AGRICOLE" itemLabel="CREDIT AGRICOLE"/>
+                                                    <f:selectItem itemValue="CREDIT DU MAROC" itemLabel="CREDIT DU MAROC"/>
+                                                    <f:selectItem itemValue="C.I.H" itemLabel="C.I.H"/>
+                                                    <f:selectItem itemValue="WAFACASH" itemLabel="WAFACASH"/>
+                                                </p:selectOneMenu>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <p:outputLabel value="Agence " />
+                                            </td>
+                                            <td>
+                                                <p:inputText class="form-control"  id="agence" value="#{nouveauSalarieMb.addSalarie.nomAgence}" disabled="#{nouveauSalarieMb.disable}"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <table class="table">
+                                        <section class="label label-danger">Autres</section>
+                                        <tr>
+                                            <td>
+                                                <p:outputLabel value="Pointure "/>
+                                            </td>
+                                            <td>
+                                                <p:selectOneMenu filter="true" style="width: 100%" class="form-control" id="pointure" value="#{nouveauSalarieMb.pointureID}">
+                                                    <f:selectItem itemLabel="--selectionner --"/> 
+                                                    <f:selectItems value="#{pointureMb.pointures}" var="p" itemLabel="#{p.pointure}" itemValue="#{p.id}" />
+                                                </p:selectOneMenu>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <p:outputLabel value="Taille d'habillement "/>
+                                            </td>
+                                            <td>
+                                                <p:selectOneMenu filter="true" class="form-control" style="width: 100%" id="th" value="#{nouveauSalarieMb.tailleID}" >
+                                                    <f:selectItem  itemLabel="-- selectionner --"/> 
+                                                    <f:selectItems value="#{tailleMb.tailles}" var="t" itemLabel="#{t.tailleHabillement}" itemValue="#{t.id}" />
+                                                </p:selectOneMenu>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <p:outputLabel value="Couleur de Gillet "/>
+                                            </td>
+                                            <td>
+                                                <p:selectOneMenu filter="true" class="form-control" id="CG" value="#{nouveauSalarieMb.giletID}">
+                                                    <f:selectItem itemLabel="-- Gilet --" /> 
+                                                    <f:selectItems value="#{couleurGiletMb.gilets}" var="g" itemLabel="#{g.couleurGilet}" itemValue="#{g.id}" />
+                                                </p:selectOneMenu>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <p:outputLabel value="Couleur de Casque "/>
+                                            </td>
+                                            <td>
+                                                <p:selectOneMenu filter="true" style="width: 100%" class="form-control" id="CC" value="#{nouveauSalarieMb.casqueID}">
+                                                    <f:selectItem itemLabel="-- casque --"/> 
+                                                    <f:selectItems value="#{couleurCasqueMb.casques}" var="c" itemLabel="#{c.couleurCasque}" itemValue="#{c.id}" />
+                                                </p:selectOneMenu>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="panel-footer" style="height: 60px">
+                                <div  class="pull-right" >
+                                    <p:commandButton class="btn btn-switch btn-block active" 
+                                                     value="Valider" id="btnAjouter" disabled="#{nouveauSalarieMb.etatBtn}"
+                                                     onstart="PF('block').show()" oncomplete="PF('block').hide()" 
+                                                     actionListener="#{nouveauSalarieMb.addNewSalarie()}" 
+                                                     />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <script type="text/javascript">
+                    $('.ui-autocomplete-input').addClass('form-control');
+                    $('.ui-inputfield').addClass('form-control');
+                </script>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+

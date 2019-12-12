@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+
+      >
+
+    <body>
+
+        <ui:composition template="./front.xhtml">
+
+            <ui:define name="top">
+                
+                <h:form> 
+                    <p:menubar>
+                        <p:submenu label="Engin" icon="">
+                            <p:menuitem value="Parc engins" url="/engin.xhtml" />
+                            <p:menuitem value="Pointage" url="#" />
+                            <p:menuitem value="Historique Pointage" url="/" />
+                        </p:submenu>
+
+                        <p:submenu label="Edit" icon="ui-icon-pencil">
+
+                        </p:submenu>
+
+                        <p:submenu label="Help" icon="ui-icon-help">
+
+                        </p:submenu>
+
+
+
+                        <p:menuitem value="Quit" url="http://www.primefaces.org" icon="ui-icon-close" />
+
+
+                    </p:menubar>
+                </h:form>
+            </ui:define>
+
+            <ui:define name="left">
+                left
+            </ui:define>
+
+            <ui:define name="content">
+
+                <p:dataTable var="enginIt" value="#{engin.engins}" rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+                    <p:column headerText="Id"   >
+                        <h:outputText value="#{enginIt.IDEngin}" />
+                    </p:column>
+
+                    <p:column headerText="Code">
+                        <h:outputText value="#{enginIt.code}" />
+                    </p:column>
+
+                    <p:column headerText="Date de creation">
+                        <h:outputText value="#{enginIt.dateCREATION}" />
+                    </p:column>
+
+                    <p:column headerText="Marque">
+                        <h:outputText value="#{enginIt.marque}" />
+                    </p:column>
+
+                    <p:column headerText="Etat">
+                        <h:outputText value="#{enginIt.etat}" />
+                    </p:column>
+
+                    <p:column headerText="Date d'affectation">
+                        <h:outputText value="#{enginIt.dateAFFECTATION}" />
+                    </p:column>
+
+                </p:dataTable>
+
+            </ui:define>
+
+            <ui:define name="bottom">
+                bottom
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+
+
+
+</html>

@@ -1,0 +1,1241 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+          
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <link rel="stylesheet" type="text/css" href="../resources/css/main.css" />
+        <title>Parc Engins</title>
+    </h:head>
+    <body>
+        <ui:composition template="./enginTemplate.xhtml">
+            <ui:define name="content">
+                <p:panel id="pannelPE">
+                    <!--<h:form id="parcEnginForm">-->
+                    <h:form id="form">
+                        <p:growl id="msgsM"  autoUpdate="false"/>
+                        <h:panelGrid columns="10" cellpadding="5">
+                            <p:commandButton class="btn btn-switch active" 
+                                             update=":form_search"
+                                             actionListener="#{parcEngins.initChan()}"
+                                             value="Rechercher" icon="ui-icon-extlink" oncomplete="PF('dlg1').show();" />
+                            <p:spacer width="10px" />
+                            <c:if test="#{authentification.hasPermission(constanteMb.ajouterEngin)}">
+                                <p:commandButton class="btn btn-switch active"  value="Ajouter" 
+                                             actionListener="#{parcEngins.prepareEngins()}" 
+                                             onclick="PF('dlg2').show();" update=":form_new"
+                                             />
+                            <p:spacer width="10px" />
+                            </c:if>
+                            <h:commandLink>
+                                <!--<p:graphicImage style="width: 21px" value="../resources/img/excel.png" />-->
+                                <p:commandButton class="btn btn-switch active" value="Exporter" icon="ui-icon-arrowthickstop-1-s"/>
+                                <p:dataExporter type="xls" target=":tablePE:tbl" fileName="Engins" pageOnly="false"/>
+                            </h:commandLink>
+                            <p:spacer width="10px" />
+                            <p:commandButton class="btn btn-switch active" value="Actualiser" 
+                                             actionListener="#{parcEngins.enginsActif()}"
+                                             update=":tablePE:tbl"/>
+                        </h:panelGrid>  
+                    </h:form>
+                    <br /><br />
+                    <h:form id="tablePE">
+                        <p:growl id="growlM" autoUpdate="false" showDetail="true" life="10000" />
+                        <p:dataTable id="tbl" var="parcEnginsIt" value="#{parcEngins.engins}" widgetVar="tableEng"   rowKey="#{parcEnginsIt.IDEngin}"
+                                     selection="#{parcEngins.engin}" filteredValue="#{parcEngins.filtredengins}"
+                                     rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                     selectionMode="single" rowStyleClass="#{parcEnginsIt.archive? 'old' : null}" >
+                            <!--<p:ajax event="rowSelect"   />-->
+                            <p:column headerText="Code" >
+                                <h:outputText value="#{parcEnginsIt.code}" />
+                            </p:column> 
+                            <p:column headerText="Designation" >
+                                <h:outputText value="#{parcEnginsIt.designation}" />
+                            </p:column>
+                            <p:column headerText="Marque">
+                                <h:outputText value="#{parcEnginsIt.marque}" />
+                            </p:column>
+                            <p:column headerText="Type">
+                                <h:outputText value="#{parcEnginsIt.typeEngin}" />
+                            </p:column>
+                            <p:column headerText="N° Série">
+                                <h:outputText value="#{parcEnginsIt.numSerie}" />
+                            </p:column>
+                            <p:column headerText="N° Immatriculation">
+                                <h:outputText value="#{parcEnginsIt.num_immatriculation}" />
+                            </p:column>
+                            <p:column headerText="Localisation"  >
+                                <h:outputText value="#{parcEnginsIt.prjapId.code}" />
+                            </p:column> 
+                            <p:column headerText="Rèference">
+                                <h:outputText value="#{parcEnginsIt.IDEngin}" />
+                            </p:column>
+                            <p:column  filterBy="#{parcEnginsIt.etat}" filterMatchMode="equals" headerText="Etat" filterFunction="#{filterMb.filterByX}">
+                                <f:facet name="filter">
+                                    <p:selectOneButton onchange="PF('tableEng').filter()" disabled="false">
+                                        <f:selectItem itemLabel="-" itemValue="" />
+                                        <f:selectItem itemLabel="M" itemValue="EN_MARCHE" />
+                                        <f:selectItem itemLabel="P" itemValue="EN_PANNE" />
+                                        <f:selectItem itemLabel="I" itemValue="INACTIF" />
+                                        <f:selectItem itemLabel="NR" itemValue="NON_RECEPTIONNE" />
+                                    </p:selectOneButton>
+                                </f:facet>
+                                <h:outputText value="#{parcEnginsIt.etat}" />
+                            </p:column>
+                            <p:column headerText="Date d'acquisition">
+                                <h:outputText value="#{parcEnginsIt.dateAquisition}" />
+                            </p:column>
+                            <p:column headerText="Année de fabrication">
+                                <h:outputText value="#{parcEnginsIt.dateCREATION}" />
+                            </p:column>
+                            <p:column headerText="Fournisseur">
+                                <h:outputText value="#{parcEnginsIt.fournisseur}" />
+                            </p:column>
+                            <p:column filterBy="#{parcEnginsIt.etatTransfert}" filterMatchMode="equals" headerText="En transfert" width="70px">
+                                <f:facet name="filter">
+                                    <p:selectOneButton onchange="PF('tableEng').filter()" disabled="false">
+                                        <f:converter converterId="javax.faces.Boolean" />
+                                        <f:selectItem itemLabel="-" itemValue="" />
+                                        <f:selectItem itemLabel="T" itemValue="true" />                                      
+                                    </p:selectOneButton>
+                                </f:facet>
+                                <h:outputText value="#{parcEnginsIt.etatTransfert ? 'T' : ''}" />
+                            </p:column>
+                            <c:if test="#{authentification.hasPermission(constanteMb.actionEngin)}">
+                                <p:column exportable="false" headerText="Action" >
+                                    <p:commandButton icon="ui-icon-document" title="detail de l'engin" onclick="PF('find').show();" 
+                                                     update=":find" actionListener="#{parcEngins.afficherDetailEngin(parcEnginsIt)}" />
+                                    <p:commandButton icon="ui-icon-pencil"
+                                                     disabled="#{parcEnginsIt.archive}"
+                                                     actionListener="#{parcEngins.prepareModifEngins()}" 
+                                                     title="modification de l'engin" 
+                                                     onclick="PF('updateE').show();" 
+                                                     update=":updateE" >
+                                        <f:setPropertyActionListener value="#{parcEnginsIt}" target="#{parcEngins.infoEngin}" />
+                                    </p:commandButton>
+                                    <c:if test="#{authentification.hasPermission(constanteMb.uploadDocEngin)}">
+                                        <p:column headerText="Interventions" exportable="false">
+                                            <p:commandButton icon="ui-icon-wrench" 
+                                                             action="#{parcEngins.redirectEngin_Intervention(parcEnginsIt)}">
+                                            </p:commandButton>
+                                        </p:column>
+                                        <p:column headerText="Interventions" exportable="false">
+                                            <p:commandButton icon="ui-icon-clock" 
+                                                             onclick="PF('changerCompteur').show();"
+                                                             action="#{compteurrEnginMB.preparCompteurEngin(parcEnginsIt)}"
+                                                             title="Changer compteur"
+                                                             update=":changeCpt" >
+                                            </p:commandButton>
+                                        </p:column>
+                                    </c:if>
+                            </p:column>
+                            </c:if>
+                            <c:if test="#{authentification.hasPermission(constanteMb.uploadDocEngin)}">
+                                <p:column headerText="Uploader" exportable="false">
+                                    <p:commandButton icon="ui-icon-arrowthickstop-1-s" action="#{parcEngins.redirectEngin_Document(parcEnginsIt)}">
+                                    </p:commandButton>
+                                </p:column>
+                            </c:if>
+                            <f:facet name="footer">
+                                <c:if test="#{authentification.hasPermission(constanteMb.affecterEngin)}">
+                                <p:commandButton process="tbl" update=":form_affectation:display" value="Affecter" icon="ui-icon-check"
+                                                 oncomplete="PF('dlg3').show();"  />
+                            </c:if>
+                            <c:if test="#{authentification.hasPermission(constanteMb.archiverEngin)}">
+                                <p:commandButton value="Archiver" icon="ui-icon-extlink" update=":tablePE:tbl ,:form:msgsM" 
+                                                 action="#{parcEngins.archiver('')}">
+                                    <p:confirm header="Confirmation" message=" Voulez vous archiver cet engin ?" icon="ui-icon-alert" />
+                                </p:commandButton>
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                    <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                </p:confirmDialog>
+                            </c:if>
+                            <c:if test="#{authentification.hasPermission(constanteMb.reformerEngin)}">
+                                <p:commandButton value="Reformer" icon="ui-icon-extlink" update=":tablePE:tbl ,:form:msgsM" 
+                                                 action="#{parcEngins.reforme()}">
+                                    <p:confirm header="Confirmation" message=" Voulez vous  Réformer cet engin ?" icon="ui-icon-alert" />
+                                </p:commandButton>
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                    <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                </p:confirmDialog>
+                            </c:if>
+                            </f:facet>
+                        </p:dataTable>
+                    </h:form>
+                    <!--</h:form>-->
+                    <p:dialog header="Détail de l'engin" widgetVar="find" modal="true" width="80%" draggable="false" >
+                        <h:form id="find">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Famille Engin :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.familleEngin}"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Designation :"  styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.designation}"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Code Engin :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.code}"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Type Engin :"  styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.typeEngin}"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Marque :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.marque}"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Numéro série :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.numSerie}"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Fournisseur :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.fournisseur}"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Type Pointage :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{(parcEngins.infoEngin.actif==1)?'Automatique':'Manuel'}" />
+                                </div>
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Conducteur :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.conducteur}" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Type Compteur :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{(parcEngins.infoEngin.typeCompteur=='kilométrique')?'Kilométrique':((parcEngins.infoEngin.typeCompteur=='horaire')?'Horaire':((parcEngins.infoEngin.typeCompteur=='kilométrique_horaire')?'Kilométrique et Horaire':''))}" />
+                                </div>
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Compteur kilométrique :"  styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.compteurKilometrique}"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Compteur horaire :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.comteurHoraire}"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Année de construction :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.anneeConst}"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Date Aquisition :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.dateAquisition}" >
+                                        <f:convertDateTime pattern="dd-MM-yyyy" />
+                                    </h:outputText>
+                                </div>
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Date du dernier contrôle réglementaire:" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.convertToFormat(parcEngins.infoEngin.dateDerniereVisiteSecurity)}" >
+                                        <f:convertDateTime pattern="dd-MM-yyyy" />
+                                    </h:outputText>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Date de le dernière vidange :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.convertToFormat(parcEngins.infoEngin.dateDERVID)}" />
+                                </div>
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Prochaine vidange (heures) :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.nbrHeures}" />
+                                </div>
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Prochaine vidange (km) :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.nbrKilometrage}" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Chantier :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.prjapId.code}"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Matricule :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.num_immatriculation}"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Date de mise en service :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.convertToFormat(parcEngins.infoEngin.dateMISESERVICE)}" />
+                                </div>
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Numéro chassis :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.numchassis}"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Etat :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.etat}"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <p:commandButton   icon="ui-icon-print"   title="Fiche Engin"  
+                                                   value="Imprimer"  oncomplete="PF('pdfEngin').show();" update=":visuliser_id"
+                                            actionListener="#{parcEngins.imprimerFicheEngin(parcEngins.infoEngin)}" /> 
+                                </div>
+                            </div>
+                            <hr/> 
+                            <!--<p:commandButton value="Quitter" onclick="PF('Find').hide();"/>-->
+                        </h:form>
+                    </p:dialog>
+                    
+                    <p:dialog  width="800px" resizable="false" modal="true" widgetVar="pdfEngin">
+                        <h:form id="visuliser_id">
+                            <p:media  width="1000px" height="500px" player="pdf"> 
+                                <f:param name="path" value="#{parcEngins.pdfFicheEngin}" />
+                            </p:media>
+                        </h:form>
+                    </p:dialog> 
+                    
+                    <!-- 
+                    ************************************************************************************************************************************************************************************
+                    *******************************Modifier Engin*********************************************************************************************************************************
+                    ************************************************************************************************************************************************************************************
+                    -->
+                    
+                    
+                    
+                    <p:dialog header="Chnager compteur" widgetVar="changerCompteur" id="changerCompteur">
+                        <h:form id="changeCpt">
+                            <div class="row">
+                                <div class="col-lg-6 form-group">
+                                    <p:outputLabel value="Ancien compteur H (*) "/>
+                                    <p:inputNumber id="oldCptH"  value="#{compteurrEnginMB.compteurEngin.oldCptHReel}"
+                                                 required="true" requiredMessage="Le compteur est obligatoire"> 
+                                        <f:ajax event="blur" render="oldCptHmsg" />
+                                    </p:inputNumber>
+                                    <p:message for="oldCptH" id="oldCptHmsgid"/>
+                                </div>
+                                <div class="col-lg-6 form-group">
+                                    <p:outputLabel value="Ancien compteur K (*) "/>
+                                    <p:inputNumber id="oldCptK"  value="#{compteurrEnginMB.compteurEngin.oldCptKReel}"
+                                                 required="true" requiredMessage="Le compteur est obligatoire"> 
+                                        <f:ajax event="blur" render="oldCptKmsg" />
+                                    </p:inputNumber>
+                                    <p:message for="oldCptK" id="oldCptKmsgid"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 form-group">
+                                    <p:outputLabel value="Nouveau compteur H (*) "/>
+                                    <p:inputNumber id="cptH"  value="#{compteurrEnginMB.compteurEngin.cptHReel}"
+                                                 required="true" requiredMessage="Le compteur est obligatoire"> 
+                                        <f:ajax event="blur" render="cptHmsg" />
+                                    </p:inputNumber>
+                                    <p:message for="cptH" id="cptHmsgid"/>
+                                </div>
+                                <div class="col-lg-6 form-group">
+                                    <p:outputLabel value="Nouveau compteur K (*) "/>
+                                    <p:inputNumber id="cptK"  value="#{compteurrEnginMB.compteurEngin.cptKReel}"
+                                                 required="true" requiredMessage="Le compteur est obligatoire"> 
+                                        <f:ajax event="blur" render="cptKmsg" />
+                                    </p:inputNumber>
+                                    <p:message for="cptK" id="cptKmsgid"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 form-group">
+                                    <p:outputLabel value="Date changement :"/>
+                                    <p:calendar pattern="dd/MM/yyyy"
+                                                buttonTabindex="true"
+                                                mindate="${compteurrEnginMB.dateChangement}"
+                                                maxdate="${compteurrEnginMB.dateChangement}"
+                                                id="idDateChangement"
+                                                value="#{compteurrEnginMB.compteurEngin.dateChangement}" />
+                                    
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 form-group">
+                                    <p:outputLabel value="Description :"/>
+                                    <p:inputText value="#{compteurrEnginMB.compteurEngin.commentaire}" style="width: 100%;" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 form-group"></div>
+                                <div class="col-lg-4 form-group">
+                                    <p:commandButton value="Valider" 
+                                                     action="#{compteurrEnginMB.addCompteurrEngin()}"
+                                                     onclick="PF('changerCompteur').hide();"
+                                                     />
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                    <!-- 
+                    ************************************************************************************************************************************************************************************
+                    *******************************Modifier Engin*********************************************************************************************************************************
+                    ************************************************************************************************************************************************************************************
+                    -->
+                    <p:dialog header="Modification engin" widgetVar="updateE" maximizable="true" resizable="false" draggable="false"  height="500">
+
+                        <h:form id="updateE">
+                            <div class="row">
+                                <h:outputText class="h5 text-danger" value="(*) veuillez remplire les champs obligatoires "/>
+                                <h:outputText/>
+                            </div>
+                            <div class="row">
+                                
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Famille d'Engin (*) "/>
+                                    <p:selectOneMenu   id="idFamilleEnginEdit" filter="true" filterMatchMode="contains" 
+                                                       style="width: 90%;float: left; " class="form-control"
+                                                       value="#{parcEngins.infoEngin.familleEngin}" >
+                                        <f:selectItem  itemLabel=""  itemValue=""/>
+                                        <f:selectItems value="#{parcEngins.familleEngins}" var="f"
+                                                       itemLabel="#{f.famille}" itemValue="#{f.famille}"/>
+                                        <p:ajax listener="#{parcEngins.familleEnginChange()}"
+                                                update=":form_new,:form_new:designation" />
+                                    </p:selectOneMenu> 
+                                    <p:commandButton onclick="PF('dlgAddFamilleEngin').show();" value="" icon="ui-icon-plus"
+                                                     style="width: 31px;float: right;height: 34px;"
+                                                     action="#{parcEngins.preparFamilleEngin()}"/>
+                                    <p:message for="idFamilleEnginEdit" id="idFamilleEnginEditSelect"/>
+                                </div> 
+                                <div class="col-lg-4 form-group">
+                                    <div class="row">
+                                        <p:outputLabel  value="Désignation : " />
+                                    </div>
+                                    <div class="row">
+                                        <p:outputLabel   value=" #{parcEngins.infoEngin.designation}"/>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <div class="row">
+                                        <p:outputLabel value="Code : " />
+                                    </div>
+                                    <div class="row">
+                                        <p:outputLabel  value=" #{parcEngins.infoEngin.code}" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Type d'Engin (*) " />
+                                    <p:selectOneMenu   id="typeInputEnginModif" filter="true" filterMatchMode="contains" 
+                                                       style="width: 90%;float: left; " class="form-control"
+                                                       value="#{parcEngins.infoEngin.typeEngin}">
+                                        <f:selectItem    itemLabel="" itemValue="" />
+                                        <f:selectItems value="#{parcEngins.typeEngins}" var="t"
+                                                       itemLabel="#{t.typeEngin}" itemValue="#{t.typeEngin}"/>
+                                        <p:ajax listener="#{parcEngins.typeEnginChange()}"
+                                                update=":updateE,:updateE:marqueModif" />
+                                    </p:selectOneMenu> 
+                                    <p:commandButton onclick="PF('dlgAddTypeEngin').show();" value="" icon="ui-icon-plus"
+                                                     style="width: 31px;float: right;height: 34px;" />
+                                    <p:message for="typeInputEnginModif" id="typeInputEnginEditMSG"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Marque"/>
+                                    <p:selectOneMenu   id="marqueModif" filter="true" filterMatchMode="contains" 
+                                                       style="width: 90%;float: left; " class="form-control"
+                                                       value="#{parcEngins.infoEngin.marque}">
+                                        <f:selectItems value="#{parcEngins.marques}" var="C"
+                                                       itemLabel="#{C.nom}" itemValue="#{C.nom}"/>
+                                    </p:selectOneMenu> 
+                                    <p:commandButton onclick="PF('dlgAdMarque').show();" value="" icon="ui-icon-plus"
+                                                     style="width: 31px;float: right;height: 34px;"
+                                                     action="#{parcEngins.preparAddMarque()}"/>
+                                    <p:message for="marqueModif" id="marqueInputModif"/>
+                                </div>
+                               
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Numéro de série (*) " />
+                                    <p:inputText id="vinModif" class="form-control" value="#{parcEngins.infoEngin.numchassis}"
+                                                 required="true" requiredMessage="Le numéro de châssis est obligatoire">
+                                        <f:ajax event="blur" render="VINInputModif" />
+                                    </p:inputText>
+                                    <p:message for="VINInputModif" id="VINInputModif"/>
+                                </div>
+                            </div> 
+                            <div class="row">
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Fournisseur :" />
+                                    <p:selectOneMenu   id="fournisseurInputEngin" filter="true" filterMatchMode="contains" 
+                                                       style="width: 90%;float: left; " class="form-control"
+                                                       value="#{parcEngins.enginsToAdd.fournisseur}">
+                                        <f:selectItem    itemLabel="" itemValue="" />
+                                        <f:selectItems value="#{parcEngins.fournisseurEngins}" var="f"
+                                                       itemLabel="#{f.fournisseur}" itemValue="#{f.fournisseur}"/>
+                                    </p:selectOneMenu> 
+                                    <p:commandButton onclick="PF('dlgAddFournisseurEngin').show();" value="" icon="ui-icon-plus"
+                                                     style="width: 31px;float: right;height: 34px;" />
+                                    <p:message for="fournisseurInputEngin" id="fournisseurInputEnginMSG"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Type Pointage "/>
+                                    <p:selectOneMenu filter="true" filterMatchMode="contains"  id="typePointageIdModif"
+                                                     style="width: 100%" class="form-control" 
+                                                     value="#{parcEngins.infoEngin.actif}">
+                                        <f:selectItem itemLabel="Manuelle" itemValue="0"/>
+                                        <f:selectItem itemLabel="Automatique" itemValue="1"/>
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Conducteur"/>
+                                    <p:selectOneMenu   filter="true" filterMatchMode="contains"  style="width: 100%" 
+                                                       class="form-control" value="#{parcEngins.idConducteur}">
+                                        <f:selectItem itemLabel="#{''.concat(parcEngins.infoEngin.conducteur.matricule).concat(' | ').concat(parcEngins.infoEngin.conducteur.nom).concat(' ').concat(parcEngins.infoEngin.conducteur.prenom)}" itemValue="#{parcEngins.infoEngin.conducteur.id}"/>
+                                        <f:selectItems value="#{parcEngins.conducteurEngins}" var="C"
+                                                       itemLabel="#{C.matricule} | #{C.nom} #{C.prenom}" itemValue="#{C.id}"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>  
+                            <div class="row">
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Type Compteur "/>
+                                    <p:selectOneMenu  id="typeCompteur" filter="true" filterMatchMode="contains"  style="width: 100%" 
+                                                      class="form-control" value="#{parcEngins.infoEngin.typeCompteur}"
+                                                      >
+                                        <f:selectItem itemLabel="Sans compteur" itemValue="sansCompteur"/>
+                                        <f:selectItem itemLabel="Kilométrique" itemValue="kilométrique"/>
+                                        <f:selectItem itemLabel="Horaire" itemValue="horaire"/>
+                                        <f:selectItem itemLabel="Kilométrique et Horaire" itemValue="kilométrique_horaire"/>
+                                        <p:ajax update="idCompteurKMModif,idCompteurHRModif" />
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Compteur Kilométrique " />
+                                    <p:inputText class="form-control" id="idCompteurKMModif"
+                                                 disabled="#{(parcEngins.infoEngin.typeCompteur == 'kilométrique')?false:((parcEngins.infoEngin.typeCompteur == 'kilométrique_horaire')?false:true)}"
+                                                 value="#{parcEngins.infoEngin.compteurKilometrique}" >
+                                        <f:convertNumber integerOnly="true" type="number" />
+                                    </p:inputText>
+                                    <h:outputText />
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Compteur Horaire " />
+                                    <p:inputText class="form-control" id="idCompteurHRModif"
+                                                 disabled="#{(parcEngins.infoEngin.typeCompteur == 'horaire')?false:((parcEngins.infoEngin.typeCompteur == 'kilométrique_horaire')?false:true)}"
+                                                 value="#{parcEngins.infoEngin.comteurHoraire}" >
+                                        <f:convertNumber integerOnly="true" type="number"/>
+                                    </p:inputText>
+                                    <h:outputText />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Année construction :"/>
+                                    <p:calendar pattern="yyyy" class="form-control"
+                                                style="padding: 0px 0px 0px 0px;border: 0px solid #ccc;display: inline-flex;"
+                                                value="#{parcEngins.infoEngin.dateCREATION}">
+                                        <p:ajax update="idDateAccModif" />
+                                    </p:calendar>
+                                    <h:outputText />
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Date d'acquisition :"/>
+                                    <p:calendar pattern="dd/MM/yyyy" class="form-control" id="idDateAccModif"
+                                                style="padding: 0px 0px 0px 0px;border: 0px solid #ccc;display: inline-flex;"
+                                                mindate="#{parcEngins.infoEngin.dateCREATION}"
+                                                value="#{parcEngins.infoEngin.dateAquisition}" />
+                                    <h:outputText />
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Date du dernier contrôle réglementaire:"/>
+                                    <p:calendar pattern="dd/MM/yyyy" id="DDSModif" value="#{parcEngins.infoEngin.dateDerniereVisiteSecurity}" 
+                                                maxdate="#{pointageEngin.d}" class="form-control"
+                                                style="padding: 0px 0px 0px 0px;border: 0px solid #ccc;display: inline-flex;"
+                                                showOn="button" >
+                                        <f:ajax event="blur" render="DDSecuriteInputModif"/>
+                                    </p:calendar>
+                                    <p:message for="DDSModif" id="DDSecuriteInputModif"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Date de la dernière vidange (*):"/>  
+                                    <p:calendar pattern="dd/MM/yyyy" id="DDVModif" value="#{parcEngins.infoEngin.dateDERVID}"
+                                                style="padding: 0px 0px 0px 0px;border: 0px solid #ccc;display: inline-flex;"
+                                                class="form-control" maxdate="#{pointageEngin.d}" showOn="button" 
+                                                required="true" requiredMessage="La date de la dérnière vidange est obligatoire"/>
+                                    <h:outputText />
+                                    <p:message for="DDVModif" id="DDVidangeModif"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Cpt à la dernière vidange (H) :"/>
+                                    <p:inputText class="form-control" value="#{parcEngins.infoEngin.nbrHeures}" />
+                                    <h:outputText />
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Cpt à la dernière vidange (Km) :"/>      
+                                    <p:inputText class="form-control" value="#{parcEngins.infoEngin.nbrKilometrage}" />
+                                    <h:outputText />
+                                </div>
+                            </div>  
+                            <div class="row">
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Chantier "/>
+                                    <p:selectOneMenu filter="true" filterMatchMode="contains"  
+                                                     style="width: 100%" class="form-control" value="#{parcEngins.chantierToAdd}">
+                                        <f:selectItem itemLabel="DEPARTEMENT LOGISTIQUE" itemValue="158"/>
+                                        <f:selectItems value="#{chantier.chantiers}" var="C"
+                                                       itemLabel="#{C.code}" itemValue="#{C.id}"/>
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Matricule "/>
+                                    <p:inputText    id="idMatriculeEdit" class="form-control" value="#{parcEngins.infoEngin.num_immatriculation}"
+                                                    required="#{(parcEngins.designation.matriculeOblig != null)?parcEngins.designation.matriculeOblig:false}"
+                                                    requiredMessage="Matricule de l'engin est obligatoire"/>
+                                    <p:message for="idMatriculeEdit" id="idMatriculeEditMessage"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Nature "/>
+                                    <p:selectOneMenu filter="true" filterMatchMode="contains"  
+                                                     style="width: 100%" class="form-control" value="#{parcEngins.enginsToAdd.nature}">
+                                        <f:selectItem itemLabel="TGCC" itemValue="TGCC"/> 
+                                        <f:selectItem itemLabel="SOUS-TRAITANT" itemValue="SOUS-TRAITANT"/> 
+                                        <f:selectItem itemLabel="LOCATION" itemValue="LOCATION"/> 
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="SOUS-TRAITANT :" />
+                                    <p:selectOneMenu   id="EditSstInputEngin" filter="true" filterMatchMode="contains" 
+                                                       style="width: 90%;float: left; " class="form-control"
+                                                       value="#{parcEngins.infoEngin.nomSST}">
+                                        <f:selectItem  itemLabel="" itemValue="" /> 
+                                        <f:selectItems value="#{parcEngins.sstEngins}" var="sst"
+                                                       itemLabel="#{sst.nomSST}" itemValue="#{sst.nomSST}"/>
+                                    </p:selectOneMenu> 
+                                    <p:commandButton onclick="PF('dlgAddSstEngin').show();" value="" 
+                                                     icon="ui-icon-plus"
+                                                     style="width: 31px;float: right;height: 34px;" 
+                                                     update=":formSstEngin" />
+                                    <p:message for="EditSstInputEngin" id="EditSstInputEnginMSG"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="LOCATAIRE :" />
+                                    <p:selectOneMenu   id="EditLocaInputEngin" filter="true" filterMatchMode="contains" 
+                                                       style="width: 90%;float: left; " class="form-control"
+                                                       value="#{parcEngins.infoEngin.nomLocataire}">
+                                        <f:selectItem  itemLabel="" itemValue="" /> 
+                                        <f:selectItems value="#{parcEngins.locataireEngins}" var="loc"
+                                                       itemLabel="#{loc.nomLOCATAIRE}" itemValue="#{loc.nomLOCATAIRE}"/>
+                                    </p:selectOneMenu> 
+                                    <p:commandButton onclick="PF('dlgAddLocEngin').show();" 
+                                                     value="" icon="ui-icon-plus"
+                                                     style="width: 31px;float: right;height: 34px;"
+                                                     update=":formLocEngin" />
+                                    <p:message for="EditLocaInputEngin" id="EditLocaInputEnginMSG"/>
+                                </div> 
+                            </div> 
+                            <p:commandButton class="btn btn-switch active"  value="Modifier" update=":tablePE:tbl,:form:msgsM" onclick="PF('updateE').hide();" action="#{parcEngins.updateEnginInfo()}"/> 
+                        </h:form>
+                    </p:dialog>
+<!-- 
+************************************************************************************************************************************************************************************
+*******************************Ajouter Designiation*********************************************************************************************************************************
+************************************************************************************************************************************************************************************
+-->
+                    <p:dialog header="Nouvel designation" maximizable="false" resizable="false" draggable="false" 
+                              widgetVar="dlgAdDesign"  id="dlgAdDesign" 
+                              style="margin-right: 50px; overflow: scroll !important; min-height: 200px !important;" >
+                        <h:form id="formDesignation">
+                            <div class="row">
+                                <div class="col-lg-6 form-group">
+                                    <p:outputLabel value="Désignation (*)" />
+                                    <p:inputText id="nomDesignation" class="form-control" value="#{parcEngins.designation.nomDesignation}"
+                                                 required="true" requiredMessage="La désignation est obligatoire"> 
+                                    </p:inputText>
+                                    <p:message for="nomDesignation" id="nomDesignationMessage"/>
+                                </div>
+                                <div class="col-lg-6 form-group">
+                                    <p:outputLabel value="Code Désignation (*) " />
+                                    <p:inputText id="codeDesignation" class="form-control" value="#{parcEngins.designation.codeDesignation}"
+                                                 required="true" requiredMessage="Le code désignation est obligatoire">
+                                    </p:inputText>
+                                    <p:message for="codeDesignation" id="codeDesignationMessage"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 form-group">
+                                    <p:outputLabel value="Type Pointage "/>
+                                    <p:selectOneMenu filter="true" filterMatchMode="contains"  id="typePointageDesignation"
+                                                     style="width: 100%" class="form-control" 
+                                                     value="#{parcEngins.designation.typePointage}">
+                                        <f:selectItem itemLabel="Manuelle" itemValue="0"/>
+                                        <f:selectItem itemLabel="Automatique" itemValue="1"/>
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="col-lg-6 form-group">
+                                    <p:outputLabel value="Type Compteur "/>
+                                    <p:selectOneMenu  id="typeCompteurDesignation" filter="true" filterMatchMode="contains"  
+                                                      style="width: 100%" class="form-control" 
+                                                      value="#{parcEngins.designation.typeCompteur}">
+                                        <f:selectItem itemLabel="Sans compteur" itemValue="sansCompteur"/>
+                                        <f:selectItem itemLabel="Kilométrique" itemValue="kilométrique"/>
+                                        <f:selectItem itemLabel="Horaire" itemValue="horaire"/>
+                                        <f:selectItem itemLabel="Kilométrique et Horaire" itemValue="kilométrique_horaire"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                            <div class="row"> 
+                                <div class="col-lg-6 form-group">
+                                    <p:outputLabel value="Famille d'Engin "/>
+                                    <p:selectOneMenu   id="idFamilleEnginD" filter="true" filterMatchMode="contains" 
+                                                       style="width: 90%;float: left; " class="form-control"
+                                                       value="#{parcEngins.designation.familleEngin}" >
+                                        <f:selectItem itemLabel=""  itemValue=""/>
+                                        <f:selectItems value="#{parcEngins.familleEngins}" var="f"
+                                                       itemLabel="#{f.famille}" itemValue="#{f.famille}"/>
+                                    </p:selectOneMenu> 
+                                </div>
+                                <div class="col-lg-6 form-group">
+                                    <p:outputLabel value="Matricule Obligatoire"/>
+                                    <p:selectOneMenu   id="idMatriculeObligatoire" filter="true" filterMatchMode="contains" 
+                                                       style="width: 90%;float: left; " class="form-control"
+                                                       value="#{parcEngins.designation.matriculeOblig}"  >
+                                        <f:selectItem itemLabel="NON"  itemValue="false"/> 
+                                        <f:selectItem itemLabel="OUI"  itemValue="true"/> 
+                                    </p:selectOneMenu> 
+                                </div>
+                            </div>
+                            <div class="row"> 
+                                <div class="col-lg-3 form-group"></div>
+                                <div class="col-lg-6 form-group">
+                                    <p:commandButton onclick="PF('dlgAdDesign').hide();" value="Enregistrer" style="width: 100%"
+                                                     action="#{parcEngins.addDesignation()}" update=":form_new:designation"/>
+                                </div>
+                                <div class="col-lg-3 form-group"></div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+<!-- 
+************************************************************************************************************************************************************************************
+*******************************Ajouter Marque*********************************************************************************************************************************
+************************************************************************************************************************************************************************************
+-->
+                    <p:dialog header="Nouvel Marque" maximizable="false" resizable="false" draggable="false" 
+                              widgetVar="dlgAdMarque"  id="dlgAdMarque" 
+                              style="margin-right: 50px; overflow: scroll !important; min-height: 200px !important;" >
+                        <h:form id="formMarque">
+                            <div class="row">
+                                <div class="col-lg-6 form-group">
+                                    <p:outputLabel value="Marque (*)" />
+                                    <p:inputText id="nomMarque" class="form-control" value="#{parcEngins.marqueClass.nom}"
+                                                 required="true" requiredMessage="Le nom est obligatoire"> 
+                                    </p:inputText>
+                                    <p:message for="nomMarque" id="nomMarqueMessage"/>
+                                </div>
+                                <div class="col-lg-6 form-group">
+                                    <p:outputLabel value="Famille marque " />
+                                    <p:inputText id="codeDesignation" class="form-control" 
+                                                 value="#{parcEngins.marqueClass.famille}" >
+                                    </p:inputText>
+                                </div> 
+                            </div>
+                            <div class="row"> 
+                                
+                                <div class="col-lg-12 form-group">
+                                    <p:outputLabel value="Type d'Engin (*) " />
+                                    <p:selectOneMenu   id="typeInputEnginMarque" filter="true" filterMatchMode="contains" 
+                                                       style="width: 90%;float: left; " class="form-control"
+                                                       value="#{parcEngins.marqueClass.type}">
+                                        <f:selectItems value="#{parcEngins.typeEngins}" var="C"
+                                                       itemLabel="#{C.typeEngin}" itemValue="#{C.typeEngin}"/>
+                                    </p:selectOneMenu> 
+                                    <p:message for="typeInputEnginMarque" id="typeInputTypeEnginMSG"/>
+                                </div>
+                            </div>
+                            <div class="row"> 
+                                <div class="col-lg-3 form-group"></div>
+                                <div class="col-lg-6 form-group">
+                                    <p:commandButton onclick="PF('dlgAdMarque').hide();" value="Enregistrer" style="width: 100%"
+                                                     actionListener="#{parcEngins.addMarque()}" update=":form_new:marque"/>
+                                </div>
+                                <div class="col-lg-3 form-group"></div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- 
+                    ************************************************************************************************************************************************************************************
+                    *******************************Ajouter Famille Engin*********************************************************************************************************************************
+                    ************************************************************************************************************************************************************************************
+                    -->
+                    <p:dialog header="Nouvel Famille Engin" maximizable="false" resizable="false" draggable="false" 
+                              widgetVar="dlgAddFamilleEngin"  id="dlgAddFamilleEngin" 
+                              style="margin-right: 50px; overflow: scroll !important; min-height: 200px !important;" >
+                        <h:form id="formFamilleEngin">
+                            <div class="row">
+                                <div class="col-lg-6 form-group">
+                                    <p:outputLabel value="Famille (*)" />
+                                    <p:inputText id="nomFamille" class="form-control" value="#{parcEngins.familleEngin.famille}"
+                                                 required="true" requiredMessage="La Famille Engin est obligatoire"> 
+                                    </p:inputText>
+                                    <p:message for="nomFamille" id="nomMarqueMessage"/>
+                                </div>
+                                <div class="col-lg-6 form-group">
+                                    <p:outputLabel value="Catégorie Famille " />
+                                    <p:inputText id="catFamille" class="form-control" 
+                                                 value="#{parcEngins.familleEngin.cat}" >
+                                    </p:inputText>
+                                </div>
+                            </div>
+                            <div class="row"> 
+                                <div class="col-lg-3 form-group"></div>
+                                <div class="col-lg-6 form-group">
+                                    <p:commandButton onclick="PF('dlgAddFamilleEngin').hide();" value="Enregistrer" style="width: 100%"
+                                                     actionListener="#{parcEngins.addFamilleEngin()}" update=":form_new:idFamilleEngin,:updateE:idFamilleEnginEdit"/>
+                                </div>
+                                <div class="col-lg-3 form-group"></div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- 
+                    ************************************************************************************************************************************************************************************
+                    *******************************Ajouter Fournisseur Engin*********************************************************************************************************************************
+                    ************************************************************************************************************************************************************************************
+                    -->
+                    <p:dialog header="Nouveau Fournisseur" maximizable="false" resizable="false" draggable="false" 
+                              widgetVar="dlgAddFournisseurEngin"  id="dlgAddFournisseurEngin" 
+                              style="margin-right: 50px; overflow: scroll !important; min-height: 200px !important;min-width: 300px; " >
+                        <h:form id="formFournisseurEngin">
+                            <div class="row">
+                                <div class="col-lg-12 form-group">
+                                    <p:outputLabel value="Fournisseur (*)" />
+                                    <p:inputText id="nomFournisseurEngin" class="form-control" value="#{parcEngins.fournisseurEngin.fournisseur}"
+                                                 required="true" requiredMessage="Le nom de fournisseur est obligatoire"> 
+                                    </p:inputText>
+                                    <p:message for="nomFournisseurEngin" id="nomFournisseurEnginMessage"/>
+                                </div>
+                            </div>
+                            <div class="row"> 
+                                <div class="col-lg-3 form-group"></div>
+                                <div class="col-lg-6 form-group">
+                                    <p:commandButton onclick="PF('dlgAddFournisseurEngin').hide();" value="Enregistrer" style="width: 100%"
+                                                     actionListener="#{parcEngins.addFournisseurEngin()}" update=":form_new:fournisseurInputEngin"/>
+                                </div>
+                                <div class="col-lg-3 form-group"></div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- 
+                    ************************************************************************************************************************************************************************************
+                    *******************************Ajouter SOUS-TRAITANT Engin*********************************************************************************************************************************
+                    ************************************************************************************************************************************************************************************
+                    -->
+                    <p:dialog header="Nouveau SOUS-TRAITANT" maximizable="false" resizable="false" draggable="false" 
+                              widgetVar="dlgAddSstEngin"  id="dlgAddSstEngin" 
+                              style="margin-right: 50px; overflow: scroll !important; min-height: 200px !important;min-width: 300px; " >
+                        <h:form id="formSstEngin">
+                            <div class="row">
+                                <div class="col-lg-12 form-group">
+                                    <p:outputLabel value="SOUS-TRAITANT (*)" />
+                                    <p:inputText id="nomSstEngin" class="form-control" 
+                                                 value="#{parcEngins.nomSstEngin}"
+                                                 required="true" 
+                                                 requiredMessage="Le nom de SOUS-TRAITANT est obligatoire"> 
+                                    </p:inputText>
+                                    <p:message for="nomSstEngin" id="nomFournisseurEnginMessage"/>
+                                </div>
+                            </div>
+                            <div class="row"> 
+                                <div class="col-lg-3 form-group"></div>
+                                <div class="col-lg-6 form-group">
+                                    <p:commandButton onclick="PF('dlgAddSstEngin').hide();" 
+                                                     value="Enregistrer" style="width: 100%"
+                                                     actionListener="#{parcEngins.addSstEngin()}" 
+                                                     update=":form_new,:form_new:sstInputEngin"/>
+                                </div>
+                                <div class="col-lg-3 form-group"></div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- 
+                    ************************************************************************************************************************************************************************************
+                    *******************************Ajouter LOCATAIRE Engin*********************************************************************************************************************************
+                    ************************************************************************************************************************************************************************************
+                    -->
+                    <p:dialog header="Nouveau Locataire Engin" maximizable="false" resizable="false" draggable="false" 
+                              widgetVar="dlgAddLocEngin"  id="dlgAddLocEngin" 
+                              style="margin-right: 50px; overflow: scroll !important; min-height: 200px !important;min-width: 300px; " >
+                        <h:form id="formLocEngin">
+                            <div class="row">
+                                <div class="col-lg-12 form-group">
+                                    <p:outputLabel value="Locataire Engin (*)" />
+                                    <p:inputText id="nomLocEngin" class="form-control" value="#{parcEngins.nomLocEngin}"
+                                                 required="true" requiredMessage="Le Nom de Locataire d'engin est obligatoire"> 
+                                    </p:inputText>
+                                    <p:message for="nomLocEngin" id="nomLocEnginMessage"/>
+                                </div>
+                            </div>
+                            <div class="row"> 
+                                <div class="col-lg-3 form-group"></div>
+                                <div class="col-lg-6 form-group">
+                                    <p:commandButton onclick="PF('dlgAddLocEngin').hide();" value="Enregistrer" style="width: 100%"
+                                                     actionListener="#{parcEngins.addLocatEngin()}" update=":form_new,:form_new:locaInputEngin"/>
+                                </div>
+                                <div class="col-lg-3 form-group"></div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- 
+                    ************************************************************************************************************************************************************************************
+                    *******************************Ajouter Engin*********************************************************************************************************************************
+                    ************************************************************************************************************************************************************************************
+                    -->
+                    <p:dialog header="Nouvel engin" maximizable="true" resizable="false" draggable="false" 
+                              widgetVar="dlg2" height="500" 
+                              style="margin-right: 50px; overflow: scroll !important; height: 500px !important;" >
+                        <h:form id="form_new">
+                            <h:outputText class="h5 text-danger" value="(*) veuillez remplire les champs obligatoires "/>
+                            <div class="row">
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Famille d'Engin (*) "/>
+                                    <p:selectOneMenu   id="idFamilleEngin" filter="true" filterMatchMode="contains" 
+                                                       style="width: 90%;float: left; " class="form-control"
+                                                       value="#{parcEngins.enginsToAdd.familleEngin}" >
+                                        <f:selectItem itemLabel=""  itemValue=""/>
+                                        <f:selectItems value="#{parcEngins.familleEngins}" var="f"
+                                                       itemLabel="#{f.famille}" itemValue="#{f.famille}"/>
+                                        <p:ajax listener="#{parcEngins.familleEnginChange()}"
+                                                update=":form_new,:form_new:designation" />
+                                    </p:selectOneMenu> 
+                                    <p:commandButton onclick="PF('dlgAddFamilleEngin').show();" value="" icon="ui-icon-plus"
+                                                     style="width: 31px;float: right;height: 34px;"
+                                                     action="#{parcEngins.preparFamilleEngin()}"/>
+                                    <p:message for="idFamilleEngin" id="familleEnginSelect"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                <p:outputLabel value="Designation"/>
+                                <p:selectOneMenu   id="designation" filter="true" filterMatchMode="contains" 
+                                                   style="width: 90%;float: left; " class="form-control"
+                                                   value="#{parcEngins.idDesignation}" >
+                                    <f:selectItem itemLabel=""  itemValue=""/>
+                                    <f:selectItems value="#{parcEngins.designiations}" var="desing"
+                                                   itemLabel="#{desing.nomDesignation}" itemValue="#{desing.id}"/>
+                                    <p:ajax listener="#{parcEngins.changeDesignation()}"
+                                            update=":form_new,:form_new:typePointageId,:form_new:typeCompteur,:form_new:codeInputText,:form_new:idMatricule,:form_new:idFamilleEngin" />
+                                </p:selectOneMenu> 
+                                <p:commandButton onclick="PF('dlgAdDesign').show();" value="" icon="ui-icon-plus"
+                                                 style="width: 31px;float: right;height: 34px;"
+                                                 update=":formDesignation:idFamilleEnginD"
+                                                 action="#{parcEngins.preparAddDesignation()}"/>
+                                <p:message for="designation" id="designationSelect"/>
+                            </div>
+                            <div class="col-lg-4 form-group">
+                                <p:outputLabel value="code (*) " />
+                                <p:inputText id="codeInputText" class="form-control" value="#{parcEngins.enginsToAdd.code}" required="true" 
+                                             requiredMessage="Le code de l'engin  est obligatoire" autocomplete="true">
+                                    <f:validator binding="#{validatorMb}" />
+                                    <f:ajax event="blur" render="codeInput" />
+                                    <p:message for="codeInputText" id="codeInput" />
+                                </p:inputText>
+                            </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Marque"/>
+                                    <p:selectOneMenu   id="marque" filter="true" filterMatchMode="contains" 
+                                                       style="width: 90%;float: left; " class="form-control"
+                                                       value="#{parcEngins.enginsToAdd.marque}">
+                                        <f:selectItem    itemLabel="" itemValue="" />
+                                        <f:selectItems value="#{parcEngins.marques}" var="C"
+                                                       itemLabel="#{C.nom}" itemValue="#{C.nom}"/>
+                                    </p:selectOneMenu> 
+                                    <p:commandButton onclick="PF('dlgAdMarque').show();" value="" icon="ui-icon-plus"
+                                                     style="width: 31px;float: right;height: 34px;"
+                                                     action="#{parcEngins.preparAddMarque()}" update=":formMarque" />
+                                    <p:message for="marque" id="marqueInput"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Type d'Engin (*) " />
+                                    <p:selectOneMenu   id="typeInputEngin" filter="true" filterMatchMode="contains" 
+                                                       style="width: 90%;float: left; " class="form-control"
+                                                       value="#{parcEngins.enginsToAdd.typeEngin}">
+                                        <f:selectItem    itemLabel="" itemValue="" />
+                                        <f:selectItems value="#{parcEngins.typeEngins}" var="C"
+                                                       itemLabel="#{C.typeEngin}" itemValue="#{C.typeEngin}"/>
+                                        <p:ajax listener="#{parcEngins.typeEnginChange()}"
+                                                update=":form_new,:form_new:marque" />
+                                    </p:selectOneMenu> 
+                                    <p:commandButton onclick="PF('dlgAddTypeEngin').show();" value="" icon="ui-icon-plus"
+                                                     style="width: 31px;float: right;height: 34px;" />
+                                    <p:message for="typeInputEngin" id="typeInputEnginMSG"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Numéro de série (*) " />
+                                    <p:inputText id="vin" class="form-control" value="#{parcEngins.enginsToAdd.numchassis}"
+                                                 required="true" requiredMessage="Le numéro de châssis est obligatoire">
+                                        <f:ajax event="blur" render="VINInput" />
+                                    </p:inputText>
+                                    <p:message for="vin" id="VINInput"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Fournisseur :" />
+                                    <p:selectOneMenu   id="fournisseurInputEngin" filter="true" filterMatchMode="contains" 
+                                                       style="width: 90%;float: left; " class="form-control"
+                                                       value="#{parcEngins.enginsToAdd.fournisseur}">
+                                        <f:selectItem    itemLabel="" itemValue="" />
+                                        <f:selectItems value="#{parcEngins.fournisseurEngins}" var="f"
+                                                       itemLabel="#{f.fournisseur}" itemValue="#{f.fournisseur}"/>
+                                    </p:selectOneMenu> 
+                                    <p:commandButton onclick="PF('dlgAddFournisseurEngin').show();" value="" icon="ui-icon-plus"
+                                                     style="width: 31px;float: right;height: 34px;" />
+                                    <p:message for="fournisseurInputEngin" id="fournisseurInputEnginMSG"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Type Pointage "/>
+                                    <p:selectOneMenu filter="true" filterMatchMode="contains"  id="typePointageId"
+                                                     style="width: 100%" class="form-control" 
+                                                     value="#{parcEngins.enginsToAdd.actif}">
+                                        <f:selectItem itemLabel="Manuel" itemValue="0"/>
+                                        <f:selectItem itemLabel="Automatique" itemValue="1"/>
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Conducteur"/>
+                                    <p:selectOneMenu   filter="true" filterMatchMode="contains"  style="width: 100%" 
+                                                       class="form-control" value="#{parcEngins.idConducteur}">
+                                        <f:selectItem itemLabel="" itemValue=""/>
+                                        <f:selectItems value="#{parcEngins.conducteurEngins}" var="C"
+                                                       itemLabel="#{C.matricule} | #{C.nom} #{C.prenom}" itemValue="#{C.id}"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>    
+                            <div class="row">
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Type Compteur "/>
+                                    <p:selectOneMenu  id="typeCompteur" filter="true" filterMatchMode="contains"  style="width: 100%" 
+                                                      class="form-control" value="#{parcEngins.enginsToAdd.typeCompteur}"
+                                                      >
+                                        <f:selectItem itemLabel="Sans compteur" itemValue="sansCompteur"/>
+                                        <f:selectItem itemLabel="Kilométrique" itemValue="kilométrique"/>
+                                        <f:selectItem itemLabel="Horaire" itemValue="horaire"/>
+                                        <f:selectItem itemLabel="Kilométrique et Horaire" itemValue="kilométrique_horaire"/>
+                                        <p:ajax update="idCompteurKM,idCompteurHR" />
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Compteur Kilométrique " />
+                                    <p:inputText class="form-control" id="idCompteurKM"
+                                                 disabled="#{(parcEngins.enginsToAdd.typeCompteur == 'kilométrique')?false:((parcEngins.enginsToAdd.typeCompteur == 'kilométrique_horaire')?false:true)}"
+                                                 value="#{parcEngins.enginsToAdd.compteurKilometrique}" >
+                                        <f:convertNumber integerOnly="true" type="number" />
+                                    </p:inputText>
+                                    <h:outputText />
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Compteur Horaire " />
+                                    <p:inputText class="form-control" id="idCompteurHR"
+                                                 disabled="#{(parcEngins.enginsToAdd.typeCompteur == 'horaire')?false:((parcEngins.enginsToAdd.typeCompteur == 'kilométrique_horaire')?false:true)}"
+                                                 value="#{parcEngins.enginsToAdd.comteurHoraire}" >
+                                        <f:convertNumber integerOnly="true" type="number"/>
+                                    </p:inputText>
+                                    <h:outputText />
+                                </div>
+                            </div> 
+                            <div class="row">
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Année construction :"/>
+                                    <p:calendar pattern="yyyy" class="form-control"
+                                                style="padding: 0px 0px 0px 0px;border: 0px solid #ccc;display: inline-flex;"
+                                                value="#{parcEngins.enginsToAdd.dateCREATION}"
+                                                >
+                                        <p:ajax update="idDateAcc" />
+                                    </p:calendar>
+                                    <h:outputText />
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Date d'acquisition :"/>
+                                    <p:calendar pattern="dd/MM/yyyy" class="form-control" id="idDateAcc"
+                                                style="padding: 0px 0px 0px 0px;border: 0px solid #ccc;display: inline-flex;"
+                                                mindate="#{parcEngins.enginsToAdd.dateCREATION}"
+                                                value="#{parcEngins.enginsToAdd.dateAquisition}" />
+                                    <h:outputText />
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Date du dernier contrôle réglementaire:"/>
+                                    <p:calendar pattern="dd/MM/yyyy" id="DDS" value="#{parcEngins.enginsToAdd.dateDerniereVisiteSecurity}" 
+                                                maxdate="#{pointageEngin.d}" class="form-control"
+                                                style="padding: 0px 0px 0px 0px;border: 0px solid #ccc;display: inline-flex;"
+                                                showOn="button" required="true" requiredMessage="La date de la dérnière visite de sécurité est obligatoire">
+                                        <f:ajax event="blur" render="DDSecuriteInput"/>
+                                    </p:calendar>
+                                    <p:message for="DDS" id="DDSecuriteInput"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Date de la dernière vidange (*):"/>  
+                                    <p:calendar pattern="dd/MM/yyyy" id="DDV" value="#{parcEngins.enginsToAdd.dateDERVID}"
+                                                style="padding: 0px 0px 0px 0px;border: 0px solid #ccc;display: inline-flex;"
+                                                class="form-control" maxdate="#{pointageEngin.d}" showOn="button" 
+                                                required="true" requiredMessage="La date de la dérnière vidange est obligatoire"/>
+                                    <h:outputText />
+                                    <p:message for="DDV" id="DDVidange"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Cpt à la dernière vidange (H) :"/>
+                                    <p:inputText class="form-control" value="#{parcEngins.enginsToAdd.nbrHeures}" />
+                                    <h:outputText />
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Cpt à la dernière vidange (Km) :"/>      
+                                    <p:inputText class="form-control" value="#{parcEngins.enginsToAdd.nbrKilometrage}" />
+                                    <h:outputText />
+                                </div>
+                            </div>  
+                            <div class="row">
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Chantier "/>
+                                    <p:selectOneMenu filter="true" filterMatchMode="contains"  
+                                                     style="width: 100%" class="form-control" value="#{parcEngins.chantierToAdd}">
+                                        <f:selectItem itemLabel="DEPARTEMENT LOGISTIQUE" itemValue="158"/>
+                                        <f:selectItems value="#{chantier.chantiers}" var="C"
+                                                       itemLabel="#{C.code}" itemValue="#{C.id}"/>
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Matricule "/>
+                                    <p:inputText    id="idMatricule" class="form-control" value="#{parcEngins.enginsToAdd.num_immatriculation}"
+                                                    required="#{(parcEngins.designation.matriculeOblig != null)?parcEngins.designation.matriculeOblig:false}"
+                                                    requiredMessage="Matricule de l'engin est obligatoire"/>
+                                    <p:message for="idMatricule" id="idMatriculeMessage"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Nature "/>
+                                    <p:selectOneMenu filter="true" filterMatchMode="contains"  
+                                                     style="width: 100%" class="form-control" value="#{parcEngins.enginsToAdd.nature}">
+                                        <f:selectItem itemLabel="TGCC" itemValue="TGCC"/> 
+                                        <f:selectItem itemLabel="SOUS-TRAITANT" itemValue="SOUS-TRAITANT"/> 
+                                        <f:selectItem itemLabel="LOCATION" itemValue="LOCATION"/> 
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="SOUS-TRAITANT :" />
+                                    <p:selectOneMenu   id="sstInputEngin" filter="true" filterMatchMode="contains" 
+                                                       style="width: 90%;float: left; " class="form-control"
+                                                       value="#{parcEngins.enginsToAdd.nomSST}">
+                                        <f:selectItem    itemLabel="" itemValue="" /> 
+                                        <f:selectItems value="#{parcEngins.sstEngins}" var="sst"
+                                                       itemLabel="#{sst.nomSST}" itemValue="#{sst.nomSST}"/>
+                                    </p:selectOneMenu> 
+                                    <p:commandButton onclick="PF('dlgAddSstEngin').show();" value="" 
+                                                     icon="ui-icon-plus"
+                                                     style="width: 31px;float: right;height: 34px;" 
+                                                     update=":formSstEngin" />
+                                    <p:message for="sstInputEngin" id="sstInputEnginMSG"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="LOCATAIRE :" />
+                                    <p:selectOneMenu   id="locaInputEngin" filter="true" filterMatchMode="contains" 
+                                                       style="width: 90%;float: left; " class="form-control"
+                                                       value="#{parcEngins.enginsToAdd.nomLocataire}">
+                                        <f:selectItem    itemLabel="" itemValue="" /> 
+                                        <f:selectItems value="#{parcEngins.locataireEngins}" var="loc"
+                                                       itemLabel="#{loc.nomLOCATAIRE}" itemValue="#{loc.nomLOCATAIRE}"/>
+                                    </p:selectOneMenu> 
+                                    <p:commandButton onclick="PF('dlgAddLocEngin').show();" 
+                                                     value="" icon="ui-icon-plus"
+                                                     style="width: 31px;float: right;height: 34px;"
+                                                     update=":formLocEngin" />
+                                    <p:message for="locaInputEngin" id="locaInputEnginMSG"/>
+                                </div> 
+                            </div> 
+                            <p:commandButton class="btn btn-switch active" 
+                                             value="Ajouter" 
+                                             update=":tablePE:tbl, :form_new, :tablePE:growlM" 
+                                             action="#{parcEngins.addEngin}"/> 
+                        </h:form>
+                    </p:dialog>
+                    <!-- 
+                    ************************************************************************************************************************************************************************************
+                    *******************************Recherche Engin*********************************************************************************************************************************
+                    ************************************************************************************************************************************************************************************
+                    -->
+                    <p:dialog header="Recherche" modal="true" draggable="false" resizable="false" widgetVar="dlg1" minHeight="40" >
+                        <h:form id="form_search">
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <h:outputText value="code" />
+                                <p:inputText value="#{parcEngins.searchEngin.code}"  />
+                                <h:outputText value="Designation" />
+                                <p:inputText  value="#{parcEngins.searchEngin.designation}"/>
+                                <h:outputText value="Marque" />
+                                <p:inputText  value="#{parcEngins.searchEngin.marque}"/>
+                                <h:outputText value="Type d'Engin" />
+                                <p:inputText  value="#{parcEngins.searchEngin.typeEngin}"/>
+                                <h:outputText value="Famille d'Engin" />
+                                <p:inputText  value="#{parcEngins.searchEngin.familleEngin}"/>
+                                <h:outputText value="Etat" />
+                                <p:selectOneMenu value="#{parcEngins.idEtatSearch}">
+                                    <f:selectItem itemLabel="" itemValue="" />
+                                    <f:selectItems value="#{parcEngins.etats}" var="ee"
+                                                   itemLabel="#{ee.libelleEtat}" itemValue="#{ee.libelleEtat}"
+                                                   />
+                                </p:selectOneMenu>
+                                <p:outputLabel  value="Chantier" />
+                                <p:selectOneMenu filter="true" filterMatchMode="contains" value="#{parcEngins.chantierSearch}" >
+                                    <f:selectItem itemLabel="" itemValue="-1"/>
+                                    <f:selectItems value="#{chantier.chantiers}" var="C"
+                                                   itemLabel="#{C.code}" itemValue="#{C.id}"/>
+                                </p:selectOneMenu>
+                            </h:panelGrid>
+                            <p:commandButton class="btn btn-switch active" update=":tablePE:tbl, :form_search"
+                                             value="Rechercher" 
+                                             onclick="PF('dlg1').hide();" 
+                                             action="#{parcEngins.rechercherEngin}"  />
+                        </h:form>
+                    </p:dialog>
+                    <p:dialog header="Affectation" widgetVar="dlg3" modal="true" draggable="false" minHeight="40" >
+                        <h:form id="form_affectation">
+                            <h:panelGrid id="display" columns="2" cellpadding="4">
+                                <h:outputText value="Code:" />
+                                <h:outputText value="#{parcEngins.engin.code}" />
+                                <h:outputText value="Designation:" />
+                                <h:outputText value="#{parcEngins.engin.designation}" />
+                                <h:outputText value="Marque:" />
+                                <h:outputText value="#{parcEngins.engin.marque}" />
+                                <h:outputText value="Chantier"  />
+                                <p:selectOneMenu filter="true" filterMatchMode="contains" value="#{parcEngins.chantierAffectation}">
+                                    <f:selectItems value="#{chantierServMb.chantiers}" var="y"
+                                                   itemLabel="#{y.code}" itemValue="#{y.id}" />
+                                </p:selectOneMenu>
+                            </h:panelGrid>
+                            <p:commandButton update=":tablePE:tbl,:form:msgsM" value="Affectation" onclick="PF('dlg3').hide();"
+                                             action="#{parcEngins.affecterEngin}"  />
+                        </h:form>
+                    </p:dialog>
+                    
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>
+
+
+
+

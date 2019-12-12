@@ -1,0 +1,180 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:body>
+        <ui:composition template="./Template.xhtml">
+            <ui:define name="arborescence">
+                <h:outputText value="Achat > Nouvelle Bon de Livraison" style="color:#000066; margin-left: -920px; font-size: 14px;  font-family: Times New Roman, Georgia, Serif;"/>
+            </ui:define>
+            <ui:define name="content">
+                    <p:blockUI block="panelId" widgetVar="block">
+                        Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                    </p:blockUI>
+
+                <p:growl id="msgs" autoUpdate="true" showDetail="true"/>
+
+                <p:panel id="panelId" class="panel" header="Bon de Livraison">
+                     <p:growl id="msgs2" autoUpdate="true" showDetail="true"/>
+                    <h:form id="formBL">
+                        
+                        <div class="row">
+                            <div class="col-lg-4 col-lg-offset-1">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <p:outputLabel value="N° Bon De Commande"  />
+                                        <p:inputText id="numeroBc" required="true" 
+                                                     requiredMessage="Code 2104 : Vous devez remplir les champs ci-dessus"
+                                                     class="form-control"
+                                                     converterMessage="Ce champs ne peut contenir que des entiers"
+                                                     value="#{newBLMb.newbl.numeroBC}" 
+                                                     onkeypress="if (event.keyCode === 13) {
+                                                                 this.blur();
+                                                                 return false;
+                                                             }">
+                                            <p:ajax listener="#{newBLMb.found()}" 
+                                                    onstart="PF('block').show()" 
+                                                    oncomplete="PF('block').hide()" 
+                                                    event="blur" update=":formBL"/>
+                                     
+                                           
+                                        </p:inputText>
+                                        <p:message for="numeroBc"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <p:outputLabel value="N° Bon de livraison"/>
+                                        <p:inputText id="numeroBl" required="true" 
+                                                     requiredMessage=" Code 2104 : Vous devez remplir les champs ci-dessus "
+                                                     class="form-control"
+                                                     value="#{newBLMb.numeroBL}"
+                                                     label="N° BL">
+                                            <f:ajax event="blur" render="numBl_msg" />
+                                        </p:inputText>
+                                        <p:message for="numeroBl" id="numBl_msg"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <p:outputLabel value="Fournisseur"/>
+                                        <p:inputText class="form-control" value="#{newBLMb.newbl.fournisseur}"/>
+                                    </div>
+                                </div>
+                                <br/><br/>
+
+                            </div>
+
+                            <div class="col-lg-4 col-lg-offset-1">
+                                <div class="form-horizontal">
+                                    <div class=" form-group">
+                                        <p:outputLabel value="Chantier : "/>
+                                        <p:outputLabel value="#{newBLMb.libChantier}" />
+                                        <p:inputText value="#{newBLMb.codeChantier}" class="form-control" required="true" label="Chantier" readonly="true"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <p:outputLabel value="Date de livraison "/>
+                                        <p:calendar maxdate="#{constanteMb.maxDate}" class="form-control" 
+                                                    pattern="dd/MM/yyyy"
+                                                    style="padding: 0px 0px 0px 0px;border: 0px solid #ccc;display: flex"
+                                                    value="#{newBLMb.dateLivr}" showOn="button" />
+                                    </div>
+                                    <div class="form-group">
+                                        <p:outputLabel value="Commentaire"/>
+                                        <p:inputTextarea class="form-control" value="#{newBLMb.commentaire}" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                                                                              
+                            <p:dataTable value="#{newBLMb.articleBLs}" id="articleBlTable" var="a" editable="true">
+                                <p:ajax event="rowEdit" listener="#{newBLMb.onRowEdit}" update="formBL:valid" />
+                                <p:ajax event="rowEditCancel" listener="#{newBLMb.onRowCancel}" update="formBL:valid" />
+                                <f:facet name="header">
+                                    <h:outputText value="Articles"/>
+                                </f:facet>
+                                <p:column headerText="Code Article">
+                                    <h:outputText value="#{a.article.codeArticle}"/>
+                                </p:column>
+                                <p:column headerText="Désignation">
+                                    <h:outputText value="#{a.article.designation}"/>
+                                </p:column>
+                                <p:column headerText="Q.Commandée">
+                                    <h:outputText value="#{a.quantiteInitiale}"/>
+                                </p:column>
+                                <p:column headerText="Q.déjà livrée">
+                                    <h:outputText value="#{a.quantiteValidee}"/>
+                                </p:column>
+                                <p:column headerText="Reste">
+                                    <h:outputText value="#{a.reste}"/>
+                                </p:column>
+                                <p:column headerText="Q. à saisir">
+                                    <p:cellEditor>
+                                        <f:facet name="output">
+                                            <h:outputText value="#{a.quantiteLivree}" />
+                                        </f:facet>
+                                        <f:facet name="input">
+                                            <p:inputText onkeypress="if (event.keyCode === 13) {
+                                                        this.blur();
+                                                        return false;
+                                                    }" value="#{a.quantiteLivree}" 
+                                                    required="true" label="qte saisie" 
+                                                    validatorMessage="Veuillez saisir une quantité supérieure à 0"
+                                                    requiredMessage="veuillez saisir une qte"  >
+                                                <f:validateDoubleRange minimum="0.00001" />
+                                                        
+                                               
+                                          
+                                            </p:inputText>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+                                <p:column headerText="Unité">
+                                    <h:outputText value="#{a.article.unite}"/>
+                                </p:column>
+                                <p:column  headerText="Actions">
+                                    <p:rowEditor />
+                                   
+                                </p:column>
+                            </p:dataTable>
+                            <br/>
+                            <div class="pull-right">
+                                <h:panelGrid class="without-border" columns="3">
+                                    <p:commandButton id="valid" value="Valider" update=":formBL" 
+                                                     onstart="PF('block').show()" oncomplete="PF('block').hide()"
+                                                     class="btn btn-switch active"
+                                                     action="#{newBLMb.validerBL()}" disabled="#{newBLMb.validerdisabled}" />
+                                    
+                                    <p:spacer width="10px"/>
+                                    <p:commandButton value="Annuler" class="btn btn-default" action="achatBL.xhtml?faces-redirect=true"/>
+                                </h:panelGrid>
+                            </div>
+                        </div>
+                    </h:form>
+                    <div class="row">
+                        <div class="col-lg-6"> 
+                            <h:form id="formup">
+                                <div class="form-group">
+                                    <p:outputLabel value="Bon de livraison"/>
+                                    <p:fileUpload  id="fileuploadBl" 
+                                                   mode="advanced" fileUploadListener="#{newBLMb.save}"
+                                                   allowTypes="/(\.|\/)(PDF|pdf)$/" 
+                                                   update="msg_BlUpload, :formup" auto="true"/>
+                                    <p:message id="msg_BlUpload" for="fileuploadBl" />
+                            <p:media value="#{imageBean.image}" width="100%" height="500px" player="pdf"> >
+                            <f:param name="path" value="#{newBLMb.newbl.nodeRefDocument}" />
+                            </p:media>
+                                </div>
+                           </h:form>
+                        </div>
+
+
+                    </div>
+
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+
+    </h:body>
+</html>

@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Voiture</title>
+    </h:head>
+    <body>
+        <ui:composition template="./mensuelTemplate.xhtml">
+            <ui:define name="arborescence"> 
+                <h:form>
+                    #{gestion_voitureMb.afficherVoiture()}
+                    Mensuel > <strong> Gestion Des Voitures </strong>
+                </h:form>
+            </ui:define>
+            <ui:define name="content">
+                <p:panel id="pannel">
+                    <h:form id="form">
+                        <br />
+                        <div class="affectation-switch">
+                            <div class="btn-group" data-toggle="buttons">
+                                <p:commandButton  class="btn btn-default"  value="V. A. à un Chantier" 
+                                                  action="/mensuel/consultationVoitureChantier.xhtml?faces-redirect=true" 
+                                                  update=":form:tbl" />
+                                <p:commandButton  class="btn btn-default"   value="V. A. à un Salarié" 
+                                                  action="/mensuel/consultVoitureSalarie.xhtml?faces-redirect=true"
+                                                  update=":form:tbl" />
+                                <p:commandButton  class="btn btn-switch active" value="Gestion Voiture"
+                                                  action="/mensuel/CreationVoiture.xhtml?faces-redirect=true" 
+                                                  update=":form:tbl" />
+                                <p:commandButton  class="btn btn-default" value="Historique Voiture Salarie"
+                                                  action="/mensuel/HistoriqueVoiture.xhtml?faces-redirect=true" />
+                                <p:commandButton  class="btn btn-default" value="Historique Voiture Chantier" 
+                                                  action="/mensuel/HistoriqueVoitureCh.xhtml?faces-redirect=true"  />
+                            </div>
+                        </div>
+                        <br />
+                        <p:growl id="msgsM" />
+                        <p:commandButton class="btn btn-switch active" value="Ajouter" icon="ui-icon-plus" onclick="PF('dlg_Ajouter').show();" />
+                        <br/><br/>
+                        <p:dataTable id="tbl" var="voitureIt" value="#{gestion_voitureMb.voitures}"
+                                     rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                     >
+                            <p:ajax event="rowEdit" listener="#{gestion_voitureMb.onRowEdit}" update=":form:msgsM" />
+                            <p:ajax event="rowEditCancel" listener="#{gestion_voitureMb.onRowCancel}"  update=":form:msgsM" />
+                            <p:column headerText="N°Immatriculation"  filterBy="#{voitureIt.matriculevoiture}" filterMatchMode="contains" >
+                                <h:outputText value="#{voitureIt.matriculevoiture}" />
+                            </p:column>
+                            <p:column headerText="Model " filterBy="#{voitureIt.model}" filterMatchMode="contains" >
+                                <h:outputText value="#{voitureIt.model}" />
+                            </p:column>
+                            <p:column headerText="WW " filterBy="#{voitureIt.matricule_voiture_nouveau}" filterMatchMode="contains" >
+                                <h:outputText value="#{voitureIt.matricule_voiture_nouveau}" />
+                            </p:column>
+                            <p:column headerText="Salarié " filterBy="#{voitureIt.salarie.matricule} #{voitureIt.salarie.nom } #{ voitureIt.salarie.prenom }" filterMatchMode="contains" >
+                                <h:outputText value="#{voitureIt.salarie.matricule} #{voitureIt.salarie.nom } #{ voitureIt.salarie.prenom }" />
+                            </p:column>
+                            <p:column headerText="Fonction " filterBy="#{voitureIt.salarie.fonction.fonction }" filterMatchMode="contains" >
+                                <h:outputText value="#{voitureIt.salarie.fonction.fonction }" />
+                            </p:column>
+                            <p:column headerText="Affectation" filterBy="#{voitureIt.affect}"  style="width:200px; " filterMatchMode="contains" >
+                                <h:outputText value="#{(voitureIt.affect==true)?((voitureIt.chantier != null)? voitureIt.chantier.code :(gestion_voitureMb.chantierBySalaryID(voitureIt.salarie.id))):'Non affecté'}"/>
+                            </p:column>
+                            <p:column headerText="Actions" style="width: 200px;"> 
+                                <p:commandButton  icon="ui-icon-trash"  update=":form:tbl,:pannel" actionListener="#{gestion_voitureMb.delete(voitureIt)}" >
+                                    <p:confirm header="Confirmation" message=" Voulez Vous Vraiment Supprimer Cette Voiture ?" icon="ui-icon-alert" />
+                                </p:commandButton>
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                    <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                </p:confirmDialog>
+                                <p:commandButton icon ="ui-icon-pencil" onclick="PF('update').show();" update=":formUp"  title="Modifier le détail de la voiture" >
+                                    <f:setPropertyActionListener value="#{voitureIt}" target="#{gestion_voitureMb.voitureSelected}" />
+                                </p:commandButton>
+                                <p:commandButton icon ="ui-icon-document" onclick="PF('detail').show();" update=":detail"  title="Détail de la voiture" >
+                                    <f:setPropertyActionListener value="#{voitureIt}" target="#{gestion_voitureMb.voitureSelected}" />
+                                </p:commandButton>
+                                <p:commandButton  title="Documents Voiture" icon="ui-icon-folder-collapsed" update=":formDocs" oncomplete="PF('dlg4').show();" 
+                                                  actionListener="#{gestion_voitureMb.initVoitureToShowDocs(voitureIt)}">
+                                    <f:setPropertyActionListener value="#{voitureIt}" target="#{gestion_voitureMb.voitureToShow}" />
+                                    <f:setPropertyActionListener value="#{voitureIt}" target="#{vehiculeDocMb.voitureShow}" />
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+
+                    <!--Detail Voiture-->
+
+                    <p:dialog header="Détail de la Voiture" widgetVar="detail" minHeight="40" modal="true">
+                        <h:form id="detail">
+                            <h:panelGrid columns="4" cellpadding="5">
+                                <p:outputLabel value="Numero Immatriculation" />
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.matriculevoiture}"/>
+                                <p:outputLabel value="WW" />
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.matricule_voiture_nouveau}"/>
+                                <p:outputLabel value="Premier Mise en service" />
+                                <h:outputText id="id_premier_m_service_ajoute" value="#{gestion_voitureMb.convertDateFormat(gestion_voitureMb.voitureSelected.premier_mise_circulation)}" >
+                                </h:outputText >
+                                <p:outputLabel value="M.C Au Maroc" />
+                                <h:outputText id="id_mc_maroc_ajouter" value="#{gestion_voitureMb.convertDateFormat(gestion_voitureMb.voitureSelected.mc_maroc)}">
+                                </h:outputText >
+                                <p:outputLabel value="Marque" />
+                                <h:outputText id="id_marque" value="#{gestion_voitureMb.voitureSelected.marque}"/>
+                                <p:outputLabel value="Model" />
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.model}"/>
+                                <p:outputLabel value="Type Carburant" />
+                                <h:outputText  value="#{gestion_voitureMb.voitureSelected.type_carburant}"/>
+                                <p:outputLabel value="N° châssis" />
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.num_chassis}"/>
+                                <p:outputLabel value="Puissance Fiscal" />
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.puissance_fiscal}"/>
+                                <p:outputLabel  value="Date de la prochaine visite technique" />
+                                <h:outputText id="button" value="#{gestion_voitureMb.convertDateFormat(gestion_voitureMb.voitureSelected.dateprochainetech)}">
+                                </h:outputText >
+                                <p:outputLabel value="N° de contrat d'assurance"/>
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.numcontrat}"/>
+                                <p:outputLabel value="Cout de Location/cout de leasing"/>
+                                <h:outputText value="#{gestion_voitureMb.voitureSelected.coutlocation}"/>
+                                <p:outputLabel value="Date de début du contrat d'assurance" />
+                                <h:outputText id="cass" value="#{gestion_voitureMb.convertDateFormat(gestion_voitureMb.voitureSelected.datedebutcontrat)}">
+                                </h:outputText >
+                                <p:outputLabel value="N° de la carte grise" />
+                                <h:outputText  value="#{gestion_voitureMb.voitureSelected.numcartegrise}"/>
+                                <p:outputLabel  value="Date de fin du contrat d'assurance" />
+                                <h:outputText id="dc" value="#{gestion_voitureMb.convertDateFormat(gestion_voitureMb.voitureSelected.datefincontrat)}">
+                                </h:outputText >
+                                <p:outputLabel  value="Date d'acquisition" />
+                                <h:outputText id="aqui"  value="#{gestion_voitureMb.convertDateFormat(gestion_voitureMb.voitureSelected.dateacquisition)}" >
+                                </h:outputText >
+                                <p:outputLabel  value="Propriétaire" />
+                                <h:outputText   value="#{gestion_voitureMb.voitureSelected.proprietaire}" >
+                                </h:outputText >
+                                <p:outputLabel  value="Statut" />
+                                <h:outputText   value="#{gestion_voitureMb.voitureSelected.statut}" >
+                                </h:outputText >
+                                <p:outputLabel  value="Date Statut" />
+                                <h:outputText   value="#{gestion_voitureMb.voitureSelected.dateStatut}" >
+                                </h:outputText >
+                            </h:panelGrid>
+                            <p:commandButton value="Quitter"  oncomplete="PF('detail').hide()" ajax="true"/>
+                        </h:form>
+                    </p:dialog>
+                    <!-- ******************************************************************************
+                    ****************************** Modifier Voiture **********************************-->
+                    <p:dialog header="Modifier le détail de la Voiture" widgetVar="update" minHeight="40" modal="true">
+                        <h:form id="formUp">
+                            <h:panelGrid columns="4" cellpadding="5">
+                                <h:outputText value="Numero Immatriculation" />
+                                <p:inputText value="#{gestion_voitureMb.voitureSelected.matriculevoiture}" />
+                                <h:outputText value="Immatriculation provisoire" />
+                                <p:inputText value="#{gestion_voitureMb.voitureSelected.matricule_voiture_nouveau}" />
+                                <h:outputText value="Premier Mise en service" />
+                                <p:calendar pattern="dd/MM/yyyy" id="id_premier_m_service_ajoute"  
+                                            showOn="button" 
+                                            value="#{gestion_voitureMb.voitureSelected.premier_mise_circulation}" >
+                                    <p:ajax event="dateSelect" update="id_mc_maroc_ajouter"/>
+                                </p:calendar>
+                                <h:outputText value="M.C Au Maroc" />
+                                <p:calendar pattern="dd/MM/yyyy" id="id_mc_maroc_ajouter"  showOn="button" 
+                                            value="#{gestion_voitureMb.voitureSelected.mc_maroc}" 
+                                            mindate="#{gestion_voitureMb.voitureSelected.premier_mise_circulation}"
+                                            />
+                                <h:outputText value="Marque" />
+                                <p:autoComplete id="id_marque" value="#{gestion_voitureMb.voitureSelected.marque}" completeMethod="#{gestion_voitureMb.completeText}" />
+                                <h:outputText value="Model" />
+                                <p:inputText value="#{gestion_voitureMb.voitureSelected.model}"/>
+                                <h:outputText value="Type Carburant" />
+                                <p:selectOneMenu id="type_carburant" value="#{gestion_voitureMb.voitureSelected.type_carburant}" style="width:125px">
+                                    <f:selectItem itemLabel="Diesel" itemValue="Diesel" />
+                                    <f:selectItem itemLabel="Essence" itemValue="Essence" />
+                                </p:selectOneMenu>
+                                <h:outputText value="N° châssis" />
+                                <p:inputText value="#{gestion_voitureMb.voitureSelected.num_chassis}"/>
+                                <h:outputText value="Puissance Fiscal" />
+                                <p:inputText value="#{gestion_voitureMb.voitureSelected.puissance_fiscal}"/>
+                                <h:outputText  value="Date de la prochaine visite technique" />
+                                <p:calendar pattern="dd/MM/yyyy" id="button"  showOn="button" value="#{gestion_voitureMb.voitureSelected.dateprochainetech}"/>
+                                <h:outputText value="N° de contrat d'assurance" />
+                                <p:inputText value="#{gestion_voitureMb.voitureSelected.numcontrat}"/>
+                                <h:outputText value="Cout de Location/cout de leasing" />
+                                <p:inputText value="#{gestion_voitureMb.voitureSelected.coutlocation}"/>
+
+                                <h:outputText  value="Date de début du contrat d'assurance" />
+                                <p:calendar pattern="dd/MM/yyyy" id="cass"  showOn="button" value="#{gestion_voitureMb.voitureSelected.datedebutcontrat}">
+                                    <p:ajax event="dateSelect" update="dc"/>
+                                </p:calendar>
+                                <h:outputText value="N° de la carte grise" />
+                                <p:inputText  value="#{gestion_voitureMb.voitureSelected.numcartegrise}"/>
+                                <h:outputText  value="Date de fin du contrat d'assurance" />
+                                <p:calendar pattern="dd/MM/yyyy" id="dc"  showOn="button" value="#{gestion_voitureMb.voitureSelected.datefincontrat}" mindate="#{gestion_voitureMb.voitureSelected.datedebutcontrat}">
+                                </p:calendar>
+                                <h:outputText  value="Date d'acquisition" />
+                                <p:calendar pattern="dd/MM/yyyy" id="aqui"  showOn="button" value="#{gestion_voitureMb.voitureSelected.dateacquisition}"/>
+                                <h:outputText value="Propriétaire" />
+                                <p:selectOneMenu  value="#{gestion_voitureMb.voitureSelected.proprietaire}" style="width:125px">
+                                    <f:selectItem itemLabel="TGCC" itemValue="TGCC" />
+                                    <f:selectItem itemLabel="Personnelle" itemValue="Personnelle" />
+                                    <f:selectItem itemLabel="Location" itemValue="Location" />
+                                </p:selectOneMenu>
+                                <h:outputText value="Statut" />
+                                <p:selectOneMenu  value="#{gestion_voitureMb.voitureSelected.statut}" style="width:125px">
+                                    <f:selectItem itemLabel="" itemValue="" />
+                                    <f:selectItem itemLabel="Vendu" itemValue="Vendu" />
+                                    <f:selectItem itemLabel="Réformé" itemValue="Réformé" />
+                                </p:selectOneMenu>
+                                <h:outputText  value="" />
+                                <h:outputText  value=""  style="width:125px"/>
+                                
+                                <h:outputText  value="Date Statut" />
+                                <p:calendar pattern="dd/MM/yyyy" id="date_statut_edit"  showOn="button" value="#{gestion_voitureMb.voitureSelected.dateStatut}"/>
+                                
+                            </h:panelGrid>
+                            <p:commandButton value="Valider" 
+                                             action="#{gestion_voitureMb.modifierVoiture()}"
+                                             oncomplete="PF('update').hide()" 
+                                             update=":form:tbl,:form:msgsM" />
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- ******************************************************************************
+                    ****************************** ajouter Voiture **********************************-->
+
+                    <p:dialog header="Nouvelle Voiture" widgetVar="dlg_Ajouter" minHeight="40" modal="true">
+                        <h:form id="formA">
+                            <h:panelGrid columns="4" cellpadding="5">
+                                <h:outputText value="Numero Immatriculation(*)" />
+                                <p:inputText value="#{gestion_voitureMb.voitureToAdd.matriculevoiture}" required="true" requiredMessage="Numero Immatriculation est obligatoire" />
+                                <h:outputText value="WW(*)" />
+                                <p:inputText value="#{gestion_voitureMb.voitureToAdd.matricule_voiture_nouveau}" required="true" requiredMessage="Numero WW est obligatoire" />
+                                <h:outputText value="Premier Mise en service" />
+                                <p:calendar pattern="dd/MM/yyyy" id="id_premier_m_service_ajoute"  showOn="button" 
+                                            value="#{gestion_voitureMb.voitureToAdd.premier_mise_circulation}" >
+                                </p:calendar>
+                                <h:outputText value="M.C Au Maroc" />
+                                <p:calendar pattern="dd/MM/yyyy" id="id_mc_maroc_ajouter"  showOn="button" value="#{gestion_voitureMb.voitureToAdd.mc_maroc}" mindate="#{gestion_voitureMb.voitureToAdd.premier_mise_circulation}" />
+                                <h:outputText value="Marque" />
+                                <p:inputText id="id_marque" required="true" requiredMessage="la marque est obligatoire" value="#{gestion_voitureMb.voitureToAdd.marque}"  />
+                                <h:outputText value="Model" />
+                                <p:inputText value="#{gestion_voitureMb.voitureToAdd.model}" required="true" requiredMessage="le model est obligatoire"/>
+                                <h:outputText value="Type Carburant" />
+                                <p:selectOneMenu  value="#{gestion_voitureMb.voitureToAdd.type_carburant}" style="width:125px">
+                                    <f:selectItem itemLabel="Diesel" itemValue="Diesel" />
+                                    <f:selectItem itemLabel="Essence" itemValue="Essence" />
+                                </p:selectOneMenu>
+                                <h:outputText value="N° châssis" />
+                                <p:inputText label="Numero châssis" value="#{gestion_voitureMb.voitureToAdd.num_chassis}" />
+                                <h:outputText value="Puissance Fiscal" />
+                                <p:inputText value="#{gestion_voitureMb.voitureToAdd.puissance_fiscal}"/>
+                                <h:outputText  value="Date de la prochaine visite technique" />
+                                <p:calendar pattern="dd/MM/yyyy" id="button"  showOn="button" value="#{gestion_voitureMb.voitureToAdd.dateprochainetech}"/>
+                                <h:outputText value="N° de contrat d'assurance" />
+                                <p:inputText value="#{gestion_voitureMb.voitureToAdd.numcontrat}"/>
+                                <h:outputText value="Cout de Location/cout de leasing" />
+                                <p:inputText value="#{gestion_voitureMb.voitureToAdd.coutlocation}"/>
+                                <h:outputText  value="Date de début du contrat d'assurance" />
+                                <p:calendar pattern="dd/MM/yyyy" id="cass"  showOn="button" value="#{gestion_voitureMb.voitureToAdd.datedebutcontrat}">
+                                <!--  <p:ajax event="dateSelect" update="dc"/>-->
+                                </p:calendar>
+                                <h:outputText value="N° de la carte grise" />
+                                <p:inputText  value="#{gestion_voitureMb.voitureToAdd.numcartegrise}"/>
+                                <h:outputText  value="Date de fin du contrat d'assurance" />
+                                <p:calendar pattern="dd/MM/yyyy" id="dc"  showOn="button" value="#{gestion_voitureMb.voitureToAdd.datefincontrat}" mindate="#{gestion_voitureMb.voitureToAdd.datedebutcontrat}">
+                                </p:calendar>
+                                <h:outputText  value="Date d'acquisition" />
+                                <p:calendar pattern="dd/MM/yyyy" id="aqui"  showOn="button" value="#{gestion_voitureMb.voitureToAdd.dateacquisition}"/>
+                                <h:outputText value="Propriétaire" />
+                                <p:selectOneMenu  value="#{gestion_voitureMb.voitureToAdd.proprietaire}" style="width:125px">
+                                    <f:selectItem itemLabel="TGCC" itemValue="TGCC" />
+                                    <f:selectItem itemLabel="Personnelle" itemValue="Personnelle" />
+                                    <f:selectItem itemLabel="Location" itemValue="Location" />
+                                </p:selectOneMenu>
+                            </h:panelGrid>
+                            <p:commandButton value="Ajouter" action="#{gestion_voitureMb.ajouterVoiture()}"
+                                             oncomplete="PF('dlg_Ajouter').hide()" ajax="true"  
+                                             update=":form:tbl,:pannel"/>
+                        </h:form>
+                    </p:dialog>
+                    <p:dialog header="Documents Voiture" widgetVar="dlg4" modal="true" resizable="false" width="1000">
+                        <h:form id="formDocs">          
+                            <p:growl id="msgsM" />
+                            <p:commandButton value="Ajouter un document" onclick="PF('dlg').show();" />
+                            <br /><br />
+                            <p:dataTable id="table" var="docIt" value="#{gestion_voitureMb.listDoc}"   rowKey="#{docIt.id}"  >
+                                <p:column headerText="Nom de document"   >
+                                    <h:outputText value="#{docIt.titre}"/>
+                                </p:column>
+                                <p:column headerText="Commentaire"   >
+                                    <h:outputText value="#{docIt.commentaire}"/>
+                                </p:column>
+                                <p:column headerText="Consulter">
+                                    <p:commandButton icon="ui-icon-document"
+                                                     title ="Consulter Document" 
+                                                     action="#{vehiculeDocMb.visualiser(docIt.chemin)}" 
+                                                     oncomplete="PF('consulterDoc').show()" update=":visuliser_id"/>
+                                </p:column>
+                                <p:column headerText="Document Téléchargé"   >
+                                    <h:commandButton value="Download" action="#{vehiculeDocMb.downLoad(docIt)}"></h:commandButton>
+                                </p:column>
+                                <p:column headerText="Supprimer"   >
+                                    <p:commandButton icon="ui-icon-trash" action="#{gestion_voitureMb.removeGest(docIt)}" update=":formDocs:table" >
+                                        <p:confirm header="Confirmation" message=" Voulez Vous Vraiment Supprimer Ce Document ?" icon="ui-icon-alert" />
+                                    </p:commandButton>
+                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                        <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                        <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                    </p:confirmDialog>
+                                </p:column>
+                            </p:dataTable>
+                        </h:form>
+                    </p:dialog>
+                    <p:dialog header="Nouveau Document" widgetVar="dlg" modal="true" showEffect="fade" 
+                              hideEffect="fade" resizable="false">
+                        <h:form id="form5"  enctype="multipart/form-data">
+                            <h:panelGrid columns="3" cellpadding="5" >
+                                <h:outputText value="Titre" id="titre"/>
+                                <h:inputText value="#{vehiculeDocMb.titre}" 
+                                             />
+                                <p:fileUpload value="#{vehiculeDocMb.uploadedFile}" 
+                                              mode="simple"></p:fileUpload>
+                                <p:separator/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="2" cellpadding="7"  >
+                                <h:outputText value="Commentaire" />
+                                <p:inputTextarea id= "Commentaire" value="#{vehiculeDocMb.commentaire}" rows="5" cols="30"  maxlength="255" 
+                                                 counterTemplate="{0} characters remaining." autoResize="false" />
+                            </h:panelGrid>
+                            <p:commandButton value="Ajouter" actionListener="#{vehiculeDocMb.saveDocumentVoitureGestion()}" oncomplete="PF('dlg').hide()"
+                                             ajax="false" update=":f1:table, :form:titre, :f1:msgM"/>
+                        </h:form>
+                    </p:dialog>
+                    <p:dialog  width="800px" resizable="false" modal="true" widgetVar="consulterDoc">
+                        <h:form id="visuliser_id">
+                            <p:media value="#{imageBean.documentMensuel}" width="1000px" height="500px" player="pdf"> 
+                                <f:param name="path" value="#{vehiculeDocMb.selectedDoc}" />
+                            </p:media>
+                        </h:form>
+                    </p:dialog>
+                    <br/>
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

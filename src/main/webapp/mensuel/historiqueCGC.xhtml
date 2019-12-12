@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Gestion Carte Gasoil</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+
+            <ui:define name="arborescence">
+
+
+                <h:form>
+                    Mensuel > <strong> gestion Carte Gasoil </strong>
+                </h:form>
+
+            </ui:define>
+
+            <ui:define name="content">
+                <p:panel id="pannel">
+
+                    <h:form id="form">
+                        <br />
+                        <div class="affectation-switch">
+                            <div class="btn-group" data-toggle="buttons">
+                                <p:commandButton class="btn btn-default" 
+                                                 action="/mensuel/consulterCarteGasoilChantier.xhtml?faces-redirect=true"
+                                                 value="CG Affectées à un Chantier "
+                                                 actionListener="#{carteGasoilMb.afficherCarteGasoilAffectChantier()}"/>
+                                <p:commandButton class="btn btn-default"
+                                                 action="/mensuel/consultCarteGS.xhtml?faces-redirect=true"
+                                                 value="CG Affectées à un Salarie" 
+                                                 actionListener="#{carteGSMb.afficherCarteGasoilAffect()}"/>
+                                <p:commandButton class="btn btn-default"
+                                                 value="Gestion Cartes Gasoil"
+                                                 action="/mensuel/gestionCarteGasoil.xhtml?faces-redirect=true"
+                                                 actionListener="#{gestion_Carte_GasoilMb.afficherCarteGasoilFindAll()}"
+                                                 update=":form:tbl"/>
+                                <p:commandButton class="btn btn-default"
+                                                 value="Historique Cartes Gasoil"
+                                                 action="/mensuel/historiqueCG.xhtml?faces-redirect=true"
+                                                 actionListener="#{gestion_Carte_GasoilMb.afficherCarteGasoilFindAll()}"
+                                                 update=":form:tbl"/>
+                                <p:commandButton class="btn btn-switch active"
+                                                 value="Historique CG Chantier"  
+                                                 update=":form:tbl"/>
+                            </div>
+                        </div>
+                        <br />
+                        <p:messages id="msgsM" closable="true"/>
+
+                        <h:panelGrid columns="10" cellpadding="10">
+                        <p:spacer width="5px"  height="1px"/>
+                        
+                            <p:outputLabel value="Recherche par date d'affectation : " />
+                           
+                            <p:outputLabel for="button" value="De:" />
+                            <p:calendar pattern="dd/MM/yyyy" id="button" 
+                                         style="display: flex; width: 200px;" 
+                                        value="#{carteGSMb.dateFrom2}" 
+                                        showOn="button"   />
+                            
+                            <p:outputLabel for="button2" value="à:" />
+                            <p:calendar pattern="dd/MM/yyyy" id="button2" 
+                                        value="#{carteGSMb.dateTo2}" 
+                                        style="display: flex; width: 200px;" 
+                                        showOn="button"   />
+                            <p:spacer width="20px"  height="1px"/>
+
+                        <p:commandButton class="btn btn-switch active" value="Rechercher" update=":form:tbl" icon="ui-icon-arrowthickstop-1-s" action="#{carteGSMb.searchByDate2}" />
+
+                         <p:commandButton class="btn btn-switch active" value="Reinitialiser" update=":form:tbl, :form" icon="ui-icon-arrowthickstop-1-s" action="#{carteGSMb.reinitSearch2}" />
+
+                         </h:panelGrid>
+                         <p:spacer width="20px"  height="20px"/>
+                         <br/><br/>
+
+
+
+                        <p:dataTable id="tbl" var="carteGasoilIt" value="#{carteGSMb.cartesH2}"
+                                     rows="10"  paginator="true"  paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                     >
+                            
+                            <p:column headerText="Date Affectation">
+                                <h:outputText value="#{modem3gMb.convertDateFormat(carteGasoilIt.dateAffectation)}"/>
+                            </p:column>
+
+                            <p:column headerText="Date Rendu">
+                                <h:outputText value="#{modem3gMb.convertDateFormat(carteGasoilIt.dateDesaffectation)}"/>
+                            </p:column>
+                            
+                            <p:column filterFunction="#{filterMb.filterByX}" headerText="Code Chantier" filterBy="#{carteGasoilIt.chantier.codeNovapaie}">
+                                <h:outputText value="#{carteGasoilIt.chantier.codeNovapaie}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Lib Chantier" filterFunction="#{filterMb.filterByX}" filterBy="#{carteGasoilIt.chantier.code}">
+                                <h:outputText value="#{carteGasoilIt.chantier.code}"/>
+                            </p:column>
+                            
+                             <p:column headerText="Numero de Carte" filterBy="#{carteGasoilIt.carteGasoil.numcartegasoil}">
+                                 <h:outputText value="#{carteGasoilIt.carteGasoil.numcartegasoil}"/>
+                            </p:column>
+                            
+                             <p:column headerText="Plafond Carte" filterBy="#{carteGasoilIt.carteGasoil.plafondotation}">
+                                 <h:outputText value="#{carteGasoilIt.carteGasoil.plafondotation}"/>
+                            </p:column>
+
+                            
+
+
+                            <p:column style="width:32px">
+
+                            </p:column>
+
+                        </p:dataTable>
+                    </h:form>
+
+
+
+
+
+
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

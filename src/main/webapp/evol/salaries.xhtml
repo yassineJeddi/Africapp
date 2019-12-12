@@ -1,0 +1,267 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html >
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Liste des Salarié</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="Template.xhtml">
+            <ui:define name="arborescence">
+                <h:outputText value="RH > Consultation des salariés" style="color:#000066; font-size: 14px;  font-family: Times New Roman, Georgia, Serif; "/>
+            </ui:define>
+            <ui:define name="content">
+                <p:blockUI block="tablePE" widgetVar="block">
+                    Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                </p:blockUI>
+                <p:growl showDetail="true" autoUpdate="true" id="msgs"  />
+                <!--<p:panel id="pannelPE" class="col-lg-12">-->
+                <h:form id="tablePE">
+                    <p:dataTable var="sal" value="#{salarieMb.salaries}" 
+                                 rowKey="#{sal.id}" rows="10"
+                                 class="table table-responsive table-bordered"
+                                 paginatorPosition="bottom"
+                                 id="salarieTable" >
+                        <f:facet name="header">
+                            <!--<p:panelGrid  columns="2">-->
+                            <!--                                    <br/>-->
+                            
+                                <p:commandButton 
+                                    rendered="#{authentification.hasPermission(constanteMb.ajouterSalarie)}"
+                                    value="Ajouter Salarie" icon="ui-icon-plus"
+                                    action="nouveausalarie.xhtml?faces-redirect=true" 
+                                    style="margin-top: 3px;"/>
+                           
+                            <p:spacer width="10px"/>
+                            <p:commandButton value="Rechercher" icon="ui-icon-search" onclick="PF('find').show();" style="margin-bottom: 3px;" />
+                            <!--</p:panelGrid>-->
+                        </f:facet>
+                        <p:column headerText ="Etat" width="10px">
+                            <img  title="#{sal.etat.etat}"
+                                  width="20px" heigth="20px" style="margin-left: 3px"
+                                  src="#{sal.etat.etat eq 'Actif' ?'../images/actif.png':
+                                         sal.etat.etat eq 'En cours' ? '../images/rouge.png':
+                                         sal.etat.etat eq 'Actif provisoire'?'../images/vert.png':
+                                         sal.etat.etat eq 'Sorti'?'../images/gris.png':
+                                         sal.etat.etat eq 'Désactivé'?'../images/desactive.png':
+                                         sal.etat.etat eq 'Blacklist' ?'../images/noir.png': ''}"
+                                  />
+                        </p:column>
+
+                        <p:column headerText="Maricule" width="25px" >
+                            <h:outputText value="#{sal.matricule}" />
+                        </p:column>
+                        <p:column headerText="Type" width="30px" >
+                            <h:outputText value="#{sal.type.type}" />
+                        </p:column>
+                        <p:column headerText="Fonction"  >
+                            <h:outputText value="#{sal.fonction.fonction}" />
+                        </p:column>
+                        <p:column headerText="Nom">
+                            <h:outputText value="#{sal.nom}" />
+                        </p:column>
+                        <p:column headerText="Prenom" >
+                            <h:outputText value="#{sal.prenom}" />
+                        </p:column>
+                        <p:column headerText="Operations" width="120px"> 
+                            <p:commandButton  icon="ui-icon-document" title="Détail" onstart="PF('block').show()" oncomplete="PF('block').hide()" 
+                                              action="#{salarieMb.navigateToDetailSalarie(sal.id)}"/>
+
+                           
+                            <p:commandButton  icon="ui-icon-plus"
+                                              rendered="#{authentification.hasPermission(constanteMb.ajouterChantier)}"
+                                              style="display: #{sal.etat.etat eq 'Sorti' ?'none':
+                                                                                    sal.etat.etat eq 'Désactivé' ? 'none':
+                                                                                    sal.etat.etat eq 'Blacklist' ?'none':'inline'}" 
+                                              title="#{sal.fonction.id.intValue() == 268 ? 'Affectation Chef Equipe' : 'Affectation'}"
+                                              action="#{dialogAffectationMb.updateChantierNonAffecter(sal.id)}"
+                                              onstart="PF('block').show()" oncomplete="PF('block').hide();#{sal.fonction.id.intValue() == 268 ? 'PF(\'affecterCE\').show();' : 'PF(\'affecter\').show();'}" 
+                                              update="#{sal.fonction.id.intValue() == 268 ? ':formAffectCE:nonAffectCE':':formAffect:nonAffect'}"/>
+                          
+                        </p:column>
+                        <f:facet name="footer">
+                            <h:panelGrid columns="9">
+                                <p:commandButton onstart="PF('block').show()" 
+                                                 oncomplete="PF('block').hide()"
+                                                 id="first" 
+                                                 icon="ui-icon-triangle-1-w" 
+                                                 class="ui-paginator-first ui-state-default ui-corner-all" 
+                                                 disabled="#{salarieMb.first}"
+                                                 action="#{salarieMb.onFirst()}" 
+                                                 update=":tablePE:salarieTable" 
+                                                 />
+                                
+                                <p:commandButton onstart="PF('block').show()" 
+                                                 oncomplete="PF('block').hide()"
+                                                 id="prev" 
+                                                 icon="ui-icon-carat-1-w"
+                                                 disabled="#{salarieMb.prev}"
+                                                 action="#{salarieMb.onPrevious()}"
+                                                 update=":tablePE:salarieTable"
+                                                 />
+                                
+                                <p:spinner id="page" 
+                                           value="#{salarieMb.page}"
+                                           disabled="#{salarieMb.pageId}"
+                                           min="1" max="#{salarieMb.var}" 
+                                           >
+                                    <p:ajax onstart="PF('block').show()" 
+                                            oncomplete="PF('block').hide()" 
+                                            listener="#{salarieMb.onPaginate()}"  
+                                            event="change"
+                                            update=":tablePE:salarieTable" 
+                                            />
+                                </p:spinner>
+                                
+                                <h:outputText value="/ #{salarieMb.var}"/>
+                                
+                                <p:commandButton onstart="PF('block').show()"
+                                                 oncomplete="PF('block').hide()" 
+                                                 id="next" disabled="#{salarieMb.next}"
+                                                 icon="ui-icon-carat-1-e"
+                                                 update=":tablePE:salarieTable"
+                                                 action="#{salarieMb.onNext()}"
+                                                 />
+                                
+                                <p:commandButton onstart="PF('block').show()" 
+                                                 oncomplete="PF('block').hide()" 
+                                                 id="last"
+                                                 disabled="#{salarieMb.last}" 
+                                                 icon="ui-icon-triangle-1-e" 
+                                                 update=":tablePE:salarieTable" 
+                                                 action="#{salarieMb.onLast()}" />
+
+                                <h:outputText value="Nombre Total" style="padding-right:  7px ; color:  white"/>
+                                <h:outputText value="#{salarieMb.i}"/>
+
+                                <h:outputText value="#{salarieMb.page ==1 or salarieMb.page ==0 ?
+                                                       '1 -10': ''.concat((salarieMb.page-1) * 10 +1).concat('-').concat((salarieMb.page-1) * 10 +10) }"
+                                              style="color:  white"/>
+                            </h:panelGrid>
+                        </f:facet>
+                    </p:dataTable>
+                </h:form>
+                <!--</p:panel>-->
+                <p:dialog modal="true" header="Recherche" widgetVar="find" >
+                    <p:blockUI block="formRecherche" widgetVar="blockDialog" >
+                        Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                    </p:blockUI>
+                    <h:form id="formRecherche">
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Matricule :"/>
+                            <p:inputText value="#{salarieMb.findSalarie.matricule}" />
+                            <h:outputText value="Matricule Nova :"/>
+                            <p:inputText value="#{salarieMb.findSalarie.matriculeDivalto}" />
+                            <h:outputText value="CIN :"/>
+                            <p:inputText value="#{salarieMb.findSalarie.cin}" />
+                            <h:outputText value="CNSS :"/>
+                            <p:inputText value="#{salarieMb.findSalarie.cnss}" />
+                            <h:outputText value="Nom :"/>
+                            <p:inputText value="#{salarieMb.findSalarie.nom}" />
+                            <h:outputText value="Prénom :"/>
+                            <p:inputText value="#{salarieMb.findSalarie.prenom}" />
+                            <h:outputText value="Statut :"/>
+                            <p:selectOneMenu id="statut" value="#{salarieMb.idStatut}" 
+                                             filter="true" filterMatchMode="contains" > 
+                                <f:selectItem itemLabel="-- Statuts --" itemValue="" /> 
+                                <f:selectItems value="#{statutMb.statuts}" var="s" itemLabel="#{s.statut}" itemValue="#{s.codeDiva}" />
+                                <p:ajax update=":formRecherche:fonction" 
+                                        onstart="PF('blockDialog').show();" 
+                                        oncomplete="PF('blockDialog').hide();"
+                                        listener="#{salarieMb.fonctionByStatut()}"  event="change"/>
+                            </p:selectOneMenu>
+                            <h:outputText value="Fonction :"/>
+                            <p:selectOneMenu id="fonction"  value="#{salarieMb.fonction}" 
+                                             filter="true" filterMatchMode="contains"> 
+                                <f:selectItem itemLabel="-- Fonctions --" itemValue="" /> 
+                                <f:selectItems value="#{salarieMb.fonctions}" var="f" itemLabel="#{f.fonction}" itemValue="#{f.id}" />
+                            </p:selectOneMenu>
+                            <h:outputText value="Etat :"/>
+                            <p:selectOneMenu id="etat" value="#{salarieMb.etat}" 
+                                             filter="true" filterMatchMode="contains"> 
+                                <f:selectItem itemLabel="-- Etats --" itemValue="" />
+                                <f:selectItems value="#{etatMb.etats}" var="e" itemLabel="#{e.etat}" itemValue="#{e.id}" />
+                            </p:selectOneMenu>
+                            <h:outputText value="Chantier :"/>
+                            <p:selectOneMenu id="chantier" value="#{salarieMb.chantier}" 
+                                             filter="true" filterMatchMode="contains"> 
+                                <f:selectItem itemLabel="-- chantiers --" itemValue="" /> 
+                                <f:selectItems value="#{evol_chantierMb.chantiers}"
+                                               var="c" itemLabel="#{c.code}" itemValue="#{c.id}" />
+                            </p:selectOneMenu>
+                            <p:commandButton ajax="true" onstart="PF('blockDialog').show();" oncomplete="PF('blockDialog').hide();PF('find').hide();" 
+                                             value="Recherche" update=":tablePE:salarieTable, :formRecherche" action="#{salarieMb.recherche()}" />
+                        </h:panelGrid>
+                    </h:form>
+                </p:dialog>
+                <p:dialog modal="true"  header="Chantiers non affectés au Chef Equipe" widgetVar="affecterCE" width="500" minHeight="300">
+                    <h:form id="formAffectCE">
+                        <p:dataTable  id="nonAffectCE" value="#{dialogAffectationMb.nonAffectChantier}" var="ch" paginator="true" rows="10">
+                            <f:facet name="header">
+                                <p:selectOneMenu id="chantierlist" filter="true" value="#{dialogAffectationMb.idchantier}" filterMatchMode="contains">
+                                    <f:selectItem itemLabel="--Chantier--" itemValue="" />
+                                    <f:selectItems value="#{dialogAffectationMb.nonAffectChantier}" var="c" itemLabel="#{c.code}" itemValue="#{c.id}" />
+                                    <p:ajax listener="#{dialogAffectationMb.filterChantier}" update="nonAffectCE" />
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <p:column headerText="Chantier"> 
+                                <h:outputText value="#{ch.code}"/>
+                            </p:column>
+                            <p:column headerText="Région">
+                                <h:outputText value="#{ch.region}"/>
+                            </p:column>
+                            <p:column headerText="Actions">
+                                <p:commandButton onstart="PF('block').show();PF('affecterCE').hide()" oncomplete="PF('block').hide();" icon="ui-icon-circle-check" 
+                                                 action="#{dialogAffectationMb.affectationCE(ch.id,'liste')}" />
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </p:dialog>
+                <p:dialog modal="true"  header="Chantiers non affectés" widgetVar="affecter" width="500" minHeight="300">
+                    <h:form id="formAffect">
+                        <p:dataTable  id="nonAffect" value="#{dialogAffectationMb.nonAffectChantier}" var="ch" paginator="true" rows="10">
+                            <f:facet name="header">
+                                <p:selectOneMenu id="chantierlist" filter="true" value="#{dialogAffectationMb.idchantier}" filterMatchMode="contains">
+                                    <f:selectItem itemLabel="--Chantier--" itemValue="" />
+                                    <f:selectItems value="#{dialogAffectationMb.nonAffectChantier}" var="c" itemLabel="#{c.code}" itemValue="#{c.id}" />
+                                    <p:ajax listener="#{dialogAffectationMb.filterChantier}" update="nonAffect" />
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <p:column headerText="Chantier"> 
+                                <h:outputText value="#{ch.code}"/>
+                            </p:column>
+                            <p:column headerText="Région">
+                                <h:outputText value="#{ch.region}"/>
+                            </p:column>
+                            <p:column headerText="Actions">
+                                <p:commandButton onstart="PF('block').show();" oncomplete="PF('block').hide();PF('ListChef').show()" icon="ui-icon-circle-check" 
+                                                 action="#{dialogAffectationMb.chefsBy(ch.id)}" update=":formChefE" />
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </p:dialog>
+                <p:dialog widgetVar="ListChef" modal="true">
+                    <h:form id="formChefE">
+                        <p:panelGrid columns="2">
+
+                            <h:outputText value="Chef Equipe:"/>
+                            <p:selectOneMenu value="#{dialogAffectationMb.idChefEquipe}" label="Chef Equipe" 
+                                             panelStyle="width:250px">
+                                <f:selectItem itemLabel="-- Chef d'équipe --"  itemValue=""/>
+                                <f:selectItems  value="#{dialogAffectationMb.chefEquipes}" var="c"
+                                                itemLabel="#{c.nom} #{c.prenom}" itemValue="#{c.id}"/>
+                            </p:selectOneMenu>
+
+                            <h:outputText/> 
+                            <p:commandButton class="btn btn-switch active" value="Ajouter" action="#{dialogAffectationMb.affectation('liste')}" update=":tablePE" oncomplete ="PF('ListChef').hide();PF('affecter').hide();"/>
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

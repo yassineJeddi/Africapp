@@ -1,0 +1,190 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+    <h:head>
+        <title>Historique des pointages des engins</title>
+    </h:head>
+    <body>
+        <ui:composition template="./enginTemplate.xhtml">
+            <ui:define name="content">
+                <p:panel id="panel">
+                    <p:messages id="msgs" showDetail="true" />
+                    <h:form  id="form">
+                        <!--// Declaration de panne //-->
+                        <p:commandButton class="btn btn-switch active" value="Déclaration d'une panne"
+                                         action="#{panneMb.prepareDecPanne()}" oncomplete="PF('dlg1').show()"
+                                         update=":EnginPanne,:EnginPanne:tbl_engins" />
+                        <br /><br />
+                        <!--table -->
+                        <p:dataTable id="dt" var="enginPanneIt" 
+                                     value="#{enginPanne.allPanne}" 
+                                     rows="10"  
+                                     paginator="true" 
+                                     widgetVar="panneVar" 
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                                     rowsPerPageTemplate="5,10,15">
+                            <p:column headerText="Chantier d'affectation" filterBy="#{enginPanneIt.engin.prjapId.code}" 
+                                      filterMatchMode="contains" >
+                                <h:outputText value="#{enginPanneIt.engin.prjapId.code}" />
+                            </p:column>
+                            <p:column headerText="Chantier Panne"  filterMatchMode="contains" >
+                                <h:outputText value="#{enginPanneIt.chantierPanne}" >
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Date" filterBy="#{enginPanne.convertFormatDate(enginPanneIt.date)}" filterMatchMode="contains" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{enginPanne.convertFormatDate(enginPanneIt.date)}" >
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Référence" filterBy="#{enginPanneIt.engin.IDEngin}" filterMatchMode="contains" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{enginPanneIt.engin.IDEngin}" />
+                            </p:column>
+                            <p:column headerText="Code" filterBy="#{enginPanneIt.engin.code}" filterMatchMode="contains" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{enginPanneIt.engin.code}" />
+                            </p:column>
+                            <p:column headerText="Designation" filterBy="#{enginPanneIt.engin.designation}" filterMatchMode="contains" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{enginPanneIt.engin.designation}" />
+                            </p:column>
+                            <p:column headerText="Commentaire" filterBy="#{enginPanneIt.commentaire}" filterMatchMode="contains" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{enginPanneIt.commentaire}" />
+                            </p:column>
+                            <p:column headerText="Déclaré par">
+                                <h:outputText value="#{enginPanneIt.user_MEPanne.nom} #{enginPanneIt.user_MEPanne.prenom}" />
+                            </p:column>
+                            <!--// Mise en marche  "Action" //-->
+                            <p:column headerText="Mise en Marche">
+                                <p:commandButton id="id_mise_marche" value="MEM" update=":mem:Mise" 
+                                                 oncomplete="PF('dlg2').show()"
+                                                 action="#{enginPanne.dernierChan_Avant_Depot()}">
+                                    <f:setPropertyActionListener value="#{enginPanneIt}"  target="#{enginPanne.lastPanne}" />
+                                </p:commandButton>   
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                    <p:dialog header="Déclaration de Panne" widgetVar="dlg1" modal="true" draggable="false" maximizable="true" showEffect="fade" 
+                              hideEffect="fade" height="80%" width="80%" resizable="false" style="margin-right: 100px !important;">
+                        <h:form id="EnginPanne">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <h:panelGrid columns="3" cellpadding="7"  >                                                         
+                                        <p:outputLabel value="Chantier :" />
+                                        <p:selectOneMenu class="value_dis" filter="true" value="#{panneMb.chantierID_selected_panne_declaration_popup}" filterMatchMode="contains" required="true">
+                                            <f:selectItem itemLabel="" itemValue="-1"/>
+                                            <f:selectItems value="#{chantierServMb.chantiers }" var="C"
+                                                           itemLabel="#{C.code}" itemValue="#{C.id}"/>
+                                            <p:ajax listener="#{panneMb.chantierByCode_get}" update=":EnginPanne:tbl_engins" />
+                                        </p:selectOneMenu>
+                                    </h:panelGrid>
+                                </div>
+                                <div class="col-lg-6" style="margin-top: -13px">
+                                    <p:messages id="msgsP" autoUpdate="true" showDetail="true" closable="true" />
+                                </div>
+                            </div>
+                            <hr />
+                            <p:dataTable id="tbl_engins" var="enginsIt" selectionMode="single" 
+                                         selection="#{panneMb.selected_engin_for_panne}" rowKey="#{enginsIt.IDEngin}" 
+                                         value="#{panneMb.l_engins_toDisplay}" rows="5"  paginator="true" 
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+                                <p:ajax event="rowSelect" listener="#{ panneMb.chantierPanneSelection() }" update=":EnginPanne:compt_kilo , :EnginPanne:compt_horaire, :EnginPanne:panne_button" />
+                                <p:column  filterMatchMode="contains" filterBy="#{enginsIt.code}"  headerText="Code"   >
+                                    <h:outputText value="#{enginsIt.code}" />
+                                </p:column>
+                                <p:column filterMatchMode="contains" filterBy="#{enginsIt.designation}"  headerText="Designation"   >
+                                    <h:outputText value="#{enginsIt.designation}" />
+                                </p:column>
+                                <p:column filterMatchMode="contains" filterBy="#{enginsIt.prjapId.code}"  headerText="Chantier d'affectation"   >
+                                    <h:outputText value="#{enginsIt.prjapId.code}" />
+                                </p:column>
+                                <p:column  headerText="Famille engin"   >
+                                    <h:outputText value="#{enginsIt.familleEngin}" />
+                                </p:column>
+                                <p:column  headerText="Marque"  filterMatchMode="contains" filterBy="#{enginsIt.marque}"  >
+                                    <h:outputText value="#{enginsIt.marque}" />
+                                </p:column>
+                                <p:column  headerText="Compteur km"   >
+                                    <h:outputText value="#{enginsIt.compteurKilometrique}" />
+                                </p:column>
+                                <p:column  headerText="Compteur H"   >
+                                    <h:outputText value="#{enginsIt.comteurHoraire}" />
+                                </p:column>
+                            </p:dataTable>
+                            <hr />
+                            <div id="engin_search">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <p:outputLabel for="compt_kilo" value="Compteur kilometrique :" />
+                                        <p:inputText  class="value_dis" id="compt_kilo" value="#{panneMb.panne.compteurKilometrique}" />
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <p:outputLabel for="compt_horaire" value="Compteur horaire :" />
+                                        <p:inputText class="value_dis" id="compt_horaire" value="#{panneMb.panne.compteurHoraire}" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class=" form-group col-lg-12">
+                                        <p:outputLabel for="commentaire" value="Commentaire :" />
+                                        <p:inputTextarea class="form-control value_dis" id="commentaire" value="#{panneMb.panne.commentaire}" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <p:commandButton actionListener="#{panneMb.addPanne()}" id="panne_button"
+                                                     disabled="#{panneMb.selected_engin_for_panne == null ? true : false}" class="col-lg-offset-10 btn btn-switch active" value="Ajouter la panne"   style="margin-right: 5px" update="msgsP , tbl_engins, :form"/>
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                    <!--Dialog Mise Marche-->
+                    <p:dialog  header="Mise en Marche" widgetVar="dlg2" modal="true" showEffect="fade" 
+                               hideEffect="fade" width="600px" style="top: -500px;"  resizable="false">
+                        <h:form id="mem">
+                            <p:outputPanel id="Mise">
+                                <div class="container-popup">
+                                    <div class="row">
+                                        <p:outputLabel class="col-lg-4" value="code :" />
+                                        <h:outputText class="col-lg-8" id="output1" value="#{enginPanne.engin_mem.code}"/>
+                                    </div>
+                                    <div class="row">
+                                        <p:outputLabel class="col-lg-4" value="Designation :" />
+                                        <h:outputText  class="col-lg-8" id="output2" value="#{enginPanne.engin_mem.designation}"/>
+                                    </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <p:outputLabel for="compt_kiloMEM" value="Compteur kilometrique :" />
+                                        <p:inputText  class="value_dis" id="compt_kiloMEM" value="#{enginPanne.engin_mem.compteurKilometrique}" />
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <p:outputLabel for="compt_horaireMEM" value="Compteur horaire :" />
+                                        <p:inputText class="value_dis" id="compt_horaireMEM" value="#{enginPanne.engin_mem.comteurHoraire}" />
+                                    </div>
+                                </div>
+                                    <div class="row">
+                                        <p:outputLabel class="col-lg-3" value="Chantier :" />
+                                        <p:selectOneMenu filter="true" filterMatchMode="contains" 
+                                                         class="col-lg-9" value="#{enginPanne.chantier}">
+                                            <f:selectItem itemLabel="" itemValue="-1"/>
+                                            <f:selectItems value="#{chantierServMb.chantiers}" var="y"
+                                                           itemLabel="#{y.code}" itemValue="#{y.id}" />
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                            </p:outputPanel>
+                            <p:commandButton value="Valider" id="id_btn_mm" 
+                                             action="#{enginPanne.updateEtat}"  
+                                             update=":form:dt" oncomplete="PF('panneVar').clearFilters();PF('dlg2').hide()"/>
+
+                            <p:blockUI block=":mem" trigger="id_btn_mm">
+                                LOADING<br />
+                                <p:graphicImage  value="/resources/img/loading.gif"/>
+                            </p:blockUI>
+                        </h:form>
+                    </p:dialog> 
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>
+

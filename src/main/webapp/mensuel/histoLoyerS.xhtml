@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"    
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Historique des loyers</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+
+            <ui:define name="arborescence">
+
+
+
+                <h:form>
+                    Mensuel > <h:commandLink action="/mensuel/affectLoyer.xhtml"> 
+                        Affecter Loyer à un salarié </h:commandLink> >
+                        <strong>Historique</strong> 
+                </h:form>
+
+            </ui:define>
+
+            <ui:define name="content">
+
+                <p:panel id="pannel">
+                    <h:form id="f1">
+                        <p:messages id="msgsM" />
+
+
+                        <br />
+                        <div class="affectation-switch">
+                            <div class="btn-group" data-toggle="buttons">
+                                <p:commandButton class="btn btn-default" 
+                                                 value="Loyer Affectées à un Salarié "
+                                                 action="/mensuel/consultLoyer.xhtml?faces-redirect=true"
+                                                 actionListener="#{loyer_SalarieMb.afficherListeLoyerSalarie()}"
+                                                 update=":f1:table" />
+                                <p:commandButton  action="/mensuel/consultLoyerChantier.xhtml?faces-redirect=true"
+                                                  class="btn btn-default" 
+                                                  value="Loyer Affectées à un Chantier"
+                                                  />
+                                <p:commandButton                                                  
+                                                  class="btn btn-switch active" 
+                                                  value="Historique des affectations"
+                                                  />
+                            </div>
+                        </div>
+
+                        <br/> <br/>
+                        
+                        <p:spacer width="5px"  height="1px"/>
+                        
+                        <p:selectOneMenu id="console" value="#{loyer_SalarieMb.loyerTypeSelected}"  style="width:125px">
+                            <p:ajax listener="#{loyer_SalarieMb.switchLoyerType()}" update=":f1:table, :f1" />
+                            <f:selectItem itemLabel="Loyer Salarie" itemValue="s" />
+                            <f:selectItem itemLabel="Loyer Chantier" itemValue="ch" />
+                        </p:selectOneMenu>
+                     
+                      <p:spacer width="50px"  height="1px"/>
+                      <p:outputLabel value="Recherche par date d'affectation : " />
+                      <br />
+                            <p:outputLabel for="button" value="De:" />
+                            <p:calendar pattern="dd/MM/yyyy" id="button" value="#{loyer_SalarieMb.dateFromS}" showOn="button"   />
+                            <p:spacer width="50px"  height="1px"/>                            
+                                                        
+                            <p:outputLabel for="button2" value="à:" />
+                            
+                            
+                            <p:calendar pattern="dd/MM/yyyy" id="button2" value="#{loyer_SalarieMb.dateToS}"  showOn="button"   />
+                            <p:spacer width="20px"  height="1px"/>
+                                                       
+
+                            <p:commandButton class="btn btn-switch active" value="Rechercher" update=":f1:table, :f1:tableC" icon="ui-icon-arrowthickstop-1-s" action="#{loyer_SalarieMb.searchByDateS}" />
+
+                            
+                            <p:commandButton class="btn btn-switch active" value="Reinitialiser" update=":f1:table,:f1:tableC, :f1" icon="ui-icon-arrowthickstop-1-s" action="#{loyer_SalarieMb.reinitSearchS}" />
+
+                         <p:spacer width="20px"  height="20px"/>
+                         
+                        
+       
+                         <br/><br/>
+
+                        
+
+
+                        
+
+                         <p:dataTable rendered="#{loyer_SalarieMb.isSalarie}" id="table"
+                                     rows="10"  paginator="true"  
+                                     paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" var="loyerSHIt" value="#{loyer_SalarieMb.loyerSH}" 
+                                     rowsPerPageTemplate="5,10,15">
+
+                             <p:column headerText="Identifiant" filterBy="#{loyerSHIt.loyerS.id}" filterFunction="#{filterMb.filterByX}"   >
+                                <h:outputText value="#{loyerSHIt.loyerS.id}"/>
+                            </p:column>
+
+                            <p:column  headerText="Nom Salarie"  filterBy="#{loyerSHIt.mensuel.nom}" filterFunction="#{filterMb.filterByX}"  >
+                                <h:outputText value="#{loyerSHIt.mensuel.nom}"/>
+                            </p:column>
+                            
+                            <p:column  headerText="Prénom Salarie"  filterBy="#{loyerSHIt.mensuel.prenom}" filterFunction="#{filterMb.filterByX}"  >
+                                <h:outputText value="#{loyerSHIt.mensuel.prenom}"/>
+                            </p:column>                          
+                            
+
+                            <p:column  headerText="Montant Loyer" filterBy="#{loyerSHIt.loyerS.montantloyer}">
+                                <h:outputText value="#{loyerSHIt.loyerS.montantloyer}"/>
+                            </p:column>
+                            
+                            
+                            <p:column headerText="date Affectation">
+                                <h:outputText value="#{modem3gMb.convertDateFormat(loyerSHIt.dateAffectation)}"/>
+                            </p:column>
+                            
+                            
+                            <p:column headerText="date Fin ">
+                                <h:outputText value="#{modem3gMb.convertDateFormat(loyerSHIt.dateDesaffectation)}"/>
+                            </p:column>
+
+                        </p:dataTable>
+                         
+                         <p:dataTable rendered="#{loyer_SalarieMb.isSalarie eq false}" id="tableC"
+                                     rows="10"  paginator="true"  
+                                     paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" var="loyerSHIt" value="#{loyer_SalarieMb.loyerCH}" 
+                                     rowsPerPageTemplate="5,10,15">
+
+                            
+                           
+                            
+                            <p:column  headerText="Id Loyer"  filterBy="#{loyerSHIt.loyerC.id}" filterFunction="#{filterMb.filterByX}"  >
+                                <h:outputText value="#{loyerSHIt.loyerC.id}"/>
+                            </p:column>  
+                             
+                             <p:column  headerText="Chantier"  filterBy="#{loyerSHIt.chantier.code}" filterFunction="#{filterMb.filterByX}"  >
+                                 <h:outputText value="#{loyerSHIt.chantier.code}"/>
+                             </p:column> 
+                            
+
+                             <p:column  headerText="Montant Loyer" filterBy="#{loyerSHIt.loyerC.montantloyer}">
+                                <h:outputText value="#{loyerSHIt.loyerC.montantloyer}"/>
+                            </p:column>
+                            
+                            
+                            <p:column headerText="date Affectation">
+                                <h:outputText value="#{modem3gMb.convertDateFormat(loyerSHIt.dateAffectation)}"/>
+                            </p:column>
+                            
+                            
+                            <p:column headerText="date Fin ">
+                                <h:outputText value="#{modem3gMb.convertDateFormat(loyerSHIt.dateDesaffectation)}"/>
+                            </p:column>
+
+                        </p:dataTable>
+                         
+                    </h:form>
+
+
+
+                    <p:dialog header="Rechercher Salarié Par " width="80%" widgetVar="dlg" minHeight="40" >
+                        <h:form id="formA" enctype="multipart/form-data">
+
+
+                            <div class="row center-block">
+
+
+                                <div class="col-lg-3">
+
+
+
+                                    <h:outputText value="Matricule de beneficiaire " />
+                                    <p:autoComplete value="#{loyer_SalarieMb.mensuelToSearch.matricule}" completeMethod="#{mensuelServMb.matricules}"/>
+
+                                </div>
+
+
+                                <div class="col-lg-3">
+
+                                    <h:outputText value="nom de beneficiaire " />
+                                    <p:autoComplete value="#{loyer_SalarieMb.mensuelToSearch.nom}" completeMethod="#{mensuelServMb.last_name}"/>
+
+                                </div>
+
+                                <div class="col-lg-3">
+
+                                    <h:outputText value="Prénom de beneficiaire" />
+                                    <p:autoComplete value="#{loyer_SalarieMb.mensuelToSearch.prenom}" completeMethod="#{mensuelServMb.first_name}"/>
+
+                                </div>
+
+
+                                <div class="col-lg-3">
+
+                                    <h:outputText value="Cin de beneficiaire" />
+                                    <p:autoComplete value="#{loyer_SalarieMb.mensuelToSearch.cin}" completeMethod="#{mensuelServMb.cins}"/>
+
+                                </div>
+
+
+
+
+                                <br/>
+                                <br/>
+                                <br/>
+
+
+                            </div>
+
+                            <div class="spacer30"/>
+
+                            <p:commandButton class="pull-right btn btn-switch active" value="Rechercher" update=":formA:tbl"  ajax="true" actionListener="#{loyer_SalarieMb.rechercheMensuel}"  onclick="PF('dlg').show();"  />
+
+
+
+                            <br/>
+
+
+
+                            <br /><br />
+                            <p:dataTable id="tbl" style="width:100%" var="mensuelIt" value="#{loyer_SalarieMb.mensuels}" 
+                                         rowKey="#{mensuelIt.id}" 
+                                         rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"  
+                                         scrollable="true" scrollHeight="150" >
+                                <p:ajax event="rowSelect"/>
+
+
+                                <p:column headerText="Matricule Bénéficiaire" filterBy="#{mensuelIt.matricule}" filterFunction="#{filterMb.filterByX}"   >
+                                    <h:outputText value="#{mensuelIt.matricule}" />
+                                </p:column>
+
+
+                                <p:column headerText="Nom Bénéficiaire" filterBy="#{mensuelIt.nom}" filterFunction="#{filterMb.filterByX}"   >
+                                    <h:outputText value="#{mensuelIt.nom}" />
+                                </p:column>
+
+                                <p:column headerText="Prénom Bénéficiaire" filterBy="#{mensuelIt.prenom}" filterFunction="#{filterMb.filterByX}" >
+                                    <h:outputText value="#{mensuelIt.prenom}" />
+                                </p:column>
+
+                                <p:column headerText="Date de Début" sortBy="#{mensuelIt.dateCreation}" >
+                                    <h:outputText value="#{mensuelIt.dateCreation}" />
+
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton icon="ui-icon-search" onclick="PF('dlg').hide();" actionListener="#{loyer_SalarieMb.consultation(mensuelIt)}" update=":f1:table"  >
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                            <p:commandButton value="Annuler"  onclick="PF('dlg').hide();"  ajax="true"/>
+
+                        </h:form>
+                    </p:dialog>
+
+
+                </p:panel>
+            </ui:define>
+
+
+
+        </ui:composition>
+
+    </body>
+
+
+
+
+
+</html>

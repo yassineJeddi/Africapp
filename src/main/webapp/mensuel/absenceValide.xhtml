@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title></title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+
+            <ui:define name="arborescence">
+
+
+
+                <h:form>
+                    Mensuel > <strong> valider les absences des mensuels </strong>
+                </h:form>
+
+            </ui:define>
+
+
+            <ui:define name="content">
+                <p:panel id="pannel">
+                    <h:form id="f1">
+                        <p:messages id="msgsM" closable="true" showDetail="true" autoUpdate="false" />
+                        <p:commandButton class="btn btn-switch active" icon="ui-icon-search" value="Rechercher Mensuel" iconPos="left" onclick="PF('dlg').show();" />
+                        <br /><br />
+                        <p:dataTable id="table"
+                                     rows="10"  paginator="true" rowKey="#{mensuelIt.id}"
+                                     selection="#{absenceMb.selectAB}" editable="true" 
+                                     paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" var="mensuelIt" value="#{absenceMb.absences}" rowsPerPageTemplate="5,10,15">
+
+
+                            <f:facet name="header">
+                                Absences des mensuels
+                            </f:facet>
+
+                            <p:column width="9%" headerText="Date Début"  filterBy="#{mensuelIt.dateDebut}"  filterFunction="#{filterMb.filterByX}" >
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputText value="#{absenceMb.converdateDay(mensuelIt.dateDebut)}">
+                                        </h:outputText>
+                                    </f:facet>
+                                    <f:facet name="input"><p:inputText value="#{absenceMb.heureE}"/></f:facet>
+                                </p:cellEditor>   
+                            </p:column>
+                            
+                            
+                              <p:column width="6%" headerText="Hr Db"  filterBy="#{mensuelIt.dateDebut}"  filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{absenceMb.converdateHour(mensuelIt.dateDebut)}h" />  
+                            </p:column>
+                            
+                            
+
+                            <p:column width="9%" headerText="Date Fin"  filterBy="#{mensuelIt.dateFin}" filterFunction="#{filterMb.filterByX}" >
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputText value="#{absenceMb.converdateDay(mensuelIt.dateFin)}">
+                                        </h:outputText>
+                                    </f:facet>
+                                    <f:facet name="input"><p:inputText value="#{absenceMb.heureS}"/></f:facet>
+                                </p:cellEditor>
+                            </p:column>
+                            
+                                <p:column width="6%" headerText="Hr Fin"  filterBy="#{mensuelIt.dateFin}" filterFunction="#{filterMb.filterByX}" >
+                                    <h:outputText value="#{absenceMb.converdateHour(mensuelIt.dateFin)}h" />
+                            </p:column>
+
+                            <p:column width="8%" headerText="Nom" filterBy="#{mensuelIt.salarie.nom}"  filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{mensuelIt.salarie.nom}"/>
+                            </p:column>
+
+                            <p:column width="8%" headerText="Prénom" filterBy="#{mensuelIt.salarie.prenom}"  filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{mensuelIt.salarie.prenom}"/>
+                            </p:column>
+
+                            <p:column width="8%" headerText="Fonction"  filterBy="#{mensuelIt.salarie.fonction.fonction}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText value="#{mensuelIt.salarie.fonction.fonction}"/>
+                            </p:column>
+
+                            <p:column width="8%" headerText="CIN" filterBy="#{mensuelIt.salarie.cin}" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{mensuelIt.salarie.cin}"/>
+                            </p:column>
+
+                            <p:column width="10%" headerText="CNSS" filterBy="#{mensuelIt.salarie.cnss}" filterFunction="#{filterMb.filterByX}"  >
+                                <h:outputText value="#{mensuelIt.salarie.cnss}"/>
+                            </p:column>
+
+                            <p:column width="7%" headerText="Type" filterBy="#{mensuelIt.typeAbsence}" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{mensuelIt.typeAbsence}"/>
+                            </p:column>
+
+                            <p:column width="9%" headerText="Commentaire" filterBy="#{mensuelIt.commentaire}" filterFunction="#{filterMb.filterByX}"  >
+                                <h:outputText value="#{mensuelIt.commentaire}"/>
+                            </p:column>
+
+                            <p:column width="15%"  headerText="Action"   >
+                                <p:selectOneRadio value="#{mensuelIt.checked}">
+                                    <f:selectItem itemValue = "1" itemLabel = "V" />
+                                    <f:selectItem itemValue = "2" itemLabel = "A" />
+                                    <p:ajax listener="#{absenceMb.setReadyToConfirm(true)}" update=":f1:btn1"/>
+                                </p:selectOneRadio>
+                            </p:column>
+                            <!--                            <p:column style="width:32px">
+                                                            <p:rowEditor />
+                                                        </p:column>-->
+                        </p:dataTable>
+                        <br/>
+                        <p:commandButton id="btn1" value="Confirmer" icon="ui-icon-check" class="btn btn-switch active pull-right" 
+                                         disabled="#{absenceMb.readyToConfirm eq false}" 
+                                         actionListener="#{absenceMb.valider_cancel__Absence()}" 
+                                         update=":f1:msgsM, :f1:table">
+                            <p:confirm header="Confirmation" message="êtes-vous sûr de vouloir continuer?" icon="ui-icon-alert" />
+                        </p:commandButton>                        
+                        <br/><br/>
+                    </h:form>
+
+                    <h:form>
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                            <p:commandButton value="Confirmer" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                            <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                        </p:confirmDialog>
+                    </h:form>
+
+
+                    <p:dialog header="Rechercher Mensuel" resizable="false" widgetVar="dlg" width="1000" minHeight="40" modal="true" >
+                        <h:form id="formA">
+
+                            <p:dataTable id="tbl" var="mensuelIt" value="#{mensuelMb.l_mensuels}" 
+                                         rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" 
+                                         scrollable="true" scrollHeight="150"
+                                         >
+
+                                <f:facet name="header">
+                                    Rechercher un mensuel
+                                </f:facet>
+
+
+                                <p:ajax event="rowSelect"/>
+
+                                <p:column headerText="Matricule Mensuel"  filterBy="#{mensuelIt.matricule}" filterFunction="#{filterMb.filterByX}" >
+                                    <h:outputText value="#{mensuelIt.matricule}" />
+                                </p:column>
+
+
+                                <p:column headerText="Nom Mensuel"  filterBy="#{mensuelIt.nom}" filterFunction="#{filterMb.filterByX}" >
+                                    <h:outputText value="#{mensuelIt.nom}" />
+                                </p:column>
+
+                                <p:column headerText="Prénom Mensuel" filterBy="#{mensuelIt.prenom}" filterFunction="#{filterMb.filterByX}" >
+                                    <h:outputText value="#{mensuelIt.prenom}" />
+                                </p:column>
+
+                                <p:column headerText="Date Début">
+                                    <h:outputText value="#{mensuelIt.dateCreation}" />
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton icon="ui-icon-check" onclick="PF('dlg').hide();" update=":f1:table" actionListener="#{absenceMb.absenceByIdMesuel_tocheck(mensuelIt.id)}">
+                                        <f:setPropertyActionListener value="#{mensuelIt}"  target="#{absenceMb.mensuel}" />
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                            <br/>
+                            <p:commandButton icon="ui-icon-close" class="btn btn-switch active pull-right" value="Annuler"  onclick="PF('dlg').hide();"  ajax="true"/>
+                        </h:form>
+
+                    </p:dialog>
+
+                </p:panel>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+
+</html>

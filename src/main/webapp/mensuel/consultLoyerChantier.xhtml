@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Consultation des loyers</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+
+            <ui:define name="arborescence">
+
+
+                <h:form>
+                    Mensuel > <h:commandLink action="/mensuel/affectLoyerChantier.xhtml"> Affecter Loyer à un chantier </h:commandLink> > <strong>Consultation</strong> 
+                </h:form>
+
+            </ui:define>
+
+            <ui:define name="content">
+                <p:panel id="pannel">
+                    <h:form id="f1">
+                        <p:messages id="msgsM" />
+
+
+
+                        <br />
+                        <div class="affectation-switch">
+                            <div class="btn-group" data-toggle="buttons">
+                                <p:commandButton class="btn btn-default" 
+                                                 value="Loyer Affectées à un Salarié "
+                                                 action="/mensuel/consultLoyer.xhtml?faces-redirect=true"
+                                                 actionListener="#{loyer_SalarieMb.afficherListeLoyerSalarie()}"
+                                                 update=":f1:table"/>
+                                <p:commandButton 
+                                    class="btn btn-switch active" 
+                                    value="Loyer Affectées à un Chantier"
+                                    />
+                                <p:commandButton  action="/mensuel/histoLoyerS.xhtml?faces-redirect=true"
+                                                  class="btn btn-default"                                                  
+                                                  actionListener="#{loyer_SalarieMb.loadHisto()}"
+                                                  value="Historique des affectations"
+                                                  />
+                            </div>
+                        </div>
+
+
+                        <br />
+
+                        <p:commandButton value="Rechercher chantier" 
+                                         onclick="PF('dlg').show();"
+                                         actionListener="#{loyer_ChantierMb.afficherChantiers()}"
+                                         update=":formA:tbl"/>
+
+
+                        <p:commandButton value="Réinitialiser"
+                                         actionListener="#{loyer_ChantierMb.afficherLoyerChantier()}" 
+                                         update=":f1:table, :f1" />
+
+
+
+                        <p:spacer width="50"/>
+
+                        <p:outputLabel value="Date Debut " />
+                        <p:spacer width="10"/>
+                        <p:calendar pattern="dd/MM/yyyy" id="btnDate" style="display: flex; width: 300px;" showOn="button" value="#{loyer_ChantierMb.date_Debut_Loyer_Chantier_To_Search}"/>
+                        <p:spacer width="10"/>
+                        <p:commandButton value="OK" update=":f1:table" actionListener="#{loyer_ChantierMb.rechercheParDateC()}"/>
+                        <p:spacer width="10"/>
+
+
+                        <br /><br />
+
+                        <p:dataTable id="table"
+                                     widgetVar="tableau"
+                                     rows="10"  paginator="true" rowKey="#{loyerCIt.id}"
+                                     editable="true" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" var="loyerCIt" value="#{loyer_ChantierMb.listeLChantier}" 
+                                     rowsPerPageTemplate="5,10,15"
+                                     rowStyleClass="#{loyerCIt.isEstArchive() eq true ? 'old' : null}">
+
+                            <p:column headerText="Identifiant" filterBy="#{loyerCIt.id}" filterFunction="#{filterMb.filterByX}"   >
+                                <h:outputText value="#{loyerCIt.id}"/>
+                            </p:column>
+
+                            <p:column headerText="N° Contrat"  filterBy="#{loyerCIt.numcontrat}" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{loyerCIt.numcontrat}"/>
+                            </p:column>
+
+                            <p:column headerText="Date Debut"   >
+                                <h:outputText value="#{loyerCIt.datedebut}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Nom Chantiers"  filterBy="#{loyerCIt.chantier.get(0).code}" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{loyerCIt.chantier.get(0).code}"/>
+                            </p:column>
+
+                            <p:column headerText="Région"  filterBy="#{loyer_ChantierMb.selectChantier.region}" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{loyer_ChantierMb.selectChantier.region}"/>
+                            </p:column>
+
+
+
+
+
+
+                            <p:column headerText="Montant" filterBy="#{loyerCIt.montantloyer}" filterFunction="#{filterMb.filterByX}"   >
+                                <h:outputText value="#{loyerCIt.montantloyer}"/>
+                            </p:column>
+
+                            <p:column headerText="Mode de paiemenet"  filterBy="#{loyerCIt.modepaiment}" filterFunction="#{filterMb.filterByX}"  >
+                                <h:outputText value="#{loyerCIt.modepaiment}" />
+                            </p:column>
+
+
+
+
+                            <p:column headerText="Actions" class="text-center" style="width:250px;"   >
+
+
+                                <p:commandButton title="Génerer bon caisse" 
+                                                 icon="ui-icon-document" 
+                                                 disabled="#{loyerCIt.isEstArchive() eq true}" 
+                                                  action="#{loyer_ChantierMb.redirectBonCaisseChantier(loyerCIt)}"
+                                                 actionListener="#{loyer_ChantierMb.redirectEditBCaisseCh(loyerCIt)}"
+                                                 />
+                                <p:commandButton  title="Consulter Fiche Loyer" 
+                                                  icon="ui-icon-folder-collapsed"  
+                                                  action="#{loyer_ChantierMb.redirectFicheLoyer(loyerCIt)}"                                                 
+                                                  actionListener="#{loyer_ChantierMb.visualiserFicheLoyer(loyerCIt)}"
+                                                  />
+
+                                <p:commandButton title="Gérer les recus caisse" 
+                                                 icon="ui-icon-arrowthickstop-1-s"                                                
+                                                 action="#{loyer_ChantierMb.redirectRCC(loyerCIt)}" 
+                                                 actionListener="#{loyer_ChantierMb.visualiserRecuChantier(loyerCIt)}"
+                                                 />
+                                <p:commandButton title="Anuuler l'affectation"
+                                                 oncomplete="PF('addDatRenduDlg').show();" 
+                                                 update=":f1:table, :f1:msgsM, :formC"
+                                                 disabled="#{loyerCIt.isEstArchive() eq true}"
+                                                 icon="ui-icon-circle-close"  
+                                                 actionListener="#{loyer_ChantierMb.setSelectedLoyerC(loyerCIt)}"
+                                                 />
+
+
+
+
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+
+
+                    <p:dialog header="ajouter date de fin" widgetVar="addDatRenduDlg" resizable="false" minHeight="50" modal="true">
+                        <h:form id="formC">
+                            <h:panelGrid columns="3">
+                                <p:outputLabel for="button22" value="Date Rendu:" />
+                                <p:calendar pattern="dd/MM/yyyy" id="button22" 
+                                            maxdate="#{operationStock.dateOfToday}"
+                                            mindate="#{loyer_ChantierMb.dateDebutChan}" 
+                                            required="true" requiredMessage="veuillez entrer une date de fin" 
+                                            value="#{loyer_ChantierMb.dateRenduC}"  
+                                            showOn="button"   />
+                                <p:commandButton value="Valider"  oncomplete="PF('tableau').clearFilters()" action="#{loyer_ChantierMb.annulerAffectLoyerC()}" update=":f1:table, :f1:msgsM" onclick="PF('addDatRenduDlg').hide();" />
+                            </h:panelGrid>   
+                        </h:form>
+                    </p:dialog>
+
+
+
+                    <p:dialog header="Rechercher Chantier Par " width="80%" widgetVar="dlg" minHeight="40" >
+                        <h:form id="formA">
+
+                            <br /><br />
+                            <p:dataTable id="tbl" style="width:100%;" var="chantierIt" value="#{loyer_ChantierMb.chantiers}" 
+                                         rowKey="#{chantierIt.prjapId}"
+                                         rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" 
+                                         scrollable="true" scrollHeight="150"    >
+                                <p:ajax event="rowSelect"/>
+
+                                <p:column headerText="Code Chantier"  filterBy="#{chantierIt.codeNovapaie}" filterFunction="#{filterMb.filterByX}"  >
+                                    <h:outputText  value="#{chantierIt.codeNovapaie}"/>
+                                </p:column>
+
+
+                                <p:column headerText="Nom Chantier"  filterBy="#{chantierIt.code}" filterFunction="#{filterMb.filterByX}"  >
+                                    <h:outputText  value="#{chantierIt.code}"/>
+                                </p:column>
+
+                                <p:column headerText="Région" filterBy="#{chantierIt.region}" filterFunction="#{filterMb.filterByX}"   >
+                                    <h:outputText  value="#{chantierIt.region}"/>
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton icon="ui-icon-search" onclick="PF('dlg').hide();" 
+                                                     update=":f1" 
+                                                     actionListener="#{loyer_ChantierMb.consultLoyerChantier(chantierIt)}">
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                            <p:commandButton value="Annuler"  onclick="PF('dlg').hide();"  ajax="true"/>
+
+
+                        </h:form>
+
+                    </p:dialog>
+
+                </p:panel>
+            </ui:define>
+
+
+
+        </ui:composition>
+
+    </body>
+
+
+
+
+
+</html>

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Consultation des cartes gasoils</title>
+    </h:head>
+    <body>
+        <ui:composition template="./mensuelTemplate.xhtml">
+            <ui:define name="arborescence">
+                <h:form>
+                    Mensuel > <h:commandLink action="/mensuel/affectCarteGasoil.xhtml"> Affecter carte gasoil à un salarié </h:commandLink> > <strong>Consultation</strong> 
+                </h:form>
+            </ui:define>
+            <ui:define name="content">
+                <p:panel id="pannel">
+                    <h:form id="f1">
+                        <p:messages id="msgsM" closable="true"/>
+                        <br />
+                        <div class="affectation-switch">
+                            <div class="btn-group" data-toggle="buttons">
+                                <p:commandButton class="btn  #{(cartesGasoilMb.activeCarteCH)?'btn-switch active':'btn-default'}"
+                                                 value="CG Affectées à un Chantier " update=":f1"
+                                                 actionListener="#{cartesGasoilMb.chargerListGazoilChantier()}" />
+                                <p:commandButton class="btn  #{(cartesGasoilMb.activeCarteSL)?'btn-switch active':'btn-default'} " 
+                                                 value="CG Affectées à un Salarie" update=":f1,:f1:table"
+                                                 actionListener="#{cartesGasoilMb.chargerListGazoilSalary()}"/>
+                                <p:commandButton class="btn  #{(cartesGasoilMb.activeCarte)?'btn-switch active':'btn-default'}" 
+                                                 value="Gestion Cartes Gasoil"  update=":f1"
+                                                 actionListener="#{cartesGasoilMb.chargerListCarte()}"/>
+                                <p:commandButton class="btn  #{(cartesGasoilMb.activeCarteHSL)?'btn-switch active':'btn-default'}" 
+                                                 value="Historique Cartes Gasoil"  update=":f1"
+                                                 actionListener="#{cartesGasoilMb.chargerListCarteHSL()}"/>
+                                <p:commandButton class="btn  #{(cartesGasoilMb.activeCarteHCH)?'btn-switch active':'btn-default'}" 
+                                                 value="Historique CG Chantier" update=":f1"
+                                                 actionListener="#{cartesGasoilMb.chargerListCarteHC()}"/>
+                            </div>
+                        </div>
+                        <br />
+                        <br />
+                        <p:dataTable id="table" 
+                                     rows="10"  paginator="true" rowKey="#{mensuelIt.id}"  editable="true" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" var="mensuelIt" value="#{(cartesGasoilMb.activeCarteHCH ||cartesGasoilMb.activeCarteHSL)?cartesGasoilMb.historiqueCarteGazoiles: cartesGasoilMb.carteGazoiles}" rowsPerPageTemplate="5,10,15">
+                            <p:column headerText="N° carte gasoil"  filterBy="#{(cartesGasoilMb.activeCarteHCH ||cartesGasoilMb.activeCarteHSL)? mensuelIt.carteGasoil.numcartegasoil :mensuelIt.numcartegasoil}"  filterMatchMode="contains"   >
+                                <h:outputText value="#{(cartesGasoilMb.activeCarteHCH ||cartesGasoilMb.activeCarteHSL)? mensuelIt.carteGasoil.numcartegasoil :mensuelIt.numcartegasoil}"/>
+                            </p:column>
+                            <p:column headerText="PIN"   filterBy="#{(cartesGasoilMb.activeCarteHCH ||cartesGasoilMb.activeCarteHSL)? mensuelIt.carteGasoil.codePin:mensuelIt.codePin}"  filterMatchMode="contains"  >
+                                <h:outputText value="#{(cartesGasoilMb.activeCarteHCH ||cartesGasoilMb.activeCarteHSL)?  mensuelIt.carteGasoil.codePin:mensuelIt.codePin}"/>
+                            </p:column>
+                            <p:column headerText="Plafond"   filterBy="#{(cartesGasoilMb.activeCarteHCH ||cartesGasoilMb.activeCarteHSL)? mensuelIt.carteGasoil.plafondotation :mensuelIt.plafondotation}"  filterMatchMode="contains"  >
+                                <h:outputText value="#{(cartesGasoilMb.activeCarteHCH ||cartesGasoilMb.activeCarteHSL)? mensuelIt.carteGasoil.plafondotation :mensuelIt.plafondotation}"/>
+                            </p:column>
+                            <p:column headerText="Date validation"   filterBy="#{(cartesGasoilMb.activeCarteHCH ||cartesGasoilMb.activeCarteHSL)? mensuelIt.carteGasoil.datefin :mensuelIt.datefin}"  filterMatchMode="contains"  >
+                                <h:outputText value="#{(cartesGasoilMb.activeCarteHCH ||cartesGasoilMb.activeCarteHSL)? mensuelIt.carteGasoil.datefin :mensuelIt.datefin}"/>
+                            </p:column>
+                            <p:column headerText="Date d'affectation"   filterBy="#{(cartesGasoilMb.activeCarteHCH ||cartesGasoilMb.activeCarteHSL)? mensuelIt.carteGasoil.dateafectation :mensuelIt.dateafectation}"  filterMatchMode="contains"  >
+                                <h:outputText value="#{(cartesGasoilMb.activeCarteHCH ||cartesGasoilMb.activeCarteHSL)? mensuelIt.carteGasoil.dateafectation :mensuelIt.dateafectation}">
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Date désaffectation"  visible="#{(cartesGasoilMb.activeCarteHCH ||cartesGasoilMb.activeCarteHSL)?'true' : 'false'}"
+                                      filterBy="#{ (cartesGasoilMb.activeCarteHCH ||cartesGasoilMb.activeCarteHSL)? mensuelIt.carteGasoil.dateafectation:''}"  filterMatchMode="contains"  >
+                                <h:outputText value="#{(cartesGasoilMb.activeCarteHCH ||cartesGasoilMb.activeCarteHSL)? mensuelIt.dateDesafect: '' }">
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Bénéficiaire"   filterBy="#{(mensuelIt.salarie!=null)?(''.concat(mensuelIt.salarie.matricule).concat(mensuelIt.salarie.nom).concat(mensuelIt.salarie.prenom)):((mensuelIt.chantier!=null)?mensuelIt.chantier.code:'Non affecté')}" filterMatchMode="contains"  >
+                                <h:outputText value="#{(mensuelIt.salarie!=null)?(''.concat(mensuelIt.salarie.matricule).concat(' | ').concat(mensuelIt.salarie.nom).concat(' ').concat(mensuelIt.salarie.prenom)):((mensuelIt.chantier!=null)?mensuelIt.chantier.code:'Non affecté')}"/>
+                            </p:column> 
+                            <p:column headerText="Désaffecter"  exportable="false" style="width: 250px;" visible="#{(cartesGasoilMb.activeCarteHCH ||cartesGasoilMb.activeCarteHSL)?'false' : 'true'}">
+                                <p:commandButton icon="ui-icon-closethick" value="Annuler" >
+                                    <p:confirm header="Confirmation" message=" Voulez vous vraiment annuler cette afféctation?" icon="ui-icon-alert" />
+                                </p:commandButton>
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                    <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                </p:confirmDialog>
+                                <p:commandButton value="désaffecter"  title="Désaffecter la carte gasoil" 
+                                                 actionListener="#{cartesGasoilMb.desAffectCarte(mensuelIt)}" update=":f1:table, :f1"> 
+                                    <p:confirm header="Confirmation" message=" Voulez vous vraiment annuler cette afféctation?" icon="ui-icon-alert" />
+                                </p:commandButton>
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                    <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                </p:confirmDialog>
+                                <p:commandButton icon ="ui-icon-document" onclick="PF('detail').show();" update=":detail"  title="Afficher le détail du téléphone">
+                                    <f:setPropertyActionListener value="#{mensuelIt}" target="#{cartesGasoilMb.carteGSelected}" />
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                    <p:dialog header="Détail de la carte gasoil" widgetVar="detail" modal="true" >
+                        <h:form id="detail">
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <p:outputLabel value="Nom du Salarie :" />
+                                <h:outputText value="#{carteGSMb.carteGSelected.mensuel.nom}"/>
+                                <p:outputLabel value="Prénom du Salarie :" />
+                                <h:outputText value="#{carteGSMb.carteGSelected.mensuel.prenom}"/>
+                                <p:outputLabel value="Matricule du Salarie :" />
+                                <h:outputText value="#{carteGSMb.carteGSelected.mensuel.matricule}"/>
+                                <p:outputLabel value="Numero Carte Gasoil :" />
+                                <h:outputText value="#{carteGSMb.carteGSelected.numcartegasoil}"/>
+                                <p:outputLabel value="Plafond Dotation :" />
+                                <h:outputText value="#{carteGSMb.carteGSelected.plafondotation}"/>
+                            </h:panelGrid>
+                            <p:commandButton value="Quitter" oncomplete="PF('detail').hide()" />
+                        </h:form>
+                    </p:dialog>
+                    <p:dialog header="Désaffecter carte gasoil" widgetVar="dateR" modal="true" width="400px">
+                        <h:form id="find">
+                            <h:panelGrid columns="2">
+                                <h:outputText value="Date Rendu :"/>        
+                                <p:calendar pattern="dd/MM/yyyy" id="date"    value="#{carteGSMb.dateRendu}" 
+                                            required="true" requiredMessage="date rendu est obligatoire"
+                                            mindate="#{carteGSMb.carteGSelected.datedebut}"
+                                            maxdate="#{operationStock.dateOfToday}"                                            
+                                            showOn="button"/>
+                                <br/>
+                                <h:outputText/>
+                                <p:commandButton value="Valider" onclick="PF('dateR').hide();" action="#{carteGSMb.addDateRendu()}" update=":f1:msgsM,:f1:table"/>
+                            </h:panelGrid>   
+                        </h:form>
+                    </p:dialog>
+                    <p:dialog header="Rechercher Salarié Par " width="80%" widgetVar="dlg" minHeight="40" >
+                        <h:form id="formA">
+                            <br /><br />
+                            <p:dataTable id="tbl" style="width:100%;" var="mensuelIt" value="#{carteGSMb.mensuels}" 
+                                         rowKey="#{mensuelIt.id}" 
+                                         rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"  
+                                         scrollable="true" scrollHeight="150" >
+                                <p:ajax event="rowSelect"/>
+                                <p:column headerText="Matricule Bénéficiaire"  filterBy="#{mensuelIt.matricule}" filterFunction="#{filterMb.filterByX}" >
+                                    <h:outputText value="#{mensuelIt.matricule}" />
+                                </p:column>
+                                <p:column headerText="Nom Bénéficiaire" filterBy="#{mensuelIt.nom}" filterFunction="#{filterMb.filterByX}"   >
+                                    <h:outputText value="#{mensuelIt.nom}" />
+                                </p:column>
+                                <p:column headerText="Prénom Bénéficiaire" filterBy="#{mensuelIt.prenom}" filterFunction="#{filterMb.filterByX}">
+                                    <h:outputText value="#{mensuelIt.prenom}" />
+                                </p:column>
+                                <p:column headerText="Date Début"  filterBy="#{mensuelIt.dateCreation}" filterFunction="#{filterMb.filterByX}" >
+                                    <h:outputText value="#{telephoneMb.convertDateFormat(mensuelIt.dateCreation)}" />
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton icon="ui-icon-check" onclick="PF('dlg').hide();" update=":f1:table" actionListener="#{carteGSMb.consultCarteCS(mensuelIt)}">
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                            <p:commandButton value="Annuler"  onclick="PF('dlg').hide();"  ajax="true"/>
+                        </h:form>
+                    </p:dialog>
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

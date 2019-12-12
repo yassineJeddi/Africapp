@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+          
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+      <h:head>
+        <title>Gestion Des Citerne</title>
+    </h:head>
+
+    <body>
+
+
+        <ui:composition template="./configTemplate.xhtml">
+
+            <ui:define name="arborescence">
+
+
+
+                <h:form>
+                    Config ><strong>Parametrage lots par article</strong> 
+                </h:form>
+
+            </ui:define>
+
+
+
+
+            <ui:define name="content">
+
+
+                <p:panel id="pannel">
+                    <h:form id="form">
+
+                        <p:messages id="msgsM" autoUpdate="false" closable="true" />
+
+
+
+
+                        <br /><br />
+
+                        <div class="row">
+
+                            <div class="col-lg-offset-1 col-lg-4">
+
+                                <div>
+                                    <h:panelGrid columns="2" cellpadding="10">
+                                   <p:outputLabel value="Fichier à uploader" for="fileUploadImport" />
+                                <h:panelGrid columns="2" cellpadding="10">
+                                    <p:fileUpload id="fileUploadImport" 
+                                                  value="#{parseLotArticle.uploadedLotParArticle}"
+                                                  update="msgupload" auto="false" 
+                                                  invalidFileMessage="type autorisé xls, xlsx" 
+                                                  allowTypes="/(\.|\/)(xlsx|xls)$/" label="Choisir fichier de parametrage" 
+                                                  mode="simple" >
+                                    </p:fileUpload>
+                                    <p:message id="msgupload" for="fileUploadImport" />
+                                    
+                                </h:panelGrid>
+                                   <p:commandButton value="Importer le fichier de paramétrage"
+                                                    actionListener="#{parseLotArticle.processUpload()}" />
+                                   </h:panelGrid>
+                                </div>
+                            </div>
+                        </div>
+
+                        <br /><br />
+
+                        <p:dataTable id="tbl" var="laxIt" value="#{parseLotArticle.listOfLotsParArticle}"   
+                                     rowKey="#{laxIt.lotArticleId}"
+                                     rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                     >
+                            <p:column headerText="Code Article"  filterBy="#{laxIt.articleId.codeArticle}" filterFunction="#{filterMb.filterByX}" >
+                                <p:outputLabel value="#{laxIt.articleId.codeArticle}" />
+                            </p:column>
+
+                            <p:column headerText="Designation Article" filterBy="#{laxIt.articleId.designation}" filterFunction="#{filterMb.filterByX}">
+                                <p:outputLabel value="#{laxIt.articleId.designation}" />
+                            </p:column>
+
+                            <p:column headerText="Libelle Lot" filterBy="#{laxIt.lotId.libelle}" sortBy="#{laxIt.lotId.libelle}">
+                                <p:outputLabel value="#{laxIt.lotId.libelle}" />
+                            </p:column>
+
+
+                        </p:dataTable>
+
+                    </h:form>
+
+
+                    <h:form>                        
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                            <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                            <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                        </p:confirmDialog>
+                    </h:form>
+
+
+
+                    
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

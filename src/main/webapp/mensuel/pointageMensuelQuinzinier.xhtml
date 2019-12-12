@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+    <h:head>
+        <title>Pointage Mensuel Quinzinier</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+
+
+            <ui:define name="content">
+
+
+
+                <p:panel id="pannel">
+                    <h:form id="formMsg">
+
+                        <p:messages id="msgsM" closable="true"/>
+                        <p:commandButton value="Rechercher salarié" onclick="PF('dlg1').show();" />
+                    </h:form>
+                    <h:form id="form">
+                        <br/>
+                        <br/>
+                        <h:panelGrid columns="11" cellpadding="1">
+                            <h:outputText value="Pointage :"  />
+                            <p:selectOneMenu value="#{pointageMensuelQuinzinierMb.pointeEntree}">
+                                <f:selectItem itemLabel="entree" itemValue="entree"/>
+                                <f:selectItem itemLabel="sortie" itemValue="sortie"/>
+                            </p:selectOneMenu> 
+
+                            <p:spacer width="10px" />
+
+                            <h:outputText  value="Chantier :" />
+                            <p:selectOneMenu value="#{pointageMensuelQuinzinierMb.chantier}" >
+                                <f:selectItem itemLabel="" itemValue=""/>
+                                <f:selectItems value="#{pointageMensuelQuinzinierMb.chantierslist}" var="y"
+                                               itemLabel="#{y.code}" itemValue="#{y.code}" />
+                            </p:selectOneMenu>
+
+                            <p:spacer width="10px" />
+                            <h:outputText value="Date :" />
+                            <p:calendar pattern="dd/MM/yyyy" id="button"  showOn="button" value="#{pointageMensuelQuinzinierMb.date}" />
+
+                            <p:spacer width="10px" />
+                            <h:outputText value="heure :" />
+                            <p:calendar pattern="dd/MM/yyyy" id="time" value="#{pointageMensuelQuinzinierMb.heure}" pattern="HH:mm" timeOnly="true"  />
+
+
+
+                        </h:panelGrid>
+
+
+
+                        <br/>
+
+
+
+                        <h:panelGrid columns="6" cellpadding="7">
+
+                            <h:outputText value="Matricule  :" />
+                            <p:inputText value="#{pointageMensuelQuinzinierMb.mensuelPointage.matricule}" readonly="true"  />
+
+
+                            <h:outputText value="fonction  :" />
+                            <p:inputText value="#{pointageMensuelQuinzinierMb.mensuelPointage.fonction.fonction}" readonly="true"  />
+
+
+                            <h:outputText value="Civilité  :" />
+                            <p:inputText value="#{pointageMensuelQuinzinierMb.mensuelPointage.civilite.civilite}"  readonly="true" />
+
+                            <h:outputText value="Etat  :" />
+                            <p:inputText value="#{pointageMensuelQuinzinierMb.mensuelPointage.etat.etat}" readonly="true" />
+
+                            <h:outputText value="Nom  :" />
+                            <p:inputText value="#{pointageMensuelQuinzinierMb.mensuelPointage.nom}" readonly="true" />
+
+
+
+
+                            <h:outputText value="Prenom  :" />
+                            <p:inputText value="#{pointageMensuelQuinzinierMb.mensuelPointage.prenom}" readonly="true" />
+
+
+
+                            <h:outputText value="Cin  :" />
+                            <p:inputText value="#{pointageMensuelQuinzinierMb.mensuelPointage.cin}" readonly="true" />
+
+
+                        </h:panelGrid>
+
+                        <p:commandButton value="Pointer"  actionListener="#{pointageMensuelQuinzinierMb.pointer()}" update=":formMsg"/>
+                    </h:form>
+
+
+
+
+                    <p:dialog header="Rechercher Salarié Par " widgetVar="dlg1" minHeight="40" >
+                        <h:form id="f"> 
+                            <h:panelGrid columns="2" cellpadding="5">
+
+                                <h:outputText value="Matricule" />
+                                <p:inputText value="#{pointageMensuelQuinzinierMb.mensuelsa.matricule}"/>
+
+                                <h:outputText value="Nom" />
+                                <p:inputText value="#{pointageMensuelQuinzinierMb.mensuelsa.nom}"/>
+
+                                <h:outputText value="Prénom" />
+                                <p:inputText value="#{pointageMensuelQuinzinierMb.mensuelsa.prenom}"/>
+
+                                <h:outputText value="Cin" />
+                                <p:inputText value="#{pointageMensuelQuinzinierMb.mensuelsa.cin}"/>
+
+                                <p:commandButton value="Rechercher" onclick="PF('dlg1').show();"  ajax="true" update=":f:tbl" actionListener="#{pointageMensuelQuinzinierMb.rechercher()}"/>
+                                <h:outputText/>
+                            </h:panelGrid>
+
+                            <br /><br />
+                            <p:dataTable id="tbl" style="width:380px;" var="mensuelIt" value="#{pointageMensuelQuinzinierMb.mensuels}" rowKey="#{mensuelIt.id}"
+                                         rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" selection="#{pointageMensuelQuinzinierMb.mensuelPointage}" selectionMode="single" 
+                                         scrollable="true" scrollHeight="150" >
+                                <p:ajax event="rowSelect"/>
+                                <p:column headerText="Matricule"   >
+                                    <h:outputText value="#{mensuelIt.matricule}" />
+                                </p:column>
+
+                                <p:column headerText="Nom"   >
+                                    <h:outputText  value="#{mensuelIt.nom}"/>
+                                </p:column>
+
+
+                                <p:column headerText="Prénom"   >
+                                    <h:outputText  value="#{mensuelIt.prenom}"/>
+                                </p:column>
+
+                                <p:column headerText="Date Début"   >
+                                    <h:outputText  value="#{constanteMb.getDateFormatFR(mensuelIt.dateCreation)}"/>
+                                </p:column>
+
+                            </p:dataTable>
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <p:commandButton value="OK" process="tbl" onclick="PF('dlg1').hide();" update=":form">
+                                    <f:setPropertyActionListener value="#{mensuelIt}"  target="#{pointageMensuelQuinzinierMb.mensuelPointage}" />
+                                </p:commandButton>
+                                <p:commandButton value="Annuler"  onclick="PF('dlg').hide();"  ajax="true"/>
+                            </h:panelGrid>     
+                        </h:form>
+                    </p:dialog>
+
+                </p:panel>
+            </ui:define>
+
+
+
+
+        </ui:composition>
+
+    </body>
+
+
+
+
+
+</html>

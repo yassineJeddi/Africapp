@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!-- was: <?xml version="1.0" encoding="UTF-8"?> -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+    
+    <context:annotation-config />
+    <import resource="database/DataSource.xml"/>
+    <import resource="database/Hibernate.xml"/>
+
+   
+    
+    <context:component-scan base-package="ma.bservices">
+        <context:exclude-filter type="regex" expression="ma\.bservices\.mb\..*"/>
+        <context:exclude-filter type="regex" expression="ma\.bservices\.tgcc\.mb\..*"/>
+    </context:component-scan>
+    
+  
+    	
+    
+    <tx:annotation-driven />
+     
+    <tx:advice id="txAdvice1">
+        <tx:attributes>
+            <tx:method name="saveOrUpdate*" propagation="REQUIRED"/>
+            <tx:method name="save*" propagation="REQUIRED"/>
+            <tx:method name="insertObject*" propagation="REQUIRED"/>
+            <tx:method name="update*" propagation="REQUIRED"/>
+            <tx:method name="*" propagation="NEVER" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <aop:config>
+        <aop:advisor pointcut="execution(* *..TestFacadeImpl.*(..))" advice-ref="txAdvice1"/>
+    </aop:config>
+</beans>

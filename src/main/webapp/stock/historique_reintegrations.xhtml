@@ -1,0 +1,180 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+
+    <h:head>
+        <title>Gestion Stock</title>
+
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./stockTemplate.xhtml">
+            <ui:define name="content">
+                <p:panel id="pannelGS">
+                    <h:form>
+
+                        <!--**********************************************************************************************
+                        ***********************    TOP BAR    ************************************************************
+                        ********************************************************************************************** -->
+
+                        <h:panelGrid id="grid" columns="12" cellpadding="1">   
+
+
+                            <!-- export to spreadsheet -->                    
+                            
+                            <h:commandLink >
+                                <p:commandButton class="btn btn-switch active" value="Exporter Retours" icon="ui-icon-arrowthickstop-1-s" type="button" />
+                                <p:dataExporter type="xls" target="  :tableGS:tblR" fileName="Retours sur Chantier" pageOnly="true"/>
+                            </h:commandLink>
+                            <p:spacer width="20px"/>
+
+                            <p:outputLabel  value="Chantier" />
+                            <p:selectOneMenu class="value_dis" value="#{operationStock.chantierGlobal}" filter="true" filterMatchMode="contains" >
+                                <p:ajax listener="#{operationStock.globalChantierManager(3)}" update=":tableGS:tblR" />
+                                <f:selectItem itemLabel="" itemValue="-1"/>
+                                <f:selectItems value="#{chantierServMb.chantiers}" var="v"
+                                               itemLabel="#{v.code}" itemValue="#{v.id}"/>
+                            </p:selectOneMenu> 
+
+                            <p:spacer width="20px"/>
+                           
+
+                        </h:panelGrid>
+
+
+
+                        <!-- select one button switcher - utils[1] -->
+                    </h:form>
+
+                    <br />
+
+                    <h:form id="tableGS">
+                        <p:messages id="msgsM" closable="true" showDetail="true" />
+                        
+
+                        <p:dataTable id="tblR" widgetVar="retourTable"  var="retourIt" value="#{operationStock.retours}" 
+                                     rowKey="#{retourIt.codeRetourStock}"  
+
+                                     sortMode="multiple"
+                                     selectionMode="single" rows="10"  paginator="true" 
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+
+                            <f:facet name="header">
+                                Historique des Retours d'affectations
+                            </f:facet>
+
+
+
+                            <p:column headerText="Code" filterBy="#{retourIt.codeRetourStock}" sortBy="#{retourIt.codeRetourStock}">
+                                <h:outputText value="#{retourIt.codeRetourStock}" />
+                            </p:column>            
+                            <p:column headerText="Article" filterMatchMode="contains" filterBy="#{retourIt.articleId.designation}" sortBy="#{retourIt.articleId.designation}">
+                                <h:outputText value="#{retourIt.articleId.designation}" />
+                            </p:column>   
+                            <p:column headerText="Zone" filterMatchMode="contains" filterBy="#{retourIt.zoneId.libeleZone}" sortBy="#{retourIt.zoneId.libeleZone}">
+                                <p:cellEditor>
+                                    <f:facet name="output"><h:outputText value="#{retourIt.zoneId.libeleZone}" /></f:facet>
+                                    <f:facet name="input">
+                                        <h:selectOneMenu value="#{retourIt.zoneId.libeleZone}" style="width:100%">
+                                            <f:selectItems value="#{zone.zones}" var="zone" itemLabel="#{zone.libeleZone}" itemValue="#{zone.libeleZone}" />
+                                        </h:selectOneMenu>
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column> 
+                            <p:column headerText="Lot" filterMatchMode="contains" filterBy="#{retourIt.lotId.libelle}" sortBy="#{retourIt.lotId.libelle}">
+                                <p:cellEditor>
+                                    <f:facet name="output"><h:outputText value="#{retourIt.lotId.libelle}" /></f:facet>
+                                    <f:facet name="input">
+                                        <h:selectOneMenu value="#{retourIt.lotId.libelle}" style="width:100%">
+                                            <f:selectItems value="#{LotCfg.lots}" var="lot" itemLabel="#{lot.libelle}" itemValue="#{lot.libelle}" />
+                                        </h:selectOneMenu>
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column> 
+                            <p:column headerText="Quantité">
+                                <p:cellEditor>
+                                    <f:facet name="output"><h:outputText value="#{retourIt.quantite}" /></f:facet>
+                                    <f:facet name="input"><p:inputText id="modelInput" value="#{retourIt.quantite}" style="width:100%"/></f:facet>
+                                </p:cellEditor>
+                            </p:column>
+                            <p:column headerText="Date" sortBy="#{retourIt.dateRetourStock}">
+                                <h:outputText value="#{operationStock.toFrDa(retourIt.dateRetourStock)}" />
+                            </p:column>
+
+                            <p:column headerText="Actions" exportable="false"> 
+
+                                <p:commandButton style="width:30px; height: 30px" process="tblR" id="af2f0yy" update="  :tableGS:tblR, :tableGS:msgsM" value="" icon="ui-icon-trash" oncomplete="" action="#{operationStock.cancelRetour(retourIt)}"  >
+                                    <p:confirm header="Confirmation" message="Êtes-vous sûr d'annuler ce retour d'affectation?" icon="ui-icon-alert" />
+                                </p:commandButton>
+                                <p:tooltip id="toolTi0pFade" for="af2f0yy" value="Annuler" />
+
+
+
+                            </p:column>
+
+                        </p:dataTable>
+
+                    </h:form>
+
+                    
+
+                    <p:dialog showEffect="fade"  hideEffect="fade" header="Bon d'affectation" resizable="false"  widgetVar="consulterDocC">
+                        <h:form id="bonForm">
+                            <object type="application/pdf"  internalinstanceid="5"
+                                    data="#{constanteMb.realPath}/#{operationStock.codeCurrent}?pfdrid_c=true" 
+                                    height="500px" 
+                                    width="1000px" >
+                                <embed src="#{constanteMb.realPath}/#{operationStock.codeCurrent}" type="application/pdf" />
+                            </object>
+                        </h:form>
+                    </p:dialog>
+                    <h:form>
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                            <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                            <p:commandButton value="Non" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                        </p:confirmDialog>
+                    </h:form>
+
+
+
+
+
+
+
+
+
+                </p:panel>
+
+
+                <!--                <p:tabView id="stockTabView">
+                
+                
+                                     TAB I: gestion de stock du chantier 
+                                    <ui:include src="gestionStock.xhtml">stock</ui:include>
+                                     END OF TAB I     
+                
+                                     TAB II: gestion des affectations intra-chantier 
+                                    <ui:include src="affectations.xhtml">affectations</ui:include>
+                                     END OF TAB II 
+                
+                                     TAB III: gestion des transfrts inter-chantiers 
+                                    <ui:include src="transferts.xhtml">transferts</ui:include>
+                                     END OF TAB III                     
+                
+                                </p:tabView>-->
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>
+
+
+
+

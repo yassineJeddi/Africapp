@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+    <h:head>
+        <title>Gestion Carte Gasoil</title>
+    </h:head>
+    <body>
+        <ui:composition template="./mensuelTemplate.xhtml">
+            <ui:define name="arborescence">
+                <h:form>
+                    Mensuel > <strong> gestion Carte Gasoil </strong>
+                </h:form>
+            </ui:define>
+            <ui:define name="content">
+                <p:panel id="pannel" >
+                    <h:form id="form">
+                        <br />
+                        <div class="affectation-switch">
+                            <div class="btn-group" data-toggle="buttons">
+                                <p:commandButton class="btn btn-default" 
+                                                 action="/mensuel/consulterCarteGasoilChantier.xhtml?faces-redirect=true"
+                                                 value="CG Affectées à un Chantier "
+                                                 actionListener="#{carteGasoilMb.chargerListGazoil()}"/>
+                                <p:commandButton class="btn btn-default"
+                                                 action="/mensuel/consultCarteGS.xhtml?faces-redirect=true"
+                                                 value="CG Affectées à un Salarie" 
+                                                 actionListener="#{carteGasoilMb.chargerListGazoil()}"/>
+                                <p:commandButton class="btn btn-switch active"
+                                                 value="Gestion Cartes Gasoil"
+                                                 actionListener="#{carteGasoilMb.chargerListGazoil()}"
+                                                 update=":form:tbl"/>
+                                <p:commandButton class="btn btn-default"
+                                                 value="Historique Cartes Gasoil"
+                                                 actionListener="#{carteGasoilMb.chargerListGazoil()}"
+                                                 action="/mensuel/historiqueCG.xhtml?faces-redirect=true"
+                                                 update=":form:tbl"/>
+                                <p:commandButton class="btn btn-default"
+                                                 value="Historique CG Chantier"
+                                                 actionListener="#{carteGasoilMb.chargerListGazoil()}"
+                                                 action="/mensuel/historiqueCGC.xhtml?faces-redirect=true"
+                                                 update=":form:tbl"/>
+                            </div>
+                        </div>
+                        <br />
+                        <p:growl id="msgsM" />
+                        <p:commandButton class="btn btn-switch active" value="Ajouter" icon="ui-icon-plus" onclick="PF('dlg_Ajouter').show();" />
+                        <p:commandButton class="btn btn-switch active" value="Recharger" action="#{carteGasoilMb.chargerListGazoil()}"  ajax="true"  update=":form:tbl,:pannel" />
+                        <br/><br/>
+                        <p:dataTable id="tbl" var="carteGasoilIt" value="#{carteGasoilMb.carteGazoiles}"
+                                     rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                     >
+                            <p:column headerText="Numero Carte Gasoil" filterBy="#{carteGasoilIt.numcartegasoil}" >
+                                <h:outputText value="#{carteGasoilIt.numcartegasoil}" />
+                            </p:column>
+
+                            <p:column headerText="Code Pine" filterBy="#{carteGasoilIt.codePin}" >
+                                <h:outputText value="#{carteGasoilIt.codePin}" />
+                            </p:column>
+
+                            <p:column headerText="Plafond Dotation"  filterBy="#{carteGasoilIt.plafondotation}" >
+                                <h:outputText value="#{carteGasoilIt.plafondotation}" />
+                            </p:column>
+
+                            <p:column headerText="Date Validité"  filterBy="#{carteGasoilIt.datefin}" >
+                                <h:outputText value="#{carteGasoilIt.datefin}" />
+                            </p:column>
+
+                            <p:column headerText="Affectation" filterBy="#{carteGasoilIt.affect}">
+                                <h:outputText value="#{carteGasoilIt.affect}"/>
+                            </p:column>
+
+                            <p:column headerText="Actions">
+                                <p:commandButton  icon="ui-icon-trash"  ajax="true">
+                                    <f:setPropertyActionListener value="#{mensuelIt}" target="#{carteGasoilMb.remouveCarteGazoil()}" />
+                                    <p:confirm header="Confirmation" 
+                                               message=" Voulez vous vraiment supprimer cette carte gasoil ?" 
+                                               icon="ui-icon-alert" />
+                                </p:commandButton>
+
+                                <p:commandButton  icon="ui-icon-search" 
+                                                  update=":formConso"
+                                                  oncomplete="PF('dlg_conso').show();">         
+                                    <f:setPropertyActionListener value="#{mensuelIt}" target="#{carteGasoilMb.carteGazoile}" />                           
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                    <!-- 
+                    **************************************************************************************
+                    ****************************** ajouter Carte Gasoil **********************************
+                    **************************************************************************************
+                    -->
+
+                    <p:dialog header="Nouvelle carte gasoil" widgetVar="dlg_Ajouter" minHeight="40" >
+                        <h:form id="formAdd">
+                            <h:panelGrid columns="4" cellpadding="5">
+                                <h:outputText value="Numero Carte Gasoil (13)" />
+                                <p:inputNumber  required="true" label="Numero Carte Gasoil" 
+                                                maxValue="9999999999999" minValue="0" style="width: 100px;"
+                                                requiredMessage="numero carte gasoil est obligatoir" 
+                                                value="#{carteGasoilMb.sufix}">
+                                </p:inputNumber>
+                                <h:outputText value="Numero Carte Gasoil (5)" />
+                                <p:inputNumber  required="true" label="Numero Carte Gasoil" 
+                                                maxValue="99999" minValue="0" style="width: 40px;"
+                                                requiredMessage="numero carte gasoil est obligatoir" 
+                                                value="#{carteGasoilMb.prefix}">
+                                </p:inputNumber>
+
+                                <h:outputText value="Code de pin" />
+                                <p:inputText required="true" 
+                                             maxlength="5"
+                                             requiredMessage="Le code de pin est obligatoire " 
+                                             value="#{carteGasoilMb.carteGazoile.codePin}">
+                                </p:inputText>
+                                <h:outputText value="Plafond Dotation" />
+                                <p:inputNumber required="true"  
+                                               requiredMessage="le plafond est obligatoire " 
+                                               value="#{carteGasoilMb.carteGazoile.plafondotation}">
+                                </p:inputNumber>
+                                <h:outputText value="Date Validité" /> 
+                                <p:calendar pattern="dd/MM/yyyy" class="value_dis" id="affe" 
+                                            showOn="button"  
+                                            value="#{carteGasoilMb.carteGazoile.datefin}"
+                                            required="true"                                             
+                                            requiredMessage="Date d'affectation champ obligatoire">
+                                    <p:ajax event="dateSelect" />
+                                </p:calendar>
+                            </h:panelGrid>
+                            <p:commandButton value="Ajouter"  
+                                             action="#{carteGasoilMb.addCarteGazoil()}" 
+                                             oncomplete="PF('dlg_Ajouter').hide()" 
+                                             update=":form:tbl,:pannel" ajax="true" />
+                        </h:form>
+                    </p:dialog>
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

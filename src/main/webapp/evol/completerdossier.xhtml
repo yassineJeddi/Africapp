@@ -1,0 +1,186 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets" >
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+
+        <ui:composition template="Template.xhtml">
+            <ui:define name="arborescence">
+                <h:outputText class="label label-default" value=" 'RH > Detail Salarie > Documents >' #{complementSalarieDocMb.addSalarieNom}"/>
+            </ui:define>
+            <ui:define name="content">
+                <p:blockUI block="panel" widgetVar="block">
+                    Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                </p:blockUI>
+                <p:panel id="panel">
+                    <h:outputText class="label label-danger" value="Etape 2"/>
+                    <h:form >
+                        <div class="row">
+                            <div class="col-lg-6 col-lg-offset-2">
+                                <p:commandButton  icon="ui-icon-plus" value="Affectation" class="btn btn-default btn-lg "
+                                                  title="#{complementSalarieDocMb.addSalarie.fonction.id.intValue() == 268 ? 'Affectation Chef Equipe' : 'Affectation'}"
+                                                  process="@form"
+                                                  rendered="#{authentification.hasPermission(constanteMb.ajouterChantier)}"
+                                                  action="#{dialogAffectationMb.updateChantierNonAffecter(complementSalarieDocMb.addSalarie.id)}"
+                                                  onstart="PF('block').show()" oncomplete="PF('block').hide();#{complementSalarieDocMb.addSalarie.fonction.id.intValue() == 268 ? 'PF(\'affecterCE\').show();' : 'PF(\'affecter\').show();'}" 
+                                                  update="#{complementSalarieDocMb.addSalarie.fonction.id.intValue() == 268 ? ':formAffectCE:nonAffectCE':':formAffect:nonAffect'}"/>
+                            </div>
+                        </div>
+                    </h:form>
+
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <h:form id="upcin">
+                                <h:panelGrid columns="1" cellspacing="5" cellpadding="20">
+                                    <p:fileUpload fileUploadListener="#{complementSalarieDocMb.saveCin}" 
+                                                  label="Choisir cin" update=":pdfcin"
+                                                  disabled="#{complementSalarieDocMb.checkIfDocExists('Cin')}"
+                                                  auto="true" mode="advanced" >
+                                    </p:fileUpload>  
+                                    <h:graphicImage value="../resources/imageUser/cin.png"  
+                                                    width="300" height="200" />
+                                </h:panelGrid>
+                            </h:form>
+                        </div>
+                        <div class="col-lg-7">
+                            <h:form id="pdfcin">
+                                <p:commandButton value="annuler" process="@this" style="display: #{complementSalarieDocMb.displayFile}" 
+                                                 update=":pdfcin, :upcin" action="#{complementSalarieDocMb.supprimerDocumentCin()}"/>
+                                <p:media value="#{imageBean.image}" width="100%" height="500px" player="pdf">
+                            <f:param name="path" value="#{complementSalarieDocMb.chemin}"/>
+                        </p:media>
+                            </h:form>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <h:form id='upcnss'>
+                                <h:panelGrid columns="1" cellspacing="5" cellpadding="20">
+                                    <p:fileUpload fileUploadListener="#{complementSalarieDocMb.saveCnss}" 
+                                                  label="Choisir cnss" update=":pdfcnss"
+                                                  auto="true" mode="advanced"
+                                                  disabled="#{complementSalarieDocMb.checkIfDocExists('cnss')}">
+                                    </p:fileUpload>
+                                    <h:graphicImage value="../resources/imageUser/cnss.png"  
+                                                    width="300" height="200" />
+                                </h:panelGrid>
+                            </h:form>
+                        </div>
+                        <div class="col-lg-7">
+                            <h:form id='pdfcnss'>
+                                <p:commandButton value="annuler" process="@this"  style="display: #{complementSalarieDocMb.displayFileCnss}" update=":upcnss,:pdfcnss" action="#{complementSalarieDocMb.supprimerDocumentCnss()}"/>
+                                                                                
+                                <p:media value="#{imageBean.image}" width="100%" height="500px" player="pdf">
+                            <f:param name="path" value="#{complementSalarieDocMb.chemincnss}"/>
+                        </p:media>
+                            </h:form>
+                        </div>
+                    </div>
+
+                    <div class="row">
+
+                        <h:form >
+                            <div class="col-lg-5">
+                                <p:fileUpload allowTypes="/(\.|\/)(gif|jpe?g|png)$/" 
+                                              fileUploadListener="#{complementSalarieDocMb.savePhoto}"
+                                              uploadLabel="Photo Salarie"  update="@form"
+                                              label="Upload photo" mode="advanced" auto="true">
+                                </p:fileUpload> 
+                            </div>
+                            <div class="col-lg-7">
+                                  <p:graphicImage value="#{imageBean.image}" >
+                                      <f:param name="path" value="#{complementSalarieDocMb.cheminPhotoSalarie}" />
+                            </p:graphicImage>
+                            </div>
+                        </h:form>
+
+                    </div>
+                    <h:form >
+                        <p:commandButton value="Terminer"
+                                         onstart="PF('block').show()" oncomplete="PF('block').hide();"
+                                         action ="#{complementSalarieDocMb.resultCreate()}"/>
+                    </h:form>
+                </p:panel>
+                <p:dialog closable="false" modal="true" resizable="false" widgetVar="confirm" >
+                    <h:form>
+                        <p:growl showDetail="true" sticky="true" autoUpdate="true"/>
+                        <p:commandButton value="Ok" action="#{complementSalarieDocMb.resultCreate()}"/>
+                    </h:form>
+                </p:dialog>
+                <p:dialog modal="true"  header="Chantier non affectés au Chef Equipe" widgetVar="affecterCE" width="500" minHeight="300">
+                    <h:form id="formAffectCE">
+                        <p:dataTable  id="nonAffectCE" value="#{dialogAffectationMb.nonAffectChantier}" var="ch" paginator="true" rows="10">
+                            <f:facet name="header">
+                                <p:selectOneMenu id="chantierlist" filter="true" value="#{dialogAffectationMb.idchantier}" filterMatchMode="contains">
+                                    <f:selectItem itemLabel="--Chantier--" itemValue="" />
+                                    <f:selectItems value="#{chantier.chantiers}" var="c" itemLabel="#{c.code}" itemValue="#{c.id}" />
+                                    <p:ajax listener="#{dialogAffectationMb.filterChantier}" update="nonAffectCE" />
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <p:column headerText="Chantier"> 
+                                <h:outputText value="#{ch.code}"/>
+                            </p:column>
+                            <p:column headerText="Région">
+                                <h:outputText value="#{ch.region}"/>
+                            </p:column>
+                            <p:column headerText="Actions">
+                                <p:commandButton onstart="PF('block').show();PF('affecterCE').hide()" oncomplete="PF('block').hide();" icon="ui-icon-circle-check" 
+                                                 action="#{dialogAffectationMb.affectationCE(ch.id,'add')}" />
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </p:dialog>
+                <p:dialog modal="true"  header="Chantier non affectés" widgetVar="affecter" width="500" minHeight="300">
+                    <h:form id="formAffect">
+                        <p:dataTable  id="nonAffect" value="#{dialogAffectationMb.nonAffectChantier}" var="ch" paginator="true" rows="10">
+                            <f:facet name="header">
+                                <p:selectOneMenu id="chantierlist" filter="true" value="#{dialogAffectationMb.idchantier}" filterMatchMode="contains">
+                                    <f:selectItem itemLabel="--Chantier--" itemValue="" />
+                                    <f:selectItems value="#{chantier.chantiers}" var="c" itemLabel="#{c.code}" itemValue="#{c.id}" />
+                                    <p:ajax listener="#{dialogAffectationMb.filterChantier}" update="nonAffect" />
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <p:column headerText="Chantier"> 
+                                <h:outputText value="#{ch.code}"/>
+                            </p:column>
+                            <p:column headerText="Région">
+                                <h:outputText value="#{ch.region}"/>
+                            </p:column>
+                            <p:column headerText="Actions">
+                                <p:commandButton onstart="PF('block').show();" oncomplete="PF('block').hide();PF('ListChef').show()" icon="ui-icon-circle-check" 
+                                                 action="#{dialogAffectationMb.chefsBy(ch.id)}" update=":formChefE" />
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </p:dialog>
+                <p:dialog widgetVar="ListChef" modal="true">
+                    <h:form id="formChefE">
+                        <p:panelGrid columns="2">
+
+                            <h:outputText value="Chef Equipe:"/>
+                            <p:selectOneMenu value="#{dialogAffectationMb.idChefEquipe}" label="Chef Equipe" 
+                                             panelStyle="width:250px">
+                                <f:selectItem itemLabel="-- Chef d'équipe --"  itemValue=""/>
+                                <f:selectItems  value="#{dialogAffectationMb.chefEquipes}" var="c"
+                                                itemLabel="#{c.nom} #{c.prenom}" itemValue="#{c.id}"/>
+                            </p:selectOneMenu>
+
+                            <h:outputText/> 
+                            <p:commandButton class="btn btn-switch active" value="Ajouter" 
+                                             action="#{dialogAffectationMb.affectation('add')}" 
+                                             onstart="PF('block').show()" 
+                                             oncomplete ="PF('ListChef').hide();PF('affecter').hide();PF('block').hide()"/>
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <body>
+        <ui:composition template="./Template.xhtml">
+            <ui:define name="arborescence">
+                <h:outputText value="Achat > Consultation BL > Détail BL" style="color:#000066; font-size: 14px;  font-family: Times New Roman, Georgia, Serif; margin-left: -920px;"/>
+            </ui:define>
+            <ui:define name="content">
+
+                <p:panel header="Détail Bon Livraison" styleClass="panel">
+                    <div class=" col-lg-5 col-lg-offset-1">
+                        <table >
+                            <tr>
+                                <td><h:outputText value="N° Bon de livraison:   "/></td>
+                                <td><p:inputText value="#{detailBLMb.bonLivraison.numeroBL}" readonly="true"/></td>
+                            </tr>
+                            <tr>
+                                <td> <h:outputText value="N° Bon de commande :   "/></td>
+                                <td><p:inputText value="#{detailBLMb.bonLivraison.numeroBC}" readonly="true"/></td>
+                            </tr>
+                            <tr>
+                                <td> <h:outputText value="Fournisseur :    "/></td>
+                                <td><p:inputText value="#{detailBLMb.bonLivraison.fournisseur}" readonly="true"/></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class=" col-lg-5 ">
+                        <table>
+                            <tr>
+                                <td><h:outputText value="Date de livraison:"/></td>
+                                <td>
+                                    <p:inputText value="#{constanteMb.getDateFormatFR(detailBLMb.bonLivraison.dateLivraison)}" readonly="true">
+                                        <f:convertDateTime dateStyle="short" pattern="dd-MM-yyyy"/>
+                                    </p:inputText>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><h:outputText value="Commentaire:"/></td>
+                                <td><p:inputTextarea rows="6" cols="20" value="#{detailBLMb.bonLivraison.commentaire}" readonly="true"/></td>
+                            </tr>
+                        </table>
+                    </div>
+                </p:panel>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <h:form>
+                          <p:media value="#{imageBean.image}" width="100%" height="500px" player="pdf"> >
+                            <f:param name="path" value="/#{detailBLMb.bonLivraison.nodeRefDocument}" />
+                            </p:media>
+                        </h:form>
+                    </div>
+                    <div class="col-lg-6">
+                        <p:dataTable class="table table-bordered" value="#{detailBLMb.articleBLs}" var="bl">
+                            <f:facet name="header">Articles</f:facet>
+                            <p:column headerText="Code Article">
+                                <h:outputText value="#{bl.article.codeArticle}"/>
+                            </p:column>
+                            <p:column headerText="Désignation">
+                                <h:outputText value="#{bl.article.designation}"/>
+                            </p:column>
+                            <p:column headerText="Q. Commandée">
+                                <h:outputText value="#{bl.quantiteInitiale}"/>
+                            </p:column>
+                            <p:column headerText="Q. Livrée">
+                                <h:outputText value="#{bl.quantiteLivree}"/>
+                            </p:column>
+                            <p:column headerText="Unité">
+                                <h:outputText value="#{bl.article.unite}"/>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <a href="achatBL.xhtml?faces-redirect=true" class="btn btn-default">Retour</a>
+                    </div>
+                </div>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+    <h:head>
+        <title>Affecter un loyer à un chantier</title>
+    </h:head>
+    <body>
+        <ui:composition template="./Template.xhtml">
+            <ui:define name="arborescence">
+                <h:form>
+                    Mensuel ><strong> Affecter Loyer à un chantier </strong> 
+                </h:form>
+            </ui:define>
+            <ui:define name="content">
+                <p:panel id="pannel">
+                    <h:form id="formA">
+                        <p:messages id="msgsM" closable="true"/>
+                        <!--                       <h:panelGrid columns="2" cellpadding="20">
+                                                    
+                                                    <h:commandLink action="/mensuel/affectLoyer.xhtml">affecter loyer des mensuels</h:commandLink>
+                                                    <h:commandLink action="/mensuel/consultLoyerChantier.xhtml">Consulter loyer des chantiers</h:commandLink>
+                                                </h:panelGrid>
+                        -->
+                        <div class="affectation-switch">
+                            <div class="btn-group" data-toggle="buttons">
+                                <p:commandButton  class="btn btn-switch active"  value="Affecter Loyer à un Chantier" />
+
+                                <p:commandButton action="/evol/affectLoyer.xhtml?faces-redirect=true" 
+                                                 class="btn btn-default" 
+                                                 value="Affecter Loyer à un Salarié"
+                                                 immediate="true"/>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <div class="col-lg-offset-1 col-lg-4">
+                                <div>
+                                    <p:commandButton style="width: 100%" class="btn btn-default" 
+                                                     value="Rechercher Chantier"
+                                                     onclick="PF('dlg').show();"
+                                                     actionListener="#{loyerMb.afficherChantier()}"
+                                                     update=":f:tbl" 
+                                                     immediate="true"/>
+                                </div>
+                                <br/>
+                                <div class="form-group">
+                                    <h:outputText value="Code Chantier :" />
+                                    <h:outputText class="value_dis" value="#{loyerMb.selectChantier.codeNovapaie}"/>
+                                </div>
+                                <div class="form-group">
+                                    <h:outputText value="Nom du Chantier : " />
+                                    <h:outputText class="value_dis" value="#{loyerMb.selectChantier.code}"/>
+                                </div>
+                                <div class="form-group">
+                                    <h:outputText value="Région : " />
+                                    <h:outputText class="value_dis" value="#{loyerMb.selectChantier.region}"/>
+                                </div>
+                                <hr/>
+                            </div>
+                            <div class="col-lg-1">
+                                <div class="verticalLine">
+                                </div>
+                            </div>
+                            <div class="col-lg-offset-1 col-lg-4">
+                                <div class="row">
+                                    <h:outputText class="col-lg-4 detailProprietairePadding"  value="Date de Début" />
+                                    <div class="col-lg-8">
+                                        <p:calendar pattern="dd/MM/yyyy" id="button"  
+                                                    required="true"
+                                                    requiredMessage="date de debut obligatoire"
+                                                    showOn="button"
+                                                    value="#{loyerMb.date_Debut_Loyer_chantier}"
+                                                    maxdate="#{operationStock.dateOfToday}"
+                                                    mindate="#{loyerMb.lc.dateFin}"/>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="row">
+                                    <h:outputText class="col-lg-4 detailProprietairePadding"  value="Date de Fin" />
+                                    <div class="col-lg-8">
+                                        <p:calendar pattern="dd/MM/yyyy" id="button2"  
+                                                    required="true"
+                                                    requiredMessage="date de fin obligatoire"
+                                                    showOn="button"
+                                                    value="#{loyerMb.date_Fin_Loyer_Chantier}"
+                                             />
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="row">
+                                    <h:outputText class="col-lg-4 detailProprietairePadding"  value="Nom du propriétaire" />
+                                    <div class="col-lg-8">
+                                        <p:selectOneMenu required="true" style="width: 345px;"
+                                                         requiredMessage="Le choix de propriétaire est obligatoire" 
+                                                         id="citerneListTrans"  
+                                                         value="#{loyerMb.ls.nomproprietaire}" filter="true" filterMatchMode="contains">
+                                            <f:selectItem itemLabel="Choix du propriétaire" noSelectionOption="true"/>
+                                            <f:selectItems value="#{loyerMb.listFournisseurLoyers}" var="c"
+                                                           itemLabel="#{c.tiers} #{c.nom}" itemValue="#{c.tiers} #{c.nom}"  /> 
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                                <br/>  
+                                <div class="row">
+                                    <h:outputText class="col-lg-4 detailProprietairePadding" value="Adresse Appartement" />
+                                    <div class="col-lg-8">
+                                        <p:inputText  value="#{loyerMb.lc.adresseproprietaire}"/>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="row">
+                                    <h:outputText class="col-lg-4 detailProprietairePadding" value="Téléphone du propriétaire" />
+                                    <div class="col-lg-8">
+                                        <p:inputMask value="#{loyerMb.lc.numtelephone}"  mask="99 99 99 99 99"/>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="row">
+                                    <h:outputText class="col-lg-4 detailProprietairePadding" value="Numéro Contrat" />
+                                    <div class="col-lg-8">
+                                        <p:inputText required="true"
+                                                     requiredMessage="numero contrat est obligatoire " 
+                                                     value="#{loyerMb.lc.numcontrat}">
+                                        </p:inputText>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="row">
+                                    <h:outputText class="col-lg-4 detailProprietairePadding"  value="Ville" />
+                                    <div class="col-lg-8">
+                                        <p:inputText value="#{loyerMb.lc.ville}"/>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="row">
+                                    <h:outputText  class="col-lg-4 detailProprietairePadding" value="Montant du loyer" />
+                                    <div class="col-lg-8">
+                                        <p:inputText required="true" requiredMessage="montant est obligatoire" label="Montant" value="#{loyerMb.lc.montantloyer}">
+                                            <f:convertNumber integerOnly="true" type="number"/>
+                                            <f:validateDoubleRange minimum="0" maximum="9999999999" />
+                                        </p:inputText>Dhs
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="row">
+                                    <h:outputText class="col-lg-4 detailProprietairePadding" value="Mode de paiement" />
+                                    <div class="col-lg-8">
+                                        <p:selectOneMenu required="true" id="output3" value="#{loyerMb.lc.modepaiment}">               
+                                            <f:selectItem itemValue="Espece" itemLabel="Espece"/>
+                                            <f:selectItem itemValue="Virement" itemLabel="Virement"/>
+                                            <p:ajax update="rib_id" listener="#{loyerMb.disbledRibLoyerChantier()}"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="row">
+                                    <h:outputText class="col-lg-4 detailProprietairePadding" value="RIB de Propriétaire" />
+                                    <div class="col-lg-8">
+                                        <p:inputText id="rib_id"  label="rib" value="#{loyerMb.lc.rib}"
+                                                      disabled="#{loyerMb.disable_rib == false}">
+                                            <f:validateLength minimum="24"  maximum="24"/>
+                                        </p:inputText>
+                                    </div>
+                                </div>
+                                <hr/>
+                                <p:commandButton id="button_affect" update=":formA" 
+                                                 actionListener="#{loyerMb.saveLoyerChantier()}" 
+                                                 disabled="#{loyerMb.disable_buttonaffectChantier == false }" 
+                                                 style="width: 100%" class="btn btn-switch active" value="Affecter Loyer" />
+                            </div>
+                        </div>
+                    </h:form>
+                    <!--Dialog Salarie-->
+                    <p:dialog header="Rechercher Chantier Par " width="80%" widgetVar="dlg" minHeight="40" >
+                        <h:form id="f"> 
+                            <br /><br />
+                            <p:dataTable id="tbl" style="width:100%;" var="chantierIt" value="#{loyerMb.chantiers}" rowKey="#{chantierIt.id}"
+                                         rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"  
+                                         scrollable="true" scrollHeight="150" >
+                                <p:ajax event="rowSelect"/>
+                                <p:column headerText="Code Chantier"  filterBy="#{chantierIt.codeNovapaie}" filterFunction="#{filterMb.filterByX}" >
+                                    <h:outputText  value="#{chantierIt.codeNovapaie}"/>
+                                </p:column>
+                                <p:column headerText="Nom Chantier"  filterBy="#{chantierIt.code}" filterFunction="#{filterMb.filterByX}" >
+                                    <h:outputText  value="#{chantierIt.code}"/>
+                                </p:column>
+                                <p:column headerText="Région"  filterBy="#{chantierIt.region}" filterFunction="#{filterMb.filterByX}" >
+                                    <h:outputText  value="#{chantierIt.region}"/>
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton icon="ui-icon-check" onclick="PF('dlg').hide();" update=":formA" action="#{loyerMb.redirectChantier(chantierIt)}">
+                                        <f:setPropertyActionListener value="#{chantierIt}"  target="#{loyerMb.selectChantier}" />
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <p:commandButton value="Annuler"  onclick="PF('dlg').hide();"  ajax="true"/>
+                            </h:panelGrid>     
+                        </h:form>
+                    </p:dialog>
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

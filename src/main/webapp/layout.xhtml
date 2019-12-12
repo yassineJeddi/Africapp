@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html >
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <h:head>
+        <title>TGCC-INTEGRATION</title>
+        <meta charset="UTF-8"></meta>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" ></meta>
+        <link rel="stylesheet" type="text/css" href="resources/bower_components/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="resources/bower_components/bootstrap/dist/css/bootstrap-theme.min.css" />
+        <link rel="stylesheet" type="text/css" href="resources/css/main.css" />
+        <!--<link rel="icon" type="img/ico" href="resources/img/logo.ico" />-->
+    </h:head>
+    <h:body>
+        <div id="wrapper">
+            <div id="sidebar-wrapper">
+                <div id="logo-zone">
+                    <img class="logo-img center center-block" alt="logo-tgcc" src="resources/img/logo.png" />
+                </div>
+                <div>
+                    <ul class="sidebar-nav">
+                        <li>
+                            <div>
+                                <a href="#">Quinzainiers 
+                                    <div class="icon-arrow-menu"></div>
+                                </a>
+                            </div>
+                        </li>
+                        <li>
+                            <a href="#">Mensuels
+                                <div class="icon-arrow-menu"></div>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="active" href="#">Engins
+                                <div class="icon-arrow-menu"></div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">Stock
+                                <div class="icon-arrow-menu"></div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div id="page-content-wrapper">
+                <div class="menu-vertical">
+                    <div class="row">
+                        <div class="col-lg-1 col-sm-1 col-xs-1 col-md-1">
+                            <a href="#menu-toggle" id="menu-toggle">
+                                <div class="menu-ham">
+                                    <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-lg-9 col-sm-9 col-xs-9 col-md-9">
+                            <div class="row nav-row">
+                                <ul class="nav nav-pills nav-tgcc" role="menu" aria-labelledby="dropdownMenu">
+                                    <li class="nav-divider nav-divider-atl-header"></li>
+                                    <li class="nav-tgcc  vertical-center" role="maintenance">
+                                        <a class="trigger right-caret" tabindex="0" data-toggle="dropdown" aria-expanded="false">
+                                            <span class="menu-logo"><img src="resources/img/icon-engin.png" /></span> 
+                                            <span class="text-menu visible-lg visible-md">Menseuls</span> 
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li > <a href="mensuel.xhtml" tabindex="0">Liste des mensuels</a></li>
+                                            <li> <a href="pointage.xhtml" tabindex="0">Déclaration de pointage</a></li>
+                                            <li> <a href="pointage.xhtml" tabindex="0">Abscence</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="nav-divider nav-divider-atl-header"></li>
+                                    <li class="nav-tgcc vertical-center" role="maintenance">
+                                        <a class="trigger right-caret" tabindex="0" data-toggle="dropdown" aria-expanded="false">
+                                            <span class="menu-logo"><img src="resources/img/icon-maintenance.png" /></span>    
+                                            <span class="text-menu visible-lg visible-md">Elements affectés</span>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li> <a href="affectation.xhtml" tabindex="0">Affectation</a></li>
+                                            <li> <a href="consultation.xhtml" tabindex="0">Consultation</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="nav-divider nav-divider-atl-header"></li>
+                                    <li class="nav-tgcc vertical-center" role="user">
+                                        <a class="trigger right-caret" tabindex="0" data-toggle="dropdown" aria-expanded="false">
+                                            <span class="menu-logo"><img src="resources/img/icon-user.png" /></span>    
+                                            <span class="text-menu visible-lg visible-md">MAINTENANCE</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-divider nav-divider-atl-header"></li>
+                                    <li class="nav-tgcc vertical-center" role="maintenance">
+                                        <a class="trigger right-caret" tabindex="0" data-toggle="dropdown" aria-expanded="false">
+                                            <span class="menu-logo"><img src="resources/img/icon-maintenance.png" /></span>    
+                                            <span class="text-menu visible-lg visible-md">ADMINISTRATION</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-sm-2 col-xs-2 col-md-2">
+                            <div class="logout">
+                                <div style="color: #FFF;" class="visible-lg visible-md">
+                                    Logout
+                                </div>
+                                <div class="logout-small visible-xs visible-sm">
+                                    <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="arborescence">
+                </div>
+                <div class="content">
+                    <ui:insert name="content">Content</ui:insert>
+                </div>
+            </div>
+        </div>
+        <script src="resources/bower_components/jquery/dist/jquery.js"></script>
+        <!--<script src="resources/js/bootstrap.min.js"></script>-->
+        <!--<script src="resources/js/../bower_components/"></script>-->
+        <script src="resources/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+        <!-- Menu Toggle Script -->
+        <script>
+            $("#menu-toggle").click(function (e) {
+                e.preventDefault();
+                $("#wrapper").toggleClass("toggled");
+            });
+        </script>
+    </h:body>
+</html>

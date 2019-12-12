@@ -1,0 +1,302 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+    <h:head>
+        <title>Parc Engins</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./adminTemplate.xhtml">
+
+            <ui:define name="content">
+
+
+
+                <br />
+
+                <h:panelGrid columns="2">
+
+                    <p:panel id="pannelPE">
+
+                        <h:form id="tablePE">
+                            <p:messages id="msgsM" closable="true"/>
+                            <h4>Gestion de Groupe</h4>
+                            <p:commandButton value="Ajouter" icon="ui-icon-plus" type="button" onclick="PF('dlg2').show();"/>
+                            <br /><br />
+                            <p:dataTable id="tbl" var="groupeIt" value="#{groupe.groupes}" 
+                                         rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+
+
+                                <p:ajax event="rowEdit" listener="#{groupe.onRowEdit}" update=":tablePE:msgsM" />
+                                <p:ajax event="rowEditCancel" listener="#{groupe.onRowCancel}" update=":tablePE:msgsM" />
+
+                                <p:column headerText="ID_GROUPE"   >
+                                    <h:outputText value="#{groupeIt.id}" />
+                                </p:column>
+
+                                <p:column headerText="Groupe"   >
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{groupeIt.groupe}"/></f:facet>
+                                        <f:facet name="input"><p:inputText value="#{groupeIt.groupe}" style="width:100%"/></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column>
+                                    <p:commandButton  icon="ui-icon-trash"  update=":tablePE:tbl,:pannelPE" action="#{groupe.deleteGroupe(groupeIt)}"  ajax="true"/>
+                                </p:column>
+
+                                <p:column style="width:32px">
+                                    <p:rowEditor />
+                                </p:column>
+                            </p:dataTable>
+                        </h:form>
+
+
+                        <p:dialog header="Nouveau groupe" widgetVar="dlg2" minHeight="40" >
+                            <h:form id="form_new">
+                                <h:panelGrid columns="2" cellpadding="5">
+                                    <h:outputText value="Groupe" />
+                                    <p:inputText   value="#{groupe.groupeToAdd.groupe}" />
+                                </h:panelGrid>
+                                <p:commandButton value="Ajouter" update=":tablePE:tbl,:pannelPE" onclick="PF('dlg2').hide();" action="#{groupe.addGroupe()}"  />
+                            </h:form>
+                        </p:dialog>
+
+                    </p:panel>
+
+                    <p:panel id="pannelPermission">
+
+                        <h:form id="tablePermission">
+                            <p:messages id="msgsPer" closable="true" />
+                            <h4>Gestion de Permission</h4>
+
+                            <p:commandButton value="Ajouter" icon="ui-icon-plus" type="button" onclick="PF('dlg3').show();"/>
+
+                            <br /><br />
+                            <p:dataTable id="tbl1" var="permissionIt" value="#{permissionMb.permissions}" 
+                                         rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+
+                                <!--<p:ajax event="rowSelect"   />--> 
+                                <p:ajax event="rowEdit" listener="#{permissionMb.onRowEdit}" update=":tablePE:msgsM" />
+                                <p:ajax event="rowEditCancel" listener="#{permissionMb.onRowCancel}" update=":tablePE:msgsM" />
+
+                                <p:column headerText="ID_Permission"   >
+                                    <h:outputText value="#{permissionIt.id}" />
+                                </p:column>
+
+                                <p:column headerText="Permission"   >
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{permissionIt.permission}"/></f:facet>
+                                        <f:facet name="input"><p:inputText value="#{permissionIt.permission}" style="width:100%"/></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column headerText="Type"   >
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{permissionIt.type}"/></f:facet>
+                                        <f:facet name="input">
+                                            <p:selectOneMenu id="output2" value="#{permissionIt.type}" style="width:100%">               
+                                                <f:selectItem itemValue="Engin" itemLabel="Engin"/>
+                                                <f:selectItem itemValue="Mensuel" itemLabel="Mensuel"/>
+                                                <f:selectItem itemValue="Lot" itemLabel="Lot"/>
+                                            </p:selectOneMenu>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column>
+                                    <p:commandButton  icon="ui-icon-trash"  action="#{permissionMb.deletePermission(permissionIt)}" update=":tablePermission:tbl1,:pannelPermission" ajax="true"/>
+                                </p:column>
+
+                                <p:column style="width:32px">
+                                    <p:rowEditor />
+                                </p:column>
+                            </p:dataTable>
+
+                        </h:form>
+                        <!--permission-->
+                        <p:dialog header="Nouvelle Permission" widgetVar="dlg3" minHeight="40" >
+                            <h:form id="form_new_Permission">
+                                <h:panelGrid columns="2" cellpadding="5">
+                                    <h:outputText value="Permission" />
+                                    <p:inputText   value="#{permissionMb.permissionToAdd.permission}" />
+
+                                    <h:outputText value="Type" />
+                                    <p:inputText   value="#{permissionMb.permissionToAdd.type}" />
+                                </h:panelGrid>
+                                <p:commandButton value="Ajouter" update=":tablePermission:tbl1,:pannelPermission"  onclick="PF('dlg3').hide();" action="#{permissionMb.addPermission()}"  />
+                            </h:form>
+                        </p:dialog>
+                    </p:panel>
+
+
+                    <p:panel id="panel"  >
+
+                        <h4>Gestion de Zone</h4>
+
+                        <h:form id="form">
+                            <p:messages id="msgs5" closable="true" />
+
+                            <p:commandButton value="Ajouter" icon="ui-icon-plus" oncomplete="PF('dlg20').show()" />
+                            <br /><br />
+
+                            <p:dataTable  var="zoneIt" id="pdataTable" value="#{zone.zones}" 
+
+                                          rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                          {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                          {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                          editable="true"
+                                          >
+
+
+
+                                <p:ajax event="rowEdit" listener="#{zone.onRowEdit}" update=":form:msgs5" />
+                                <p:ajax event="rowEditCancel" listener="#{zone.onRowCancel}" update=":form:msgs5" />
+
+
+
+                                <p:column headerText="Id">
+
+
+                                    <p:outputLabel  value="#{zoneIt.idZone}" style="width:100%"/>
+
+                                </p:column>
+
+
+
+
+                                <p:column headerText="Libelle Zone">
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{zoneIt.libeleZone}" /></f:facet>
+                                        <f:facet name="input"><p:inputText  value="#{zoneIt.libeleZone}" style="width:100%"/></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column headerText="Chantier">
+
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{zoneIt.idChantier.code}" /></f:facet>
+                                        <f:facet name="input">
+                                            <p:selectOneMenu filter="true" value="#{zone.chantierSearch}" style="width:100%">
+                                                <f:selectItems value="#{chantier.chantiers}" var="man" itemLabel="#{man.code}" itemValue="#{man.id}" />
+                                            </p:selectOneMenu>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+
+
+                                <p:column headerText="Action">
+                                    <p:commandButton  icon="ui-icon-trash"  action="#{zone.deleteZone(zoneIt)}" update=":form:pdataTable, :panel" ajax="true"/>
+                                </p:column>
+
+
+
+                                <p:column style="width:32px">
+                                    <p:rowEditor />
+                                </p:column>
+                            </p:dataTable>
+
+                        </h:form>
+
+
+
+                        <p:dialog header="Ajouter" widgetVar="dlg20" minHeight="40" >
+                            <h:form id="Ajouter">
+                                <h:panelGrid columns="2" cellpadding="5">
+                                    <h:outputText value="Chantier" />
+                                    <p:selectOneMenu filter="true" value="#{zone.chantierAdd}">
+                                        <f:selectItem itemLabel="" itemValue="-1"/>
+                                        <f:selectItems value="#{chantier.chantiers}" var="C"
+                                                       itemLabel="#{C.code}" itemValue="#{C.id}"/>
+                                    </p:selectOneMenu>  
+                                </h:panelGrid>
+
+
+                                <p:commandButton value="Ajouter" id="addButton" onclick="PF('dlg20').hide();" action="#{zone.addZone()}" update=":form:pdataTable, :panel" ajax="true"/>
+                            </h:form>
+
+                        </p:dialog>
+
+                    </p:panel>
+
+
+
+                    <p:panel id="pan">
+                        <h:form id="tab">
+                            <p:messages id="ms" closable="true"/>
+                            <h4>Gestion de Lot</h4>
+
+                            <p:commandButton value="Ajouter" icon="ui-icon-plus" type="button" onclick="PF('dlg4').show();"/>
+                            <br /><br />
+                            <p:dataTable id="datat" var="lotIt" value="#{LotCfg.lots}" 
+                                         rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+
+                                <p:ajax event="rowEdit" listener="#{LotCfg.onRowEdit}" update=":tab:ms,:pan" />
+                                <p:ajax event="rowEditCancel" listener="#{LotCfg.onRowCancel}" update=":tab:ms,:pan" />
+
+                                <p:column>
+                                    <h:outputText value="#{lotIt.id}"/>
+                                </p:column>
+
+                                <p:column headerText="Libelle Lots"   >
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{lotIt.libelle}"/></f:facet>
+                                        <f:facet name="input"><p:inputText value="#{lotIt.libelle}" style="width:100%"/></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column>
+                                    <p:commandButton  icon="ui-icon-trash"  action="#{LotCfg.deleteLot(lotIt)}" update=":tab:datat,:pan" ajax="true"/>
+                                </p:column>
+
+                                <p:column style="width:32px">
+                                    <p:rowEditor />
+                                </p:column>
+                            </p:dataTable>
+                        </h:form>
+
+                        <!--</h:form>-->
+
+                        <p:dialog header="Nouveau Lot" widgetVar="dlg4" minHeight="40" >
+                            <h:form id="form_neww">
+                                <h:panelGrid columns="2" cellpadding="1">
+                                    <h:outputText value="Lot" />
+                                    <p:inputText value="#{LotCfg.lot.libelle}"    />
+                                </h:panelGrid>
+                                <br/>
+                                <p:commandButton value="Ajouter" onclick="PF('dlg4').hide();" action="#{LotCfg.insertLot()}" update=":tab:datat,:pan" ajax="true"  />
+                            </h:form>
+                        </p:dialog>
+                    </p:panel>    
+
+                </h:panelGrid>
+            </ui:define>
+
+
+
+        </ui:composition>
+
+    </body>
+
+
+
+
+
+</html>
+
+
+
+

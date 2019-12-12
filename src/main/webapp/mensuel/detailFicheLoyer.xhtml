@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+    <h:head>
+        <title>Detail fiche loyer</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+            
+
+            <ui:define name="content">
+                <p:panel id="pannel">
+                    <h:form id="form">
+                        
+                        
+                        <h:selectOneRadio>
+                        <f:selectItem itemValue="335" itemLabel="Salarié" />
+                        <f:selectItem itemValue="316" itemLabel="chantier" />
+                       </h:selectOneRadio>
+                        
+                       <p:commandButton value="Rechercher salarié" onclick="PF('dlg').show();" />
+                       
+                       <h:panelGrid columns="4" cellpadding="5">
+                          
+                          <h:outputText value="Identifiant :" />
+                           
+                           
+                       </h:panelGrid>
+                        
+                        
+                    </h:form>
+                    
+                </p:panel>
+            </ui:define>
+            
+            
+
+        </ui:composition>
+
+    </body>
+
+
+
+
+
+</html>

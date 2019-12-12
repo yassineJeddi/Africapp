@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Editer Recu </title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+            <ui:define name="arborescence">
+
+
+                <h:form>
+                    Mensuel > <h:commandLink action="/mensuel/affectLoyer.xhtml"> Affecter Loyer à un salarié </h:commandLink> > <h:commandLink action="/mensuel/consultLoyer.xhtml"> Consultation Loyer à un salarié </h:commandLink> > <strong>Edite Recu caisse</strong> 
+                </h:form>
+
+            </ui:define>
+
+            <ui:define name="content">
+                <p:panel id="pannel">
+                    <h:form id="form">
+
+                        <p:messages id="msgsM" autoUpdate="true" closable="true"/>
+
+
+
+                        <p:commandButton class="btn btn-switch active"
+                                         icon="ui-icon-arrowthickstop-1-n" 
+                                         value="Importer fichier Recu de caisse "
+                                         oncomplete="PF('uploader_var').show()"
+                                         />
+
+                        <br/>
+
+                        <br/>
+
+                        <p:dataTable id="tbl" var="boncaissIt" value="#{loyer_SalarieMb.listeBonCaiss}" 
+
+                                     rows="10"  paginator="true" editable="false" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+
+
+                            <p:column headerText="identifiant"   >
+                                <h:outputText value="#{loyer_SalarieMb.loyerSalarieSelectMensuel.id}" />
+                            </p:column>
+
+                            <p:column headerText="Adresse Propriéte"   >
+                                <h:outputText value="#{loyer_SalarieMb.loyerSalarieSelectMensuel.adresseproprietaire}" />
+                            </p:column>
+
+
+                            <p:column headerText="Nom Propriéte"   >
+                                <h:outputText value="#{loyer_SalarieMb.loyerSalarieSelectMensuel.nomproprietaire}" />
+                            </p:column>
+
+
+                            <p:column headerText="Prénom Propriéte"   >
+                                <h:outputText value="#{loyer_SalarieMb.loyerSalarieSelectMensuel.prenomproprietaire}" />
+                            </p:column>
+
+                            <p:column headerText="Fonction Bénéficiaire"   >
+                                <h:outputText value="#{loyer_SalarieMb.loyerSalarieSelectMensuel.mensuel_Principal.fonction.fonction}" />
+                            </p:column>
+
+                            <p:column headerText="Mois"  >
+                                <h:outputText value="#{boncaissIt.mois} / #{boncaissIt.annee}" />
+                            </p:column>
+
+
+
+
+
+
+
+                            <p:column headerText="Actions"   >
+
+                                <p:commandButton title ="Visualiser Recu Caisse" icon="ui-icon-pencil" 
+                                                 oncomplete="PF('consulterDocCC').show();"
+                                                 update=":bonFormM"
+                                                 actionListener="#{loyer_SalarieMb.visualiser_Recu_Caisse_salarie()}"
+                                                 />
+
+                                <p:commandButton title="Details Recu Caisse" icon="ui-icon-circlesmall-plus" 
+                                                 oncomplete="PF('dlg').show()" 
+                                                 update=":formA"  actionListener="#{loyer_SalarieMb.setBonCaisseSelected(boncaissIt)}"/>
+
+                            </p:column>
+                            <f:facet name="footer">
+
+
+                            </f:facet>
+                        </p:dataTable>
+
+
+                    </h:form>
+
+
+
+                    <p:dialog showEffect="fade"  hideEffect="fade" modal="true" header="Recu de Caisse" widgetVar="consulterDocCC">
+                        <h:form id="bonFormM">
+                            <p:media value="#{imageBean.bon}" width="100%" height="500px" player="pdf"> 
+                                <f:param name="path" value="#{loyer_SalarieMb.codeCurrent}" />
+                            </p:media>
+                        </h:form>
+                    </p:dialog>
+
+
+
+                    <p:dialog modal="true" header="Détail Recu Caisse " resizable="false" width="500px" widgetVar="dlg" minHeight="40" >
+                        <h:form id="formA">
+
+                            <fieldset>
+                                <legend style="padding-bottom: 5px;"> <img style="-webkit-transform: scale(0.4); -moz-transform: scale(0.4)" src="http://www.divalto.com/wp-content/uploads/2015/02/tgcc.png" /> <span class="pull-right" style=" margin-top: 20px;"> Details Recu </span> </legend>
+
+
+                                <h:panelGrid columns="3" cellpadding="5">
+
+                                    <p:outputLabel value="Mois" />
+                                    <p:spacer width="50px" height="1px"></p:spacer>
+                                    <p:outputLabel value="#{loyer_SalarieMb.bonCaiss.mois}" />
+
+
+                                    <p:outputLabel value="Annee" />
+                                    <p:spacer width="50px" height="1px"></p:spacer>
+                                    <p:outputLabel value="#{loyer_SalarieMb.bonCaiss.annee}"/>
+
+
+                                    <p:outputLabel value="Béneficiare" />
+                                    <p:spacer width="50px" height="1px"></p:spacer>
+                                    <p:outputLabel value="#{loyer_SalarieMb.loyerSalarieSelectMensuel.mensuel_Principal.nom} #{loyer_SalarieMb.loyerSalarieSelectMensuel.mensuel_Principal.prenom}" />
+
+
+                                    <p:outputLabel value="Proprétaire" />
+                                    <p:spacer width="50px" height="1px"></p:spacer>
+                                    <p:outputLabel value=" #{loyer_SalarieMb.loyerSalarieSelectMensuel.nomproprietaire} #{loyer_SalarieMb.loyerSalarieSelectMensuel.prenomproprietaire}"/>
+
+
+                                </h:panelGrid>
+
+                            </fieldset>
+                        </h:form>
+                    </p:dialog>
+
+
+
+
+
+
+
+                    <!-- ************************************************             -->
+
+
+
+
+                    <p:dialog header="uploader fichier Recu caisse"  widgetVar="uploader_var"
+                              modal="true" showEffect="fade" 
+                              hideEffect="fade" resizable="false" >
+
+                        <h:form id="form_upload"  enctype="multipart/form-data">
+
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <h:outputText value="Le mois"/>  
+                                <p:selectOneMenu id="mois"  value="#{loyer_SalarieMb.bc.mois}">               
+                                    <f:selectItem itemValue="1" itemLabel="1"/>
+                                    <f:selectItem itemValue="2" itemLabel="2"/>
+                                    <f:selectItem itemValue="3" itemLabel="3"/>
+                                    <f:selectItem itemValue="4" itemLabel="4"/>
+                                    <f:selectItem itemValue="5" itemLabel="5"/>
+                                    <f:selectItem itemValue="6" itemLabel="6"/>
+                                    <f:selectItem itemValue="7" itemLabel="7"/>
+                                    <f:selectItem itemValue="8" itemLabel="8"/>
+                                    <f:selectItem itemValue="9" itemLabel="9"/>
+                                    <f:selectItem itemValue="10" itemLabel="10"/>
+                                    <f:selectItem itemValue="11" itemLabel="11"/>
+                                    <f:selectItem itemValue="12" itemLabel="12"/>
+                                </p:selectOneMenu>
+
+                                <h:outputText value="Année"/>
+                                <p:selectOneMenu id="annee"  value="#{loyer_SalarieMb.bc.annee}">               
+                                    <f:selectItem itemValue="2010" itemLabel="2010"/>
+                                    <f:selectItem itemValue="2011" itemLabel="2011"/>
+                                    <f:selectItem itemValue="2012" itemLabel="2012"/>
+                                    <f:selectItem itemValue="2013" itemLabel="2013"/>
+                                    <f:selectItem itemValue="2014" itemLabel="2014"/>
+                                    <f:selectItem itemValue="2015" itemLabel="2015"/>
+                                    <f:selectItem itemValue="2016" itemLabel="2016"/>
+
+                                </p:selectOneMenu>
+
+
+
+
+                                <p:fileUpload  required="true" requiredMessage="veuillez selectionner un fichier" value="#{loyer_SalarieMb.uploadedFile}" mode="simple"></p:fileUpload>
+
+                            </h:panelGrid>
+
+
+                            <p:commandButton  update=":form:tbl, :form:msgsM" value="Ajouter" actionListener="#{loyer_SalarieMb.save()}" oncomplete="PF('uploader_var').hide()" ajax="false"/>
+
+
+
+                        </h:form>
+                    </p:dialog>
+
+
+
+
+
+
+
+
+
+
+                </p:panel>
+            </ui:define>
+
+
+
+
+        </ui:composition>
+
+    </body>
+
+
+
+
+
+</html>
+

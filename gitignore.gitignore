@@ -1,0 +1,3 @@
+nb-configuration.xml
+/target/
+/src/main/webapp/WEB-INF/properties/database.properties

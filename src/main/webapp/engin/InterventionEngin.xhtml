@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <h:head>
+        <link rel="stylesheet" type="text/css" href="../resources/css/main.css" />
+        <title>Document Engin</title>
+    </h:head>
+    <body>
+        <ui:composition template="./enginTemplate.xhtml">
+            <ui:define name="arborescence">
+                <h:form>
+                    Parc Engin > <h:commandLink 
+                        action="/engin/parcengins.xhtml"> Parc Engin</h:commandLink> > 
+                    <strong> Interventions Engin </strong>
+                </h:form>
+            </ui:define>
+            <ui:define name="content">
+            <p:panel>
+                <h:form>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <h:outputText value="Code :" />
+                                <h:outputText class="value_dis" 
+                                              value="#{interventionEnginMb.engin.code}"/>
+                            </div>
+                            <div class="col-lg-4">
+                                <h:outputText value="Designation  :" />
+                                <h:outputText class="value_dis" 
+                                              value="#{interventionEnginMb.engin.designation}"/>
+                            </div>
+                            <div class="col-lg-4">
+                                <h:outputText value="Marque :" />
+                                <h:outputText class="value_dis" 
+                                              value="#{interventionEnginMb.engin.marque}" />
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <h:outputText value="Etat :" />
+                                <h:outputText class="value_dis" value="#{interventionEnginMb.engin.etat}" />
+                            </div>
+                            <div class="col-lg-4">
+                                <h:outputText value="Compteur kilometrique :" />
+                                <h:outputText class="value_dis" value="#{interventionEnginMb.engin.compteurKilometrique}" />
+                            </div>
+                            <div class="col-lg-4">
+                                <h:outputText value="Compteur horaire :" />
+                                <h:outputText class="value_dis" value="#{interventionEnginMb.engin.comteurHoraire}"/>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <h:outputText value="Prochaine intervention de la maintenance préventive de type:" />
+                                <h:outputText class="value_dis" value="#{interventionEnginMb.ev.TYPE_PR_VID}" />
+                            </div>
+                            <div class="col-lg-3">
+                                <h:outputText value=" prévue le:" />
+                                <h:outputText class="value_dis" value="#{interventionEnginMb.ev.DATE_PR_VID}" />
+                            </div>
+                            <div class="col-lg-3">
+                                <h:outputText value="au cpt: " />
+                                <h:outputText class="value_dis" value="#{interventionEnginMb.ev.CP_PR_VID}"/>
+                            </div>
+                        </div>
+                </h:form>
+            </p:panel>
+                <p:panel id="panel">
+                    <h:form id="formTable">
+                        <p:messages id="msgsM" closable="true"/>
+                        <br/>
+                                <h:form id="form11">
+                                    <p:outputLabel value="Interventions maintenance préventive:" /> 
+                                    <p:dataTable id="tbl" var="l" value="#{interventionEnginMb.listPr}" 
+                                                 rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                                 {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                                 {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                                 >
+                                      
+                                        <p:column headerText="Date intervention" >
+                                            <h:outputText  value="#{l.DATE_INTER}"  />
+                                        </p:column>
+                                        <p:column headerText="Chantier"  >
+                                            <h:outputText  value="#{l.PRJAP_ID_INTER}"  />
+                                        </p:column>
+                                        <p:column headerText="Secteur" >
+                                            <h:outputText  value="#{l.SECTEUR_INTERV}"  />
+                                        </p:column>
+                                        <p:column headerText="Type Rév.">
+                                            <h:outputText  value="#{l.TYPE_REV}"  />
+                                        </p:column>
+                                        <p:column headerText="Date révision"  >
+                                            <h:outputText  value="#{l.DATE_REV}"  />
+                                        </p:column>
+                                        <p:column headerText="Cpt à la révision" >
+                                            <h:outputText  value="#{l.CPT_REV}"  />
+                                        </p:column>
+                                        <p:column headerText="N° de Fiche"  >
+                                            <h:outputText  value="#{l.NUM_FM}"  />
+                                        </p:column>  
+                                    </p:dataTable>
+                                </h:form>
+                        <br/> 
+                                <h:form id="form12">
+                                    <p:outputLabel value="Interventions maintenance corrective:" /> 
+                                    <p:dataTable id="tbl2" var="list" value="#{interventionEnginMb.listCr}" 
+                                                 rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                                 {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                                 {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                                 >
+                                        <p:column headerText="Date Panne"  >
+                                            <h:outputText  value="#{list.panne.date}"  />
+                                        </p:column>
+                                        <p:column headerText="Chantier"  >
+                                            <h:outputText  value="#{list.panne.chantierPanne}"  />
+                                        </p:column>
+                                        <p:column headerText="Description Panne" >
+                                            <h:outputText  value="#{list.panne.commentaire}"  />
+                                        </p:column>
+                                        <p:column headerText="Cpt à la panne" >
+                                            <h:outputText  value="H:#{list.panne.compteurHoraire} K: #{list.panne.compteurKilometrique}"  />
+                                        </p:column>
+                                        <p:column headerText="Description intervention"  >
+                                            <h:outputText  value="#{list.DESC_DIAG}"  />
+                                        </p:column>
+                                        <p:column headerText="Date MEM"  >
+                                            <h:outputText  value="#{list.panne.date_marche}"  />
+                                        </p:column>
+                                        <p:column headerText="Durée de panne"  >
+                                            <h:outputText  value=" "  />
+                                        </p:column>
+                                        <p:column headerText="N° de Fiche"  >
+                                            <h:outputText  value="#{list.panne.id}"  />
+                                        </p:column>
+                                    </p:dataTable>
+                                </h:form> 
+                        <br/> 
+                                <h:form id="form13">
+                                    <p:outputLabel value="Historique de changement du compteur:" /> 
+                                    <p:dataTable id="tbl3" var="list" value="#{interventionEnginMb.compteurrEngins}" 
+                                                 rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                                 {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                                 {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                                 > 
+                                        <p:column headerText="Date Chngement cpt"  >
+                                            <h:outputText  value="#{list.dateChangement}"  />
+                                        </p:column> 
+                                        <p:column headerText="OLD cpt H"  >
+                                            <h:outputText  value="#{list.oldCptHReel}"  />
+                                        </p:column> 
+                                        <p:column headerText="NV cpt H"  >
+                                            <h:outputText  value="#{list.cptHReel}"  />
+                                        </p:column> 
+                                        <p:column headerText="OLD cpt K"  >
+                                            <h:outputText  value="#{list.oldCptKReel}"  />
+                                        </p:column> 
+                                        <p:column headerText="NV cpt K"  >
+                                            <h:outputText  value="#{list.cptKReel}"  />
+                                        </p:column> 
+                                        <p:column headerText="Description"  >
+                                            <h:outputText  value="#{list.commentaire}"  />
+                                        </p:column> 
+                                        <p:column headerText="Utilisateur"  >
+                                            <h:outputText  value="#{list.utilisateur}"  />
+                                        </p:column> 
+                                    </p:dataTable>
+                                </h:form> 
+                    </h:form>
+                    <!--             dialog consultation document                        -->
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

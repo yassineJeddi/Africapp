@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+    <h:head>
+        <title>Detail fiche loyer</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./adminTemplate.xhtml">
+            <ui:define name="arborescence">
+                <h:form>
+                    Mensuel > <strong> Importer  </strong>
+                </h:form>
+            </ui:define>
+            <ui:define name="content" >
+                <p:panel id="pannel">
+                    <h:form id="form">
+                        <p:blockUI  animate="true" block=" :form" trigger=":form:reload_mensuel_btn,:form:reload_all_btn, :form:reload_chantier_btn, :form:reload_fonction_btn, :form:reload_citerne_btn,  :form:reload_engin_btn,  :form:reload_gasoil_btn,  :form:reload_modem_btn,  :form:reload_voiture_btn,  :form:reload_voitureCh_btn,  :form:reload_voitureSa_btn,  :form:reload_ordinateur_btn,  :form:reload_telephone_btn,  :form:reload_document_btn, :form:reload_all_sal_ws" >
+                            Chargement en cours ... <br />
+                            <p:graphicImage url="https://upload.wikimedia.org/wikipedia/commons/5/53/Loading_bar.gif"/>
+                        </p:blockUI>
+                        <p:messages id="msgsM" closable="true" showDetail="true"/>
+                        <div class="row">
+                            <div class="col-lg-offset-1 col-lg-3">
+                                <div>
+                                    <p:commandButton icon="ui-icon-arrowthickstop-1-n" style="width: 100%" id="reload_mensuel_btn" class="btn btn-default" value="Importer les Mensuels" 
+                                                     actionListener="#{mensuelServMb.reload_Mensuel()}" update=":form"/>
+                                </div>
+                                <div class="spacer30" />    
+                                <div>
+                                    <p:commandButton icon="ui-icon-arrowthickstop-1-n" style="width: 100%" id="reload_chantier_btn" class="btn btn-default" value="Importer les Chantiers" 
+                                                     actionListener="#{chantierServMb.reload_Chantier()}" action="#{evol_chantierMb.reload_Chantier()}" update=":form"/>
+                                </div>
+                                <div class="spacer30" />    
+                                <div>
+                                    <p:commandButton icon="ui-icon-arrowthickstop-1-n" id="reload_fonction_btn" style="width: 100%" class="btn btn-default" value="Importer les Fonctions" 
+                                                     actionListener="#{fonctionServMb.reload_Fonction()}" update=":form"/>
+                                </div>
+                                <div class="spacer30" />    
+                                <div>
+                                    <p:commandButton icon="ui-icon-arrowthickstop-1-n" id="reload_citerne_btn" style="width: 100%" class="btn btn-default" value="Importer les Citernes" 
+                                                     actionListener="#{citerne_ServMb.reload()}" update=":form"/>
+                                </div>
+                                <div class="spacer30" /> 
+                                <div>
+                                    <p:commandButton icon="ui-icon-arrowthickstop-1-n" style="width: 100%" id="reload_engin_btn" class="btn btn-default" value="Importer les Engins" 
+                                                     actionListener="#{enginServMb.reload()}" update=":form"/>
+                                </div>
+                            </div>
+
+                            <!--************** SECOND COLUMN ******************-->
+
+                            <div class="col-lg-3">
+
+
+
+
+                                <div>
+                                    <p:commandButton icon="ui-icon-arrowthickstop-1-n" style="width: 100%" id="reload_modem_btn" class="btn btn-default" value="Importer les Modems 3G" 
+                                                     actionListener="#{modem3g_ServMb.reloadList3g()}" update=":form"/>
+                                </div>
+
+
+
+                                <div class="spacer30" />    
+
+
+                                <div>
+                                    <p:commandButton icon="ui-icon-arrowthickstop-1-n" id="reload_voiture_btn" style="width: 100%" class="btn btn-default" value="Importer les Voitures" 
+                                                     actionListener="#{voiture_ServMb.reload()}" update=":form"/>
+                                </div>
+
+                                <div class="spacer30" />    
+
+
+                                <div>
+                                    <p:commandButton icon="ui-icon-arrowthickstop-1-n" id="reload_document_btn" style="width: 100%" class="btn btn-default" value="Importer les Documents" 
+                                                     actionListener="#{document_ServMb.reload()}" update=":form"/>
+                                </div> 
+
+                                <div class="spacer30" />   
+
+                                <div>
+                                    <p:commandButton icon="ui-icon-arrowthickstop-1-n" id="reload_gasoil_btn" style="width: 100%" class="btn btn-default" value="Importer les Cartes Gasoil" 
+                                                     actionListener="#{carteGasoil_ServMb.reloadFindAll()}" update=":form"/>
+                                </div> 
+
+                                <div class="spacer30" />
+
+                                <div>
+                                    <p:commandButton icon="ui-icon-arrowthickstop-1-n" id="reload_ordinateur_btn" style="width: 100%" class="btn btn-default" value="Importer les Ordinateurs" 
+                                                     actionListener="#{ordinateur_ServMb.reload()}" update=":form"/>
+                                </div>
+
+                            </div>
+                            <div class="col-lg-3">
+
+
+
+
+                                <div>
+                                    <p:commandButton icon="ui-icon-arrowthickstop-1-n" id="reload_telephone_btn" style="width: 100%" class="btn btn-default" value="Importer les Télephones" 
+                                                     actionListener="#{telephone_ServMb.reload()}" update=":form"/>
+                                </div> 
+
+                                <div class="spacer30" />
+
+                                <div>
+                                    <p:commandButton icon="ui-icon-arrowthickstop-1-n" id="reload_voitureCh_btn" style="width: 100%" class="btn btn-default" value="Importer les Voitures Chantier" 
+                                                     actionListener="#{voiture_chantierServMb.reload()}" update=":form"/>
+                                </div>  
+
+                                <div class="spacer30" />
+
+                                <div>
+                                    <p:commandButton icon="ui-icon-arrowthickstop-1-n" id="reload_voitureSa_btn" style="width: 100%" class="btn btn-default" value="Importer les Voitures Salarié" 
+                                                     actionListener="#{voiture_salarieServMb.reload()}" update=":form"/>
+                                </div>
+
+                                <div class="spacer30" />
+
+                                <div>
+                                    <p:commandButton icon="ui-icon-arrowthickstop-1-n" id="reload_all_btn" style="width: 100%" class="btn btn-default" value="Importer toutes les Données" 
+                                                     actionListener="#{uploadAll_ServMb.reloadAll()}" update=":form"/>
+                                </div>
+                                <div class="spacer30" />
+
+                                <div >
+                                    <p:commandButton icon="ui-icon-arrowthickstop-1-n" id="reload_all_sal_ws" class="btn btn-switch active" 
+                                                     style="width: 100%" value="Importer Mensuels WS" 
+                                                     actionListener="#{mensuelMb.callWSmensuel()}" update=":form"/>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+
+
+                    </h:form>
+
+
+
+
+
+
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

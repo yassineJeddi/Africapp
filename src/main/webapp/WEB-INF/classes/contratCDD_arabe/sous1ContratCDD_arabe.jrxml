@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sous1ContratCDD_arabe" pageWidth="600" pageHeight="1100" columnWidth="560" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="27016bbb-195a-4aab-85b6-4f512030e37f">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="671" splitType="Stretch">
+			<staticText>
+				<reportElement x="13" y="26" width="536" height="24" uuid="21f6233a-7ade-4839-a978-9b56ff956bb8"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="16" isBold="true" isUnderline="true" pdfFontName="arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[البند السادس : الالتزامات :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="0" y="50" width="535" height="171" uuid="0600f783-f545-4ecb-9a4f-557ada9694d5"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="14" isBold="false" pdfFontName="arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[يلتزم العامل بمقتضى هذا الاتفاق :
+    -   أن يخضع للمقتضيات القانونية الجاري بها العمل و خصوصا في ما يتعلق بشروط السلامة و حفظ الصحة و القانون الداخلي للشركة .
+	    -    أن يقبل ويحترم شروط العمل المفروضة من طرف الشركة   .
+	    -    أن يقبل أنواع المراقبة من طرف التقنيين والمهندسين.
+    -    أن يقبل اشتغال أوقات إضافية في حالة حاجة الشركة لخدمته حسب شروط قانون الشغل وبصفة عامة أن يقبل دون تحفظ التعليمات والتوجيهات المعمول بها في الشركة.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="234" width="549" height="26" uuid="21f6233a-7ade-4839-a978-9b56ff956bb8"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="16" isBold="true" isUnderline="true" pdfFontName="arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[البند السابع : الإلتزام بالتنقل الجغرافي :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="0" y="260" width="535" height="36" uuid="0600f783-f545-4ecb-9a4f-557ada9694d5"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="14" isBold="false" pdfFontName="arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[مكان العمل الأجير يتواجد.......................لكن المشغل يحتفظ بحقه في نقل الأجير نتيجة الالتزامات ومتطلبات الشركة إلى ورش أخر في نفس المدينة أو مدينة أخرى.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="0" y="302" width="535" height="21" uuid="0600f783-f545-4ecb-9a4f-557ada9694d5"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="14" isBold="false" pdfFontName="arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[يقر الأجير بقبوله صراحة لهدا البند الخاص بنقله إلى ورش أخر تابعة للشركة ويلتزم بتنفيذها في الآجال المضروبة من طرف هده الأخيرة.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="0" y="327" width="535" height="43" uuid="0600f783-f545-4ecb-9a4f-557ada9694d5"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="14" isBold="false" pdfFontName="arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[وانه في حالة رفضه لقرار التنقل تندره المشغلة بالتنفيذ في اجل لا يتعدى 8 أيام و إذا لم يمتثل يعتبر ذلك   سبباً لفسخ العقد من جانبه و بذلك تكون المشغلة لها الصلاحية لإعفاءه من مهامه دون إشعار أو تعويض.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="0" y="455" width="535" height="18" uuid="0600f783-f545-4ecb-9a4f-557ada9694d5"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="14" isBold="false" pdfFontName="arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ - عدم الالتحاق بالعمل لمدة تفوق 48 ساعة بدون مبرر.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="0" y="417" width="535" height="18" uuid="0600f783-f545-4ecb-9a4f-557ada9694d5"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="14" isBold="false" pdfFontName="arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ - بانتهاء الأشغال التي بشأنها تم توقيع هذا العقد.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="0" y="398" width="535" height="18" uuid="0600f783-f545-4ecb-9a4f-557ada9694d5"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="14" isBold="false" pdfFontName="arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[يفسخ العقد الحالي بدون إشعار و لاتعويض في الحالة  التالية :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="369" width="549" height="25" uuid="21f6233a-7ade-4839-a978-9b56ff956bb8"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="16" isBold="true" isUnderline="true" pdfFontName="arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[البند الثامن : فسخ العقد :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="0" y="436" width="535" height="18" uuid="0600f783-f545-4ecb-9a4f-557ada9694d5"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="14" isBold="false" pdfFontName="arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ - ارتكاب خطأ جسيم من الأخطاء المنصوص عليها في المادة 39 من مدونة الشغل.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="0" y="474" width="535" height="18" uuid="0600f783-f545-4ecb-9a4f-557ada9694d5"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="14" isBold="false" pdfFontName="arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ - عدم احترام جدول العطل السنوية المتفق عليه مع مندوبي الأجراء.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="0" y="541" width="535" height="25" uuid="0600f783-f545-4ecb-9a4f-557ada9694d5"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="14" isBold="false" pdfFontName="arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[في حالة وجود نزاع إذا لم يحل بصفة ودية تبقى محكمة الدار البيضاء لها الاختصاص للبث في النزاع.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="277" y="514" width="272" height="28" uuid="21f6233a-7ade-4839-a978-9b56ff956bb8"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="16" isBold="true" isUnderline="true" pdfFontName="arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[البند التاسع : الإختصاص :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="345" y="617" width="140" height="20" uuid="21f6233a-7ade-4839-a978-9b56ff956bb8"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" isBold="true" isUnderline="true" pdfFontName="arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[الشركة المشغلة :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="13" y="617" width="197" height="20" uuid="21f6233a-7ade-4839-a978-9b56ff956bb8"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" isBold="true" isUnderline="true" pdfFontName="arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[	العامل الموسمي :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="23" y="637" width="198" height="20" uuid="21f6233a-7ade-4839-a978-9b56ff956bb8"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" isBold="true" isUnderline="false" pdfFontName="arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[التوقيع بعد القراءة والاطلاع]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="1" y="495" width="535" height="18" uuid="67655226-e518-4c3f-976e-e0efced7def7"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="14" isBold="false" pdfFontName="arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ - في حالة نقص وثيرة العمل في الورش موضوع العقد و اتخاد الشركة قرار نقص العمال حسب طبيعة تخصص كل عامل.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="1" y="580" width="535" height="25" uuid="16cc0943-76bb-476a-9870-9f928afa7891"/>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="14" isBold="false" pdfFontName="arial.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[حرر ب.......................... يوم ......................]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="28" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

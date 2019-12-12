@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Detail fiche loyer</title>
+    </h:head>
+    <body>
+        <ui:composition   template="./mensuelTemplate.xhtml">
+            <ui:define name="arborescence">
+                <h:form>
+                    Mensuel > <strong> Affecter une voiture à un chantier </strong>
+                </h:form>
+            </ui:define>
+            <ui:define name="content">
+                <p:panel id="pannel">
+                    <h:form id="form">
+                        <br />
+                        <div class="affectation-switch">
+                            <div class="btn-group" data-toggle="buttons">
+                                <p:commandButton  class="btn btn-switch active"  value="Affecter à un Chantier" />
+
+                                <p:commandButton action="/mensuel/affectVoiture.xhtml?faces-redirect=true"
+                                                 class="btn btn-default" value="Affecter à un salarié" immediate="true"/>
+                            </div>
+                        </div>
+                        <p:messages id="msgsM" closable="true"/>
+                        <br /><br />
+                        <div class="row">
+                            <div class="col-lg-offset-1 col-lg-4">
+                                <div>
+                                    <p:commandButton style="width: 100%" class="btn btn-default" value="Rechercher Chantier" 
+                                                     onclick="PF('dlg').show();"  update=":formA:tbl" 
+                                                     actionListener="#{gestion_voitureMb.chargerChantier()}"
+                                                     immediate="true"/>
+                                </div>
+                                <div class="spacer30"></div>
+                                <div class="form-group">
+                                    <h:outputText value="Code chantier :" />
+                                    <h:outputText class="value_dis" value="#{gestion_voitureMb.chantier.codeNovapaie}"/>
+                                </div>
+                                <div class="form-group">
+                                    <h:outputText value="Nom chantier :" />
+                                    <h:outputText class="value_dis" value="#{gestion_voitureMb.chantier.code}"/>
+                                </div>
+                                <div class="form-group">
+                                    <h:outputText value="Région :" />
+                                    <h:outputText class="value_dis" value="#{gestion_voitureMb.chantier.region}"/>
+                                </div>
+                                <hr />
+                            </div>
+                            <div class="col-lg-1">
+                                <div class="verticalLine">
+                                </div>
+                            </div>
+                            <div class="col-lg-offset-1 col-lg-4">
+                                <div>
+                                    <p:commandButton style="width: 100%" class="btn btn-default" value="Rechercher voiture"
+                                                     onclick="PF('dlg_voiture').show();" 
+                                                     actionListener="#{gestion_voitureMb.afficherVoitureNonAffecter()}"
+                                                     update=":formA_voiture:tbl_voiture" immediate="true"/>
+                                </div>
+                                <div class="spacer30"></div>
+                                <div class="form-group">
+                                    <p:outputLabel value="Numero Châssis  :" />
+                                    <h:outputText class="value_dis"  value="#{gestion_voitureMb.voiture.num_chassis}" />
+                                </div>
+                                <div class="form-group">
+                                    <p:outputLabel value="Marque  :" />
+                                    <h:outputText class="value_dis"  value="#{gestion_voitureMb.voiture.marque}" />
+                                </div>
+                                <div class="form-group">
+                                    <p:outputLabel value="Model  :" />
+                                    <h:outputText class="value_dis"  value="#{gestion_voitureMb.voiture.model}" />
+                                </div>
+                                <div class="spacer25"></div>                                
+                                <div class="form-group">
+                                    <h:outputText value="Matricule 1 :" />
+                                    <h:outputText class="value_dis" id="matr_voit_1" value="#{gestion_voitureMb.voiture.matricule_voiture_nouveau}" />
+                                </div>
+                                <div class="form-group">
+                                    <h:outputText value="Matricule 2 :" />
+                                    <h:outputText class="value_dis" id="matr_voit_2" value="#{gestion_voitureMb.voiture.matriculevoiture}" />
+                                </div>
+                                <div class="form-group">
+                                    <h:outputText value="Carburant :" />
+                                    <h:outputText class="value_dis" id="carburant" value="#{gestion_voitureMb.voiture.type_carburant}" />
+                                </div>
+                                <hr />
+                            </div>
+                        </div>                         
+                         <div class="col-lg-2" />
+                        <div class="col-lg-8">
+                            <div class="affectation-switch">
+                                <h:outputText value="Date d'affectation :" />
+                                <p:calendar pattern="dd/MM/yyyy" class="value_dis" id="affe" 
+                                            showOn="button"  
+                                            value="#{gestion_voitureMb.dateAfect}"
+                                            required="true"                                             
+                                            requiredMessage="Date d'affectation champ obligatoire">
+                                    <p:ajax event="dateSelect" update="button_affect" />
+                                </p:calendar>
+                                <br />
+                                <div>
+                                    <p:commandButton id="button_affect"
+                                                     actionListener="#{gestion_voitureMb.affectVoitureChantier()}" 
+                                                     update=":form:msgsM, :pannel"
+                                                     style="width: 100%" class="btn btn-switch active" 
+                                                     value="Affecter cette voiture" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2" />
+                        <br /><br /><br />
+                    </h:form>  
+                    <p:dialog header="Rechercher Chantier" modal="true" width="80%" widgetVar="dlg"  >
+                        <h:form id="formA">
+                            <br /><br />
+                            <p:dataTable id="tbl" style="width:100%;" var="chaniterIt" value="#{gestion_voitureMb.chantiers}"
+                                         rowKey="#{chaniterIt.id}" scrollable="true" scrollHeight="300"
+                                         rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+                                <p:ajax event="rowSelect"   /> 
+                                <p:column headerText="Code chantier"  filterBy="#{chaniterIt.codeNovapaie}" filterFunction="#{filterMb.filterByX}">
+                                    <h:outputText value="#{chaniterIt.codeNovapaie}" />
+                                </p:column>
+                                <p:column headerText="Nom chantier"  filterBy="#{chaniterIt.code}" filterFunction="#{filterMb.filterByX}">
+                                    <h:outputText value="#{chaniterIt.code}" />
+                                </p:column>
+                                <p:column headerText="Région"  filterBy="#{chaniterIt.region}" filterFunction="#{filterMb.filterByX}" >
+                                    <h:outputText value="#{chaniterIt.region}"/>
+                                </p:column>
+                                <p:column>    
+                                    <p:commandButton icon ="ui-icon-check" onclick="PF('dlg').hide();" 
+                                                     update=":form" title="Choisir" >
+                                        <f:setPropertyActionListener value="#{chaniterIt}" target="#{gestion_voitureMb.chantier}" />
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                            <br />
+                        </h:form>
+                    </p:dialog>
+
+                    <!--   ******************************    dialog voiture chercher  ************************************************************-->
+                    <p:dialog header="Rechercher voiture" modal="true" width="80%" widgetVar="dlg_voiture"  >
+                        <h:form id="formA_voiture">
+
+
+                            <p:dataTable id="tbl_voiture" style="width:100%;" var="voitureIt" value="#{gestion_voitureMb.voitures}"
+                                         rowKey="#{voitureIt.id}" scrollable="true" scrollHeight="300"
+                                         rows="10"  paginator="true"  paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+                                <p:ajax event="rowSelect"   /> 
+                                <p:column headerText="Numero Chassis" filterBy="#{voitureIt.num_chassis}" filterFunction="#{filterMb.filterByX}">
+                                    <h:outputText value="#{voitureIt.num_chassis}" />
+                                </p:column>
+                                <p:column headerText="Marque" filterBy="#{voitureIt.marque}" filterFunction="#{filterMb.filterByX}"  >
+                                    <h:outputText value="#{voitureIt.marque}"/>
+                                </p:column>
+                                <p:column headerText="Numero Immatriculation" filterBy="#{voitureIt.matriculevoiture}" filterFunction="#{filterMb.filterByX}"  >
+                                    <h:outputText value="#{voitureIt.matriculevoiture}"/>
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton icon ="ui-icon-check" onclick="PF('dlg_voiture').hide();" 
+                                                     update=":form" title="Choisir" >
+                                        <f:setPropertyActionListener value="#{voitureIt}" target="#{gestion_voitureMb.voiture}" />
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                            <br />
+                        </h:form>
+                    </p:dialog>
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

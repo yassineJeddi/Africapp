@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+    <h:head>
+        <title>Parc Engins</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+            <ui:define name="arborescence">
+
+
+
+
+                <h:form>
+                    Mensuel > <h:commandLink action="/mensuel/telephone.xhtml"> Affecter téléphone  à un salarié </h:commandLink> > <strong>Consultation</strong> 
+                </h:form>
+
+            </ui:define>
+            <ui:define name="content">
+                <p:panel id="pannel">
+                    <h:form id="form">
+                        <br />
+                        <div class="affectation-switch">
+                            <div class="btn-group" data-toggle="buttons">
+                                <p:commandButton class="btn btn-switch active"  value="Consulter Téléphone"
+                                                 actionListener="#{telephoneMb.afficherTelephoneaffecter()}"
+                                                 update=":form:tb"/>
+                                <p:commandButton class="btn btn-default" 
+                                                 action="/mensuel/gestionTelephone.xhtml?faces-redirect=true" 
+                                                 value="Gestion Télephone" 
+                                                 actionListener="#{telephoneMb.afficherTelephoneRechercher()}"/>
+                                <p:commandButton class="btn btn-default" 
+                                                 action="/mensuel/histoTel.xhtml?faces-redirect=true" 
+                                                 value="Historique Télephone" 
+                                                 actionListener="#{telephoneMb.afficherTelephoneRechercher()}"/>
+
+                            </div>
+                        </div>
+                        <br />
+                        <p:messages id="msgsM" closable="true"/>
+
+                        <p:commandButton value="Rechercher salarié"
+                                         onclick="PF('dlg').show();"
+                                         actionListener="#{telephoneMb.afficherMensuelRechercher()}"
+                                         update=":formA:tbl"/>
+
+
+                        <p:commandButton value="Réinitialiser"
+                                         actionListener="#{telephoneMb.afficherTelephoneaffecter()}"
+                                         update=":form:tb"/>
+
+
+                        <br /><br />
+
+                        <p:dataTable id="tb" value="#{telephoneMb.telephones}" var="v"
+                                     widgetVar="tableau"
+                                     rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+
+                            <p:column headerText="Identifiant"  filterBy="#{v.numSerieTel}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText  value="#{v.numSerieTel}"/>
+                            </p:column>
+
+                            <p:column headerText="Marque"   filterBy="#{v.marque}" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText  value="#{v.marque}"/>
+                            </p:column>
+
+
+                            <p:column headerText="Date Début"    filterBy="#{telephoneMb.convertDateFormat(v.dateDebut)}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText  value="#{telephoneMb.convertDateFormat(v.dateDebut)}">
+
+                                </h:outputText >
+                            </p:column>
+
+<!--                            <p:column headerText="Date Rendu"  filterBy="#{telephoneMb.convertDateFormat(v.dateRendu)}" filterFunction="#{filterMb.filterByX}"  >
+                                <h:outputText  value="#{telephoneMb.convertDateFormat(v.dateRendu)}">
+
+                                </h:outputText >
+                            </p:column>
+
+
+                            </p:column>-->
+                            
+                            
+                            <p:column headerText="Matricule"  filterBy="#{v.mensuel.matricule}" filterFunction="#{filterMb.filterByX}"  >
+                                <h:outputText  value="#{v.mensuel.matricule}"/>
+                            </p:column>
+
+                            <p:column headerText="Nom Bénéficiaire"  filterBy="#{v.mensuel.nom}" filterFunction="#{filterMb.filterByX}"  >
+                                <h:outputText  value="#{v.mensuel.nom}"/>
+                            </p:column>
+
+
+                            <p:column headerText="Prénom Bénéficiaire"  filterBy="#{v.mensuel.prenom}" filterFunction="#{filterMb.filterByX}"  >
+                                <h:outputText  value="#{v.mensuel.prenom}"/>
+                            </p:column>
+
+                            <p:column headerText="Annuler"  exportable="false" style="width: 250px;">
+                                <p:commandButton icon=" ui-icon-closethick" value="Annuler" actionListener="#{telephoneMb.desaffecter_telephone_mensuel(v)}" update=":form:tb, :form">
+                                    <p:confirm header="Confirmation" message=" Voulez vous vraiment annuler cette affectation?" icon="ui-icon-alert" />
+                                </p:commandButton>
+
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                    <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                </p:confirmDialog>
+                                <p:commandButton style="width: 100px; text-align: center;" value="Désaffecter" onclick="PF('dateR').show();" update=":find"  title="désaffecter ce téléphone" >
+                                    <f:setPropertyActionListener value="#{v}" target="#{telephoneMb.teleSelected}" />
+                                </p:commandButton>
+
+                                <p:commandButton icon ="ui-icon-document" onclick="PF('detail').show();" update=":detail"  title="Afficher le détail du téléphone">
+                                    <f:setPropertyActionListener value="#{v}" target="#{telephoneMb.teleSelected}" />
+                                </p:commandButton>
+                            </p:column>
+
+                        </p:dataTable>
+
+
+                    </h:form>
+
+                    <p:dialog header="Détail du  Téléphone" widgetVar="detail" modal="true" >
+                        <h:form id="detail">
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <p:outputLabel value="Numero Serie Téléphone :" />
+                                <h:outputText value="#{telephoneMb.teleSelected.numSerieTel}"/>
+
+                                <p:outputLabel value="Marque Téléphone :" />
+                                <h:outputText value="#{telephoneMb.teleSelected.marque}"/>
+
+                                <p:outputLabel value="Modéle Téléphone :" />
+                                <h:outputText value="#{telephoneMb.teleSelected.modele}"/>
+
+                                <p:outputLabel value="Nom Bénéficiare :" />
+                                <h:outputText value="#{telephoneMb.teleSelected.mensuel.nom}"/>
+
+                                <p:outputLabel value="Prénom Bénéficiare :" />
+                                <h:outputText value="#{telephoneMb.teleSelected.mensuel.prenom}"/>
+
+                                <p:outputLabel value="Matricule Bénéficiare :" />
+                                <h:outputText value="#{telephoneMb.teleSelected.mensuel.matricule}"/>
+
+
+
+                            </h:panelGrid>
+
+                            <p:commandButton value="Quitter" oncomplete="PF('detail').hide()" />
+
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog header="Désaffecter Téléphone" widgetVar="dateR" modal="true" width="400px">
+                        <h:form id="find">
+                            <h:panelGrid columns="2">
+                                <h:outputText value="Date de désaffectation :"/>        
+                                <p:calendar pattern="dd/MM/yyyy" id="date"    
+                                            mindate="#{telephoneMb.teleSelected.dateDebut}"
+                                            maxdate="#{operationStock.dateOfToday}"
+                                            value="#{telephoneMb.dateRendu}" 
+                                            
+                                            required="true"
+                                            requiredMessage="date rendu est obligatoire"
+                                            showOn="button"/>
+
+                                <br/>
+
+                                <h:outputText/>
+                                <p:commandButton value="Valider"  oncomplete="PF('tableau').clearFilters()" onclick="PF('dateR').hide();"
+                                                 action="#{telephoneMb.addDateRendu()}" update=":form:msgsM,:form:tb"/>
+
+                            </h:panelGrid>   
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog header="Rechercher Salarié Par "  width="80%" widgetVar="dlg" minHeight="40" >
+                        <h:form id="formA">
+                            
+                            <br /><br />
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <p:dataTable id="tbl" style="width:100%;" var="m" value="#{telephoneMb.mensuels}"
+                                             rowKey="#{m.id}" 
+                                             rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                             {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                             {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                             scrollable="true" scrollHeight="150" >
+
+                                    <p:ajax event="rowSelect"   /> 
+
+                                    <p:column headerText="Matricule" filterBy="#{m.matricule}" filterFunction="#{filterMb.filterByX}" >
+                                        <h:outputText  value="#{m.matricule}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Nom" filterBy="#{m.nom}" filterFunction="#{filterMb.filterByX}"  >
+                                        <h:outputText  value="#{m.nom}"/>
+                                    </p:column>
+
+
+                                    <p:column headerText="Prénom" filterBy="#{m.prenom}" filterFunction="#{filterMb.filterByX}"   >
+                                        <h:outputText value="#{m.prenom}" />
+                                    </p:column>
+
+                                    <p:column headerText="Date Début"  filterBy="#{m.dateCreation}" filterFunction="#{filterMb.filterByX}"  >
+                                        <h:outputText value="#{telephoneMb.convertDateFormat(m.dateCreation)}"  />
+                                    </p:column>
+
+
+                                    <p:column>
+                                        <p:commandButton icon="ui-icon-search"  onclick="PF('dlg').hide();"  actionListener="#{telephoneMb.consultation(m)}" update=":form, :form:tb">
+                                            <f:setPropertyActionListener value="#{mensuelIt}"  target="#{telephoneMb.telephoneSearch}" />
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:dataTable>
+
+                            </h:panelGrid> 
+
+                            <p:commandButton value="Annuler"  onclick="PF('dlg').hide();"  ajax="true"/>
+                        </h:form>
+
+                    </p:dialog>
+
+                </p:panel>
+            </ui:define>
+
+
+        </ui:composition>
+
+    </body>
+
+
+
+
+
+</html>

@@ -1,0 +1,223 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+    <h:head>
+        <title>Parc Engins</title>
+    </h:head>
+
+    <body>
+        <ui:composition template="./enginTemplate.xhtml">
+            <ui:define name="content">
+                <p:blockUI block="pointage_form" widgetVar="block">
+                    Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                </p:blockUI>
+                <p:panel id="panel">
+                    <p:growl showDetail="true" id="msgs"   />
+                    <h:form id="filtre_form">
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <p:outputLabel for="date: " value="Date de pointage ou de panne :" />
+                                <p:calendar class="value_dis" id="date" 
+                                            pattern="dd/MM/yyyy HH:mm:ss" value="#{pointageEnginDept.date}"
+                                            showOn="button" style="display: inline-flex;" required="true"
+                                            locale="fr"
+                                            mindate="#{pointageEnginDept.last_day_pointed}"
+                                            maxdate="#{pointageEnginDept.dateStart}">
+                                    <p:ajax event="dateSelect" listener="#{pointageEnginDept.updateDate()}" update=":pointage_form3:isValid,:pointage_form:tblA,:pointage_form2:tblM, :panel" />
+                                </p:calendar>
+                            </div>
+                            <div class="col-lg-5">
+                               
+                            </div>
+                        </div>
+                    </h:form>
+                    <br />
+                    <h:form id="pointage_form">
+                        <!--*********************************************************************************
+                       *************************************************************************************
+                       *************************************************************************************
+                       ARRAY : POINTAGE
+                       *************************************************************************************
+                       *************************************************************************************
+                       **********************************************************************************-->
+                        <div class="row">
+                            <div class="col-lg-2 col-lg-offset-1">T : En transfert </div>
+                            <div class="col-lg-2">O : Opérationel </div>
+                            <div class="col-lg-2">I : Inactif </div> 
+                            <div class="col-lg-2">NR : Non réceptionné </div>
+                        </div>
+                        <hr/>
+                        <h:outputLabel value="Liste des Engins du Pointage Automatic : " />
+                        <p:dataTable id="tblA" var="peIt"  value="#{pointageEnginDept.lpA}" 
+                                     rows="10"  paginator="true" 
+                                     paginatorPosition="bottom"                                   
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                                     rowsPerPageTemplate="5,10,20,100">
+                                <p:ajax event="page" process="tblA" update="tblA" />
+                            <p:column style="width: 6%" filterBy="#{peIt.IDEngin.code}" filterFunction="#{filterMb.filterByX}"  headerText="code" >
+                                <h:outputText value="#{peIt.IDEngin.code}"  />
+                            </p:column>
+                            <p:column style="width: 10%" headerText="des" filterBy="#{peIt.IDEngin.designation}" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{peIt.IDEngin.designation}"  />
+                            </p:column>                        
+                            <p:column headerText="Km" style="width: 8%">
+                                <p:inputNumber label="Le champ" id="Comp" 
+                                               value="#{peIt.nbrKm}" required="#{peIt.IDEngin.etatTransfert ne true ?true:false}"
+                                               class="form-control"
+                                               requiredMessage="Engin #{peIt.IDEngin.code} - Compteur KM : veuillez saisir le nombre du Compteur Km">
+                                <p:ajax event="change" />
+                                </p:inputNumber>
+                            </p:column>
+                            <p:column headerText="Horaire" style="width: 8%">
+                                <p:inputNumber label="Le champ" id="horaire" 
+                                               value="#{peIt.nbrHeures}" required="#{peIt.IDEngin.etatTransfert ne true ?true:false}"
+                                               styleClass="form-control" 
+                                               requiredMessage="Engin #{peIt.IDEngin.code} - Compteur H : veuillez saisir le nombre du Compteur Horaire">
+
+                                <p:ajax event="change" />
+                                </p:inputNumber>  
+                            </p:column>
+                            <p:column style="width: 10%" headerText="Etat" >
+                                <p:selectOneRadio disabled="#{peIt.IDEngin.etatTransfert}" id="C1" value="#{peIt.IDEngin.etat}" >
+                                    <f:selectItem itemLabel="O" itemValue="EN_MARCHE" /> 
+                                    <f:selectItem itemLabel="I" itemValue="INACTIF" />
+                                    <f:selectItem itemLabel="NR" itemValue="NON_RECEPTIONNE" /> 
+                                </p:selectOneRadio>
+                            </p:column> 
+                        </p:dataTable>
+                        <br />
+                        <p:commandButton class="col-lg-offset-9 btn btn-switch active" 
+                                         onstart="PF('block').show()" oncomplete="PF('block').hide()"
+                                         update=":panel,@this,:dlgMsgErreur,:pointage_form3:tblF"
+                                         value="Valider" 
+                                         action="#{pointageEnginDept.validerLpA()}" />
+                        <br />
+                        
+                    </h:form>
+                    <h:form  id="pointage_form2">
+                        <h:outputLabel value="Liste des Engins du Pointage Manuel : " />
+                        <p:dataTable id="tblM" var="peItM"  value="#{pointageEnginDept.lpM}" 
+                                     rows="10"  paginator="true" 
+                                     paginatorPosition="bottom"                                   
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                                     rowsPerPageTemplate="5,10,20,100">
+                                    <p:ajax event="page" process=":pointage_form2:tblM" update=":pointage_form2:tblM"/>
+                            <p:column style="width: 6%" filterBy="#{peItM.IDEngin.code}" filterFunction="#{filterMb.filterByX}"  headerText="code" >
+                                <h:outputText value="#{peItM.IDEngin.code}"  />
+                            </p:column>
+                            <p:column style="width: 10%" headerText="des" filterBy="#{peItM.IDEngin.designation}" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{peItM.IDEngin.designation}"  />
+                            </p:column>                        
+                            <p:column headerText="Km" style="width: 8%">
+                                <p:inputNumber label="Le champ" id="Comp" 
+                                               value="#{peItM.nbrKm}" required="#{peItM.IDEngin.etatTransfert ne true ?true:false}"
+                                               class="form-control"
+                                               requiredMessage="Engin #{peItM.IDEngin.code} - Compteur KM : veuillez saisir le nombre du Compteur Km">
+                                <p:ajax event="change" />
+                                </p:inputNumber>
+                            </p:column>
+                            <p:column headerText="Horaire" style="width: 8%">
+                                <p:inputNumber label="Le champ" id="horaire" 
+                                               value="#{peItM.nbrHeures}" required="#{peItM.IDEngin.etatTransfert ne true ?true:false}"
+                                               styleClass="form-control" 
+                                               requiredMessage="Engin #{peItM.IDEngin.code} - Compteur H : veuillez saisir le nombre du Compteur Horaire">
+
+                                <p:ajax event="change" />
+                                </p:inputNumber>  
+                            </p:column>
+                            <p:column style="width: 10%" headerText="Etat" >
+                                <p:selectOneRadio disabled="#{peItM.IDEngin.etatTransfert}" id="C1" value="#{peItM.IDEngin.etat}" required="true">
+                                    <f:selectItem itemLabel="O" itemValue="EN_MARCHE" /> 
+                                    <f:selectItem itemLabel="I" itemValue="INACTIF" />
+                                    <f:selectItem itemLabel="NR" itemValue="NON_RECEPTIONNE" /> 
+                                </p:selectOneRadio>
+                            </p:column> 
+                        </p:dataTable>
+                        <br />
+                        <p:commandButton class="col-lg-offset-9 btn btn-switch active" 
+                                        onstart="PF('block').show()" oncomplete="PF('block').hide()"
+                                         update=":panel,@this,:dlgMsgErreur"
+                                         value="Valider" 
+                                         action="#{pointageEnginDept.validerLpM()}" />
+                        <br />
+                        
+                    </h:form>
+                    <h:form  id="pointage_form3">
+                        <h:outputLabel value="Liste des Engins validé : " />
+                        <p:dataTable id="tblF" var="peIt"  value="#{pointageEnginDept.lpe}" 
+                                     rows="5"  paginator="true" 
+                                     paginatorPosition="bottom"                                     
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                                     rowsPerPageTemplate="5,10,15">
+                            <p:ajax event="page" process="tblF" update="tblF"/>
+                            <p:column style="width: 6%" filterBy="#{peIt.IDEngin.code}" filterFunction="#{filterMb.filterByX}"  headerText="code" >
+                                <h:outputText value="#{peIt.IDEngin.code}"  />
+                            </p:column>
+                            <p:column style="width: 10%" headerText="des" filterBy="#{peIt.IDEngin.designation}" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText value="#{peIt.IDEngin.designation}"  />
+                            </p:column>                        
+                            <p:column headerText="Km" style="width: 8%">
+                                <p:inputNumber label="Le champ" id="Comp" 
+                                               value="#{peIt.nbrKm}" required="#{peIt.IDEngin.etatTransfert ne true ?true:false}"
+                                               class="form-control"
+                                               requiredMessage="Engin #{peIt.IDEngin.code} - Compteur KM : veuillez saisir le nombre du Compteur Km">
+                                </p:inputNumber>
+                            </p:column>
+                            <p:column headerText="Horaire" style="width: 8%">
+                                <p:inputNumber label="Le champ" id="horaire" 
+                                               value="#{peIt.nbrHeures}" required="#{peIt.IDEngin.etatTransfert ne true ?true:false}"
+                                               styleClass="form-control" 
+                                               requiredMessage="Engin #{peIt.IDEngin.code} - Compteur H : veuillez saisir le nombre du Compteur Horaire">
+
+                                </p:inputNumber>  
+                            </p:column>
+                            <p:column style="width: 10%" headerText="Etat" >
+                                <p:selectOneRadio  disabled="true"
+                                                  id="C1F" value="#{peIt.IDEngin.etat}" required="true">
+                                    <f:selectItem itemLabel="O" itemValue="EN_MARCHE" />
+                                    <f:selectItem itemLabel="I" itemValue="INACTIF" />
+                                    <f:selectItem itemLabel="NR" itemValue="NON_RECEPTIONNE" />
+                                    <f:ajax event="change" listener="#{pointageEngin.setEtatRadio(peIt)}"/>
+                                </p:selectOneRadio>
+                            </p:column>
+                            <p:column style="width: 3%" headerText="Annuler">
+                                <p:commandButton icon="	ui-icon-arrowreturnthick-1-w" action="#{pointageEnginDept.annulerPointageEnginList(peIt)}" update=":panel,@this" />
+                            </p:column>
+                            
+                        </p:dataTable>
+                        <br />
+                        <p:commandButton class="col-lg-offset-9 btn btn-switch active" id="isValid" 
+                                         onstart="PF('block').show()" oncomplete="PF('block').hide()"
+                                         update=":panel,@this,:dlgMsgErreur,:pointage_form,:pointage_form:tblA,:pointage_form2:tblM,:pointage_form3:tblF"
+                                         value="Valider le pointage" 
+                                         disabled="#{!pointageEnginDept.isvalid}"
+                                         action="#{pointageEnginDept.validate()}" />
+                    </h:form>
+                    
+                    <p:dialog style="margin: auto;" header="Erreur"
+                              widgetVar="dlgMsgErreur" draggable="false" modal="true" showEffect="fade" 
+                              hideEffect="fade" height="30%" width="30%" resizable="false">
+                        <h:form id="dlgMsgErreur">
+                                <div class="row">
+                                    <h:outputLabel value="Erreur : " />
+                                    <h:outputLabel value="#{pointageEngin.messageErrorPointage}" />
+                                    
+                                </div>
+                        
+                                <div class="row">
+                                    <p:commandButton  onclick="PF('dlgMsgErreur').hide()"
+                                                     class="col-lg-offset-10 btn btn-switch active" 
+                                                     value="OK"   />
+                                </div>
+                        </h:form>
+                    </p:dialog>
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

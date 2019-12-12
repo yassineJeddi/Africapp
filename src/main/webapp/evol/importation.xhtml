@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <head>
+        <title>Presences - importation</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+
+    <body>
+        <ui:composition template="Template.xhtml">
+             <ui:define name="arborescence">
+                 <h:outputText value="Quinzainiers > Pointage > Presences > Importation " style="color:#000066; font-size: 14px;  font-family: Times New Roman, Georgia, Serif;"/>
+            </ui:define>
+            <ui:define name="content">
+                <div class="container">
+                    <h:form id="affectationMultip" enctype="multipart/form-data" prependId="false">
+
+                        <p:growl showDetail="true" id="messages"   autoUpdate="true"   />
+
+
+                        <p:panel id="basic" header="Importation des présences des salariés"  style="margin-bottom:20px">
+                            <h:panelGrid columns="2" cellpadding="10">
+
+                                <p:outputLabel value="Fichier à uploader" for="fileUploadImport" />
+                                <h:panelGrid columns="1" cellpadding="10">
+                                    <p:fileUpload id="fileUploadImport" value="#{importAbsensesMb.importFile}" update="msgupload" auto="false" invalidFileMessage="type autorisé xls, xlsx" allowTypes="/(\.|\/)(xlsx|xls)$/" label="Choisir Fiche de Pointage"  mode="simple" ></p:fileUpload>
+                                    <p:message id="msgupload" for="fileUploadImport" />
+                                </h:panelGrid>
+
+                                <p:outputLabel value="Mois" for="mount" />
+                                <p:spinner value="#{importAbsensesMb.mounth}" id="mount" label="Mount" placeholder="" min="1" max="12"/>
+
+                                <p:outputLabel value="Année" for="year" />
+                                <p:spinner  value="#{importAbsensesMb.year}" id="year" label="Year" placeholder="" min="#{importAbsensesMb.year - 1}" max="#{importAbsensesMb.year}"/>
+
+                                <p:outputLabel value="Actions" for="actions" />
+                                <p:selectManyCheckbox id="actions" value="#{importAbsensesMb.selectedValues}" columns="1">
+                                    <f:selectItem itemLabel="Désaffectation de chantiers" itemValue="0" />
+                                    <f:selectItem itemLabel="Ecraser les pointages existants" itemValue="1" />
+                                    <f:selectItem itemLabel="Vérification de contrat" itemValue="2" />
+                                    <f:selectItem itemLabel="Avec Réglage" itemValue="3" />
+                                </p:selectManyCheckbox>
+
+                                <p:outputLabel value="Chantier" for="chantier" />
+                                <p:selectOneMenu filter="true" id="chantier" value="#{importAbsensesMb.chantierSearch}" 
+                                                 filterMatchMode="contains"
+                                                 >
+                                    <f:selectItem itemLabel="Ajouter un chantier :" itemValue="-1"/>
+                                    <f:selectItems value="#{chantier.chantiers}" var="C"
+                                                   itemLabel="#{C.code}" itemValue="#{C.id}"/>
+                                </p:selectOneMenu>
+
+                            </h:panelGrid>
+                        </p:panel>
+
+                        <div>
+
+                            <div class="row">
+                                <p:commandButton class="col-lg-offset-6 col-lg-2 btn btn-switch active" value="Valider les présences" actionListener="#{importAbsensesMb.importer()}" ajax="false" update="import_file">
+                                    <p:fileDownload value="#{importAbsensesMb.file_Excel}"/>
+                                    <f:ajax disabled="true" />
+                                </p:commandButton>
+
+
+                            </div>
+
+
+
+                        </div>
+                    </h:form>
+                </div>
+            </ui:define>    
+        </ui:composition>
+    </body>
+</html>

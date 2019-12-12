@@ -1,0 +1,377 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+
+    <h:head>
+        <title>Gestion Stock</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./stockTemplate.xhtml">
+            <ui:define name="content">
+
+
+                <p:panel id="pannelAF">
+
+                    <h:form id="header_f">
+                        
+
+                        <!--**********************************************************************************************
+                        ***********************    TOP BAR    ************************************************************
+                        ********************************************************************************************** -->
+
+                        <h:panelGrid id="panelf" columns="15" cellpadding="1">   
+                            <!--<p:commandButton disabled="true" value="Ajouter Article" icon="ui-icon-plus" type="button" onclick="PF('addStock_dialog').show();" />-->
+                            <p:outputLabel  value="Chantier" />
+                            <p:selectOneMenu  class="value_dis" value="#{operationStock.chantierGlobal}" filter="true" filterMatchMode="contains" >
+                                <p:ajax listener="#{operationStock.globalChantierManager(8)}" 
+                                        onstart="PF('blocke').show();"
+                                        oncomplete="PF('blocke').hide(); PF('stockTable').clearFilters()"
+                                        update=":header_f:panelf, :form_transferMV:display,   :form_detailz3:tbl6, :tableAF:tbl2" />
+                                <f:selectItem itemLabel="" itemValue="-1"/>
+                                <f:selectItems value="#{chantier.chantiers}" var="C"
+                                               itemLabel="#{C.code}" itemValue="#{C.id}"/>
+                            </p:selectOneMenu> 
+
+                            <p:spacer width="50px" height="1px" />
+                            <p:commandButton disabled="#{operationStock.noChantierSelectedYet}" class="btn btn-switch active" update=" :form_detailz2:tbl5" value="Nouveau Transfert" icon="ui-icon-transferthick-e-w red" oncomplete="PF('detailz2_dialog').show();" action="#{operationStock.initTransferMList()}"  />
+
+
+                            <p:spacer width="5px" />
+
+                            <!-- export to spreadsheet -->                    
+                            <h:commandLink>
+                                <p:commandButton disabled="#{operationStock.noChantierSelectedYet}" class="btn btn-switch active" value="Exporter Excel" icon="ui-icon-arrowthickstop-1-s" type="button" />
+                                <p:dataExporter type="xls" target=" :tableAF:tbl2" fileName="Etat du Stock #{operationStock.chantierGlobal}" pageOnly="false" />
+                            </h:commandLink>
+                            <p:spacer width="5px" />
+
+                           
+
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                <p:commandButton value="Synchroniser" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                            </p:confirmDialog>
+
+                           
+                              
+                            <p:blockUI widgetVar="blocke" block=" :tableAF:tbl2" >
+                                Transfert en cours ... <br />
+                                <p:graphicImage url="https://upload.wikimedia.org/wikipedia/commons/5/53/Loading_bar.gif"/>
+                            </p:blockUI>
+                            <!-- chantier selection -->
+
+                            <p:spacer width="10px" />
+
+
+
+
+
+                        </h:panelGrid>
+
+                        <p:spacer width="10px" />
+                        <!-- select one button switcher - utils[1] -->
+                    </h:form>
+
+                    <br />
+
+                    <!--**********************************************************************************************
+                    **************************************       BASE ARTICLES    **********************************
+                      ********************************************************************************************  -->
+
+                    <h:form id="tableAF">
+                        <p:messages id="msgsM" showDetail="true" closable="true"  />
+
+                        <p:dataTable id="tbl2" widgetVar="stockTable" var="articleIt" value="#{operationStock.articlesInChantier}" 
+                                     emptyMessage="Pas d'articles sur ce chantier. Veuillez séléctionner un chantier ou synchroniser "
+                                     rows="10"  paginator="true"
+                                     rowStyleClass="#{articleIt.estEnCoursDeTransfert eq true ? 'old' : null}"
+
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+
+                            <f:facet name="header">
+                                  <p:outputPanel>
+                                    <p:outputLabel value="Recherche par mot-clé : " />
+                                    <p:inputText id="globalFilter" onkeyup="PF('stockTable').filter()" style="width:150px" placeholder="Entrez un mot-clé"/>
+                                </p:outputPanel>
+                            </f:facet>
+                            <p:ajax event="rowSelect"  />
+
+                            <p:column headerText="Réference Article" filterFunction="#{filterMb.filterByX}" filterBy="#{articleIt.articleId.codeArticle}">
+                                <h:outputText value="#{articleIt.articleId.codeArticle}" />
+                            </p:column>
+
+                            <p:column headerText="Famille 1" filterFunction="#{filterMb.filterByX}" filterBy="#{articleIt.articleId.fam1}">
+                                <h:outputText value="#{articleIt.fam}" />
+                            </p:column>
+
+                            <p:column filterFunction="#{filterMb.filterByX}"
+                                      headerText="Famille 2" filterBy="#{articleIt.sfam}">
+                                <h:outputText value="#{articleIt.sfam}" 
+                                              />
+                            </p:column> 
+                            
+                             <p:column filterFunction="#{filterMb.filterByX}"
+                                      headerText="Famille 3" filterBy="#{articleIt.ssfam}">
+                                <h:outputText value="#{articleIt.ssfam}" />
+                            </p:column> 
+
+                            <p:column filterFunction="#{filterMb.filterByX}"  
+                                      headerText="Designation" 
+                                      filterBy="#{articleIt.articleId.designation}">
+                                <h:outputText value="#{articleIt.articleId.designation}" />
+                            </p:column>                       
+
+                            <p:column headerText="Quantité Disponible">
+                                <h:outputText value="#{operationStock.convertToDoubleDecimals(articleIt.quantiteChantierStock)}" />
+                            </p:column>
+                            
+                             <p:column headerText="Unité">
+                                 <h:outputText value="#{articleIt.articleId.unite}" />
+                            </p:column>
+
+                            <f:facet name="footer">  
+                               
+                            </f:facet>
+                        </p:dataTable>
+                    </h:form>
+
+                    
+                    
+                    <!-- Transfert Dialog Box -->
+                    
+                    <p:dialog showEffect="fade"
+                              draggable="false"
+                              resizable="false" hideEffect="fade" width="1000px" modal="true"  header="Articles à transférer" widgetVar="detailz2_dialog" minHeight="40" >
+                        <h:form id="form_detailz2">
+
+                            <p:messages id="msgsM3" showDetail="true" closable="true"  />
+
+                            <p:dataTable id="tbl5" 
+                                         emptyMessage="Veuillez ajouter des articles à ce transfert."
+                                         var="articleTr" 
+                                         value="#{operationStock.listOfArticleQuantite}"
+                                         style="margin-bottom:0"
+                                         
+                                         rows="10"  paginator="true"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                                         rowsPerPageTemplate="5,10,15">
+
+                                <f:facet name="header">
+                                    Ajouter des articles au transfèrt: 
+                                </f:facet>
+
+                                <p:column headerText="Code Article">
+                                    <p:outputLabel value="#{articleTr.article.codeArticle}" />
+                                </p:column>
+
+                                <p:column headerText="Designation">
+                                    <p:outputLabel value="#{articleTr.article.designation}" />
+                                </p:column>
+
+                                <p:column headerText="Quantité à transférer">
+                                    <p:outputLabel value="#{operationStock.convertToDoubleDecimals(articleTr.quantite)} #{articleTr.article.unite}" />
+                                </p:column>
+
+                                <p:column headerText="Actions" style="text-align: center">                       
+                                    <p:commandButton style="width:30px; height: 30px" process="tbl5" id="af2f" update=" :form_detailz2:tbl5" value="" icon="ui-icon-circle-close" oncomplete="" action="#{operationStock.removeArticleTRM(articleTr)}"  />
+                                    <p:tooltip id="toolTipFade" for="af2f" value="Supprimer" />
+
+                                    <p:commandButton style="width:30px; height: 30px" process="tbl5"  id="d2et" update=" :form_detailz2:tbl5,  :form_transferM22:display" value="" icon="ui-icon-pencil" oncomplete="PF('transferM22_dialog').show();" actionListener="#{operationStock.initArticleTRMToEdit(articleTr)}"  />
+                                    <p:tooltip id="toolTipFade2" for="d2et" value="Modifier" />
+
+                                </p:column>
+
+                                <f:facet name="footer">
+                                    <p:commandButton process="tbl5" update=" :form_transferM:display" icon="ui-icon-plus" value="Ajouter un Article" oncomplete="PF('transferM_dialog').show()" actionListener="#{operationStock.initAddVars}" />
+                                    <p:commandButton process="tbl5" update=" :form_transferMV" icon="ui-icon-arrow-1-e"
+                                                     value="Procéder au Transfert"  
+                                                     oncomplete="PF('transferMV_dialog').show()" 
+                                                     disabled="#{operationStock.isReadyToTransfer eq false}"
+                                                     actionListener="#{operationStock.switchi}"/>
+                                </f:facet>
+                            </p:dataTable>
+                        </h:form>
+                    </p:dialog>
+
+
+
+                    <p:dialog showEffect="fade"  resizable="false" draggable="false" hideEffect="fade" header="Transfert" modal="true" widgetVar="transferM_dialog" minHeight="40" >
+                        <h:form id="form_transferM">
+                            <p:growl id="msgsTRM" showDetail="true" autoUpdate="false"  />
+
+                            <p:panelGrid id="display" columns="3">
+
+                                <p:outputLabel value="Code Article:" />
+                                <h:outputText  value="#{operationStock.designationToSearch2}" />
+                                <p:commandButton style="width:32px; height: 32px" process="" id="trM" update=" :form_transferM:display,  :form_detailz3:tbl6 " value="" icon="ui-icon-search" 
+                                                 oncomplete="PF('multiArticleDialog').show();" actionListener="#{operationStock.loadArticlesByDes}" />
+
+                                <p:outputLabel value="Quantité Disponible:" style="font-weight: bold; padding-left: 0px !important;" />
+                                <h:outputText style="font-weight: bold" value="#{operationStock.codeCurrent} #{operationStock.uniteToSearch}" />
+                                <p:tooltip id="toolTipFade" for="trM" value="Ajouter un autre article" /> 
+
+                                <p:outputLabel value="Quantité à transférer:" />
+                                <h:inputText validatorMessage="Veuillez vérifier la quantité à transferer, ce champs doit etre un nombre positif inférieur ou égal à la quantité disponible!" required="true" 
+                                             requiredMessage="veuillez entrer une quantité" value="#{operationStock.quantiteToTransferM}">
+                                    <f:validateDoubleRange minimum="0.0001" maximum="#{operationStock.chantierArticleQToTransferM.quantiteChantierStock}" />
+                                </h:inputText>
+                                <p:outputLabel value="#{operationStock.uniteToSearch}"/>
+
+                                <p:commandButton class="btn btn-switch active" style="width: 100%"
+                                                 update=" :form_detailz2:tbl5, :form_transferM:display,  :form_transferM:msgsTRM "
+                                                 value="Ajouter" action="#{operationStock.addToListOfTransferM}"  >
+                                </p:commandButton>
+
+                                <p:commandButton  class="btn btn-switch active" style="width: 100%" update="" value="Annuler" oncomplete="PF('transferM_dialog').hide()">
+                                </p:commandButton>
+                            </p:panelGrid>
+
+
+
+                        </h:form>
+                    </p:dialog>
+
+
+
+                    <p:dialog showEffect="fade"  hideEffect="fade" header="Modifier l'article" modal="true" widgetVar="transferM22_dialog" minHeight="40" >
+                        <h:form id="form_transferM22">
+                            <p:growl id="growlTRM" showDetail="true"   />
+
+                            <p:panelGrid styleClass="panelGridStyle" id="display" columns="2">
+
+                                <p:outputLabel value="Code Article:" />
+                                <p:outputLabel value="#{operationStock.articleTRM2.article.codeArticle}" />
+
+                                <p:outputLabel value="Quantité Disponible:" />
+                                <h:outputText value="#{operationStock.articleTRM2.quantiteTotalDispo}" />
+
+                                <p:outputLabel value="Quantité à transférer" />
+                                <h:inputText value="#{operationStock.quantiteToTransferM}" >
+                                    <f:validateDoubleRange minimum="0.0001" maximum="#{operationStock.articleTRM2.quantiteTotalDispo}" />
+                                </h:inputText>
+
+                                <p:commandButton class="btn btn-switch active" style="width: 100%"  oncomplete="PF('transferM22_dialog').hide()" update=" :form_detailz2:tbl5, :form_transferM22:display,  :form_transferM22:growlTRM " value="Ajouter" action="#{operationStock.addToListOfTransferMAfterEdit()}"  >
+                                </p:commandButton>
+
+                                <p:commandButton class="btn btn-switch active" style="width: 100%" update="" value="Annuler" oncomplete="PF('transferM22_dialog').hide()">
+                                </p:commandButton>
+
+                            </p:panelGrid>
+                        </h:form>
+                    </p:dialog>
+
+
+
+                    <p:dialog showEffect="fade"  hideEffect="fade" header="Transfer" modal="true" resizable="false" widgetVar="transferMV_dialog" minHeight="40" >
+                        <h:form id="form_transferMV">
+                            <p:growl id="msgsTRMV" autoUpdate="false" showDetail="true"  />
+                            <h:panelGrid id="display" columns="2" cellpadding="4">
+                                <h:outputText value="Chantier Client"  />
+                                <p:selectOneMenu required="true" value="#{operationStock.chantierRecepteurId}" filter="true" filterMatchMode="contains"  disabled="#{operationStock.isNotReadyToShowBon eq false}">
+                                    <f:selectItems value="#{chantierServMb.chantiers}" var="y"   
+                                                   itemLabel="#{y.code}" itemValue="#{y.id}" />
+                                </p:selectOneMenu>  
+                                <p:outputLabel for="button" value="Date de transfert :" />
+                                <p:calendar  disabled="#{operationStock.isNotReadyToShowBon eq false}"
+                                             required="true" requiredMessage="la date est obligatoire"  
+                                             id="button" value="#{operationStock.dateTransfert}"
+                                             maxdate="#{operationStock.dateOfToday}" showOn="button" 
+                                             pattern="dd/MM/yyyy" />
+                            </h:panelGrid>
+                            <p:commandButton class="btn btn-switch active" id="btnTransfert"
+                                             disabled="#{operationStock.isNotReadyToShowBon eq false}"
+                                             update=":bonFormR, :form_transferMV,  :form_transferMV:msgsTRMV,  :tableAF:tbl2"  
+                                             oncomplete="" value="Valider le transfert" 
+                                             action="#{operationStock.addTransferStock()}" 
+                                             >
+                            </p:commandButton>
+
+                            <p:commandButton class="btn btn-switch active" update=":bonFormR" disabled="#{operationStock.isNotReadyToShowBon}" oncomplete="PF('consulterDocCR').show()" value="Afficher Bon" actionListener="#{operationStock.bonTransfert()}"  >
+                            </p:commandButton>
+
+                            <p:commandButton  class="btn btn-switch active" update="" value="Fermer" oncomplete="PF('transferMV_dialog').hide()">
+                            </p:commandButton>
+                        </h:form>
+                    </p:dialog>
+
+                   
+                    <p:dialog modal="true" header="Bon de transfert" widgetVar="consulterDocCR">
+                        <h:form id="bonFormR">
+                           <p:media value="#{imageBean.bon}" width="100%" height="500px" player="pdf"> 
+                                <f:param name="path" value="#{operationStock.codeCurrent}" />
+                           </p:media>
+                        </h:form>
+                    </p:dialog>
+
+
+                    <p:dialog showEffect="fade"  resizable="false" draggable="false" maximizable="true" hideEffect="fade" width="1000px" header="Ajouter Articles" widgetVar="multiArticleDialog" modal="true"   minHeight="50">
+                        <h:form id="form_detailz3">  
+                            <p:growl id="trang" showDetail="true" autoUpdate="false"/>
+                            <p:dataTable id="tbl6" 
+                                         scrollable="true" scrollHeight="300"
+                                         emptyMessage="Pas d'article sur le chantier choisi."
+                                         var="article6" 
+                                         widgetVar="tableArt"
+                                         value="#{operationStock.articlesInChantier}"
+                                         style="margin-bottom:0"
+                                         selectionMode="single"                                
+                                         selection="#{operationStock.chantierArticleQToTransferM}"
+                                         rowKey="#{article6.codeChantierStockQ}"
+                                         rows="10"  paginator="true"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+
+                                <f:facet name="header">
+                                    Ajouter des articles au transfèrt: 
+                                </f:facet>
+
+                                <p:column headerText="Code Article" filterMatchMode="exact" filterFunction="#{filterMb.filterByX}" filterBy="#{article6.articleId.codeArticle}">
+                                    <h:outputText value="#{article6.articleId.codeArticle}" />
+                                </p:column>
+
+                                <p:column headerText="Famille" filterMatchMode="contains" filterFunction="#{filterMb.filterByX}" filterBy="#{article6.fam}">
+                                    <h:outputText value="#{article6.fam}" />
+                                </p:column>
+
+                                <p:column headerText="Sous Famille" filterMatchMode="contains" filterFunction="#{filterMb.filterByX}" filterBy="#{article6.sfam}">
+                                    <h:outputText value="#{article6.sfam}" />
+                                </p:column>
+
+                                <p:column headerText="Designation" filterMatchMode="contains" filterFunction="#{filterMb.filterByX}" filterBy="#{article6.articleId.designation}">
+                                    <h:outputText value="#{article6.articleId.designation}" />
+                                </p:column>
+
+                                <p:column headerText="Quantité Disponible" sortBy="#{article6.quantiteChantierStock}">
+                                    <h:outputText value="#{operationStock.convertToDoubleDecimals(article6.quantiteChantierStock)}" />
+                                </p:column>
+
+                                <f:facet name="footer">
+                                    <p:commandButton process="tbl6" 
+                                                     update=" :form_transferM:display,  :form_detailz3:trang" icon="ui-icon-plus"
+                                                     value="Ajouter" oncomplete="PF('multiArticleDialog').hide(); PF('tableArt').clearFilters();" 
+                                                     action="#{operationStock.initTransferM()}" />
+                                </f:facet>
+
+                            </p:dataTable>
+
+                        </h:form>
+                    </p:dialog>
+
+                </p:panel>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>
+
+
+
+

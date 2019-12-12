@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html >
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Liste des Salarié</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="Template.xhtml">
+            <ui:define name="arborescence">
+                <h:outputText value="RH > Consultation des salariés" style="color:#000066; font-size: 14px;  font-family: Times New Roman, Georgia, Serif; "/>
+            </ui:define>
+            <ui:define name="content">
+                <p:blockUI block="form" widgetVar="block">
+                    Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                </p:blockUI>
+                <p:growl showDetail="true" autoUpdate="true" id="msgs"  />
+                <!--<p:panel id="pannelPE" class="col-lg-12">-->
+                <h:form id="form">
+                    <div class="row">
+                        <div class="col-lg-2 form-group">
+                        </div>
+                          
+                        <div class="col-lg-4 form-group">
+                            <p:selectOneMenu id="chantierlistPresence" filter="true"
+                                             value="#{badgeMb.idChantier}" filterMatchMode="contains" 
+                                             >
+                                <f:selectItem itemLabel="--Chantier--" itemValue="0" noSelectionOption="true" />
+                                <f:selectItems value="#{badgeMb.chantiers}" 
+                                               var="c"                                               
+                                               itemLabel="#{c.code}"
+                                               itemValue="#{c.id}" 
+                                               />
+                                <p:ajax listener="#{badgeMb.changeChantier()}" />
+                            </p:selectOneMenu>                            
+                        </div>   
+                        <div class="col-lg-2 form-group">
+                            <p:commandButton icon="ui-icon-circle-check" value="Générer badges" 
+                                             process="@this"  update=":form"
+                                             actionListener="#{badgeMb.ajouterAttestatoin('badge')}"
+                                             />
+                        </div >                              
+                    </div>     
+                    <p:growl showDetail="true" id="growlId" sticky="true"   showSummary="true"  autoUpdate="true" />
+                     
+                        <p:tab  >
+                            <p:dataTable id="attestation" value="#{badgeMb.attestations}" var="attestation"
+                                        rows="10" paginator="true"
+                                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                        rowsPerPageTemplate="5,10,15"
+                                         >
+                                <p:column headerText="Titre" filterBy="#{attestation.titre}" sortBy="#{attestation.titre}" filterMatchMode="contains">
+                                    <h:outputText value="#{attestation.titre}"/>
+                                </p:column>
+                                <p:column headerText="Crée par" filterBy="#{attestation.creePar}" sortBy="#{attestation.creePar}" filterMatchMode="contains">
+                                    <h:outputText value="#{attestation.creePar}"/>
+                                </p:column>
+                                <p:column headerText="Date Création" filterBy="#{attestation.dateCreation}" sortBy="#{attestation.dateCreation}" filterMatchMode="contains">
+                                    <h:outputText value="#{attestation.dateCreation}"/>
+                                </p:column>
+                                <p:column headerText="Action">
+                                    
+                                    <p:commandButton process="@this" value="Telecharger" ajax="false" 
+                                                     onclick="PrimeFaces.monitorDownload(start, stop);" 
+                                                     icon="ui-icon-arrowthick-1-s" >
+                                        <p:fileDownload value="#{imageBean.getFile(attestation.chemin,attestation.chantier.code)}" />
+                                    </p:commandButton>
+                                        
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab>
+                    
+                        
+                </h:form>   
+                    
+                <!--</p:panel>-->
+                    
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

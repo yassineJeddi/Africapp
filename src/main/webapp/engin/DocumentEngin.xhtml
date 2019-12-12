@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <h:head>
+        <link rel="stylesheet" type="text/css" href="../resources/css/main.css" />
+        <title>Document Engin</title>
+    </h:head>
+    <body>
+        <ui:composition template="./enginTemplate.xhtml">
+            <ui:define name="arborescence">
+                <h:form>
+                    Parc Engin > <h:commandLink 
+                        action="/engin/parcengins.xhtml"> Parc Engin</h:commandLink> > 
+                    <strong> Document Engin </strong>
+                </h:form>
+            </ui:define>
+            <ui:define name="content">
+                <p:panel id="panel">
+                    <h:form id="formTable">
+                        <p:messages id="msgsM" closable="true"/>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <h:outputText value="Reference :" />
+                                <h:outputText class="value_dis" 
+                                              value="#{documentEnginMb.enginToaddDocument.reference}"/>
+                            </div>
+                            <div class="col-lg-4">
+                                <h:outputText value="Code  :" />
+                                <h:outputText class="value_dis" 
+                                              value="#{documentEnginMb.enginToaddDocument.code}"/>
+                            </div>
+                            <div class="col-lg-4">
+                                <h:outputText value="Designation :" />
+                                <h:outputText class="value_dis" 
+                                              value="#{documentEnginMb.enginToaddDocument.designation}" />
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <h:outputText value="Marque :" />
+                                <h:outputText class="value_dis" value="#{documentEnginMb.enginToaddDocument.marque}" />
+                            </div>
+                            <div class="col-lg-4">
+                                <h:outputText value="Numero Chassis :" />
+                                <h:outputText class="value_dis" value="#{documentEnginMb.enginToaddDocument.numchassis}" />
+                            </div>
+                            <div class="col-lg-4">
+                                <h:outputText value="Etat :" />
+                                <h:outputText class="value_dis" value="#{documentEnginMb.enginToaddDocument.etat}"/>
+                            </div>
+                        </div>
+                        <br/>
+                        <p:tabView id="tabview_1">
+                            <p:tab title="Document">
+                                <p:commandButton value="Ajouter Autre Document " 
+                                                 disabled="#{documentEnginMb.enginToaddDocument.archive}"
+                                                 oncomplete="PF('uploaderVar').show()" />
+                                <br /><br />
+                                <h:form id="form11">
+                                    <p:dataTable id="tbl" var="documentIt" value="#{documentEnginMb.l_DocumentEngins}" 
+                                                 rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                                 {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                                 {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                                 >
+                                        <p:ajax event="rowEdit" listener="#{documentEnginMb.onRowEdit}" update=":formTable:msgsM" />
+                                        <p:ajax event="rowEditCancel" listener="#{documentEnginMb.onRowCancel}"  update=":formTable:msgsM" />
+                                        
+                                        <p:column headerText="Date de Creation"  
+                                                  filterBy="#{documentEnginMb.format(documentIt.dateCreation)}"
+                                                  sortBy="#{documentIt.dateCreation}"
+                                                  filterFunction="#{filterMb.filterByX}" 
+                                                  >
+                                            <h:outputText 
+                                                value="#{documentEnginMb.format(documentIt.dateCreation)}" 
+                                                ></h:outputText>
+                                        </p:column>
+                                        <p:column headerText="Titre"  filterBy="#{documentIt.titre}"  sortBy="#{documentIt.titre}" filterFunction="#{filterMb.filterByX}"  >
+                                            <p:cellEditor>
+                                                <f:facet name="output"><h:outputText value="#{documentIt.titre}"  /></f:facet>
+                                                <f:facet name="input"><p:inputText value="#{documentIt.titre}"  /></f:facet>
+                                            </p:cellEditor>
+                                        </p:column>
+                                        <p:column headerText="Date de Fichier"  
+                                                  filterBy="#{documentEnginMb.format(documentIt.dateFiche)}"
+                                                  sortBy="#{documentIt.dateFiche}"
+                                                  filterFunction="#{filterMb.filterByX}" 
+                                                  >
+                                            <h:outputText 
+                                                value="#{documentEnginMb.format(documentIt.dateFiche)}" 
+                                                ></h:outputText>
+                                        </p:column>
+                                        <p:column headerText="Ajouter Par"   >
+                                            <h:outputText value="#{documentIt.creePar}" />
+                                        </p:column>
+                                        <p:column headerText="Opérations" style="width:150px">
+                                            <p:commandButton icon="ui-icon-document"
+                                                             title ="Consulter Document" 
+                                                             action="#{documentEnginMb.visualiser(documentIt.chemin)}" 
+                                                             oncomplete="PF('consulterDoc').show()" update=":panel"/>
+                                         
+                                            <p:commandButton icon="ui-icon-arrowthick-1-s"
+                                                             title ="Télecharger Document" 
+                                                             action="#{documentEnginMb.downLoad(documentIt)}" 
+                                                             ajax="false"
+                                                             >
+                                            </p:commandButton> 
+                                            <p:commandButton  icon="ui-icon-trash"  action="#{documentEnginMb.delete(documentIt)}" 
+                                                              update=":formTable:tabview_1:form11:tbl" ajax="true" >
+                                                <p:confirm header="Confirmation" message="Voulez vous vraiment supprimer ce document ?" />
+                                            </p:commandButton>
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" 
+                                                                 update=":formTable:tabview_1:form11:tbl, :formTable:msgsM"/>
+                                                <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" update=":formTable:tabview_1:form11:tbl"/>
+                                            </p:confirmDialog>
+                                        </p:column>
+                                        <p:column style="width:32px">
+                                            <p:rowEditor />
+                                        </p:column>
+                                    </p:dataTable>
+                                </h:form>
+                            </p:tab>
+                        </p:tabView>
+                    </h:form>
+                    <p:dialog header="Uploader" widgetVar="uploaderVar" width="40%" minHeight="50" >
+                        <h:form id="form_uploader" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-lg-6 form-group">
+                                    <p:outputLabel value="Titre (*):" />
+                                    <p:inputText  class="form-control"  required="true" 
+                                                  style="padding: 0px 0px 0px 0px;border: 0px solid #ccc;display: inline-flex;"
+                                                  value="#{documentEnginMb.documentEngin.titre}" />
+                                </div>
+                                
+                                <div class="col-lg-6 form-group">
+                                    <p:outputLabel value="Date de Fichier :"/>
+                                    <p:calendar pattern="dd/MM/yyyy" class="form-control" id="idDateAcc"
+                                                style="padding: 0px 0px 0px 0px;border: 0px solid #ccc;display: inline-flex;"
+                                                value="#{documentEnginMb.documentEngin.dateFiche}" />
+                                    <h:outputText />
+                                </div>
+                            </div>
+                            <div class="spacer30"/>
+                            <p:fileUpload  required="true" requiredMessage="veuillez selectionner un fichier" 
+                                           value="#{documentEnginMb.uploadedFile}" mode="simple"></p:fileUpload>
+                            <br/>
+                            <br/>
+                            <p:commandButton  update=":form:msgsM"   value="Ajouter"
+                                              action="#{documentEnginMb.uploader()}"
+                                              oncomplete="PF('uploaderVar').hide()"
+                                              ajax="false"/>
+                        </h:form>
+                    </p:dialog>
+                    <p:dialog  width="800px" resizable="false" modal="true" widgetVar="consulterDoc">
+                        <h:form id="visuliser_id">    
+                            <p:media value="#{imageBean.bon}" width="100%" height="500px" player="pdf"> 
+                                <f:param name="path" value="#{documentEnginMb.selectedDoc}" />
+                            </p:media>
+                        </h:form>
+                    </p:dialog>
+                    <!--             dialog consultation document                        -->
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

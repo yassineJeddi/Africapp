@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Parc Engins</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+            <ui:define name="arborescence">
+
+
+
+                <h:form>
+                    Mensuel > <h:commandLink action="/mensuel/affectLoyer.xhtml"> Affecter Loyer à un salarié </h:commandLink> > <h:commandLink action="/mensuel/consultLoyer.xhtml"> Consultation Loyer à un salarié </h:commandLink> > <strong>Consultation fiche loyer</strong> 
+                </h:form>
+
+            </ui:define>
+
+            <ui:define name="content">
+                <div style="margin : 0px 100px">
+                    <p:panel id="pannel">
+                        <h:form id="form">
+                            <p:growl id="msgsM" showDetail="true"/>
+
+                            <fieldset>
+                                <legend style="text-transform: capitalize; padding-bottom: 8px;"> 
+                                    <img style="-webkit-transform: scale(0.6); -moz-transform: scale(0.6)" src="http://www.divalto.com/wp-content/uploads/2015/02/tgcc.png" /><span class="pull-right" style="margin-top:20px;"> Fiche Loyer  </span> </legend>
+
+
+
+                                <h:panelGrid id="grid" columns="5" cellspacing="5" cellpadding="10">
+
+                                    <h:outputText value="Identifiant :" />
+                                    <p:outputLabel value="#{control_fiche_loyer_Mb.loyerSalarieSelectMensuel.id}"/>
+
+                                    <p:spacer width="50px" height="1px"></p:spacer>
+
+                                    <h:outputText value=" N° de contrat :" />
+                                    <p:inputText disabled="#{control_fiche_loyer_Mb.updateSalarie}" 
+                                                 value="#{control_fiche_loyer_Mb.loyerSalarieSelectMensuel.numcontrat}"/>
+
+
+                                    <h:outputText value="Propriétiare :" />
+                                    <p:outputLabel  value="#{control_fiche_loyer_Mb.loyerSalarieSelectMensuel.nomproprietaire} #{control_fiche_loyer_Mb.loyerSalarieSelectMensuel.prenomproprietaire}"/>     
+
+                                    <p:spacer width="50px" height="1px"></p:spacer>
+
+                                    <h:outputText value="Ville :" />
+                                    <p:inputText disabled="#{control_fiche_loyer_Mb.updateSalarie}"
+                                                 value="#{control_fiche_loyer_Mb.loyerSalarieSelectMensuel.ville}"/> 
+
+                                    <h:outputText value="Adresse Du propriétaire  :" />
+                                    <p:inputText disabled="#{control_fiche_loyer_Mb.updateSalarie}" 
+                                                 value="#{control_fiche_loyer_Mb.loyerSalarieSelectMensuel.adresseproprietaire}"/>     
+
+                                    <p:spacer width="50px" height="1px"></p:spacer>
+
+                                    <h:outputText value="Telephone du Propriétaire :" />
+                                    <p:inputText disabled="#{control_fiche_loyer_Mb.updateSalarie}" value="#{control_fiche_loyer_Mb.loyerSalarieSelectMensuel.numtelephone}"/>     
+
+
+
+
+                                    <h:outputText value="Rib du Propriétaire :" />
+
+                                    <p:inputText disabled="#{loyer_SalarieMb.updateSalarie}" 
+                                                 value="#{control_fiche_loyer_Mb.loyerSalarieSelectMensuel.rib}"/>  
+
+                                    <p:spacer width="50px" height="1px"></p:spacer>
+                                    <p:spacer width="50px" height="1px"></p:spacer>
+                                    <p:spacer width="50px" height="1px"></p:spacer>
+
+                                    <h:outputText value=" Nom Bénéficiaire :" />
+                                    <p:outputLabel value="#{loyer_SalarieMb.loyerSalarieSelectMensuel.mensuel_Principal.nom} #{control_fiche_loyer_Mb.loyerSalarieSelectMensuel.mensuel_Principal.prenom}"/>
+
+
+                                    <p:spacer width="50px" height="1px"></p:spacer>
+
+                                    <h:outputText value="Matricule de bénéficiaire :" />
+                                    <p:outputLabel value="#{control_fiche_loyer_Mb.loyerSalarieSelectMensuel.mensuel_Principal.matricule}"/>
+
+
+                                    <h:outputText value="bénéficiaire sec :" />
+                                    <p:outputLabel  value="#{loyer_SalarieMb.beneficiaire_sec}" />
+
+
+                                    <p:spacer width="50px" height="1px"></p:spacer>
+
+                                    <h:outputText value="Date Debut :" />
+                                    <p:outputLabel value="#{loyer_SalarieMb.date_debut_loyer_MensuelString}" /> 
+
+
+
+
+                                    <h:outputText value="Montant De loyer :" />
+
+                                    <p:inputText disabled="#{control_fiche_loyer_Mb.updateSalarie}"
+                                                 value="#{control_fiche_loyer_Mb.loyerSalarieSelectMensuel.montantloyer}"/>     
+
+
+
+
+                                    <p:spacer width="50px" height="1px"></p:spacer>
+
+
+                                    <h:outputText value="Mode Paiement :" />
+                                    <p:outputLabel value="#{control_fiche_loyer_Mb.loyerSalarieSelectMensuel.modepaiment}"/>  
+
+                                    <p:spacer width="50px" height="1px"></p:spacer>
+                                    <p:commandButton value="Modifier les infos" actionListener="#{control_fiche_loyer_Mb.setUpdateSalarie(false)}" update=":form:grid" />  
+                                    <p:commandButton value="Terminer la modification" 
+                                                     actionListener="#{control_fiche_loyer_Mb.initUpdate(loyerSalarieSelectMensuel)}"
+                                                     update=":form:grid, :form:msgsM" />  
+
+
+                                </h:panelGrid>
+
+
+
+                            </fieldset>
+
+                        </h:form>
+
+                    </p:panel>
+                </div>
+            </ui:define>
+
+
+
+        </ui:composition>
+
+    </body>
+
+
+
+
+
+</html>

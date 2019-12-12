@@ -1,0 +1,512 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      > 
+
+    <h:head>
+        <title>Pointage déclaratif des mensuels</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+
+            <ui:define name="arborescence">
+
+                <h:form>
+                    Mensuel > <strong> Pointage déclaratif </strong>
+                </h:form>
+
+            </ui:define>
+
+            <ui:define name="content">
+                <p:panel id="pannelPE">
+
+                    <!--*********************************************************************************
+                    *************************************************************************************
+                    *************************************************************************************
+                    FILTRE SUR LA PAGE, LE MOIS, L'ANNEE, LES CHANTIERS
+                    *************************************************************************************
+                    *************************************************************************************
+                    ***********************************************************************************-->
+
+                    <h:form id="formGG" >
+
+                        <p:messages id="messages" showDetail="true" autoUpdate="true"  closable="true" />
+
+
+                        <!--*********************************************************************************
+                        *************************************************************************************
+                        *************************************************************************************
+                        FILRES D UN RESPONSABLE RH 
+                        *************************************************************************************
+                        *************************************************************************************
+                        **********************************************************************************-->
+                        <c:if test="#{pointageMem.is_rh == true}" > 
+                            <div>
+                                <div class="row">
+                                    <!--                                    <div class="form-group col-lg-3">
+                                                                            <p:selectOneMenu  style="width: 100%" id="chantier_select_search" filter="true" value pointageMem.chantierSearch_rh}" >
+                                                                                <f:selectItem itemLabel="Selectionner un chantier :" itemValue="# {null}"/>
+                                                                                <f:selectItems value="# {pointageMem.chantiers}" var="C"
+                                                                                               itemLabel="# {C.code}" itemValue="# {C.prjapId}"/>
+                                    
+                                                                                <p:ajax listener="# {pointageMem.get_mensuel_by_Chantier_pointage(pointageMem.chantierSearch_rh)}" update="mensuel_select_search" />
+                                                                            </p:selectOneMenu>
+                                                                        </div>-->
+                                    <div class="form-group col-lg-3">
+                                        <p:commandButton value="Selectionnez un mensuel"  oncomplete="PF('dlg_select_men').show();"/>
+                                    </div>
+                                    <div class="form-group col-lg-3">
+
+                                        <p:dialog widgetVar="dlg_select_men" header="Selectionnez un mensuel">
+                                            <p:dataTable id="tbl" style="width:100%;" 
+                                                         var="menIt" value="#{pointageMem.mensuels_l}"                                                          
+                                                         rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"  
+                                                         scrollable="true" scrollHeight="150" >
+
+                                                <p:column headerText="Matricule" filterFunction="#{filterMb.filterByX}"  filterBy="#{menIt.matricule}">                                                    
+                                                    <h:outputText  value="#{menIt.matricule}"/>
+                                                </p:column>
+                                                <p:column headerText="Nom" filterFunction="#{filterMb.filterByX}" filterBy="#{menIt.nom}">
+                                                    <h:outputText  value="#{menIt.nom}"/>
+                                                </p:column>
+                                                <p:column headerText="Prenom" filterFunction="#{filterMb.filterByX}" filterBy="#{menIt.prenom}">
+                                                    <h:outputText  value="#{menIt.prenom}"/>
+                                                </p:column>
+                                                <p:column headerText="Selectionner">
+                                                    <p:commandButton value="selectionner" oncomplete="PF('dlg_select_men').hide();" update=":formGG:fiche_select_search , :formGG:mensuel_select_search "  actionListener="#{pointageMem.get_fiches_Bymensuel_inChantier(pointageMem.chantierSearch_rh, menIt.id)}">
+                                                        <p:ajax listener="#{pointageMem.setMensuel_forSearch(menIt.id)}"  />
+                                                    </p:commandButton>
+                                                </p:column>                                            
+
+                                            </p:dataTable>
+
+                                        </p:dialog>
+
+                                        <p:selectOneMenu  disabled="true" style="width: 100%" id="mensuel_select_search" filter="true" value="#{pointageMem.mensuel_forSearch}" >
+                                            <f:selectItem itemLabel="Selectionner un mensuel:" itemValue="-1"/>
+                                            <f:selectItems value="#{pointageMem.mensuels_l}" var="mensuelIt"
+                                                           itemLabel="#{mensuelIt.matricule} -- #{mensuelIt.nom} #{mensuelIt.prenom} " itemValue="#{mensuelIt.id}"/>
+                                            <p:ajax listener="#{pointageMem.get_fiches_Bymensuel_inChantier(pointageMem.chantierSearch_rh, pointageMem.mensuel_forSearch)}" update="fiche_select_search" />
+                                        </p:selectOneMenu>
+                                    </div>
+                                    <div class="form-group col-lg-3">
+                                        <p:selectOneMenu style="width: 100%" id="fiche_select_search" filter="true" value="#{pointageMem.selected_code_fiche}" >
+                                            <f:selectItem itemLabel="Selectionner une fiche de pointage:" itemValue="-1"/>
+                                            <f:selectItems value="#{pointageMem.codes_fiche_mensuel}" var="codeIt"
+                                                           itemLabel="#{codeIt}" itemValue="#{codeIt}"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                    <div class="form-group col-lg-3">
+                                        <p:commandButton class="value_dis" style="width: 50%"  value="Rechercher" icon="ui-icon-check" action="#{pointageMem.get_pointageTableby_codeChantier_and_mensuel(pointageMem.mensuel_forSearch, pointageMem.selected_code_fiche)}" update="weeks, :pointage_form, chantier_select , week" oncomplete="return pointage_array()"  />
+                                    </div>
+                                </div>
+                            </div>
+                        </c:if>
+
+                        <!--*********************************************************************************
+                        *************************************************************************************
+                        *************************************************************************************
+                        FILRES D UN RESPONSABLE RH  ______ FIN 
+                        *************************************************************************************
+                        *************************************************************************************
+                        **********************************************************************************-->
+
+
+                        <div class="row">
+
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <p:selectOneMenu class="value_dis col-lg-4" value="#{pointageMem.year_for_affectation}" required="true">
+                                        <f:selectItems value="#{pointageMem.l_year}" var="y"
+                                                       itemLabel="#{y}" itemValue="#{y}"/>
+                                    </p:selectOneMenu>
+
+                                    <p:selectOneMenu class="value_dis col-lg-4" value="#{pointageMem.mounth_for_affectation}" required="true">
+                                        <f:selectItem itemLabel="Janvier" itemValue="0"/>
+                                        <f:selectItem itemLabel="Fevrier" itemValue="1"/>
+                                        <f:selectItem itemLabel="Mars" itemValue="2"/>
+                                        <f:selectItem itemLabel="Avril" itemValue="3"/>
+                                        <f:selectItem itemLabel="Mai" itemValue="4"/>
+                                        <f:selectItem itemLabel="Juin" itemValue="5"/>
+                                        <f:selectItem itemLabel="Juillet" itemValue="6"/>
+                                        <f:selectItem itemLabel="Août" itemValue="7"/>
+                                        <f:selectItem itemLabel="Septembre" itemValue="8"/>
+                                        <f:selectItem itemLabel="Octobre" itemValue="9"/>
+                                        <f:selectItem itemLabel="Novembre" itemValue="10"/>
+                                        <f:selectItem itemLabel="Décembre" itemValue="11"/>
+                                    </p:selectOneMenu>
+
+                                    <p:commandButton class="value_dis col-lg-3" value="Valider" icon="ui-icon-check" action="#{pointageMem.weeksOfMonth()}" update="weeks"  />
+                                </div>
+                            </div>
+
+
+                            <div class="col-lg-6">
+                                <h:panelGrid columns="20" id="chantier_select">
+
+                                    <c:if test="#{pointageMem.is_rh == false}">
+                                        <div class="row">
+                                            <div class="form-group col-lg-8">
+                                                <p:selectOneMenu filter="true" value="#{pointageMem.chantierSearch}" >
+                                                    <f:selectItem itemLabel="Ajouter un chantier :" itemValue="-1"/>
+                                                    <f:selectItems value="#{pointageMem.chantiers}" var="C"
+                                                                   itemLabel="#{C.code}" itemValue="#{C.code}"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <p:commandButton value="Valider" icon="ui-icon-check" action="#{pointageMem.get_Calendar_forPoint_byWeekNumber(null, null ,true)}" update=":pointage_form, chantier_select" oncomplete="return pointage_array(1)"  />
+                                            </div>
+                                        </div>  
+                                    </c:if>
+                                </h:panelGrid>
+                            </div>
+
+                        </div>
+
+                        <br />
+
+                        <!--*********************************************************************************
+                        *************************************************************************************
+                        *************************************************************************************
+                        FILTRE SUR LA PAGE, LE MOIS, L'ANNEE, LES CHANTIERS  ______ FIN 
+                        *************************************************************************************
+                        *************************************************************************************
+                        **********************************************************************************-->
+
+                        <!--********************************************************************************************************************************************************************-->
+
+                        <!--*********************************************************************************
+                        *************************************************************************************
+                        *************************************************************************************
+                        INFORMATIONS SUR LES SEMIANES
+                        *************************************************************************************
+                        *************************************************************************************
+                        ***********************************************************************************-->
+
+                        <h:panelGrid id="weeks" columns="20" >
+                            <c:if test="#{pointageMem.display_weeks}" >
+
+                                <c:forEach items="#{pointageMem.last_weeks_numbers}" var="week">
+
+                                    <p:commandLink actionListener="#{pointageMem.get_Calendar_forPoint_byWeekNumber(week.week_number, week.year  , false)}" oncomplete="return pointage_array(0)" update=":pointage_form, weeks, week, chantier_select">
+                                        <h:outputText value="Semaine #{week.week_number}" />
+                                    </p:commandLink>
+                                    <p:spacer width="10px" />
+
+                                </c:forEach>
+
+                                <h:outputText value="... " />
+                                <p:commandLink actionListener="#{pointageMem.get_Calendar_forPoint_byWeekNumber(null, null, false)}" oncomplete="return pointage_array(0)" update=":pointage_form, weeks, week, chantier_select">
+                                    <h:outputText value=" Cette semaine" />
+                                </p:commandLink>
+                            </c:if>
+
+                        </h:panelGrid>
+
+                        <h:panelGrid id="week" columns="2" cellspacing="30">
+                            <c:if test="#{pointageMem.display_weeks}" >
+                                <strong> <h:outputText value="Semaine #{pointageMem.curent_week_number} : Du #{pointageMem.day_start_of_current_week} Au #{pointageMem.day_end_of_current_week} " /></strong>
+                            </c:if>
+                        </h:panelGrid>
+
+
+                        <!--*********************************************************************************
+                        *************************************************************************************
+                        *************************************************************************************
+                        INFORMATIONS SUR LES SEMIANES    ______ FIN 
+                        *************************************************************************************
+                        *************************************************************************************
+                        ***********************************************************************************-->
+
+                    </h:form>
+
+                </p:panel>
+
+                <br />
+
+                <h:form id="pointage_form">
+                    <c:if test = "#{ pointageMem.display_pointage_array_in_view }" >
+                        <p:panel id="pointage"  style="float:left;overflow-x: auto;width:  100%;">
+
+                            <!--*********************************************************************************
+                            *************************************************************************************
+                            *************************************************************************************
+                            JOUR DE LA SEMAINE 
+                            *************************************************************************************
+                            *************************************************************************************
+                            **********************************************************************************-->
+
+                            <h:panelGrid style="width: #{ ( pointageMem.day_number_in_desplayed_week + 1 ) * 240 }px" id="pointage_day" class="pointage_day days_of_week" columns="8" cellspacing="40">
+                                <h:outputText value="" />   
+                                <c:forEach items="#{pointageMem.days_of_week}" var="day" varStatus="loopDay">
+                                    <h:outputText style="color: #fff;" class="day_text #{loopDay.index == 6 ? 'dim' : '' }" value="#{day}" />   
+                                </c:forEach>
+                            </h:panelGrid>
+
+
+                            <!--*********************************************************************************
+                            *************************************************************************************
+                            *************************************************************************************
+                            JOUR DE LA SEMAINE ________ FIN
+                            *************************************************************************************
+                            *************************************************************************************
+                            **********************************************************************************-->
+
+
+                            <!--********************************************************************************************************************************************************************-->
+
+
+                            <!--*********************************************************************************
+                            *************************************************************************************
+                            *************************************************************************************
+                            HEURES DU JOUR
+                            *************************************************************************************
+                            *************************************************************************************
+                            **********************************************************************************-->
+                            <!--<c:if>-->
+                            <h:panelGrid style="width: #{ ( pointageMem.day_number_in_desplayed_week + 1 ) * 240 }px" class="pointage_day" columns="8" cellspacing="40">
+
+                                <h:outputText class="first_td" value="" />   
+                                <c:forEach items="#{pointageMem.days_of_week}" var="day" >
+                                    <h:panelGrid class="select_pointage" columns="4" cellspacing="40">
+                                        <h:outputText value="8h-10h" />
+                                        <h:outputText value="10h-12h" />
+                                        <h:outputText value="14h-16h" />
+                                        <h:outputText value="16h-18h" />
+                                    </h:panelGrid>
+                                </c:forEach>
+
+                            </h:panelGrid>
+
+
+                            <!--*********************************************************************************
+                            *************************************************************************************
+                            *************************************************************************************
+                            HEURES DU JOUR ______ FIN
+                            *************************************************************************************
+                            *************************************************************************************
+                            **********************************************************************************-->
+
+
+                            <h:panelGrid style="width: #{ ( pointageMem.day_number_in_desplayed_week + 1 ) * 240 }px" class="pointage_day" columns="8" cellspacing="40">
+
+
+                                <h:panelGrid class="pointage_chantier affectation" columns="1" cellspacing="40">
+                                    <c:forEach items="#{pointageMem.l_aff_str}" var="affectation1" varStatus="it">
+                                        <c:if test="#{affectation1 != ''}">
+                                            <h:outputText style="color: #848E92;" class="first_td" value="#{affectation1}" />   
+                                        </c:if>
+                                        <c:if test="#{affectation1 == ''}">
+                                            <h:outputText style="color: #848E92;" class="notshow first_td" value="#{affectation1}" />   
+                                        </c:if>
+
+                                    </c:forEach>
+                                </h:panelGrid>
+
+
+
+                                <c:forEach items="#{pointageMem.days_of_week}" var="day" varStatus="loopDay">
+                                    <h:panelGrid class="select_pointage_inside"  columns="4">
+                                        <h:selectOneRadio  disabled="#{ (loopDay.index != 6 and pointageMem.is_rh == false and pointageMem.pointedDefenetively == false) ? false : true }" class="select_pointage_inside_1" value="#{pointageMem.l_pf[ (loopDay.index*4) + 0].value}"  layout="pageDirection">
+                                            <p:ajax event="change" listener="#{ pointageMem.changeLis( (loopDay.index*4) + 0 , pointageMem.l_pf[ (loopDay.index*4) + 0].value)  }"  update="details_pointage" />
+                                            <c:forEach var="i" begin="0" end="${pointageMem.l_aff_str.size() - 1}" step="1">
+
+                                                <div>
+                                                    <f:selectItem itemValue="${i}" itemLabel=""  />
+                                                </div>
+                                                <!--style="# { i >= (pointageMem.iteration + 4) ? 'display: none' : '' }"-->
+                                            </c:forEach>
+                                        </h:selectOneRadio>
+
+                                        <h:selectOneRadio  disabled="#{(loopDay.index != 6 and pointageMem.is_rh == false and pointageMem.pointedDefenetively == false) ? false : true }" class="select_pointage_inside_1" value="#{pointageMem.l_pf[ (loopDay.index*4) + 1].value}" layout="pageDirection">
+                                            <p:ajax event="change" listener="#{ pointageMem.changeLis( (loopDay.index*4) + 1 , pointageMem.l_pf[ (loopDay.index*4) + 1].value)  }" update="details_pointage" />
+                                            <c:forEach var="i" begin="0" end="${pointageMem.l_aff_str.size() - 1}" step="1">
+
+                                                <f:selectItem itemValue="${i}" itemLabel="" />                                               
+
+                                            </c:forEach>
+                                        </h:selectOneRadio>
+
+                                        <h:selectOneRadio  disabled="#{(loopDay.index != 6 and pointageMem.is_rh == false and pointageMem.pointedDefenetively == false) ? false : true }" class="select_pointage_inside_1" layout="pageDirection" value="#{pointageMem.l_pf[ (loopDay.index*4) + 2].value}">
+                                            <p:ajax event="change" listener="#{ pointageMem.changeLis( (loopDay.index*4) + 2 , pointageMem.l_pf[ (loopDay.index*4) + 2].value)  }"  update="details_pointage" />
+                                            <c:forEach var="i" begin="0" end="${pointageMem.l_aff_str.size() - 1}" step="1">
+
+                                                <f:selectItem itemValue="${i}" itemLabel="" />
+
+                                            </c:forEach>
+                                        </h:selectOneRadio>
+
+                                        <h:selectOneRadio disabled="#{(loopDay.index != 6 and pointageMem.is_rh == false and pointageMem.pointedDefenetively == false) ? false : true }" class="select_pointage_inside_1" layout="pageDirection" value="#{pointageMem.l_pf[ (loopDay.index*4) + 3].value}">
+                                            <p:ajax event="change" listener="#{ pointageMem.changeLis( (loopDay.index*4) + 3 , pointageMem.l_pf[ (loopDay.index*4) + 3].value)  }"  update="details_pointage"/>
+                                            <c:forEach var="i" begin="0" end="${pointageMem.l_aff_str.size() - 1}" step="1">
+
+                                                <f:selectItem itemValue="${i}" itemLabel="" />
+
+
+
+                                            </c:forEach>
+                                        </h:selectOneRadio>
+
+                                    </h:panelGrid>
+                                </c:forEach>
+
+                            </h:panelGrid>
+
+
+
+                            <!--
+                            *************************************************************************************
+                            *************************************************************************************
+                            *************************************************************************************
+                            MORE INFORMATIONS ABOUT POINTAGE SECTION 
+                            *************************************************************************************
+                            *************************************************************************************
+                            *************************************************************************************
+                            -->
+
+
+
+                            <!--                                <h:panelGrid class="pointage_chantier affectation" columns="1" cellspacing="40">
+                                                                  <h:outputText style="color: #848E92;" class="first_td" value="" />   
+                                                              </h:panelGrid>
+                                                              <h:panelGrid class="select_pointage_inside"  columns="$ {pointageMem.l_pf.size()}">
+                                                                  <c:forEach var="i" begin="0" end="$ {pointageMem.l_pf.size() - 1}" step="1">
+                                                                      <h:outputText style="color: #848E92;" class="select_pointage_inside_1"  value="# {pointageMem.l_pf.size()}" />   
+                                                                  </c:forEach>
+                                                              </h:panelGrid>-->
+
+
+                            <h:panelGrid id="details_pointage" style="width: #{ ( pointageMem.day_number_in_desplayed_week + 1 ) * 240 }px" class="pointage_day" columns="8" cellspacing="40">
+
+
+                                <h:panelGrid class="pointage_chantier affectation" columns="1" cellspacing="40">
+                                    <h:outputText style="color: #848E92;" class="first_td" value="Détails" />   
+                                </h:panelGrid>
+
+                                <c:forEach items="#{pointageMem.days_of_week}" var="day" varStatus="loopDay">
+                                    <h:panelGrid class="select_pointage_inside"  columns="4">
+
+                                        <h:outputText style="color: #848E92;" class="select_pointage_inside_1"  value="#{pointageMem.l_pf.get(loopDay.index * 4 + 0).subValueAb }" />   
+                                        <h:outputText style="color: #848E92;" class="select_pointage_inside_1"  value="#{pointageMem.l_pf.get(loopDay.index * 4 + 1).subValueAb }" />   
+                                        <h:outputText style="color: #848E92;" class="select_pointage_inside_1"  value="#{pointageMem.l_pf.get(loopDay.index * 4 + 2).subValueAb }" />   
+                                        <h:outputText style="color: #848E92;" class="select_pointage_inside_1"  value="#{pointageMem.l_pf.get(loopDay.index * 4 + 3).subValueAb }" />   
+
+                                    </h:panelGrid>
+                                </c:forEach>
+
+
+                            </h:panelGrid>
+
+
+
+                            <br />
+
+                            <c:if test="#{pointageMem.is_rh == false}" >
+                                <div class="row">
+                                    <p:commandButton class="col-lg-offset-6 col-lg-2 btn btn-switch active" disabled = "#{pointageMem.pointedDefenetively == false ? false : true }" value="Enregistrer" icon="ui-icon-check" action="#{pointageMem.validate(false)}" update=":pointage_form:pointage" oncomplete="return pointage_array(1)" />
+                                    <p:commandButton class="col-lg-3 btn btn-switch active" disabled="#{ (pointageMem.val_definitive == false) || (pointageMem.pointedDefenetively == true) || (pointageMem.pointadLast == true) ? true : false }" action="#{pointageMem.validate(true)}" update=":pointage_form:pointage" value="Validation définitive" icon="ui-icon-check" oncomplete="return pointage_array(1)"  />
+                                    <!--<p:commandButton disabled = "# {pointageMem.pointedDefenetively == false ? false : true }" value="Annuler" icon="ui-icon-check"   />-->
+                                </div>
+                            </c:if>
+
+                            <br /><br />
+
+                            <div class="row">
+                                <div class="col-lg-3"><strong>C</strong> : Client</div>
+                                <div class="col-lg-3"><strong>F</strong> : Fournisseur</div>
+                                <div class="col-lg-3"><strong>P</strong> : Prestataire</div>
+                                <div class="col-lg-3"><strong>RP</strong> : Repas professionel</div>
+                                <div class="col-lg-3"><strong>M</strong> : Maladie</div>
+                                <div class="col-lg-3"><strong>EF</strong> : Engagement familial</div>
+                                <div class="col-lg-3"><strong>PT</strong> : Problème technique</div>
+                                <div class="col-lg-3"><strong>A</strong> : Autre</div>
+                            </div>
+
+
+                            <br />
+
+
+                        </p:panel>
+
+
+
+
+                        <p:dialog id="dlg1_id" modal="true" resizable="false" widgetVar="dlg1" header="Valeurs" showEffect="clip">
+                            <p:selectOneMenu id="autre" value="#{pointageMem.valuefOther}" style="width:125px" onchange="PF('dlg1').hide()">
+                                <p:ajax listener="#{pointageMem.addOtherInPointageList()}" update="dlg1_id, dlg2_id, details_pointage" />
+
+                                <f:selectItem itemLabel="" itemValue="" />
+                                <f:selectItem itemLabel="Client" itemValue="Client" />
+                                <f:selectItem itemLabel="Fournisseur" itemValue="Fournisseur" />
+                                <f:selectItem itemLabel="Prestataire" itemValue="Prestataire" />
+                                <f:selectItem itemLabel="Repas professionel" itemValue="Repas professionel" />
+                                <f:selectItem itemLabel="Autre" itemValue="Autre" />
+                            </p:selectOneMenu>
+                        </p:dialog>
+
+                        <p:dialog id="dlg2_id" modal="true" resizable="false" widgetVar="dlg2" header="Valeurs" showEffect="clip">
+                            <p:selectOneMenu id="conge" value="#{pointageMem.valuefOther}" style="width:125px" onchange="PF('dlg2').hide()">
+                                <p:ajax listener="#{pointageMem.addOtherInPointageList()}" update="dlg1_id, dlg2_id, details_pointage"  />
+
+                                <f:selectItem itemLabel="" itemValue="" />
+                                <f:selectItem itemLabel="Maladie" itemValue="Maladie" />
+                                <f:selectItem itemLabel="Engagement familial" itemValue="Engagement familial" />
+                                <f:selectItem itemLabel="Problème technique" itemValue="Problème technique" />
+                                <f:selectItem itemLabel="Autre" itemValue="Autre" />
+                            </p:selectOneMenu>
+                        </p:dialog>
+                    </c:if>
+
+                </h:form>
+                <script type="text/javascript">
+
+                    pointage_array();
+
+                    function pointage_array() {
+                        var chantier_number = 0;
+
+                        $('.pointage_chantier').children('tbody').children("tr").each(function () {
+                            if ($(this).children('td').children('span').hasClass('notshow') == false) {
+                                chantier_number = chantier_number + 1;
+                            }
+                        });
+
+                        /**
+                         * La valeur des input dans la ba vue est le i, qui correspant à l' iteration dans la liste des chantier
+                         * donc si la valeur de i est 1 , rah on a choisit le chantier ayant l'index 1 dans la liste des chantier
+                         * si la valeur de u est supérieur à la taille de la liste des chantier, cvd que nous devons pas afficher le select.
+                         */
+                        $('.select_pointage_inside_1').each(function () {
+                            $(this).children("tbody").children("tr").each(function () {
+                                if ($(this).children("td").children("input").val() >= chantier_number - 1) {
+                                    $(this).css("display", "none");
+                                }
+
+                            });
+                        });
+                        $(".first_td").parent("td").parent("tr").css("display", "grid");
+                        $(".notshow").parent("td").parent("tr").css("display", "none");
+                    }
+
+                </script>
+
+            </ui:define>    
+
+        </ui:composition>
+
+
+        <br /><br /><br />
+
+    </body>
+
+</html>
+

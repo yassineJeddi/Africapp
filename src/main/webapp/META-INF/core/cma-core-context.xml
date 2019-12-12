@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+    <bean id="cmaUnmarshaller"
+          class="com.rivetlogic.core.cma.mapping.impl.CmaCastorUnmarshaller" />
+
+    <bean id="cmaMappingService"
+          class="com.rivetlogic.core.cma.mapping.impl.CmaMappingServiceImpl"
+          init-method="init">
+        <property name="mappingFile">
+            <value>castor/mapping/mappingservice.mapping.xml</value>
+        </property>
+        <property name="mappingConfiguration">
+            <value>castor/mapping/mappingservice.configuration.xml</value>
+        </property>
+        <property name="cmaUnmarshaller" ref="cmaUnmarshaller" />
+    </bean>
+
+    <bean id="restExecuter"
+          class="com.rivetlogic.core.cma.rest.impl.RestExecuterImpl"
+          init-method="init">
+        <property name="cmaUnmarshaller" ref="cmaUnmarshaller" />
+    </bean>
+
+    <bean id="actionService"
+          class="com.rivetlogic.core.cma.impl.ActionServiceImpl">
+        <property name="serviceUri">
+            <value>/cma/actionservice</value>
+        </property>
+        <property name="restExecuter" ref="restExecuter" />
+        <property name="cmaMappingService" ref="cmaMappingService" />
+    </bean>
+
+    <bean id="authenticationService"
+          class="com.rivetlogic.core.cma.impl.AuthenticationServiceImpl">
+        <property name="serviceUri">
+            <value>/cma/authenticationservice</value>
+        </property>
+        <property name="restExecuter" ref="restExecuter" />
+        <property name="cmaMappingService" ref="cmaMappingService" />
+    </bean>
+
+    <bean id="classificationService"
+          class="com.rivetlogic.core.cma.impl.ClassificationServiceImpl">
+        <property name="serviceUri">
+            <value>/cma/classificationservice</value>
+        </property>
+        <property name="restExecuter" ref="restExecuter" />
+        <property name="cmaMappingService" ref="cmaMappingService" />
+    </bean>
+
+    <bean id="contentService"
+          class="com.rivetlogic.core.cma.impl.ContentServiceImpl">
+        <property name="serviceUri">
+            <value>/cma/contentservice</value>
+        </property>
+        <property name="restExecuter" ref="restExecuter" />
+        <property name="cmaMappingService" ref="cmaMappingService" />
+    </bean>
+
+    <bean id="dictionaryService"
+          class="com.rivetlogic.core.cma.impl.DictionaryServiceImpl">
+        <property name="serviceUri">
+            <value>/cma/dictionaryservice</value>
+        </property>
+        <property name="restExecuter" ref="restExecuter" />
+        <property name="cmaMappingService" ref="cmaMappingService" />
+    </bean>
+
+    <bean id="nodeService"
+          class="com.rivetlogic.core.cma.impl.NodeServiceImpl">
+        <property name="serviceUri">
+            <value>/cma/nodeservice</value>
+        </property>
+        <property name="restExecuter" ref="restExecuter" />
+        <property name="cmaMappingService" ref="cmaMappingService" />
+    </bean>
+
+    <bean id="libraryService"
+          class="com.rivetlogic.core.cma.impl.LibraryServiceImpl">
+        <property name="serviceUri">
+            <value>/cma/libraryservice</value>
+        </property>
+        <property name="restExecuter" ref="restExecuter" />
+        <property name="cmaMappingService" ref="cmaMappingService" />
+    </bean>
+
+    <bean id="mimetypeService"
+          class="com.rivetlogic.core.cma.impl.MimetypeServiceImpl">
+        <property name="serviceUri">
+            <value>/cma/mimetypeservice</value>
+        </property>
+        <property name="restExecuter" ref="restExecuter" />
+        <property name="cmaMappingService" ref="cmaMappingService" />
+    </bean>
+	
+    <bean id="peopleService"
+          class="com.rivetlogic.core.cma.impl.PeopleServiceImpl">
+        <property name="serviceUri">
+            <value>/cma/peopleservice</value>
+        </property>
+        <property name="restExecuter" ref="restExecuter" />
+        <property name="cmaMappingService" ref="cmaMappingService" />
+    </bean>
+
+    <bean id="searchService"
+          class="com.rivetlogic.core.cma.impl.SearchServiceImpl">
+        <property name="serviceUri">
+            <value>/cma/searchservice</value>
+        </property>
+        <property name="restExecuter" ref="restExecuter" />
+        <property name="cmaMappingService" ref="cmaMappingService" />
+    </bean>
+
+    <bean id="securityService"
+          class="com.rivetlogic.core.cma.impl.SecurityServiceImpl">
+        <property name="serviceUri">
+            <value>/cma/securityservice</value>
+        </property>
+        <property name="restExecuter" ref="restExecuter" />
+        <property name="cmaMappingService" ref="cmaMappingService" />
+    </bean>
+
+    <bean id="transformationService"
+          class="com.rivetlogic.core.cma.impl.TransformationServiceImpl">
+        <property name="serviceUri">
+            <value>/cma/transformationservice</value>
+        </property>
+        <property name="restExecuter" ref="restExecuter" />
+        <property name="cmaMappingService" ref="cmaMappingService" />
+    </bean>
+
+    <bean id="versionService"
+          class="com.rivetlogic.core.cma.impl.VersionServiceImpl">
+        <property name="serviceUri">
+            <value>/cma/versionservice</value>
+        </property>
+        <property name="restExecuter" ref="restExecuter" />
+        <property name="cmaMappingService" ref="cmaMappingService" />
+    </bean>
+	
+    <bean id="workflowService"
+          class="com.rivetlogic.core.cma.impl.WorkflowServiceImpl">
+        <property name="serviceUri">
+            <value>/cma/workflowservice</value>
+        </property>
+        <property name="restExecuter" ref="restExecuter" />
+        <property name="cmaMappingService" ref="cmaMappingService" />
+    </bean>
+
+</beans>

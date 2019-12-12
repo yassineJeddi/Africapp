@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <h:head>
+        <title>Consulation Chef d'équipe --> Salarie</title>
+        <link rel="stylesheet" type="text/css" href="../resources/css/main.css" />
+    </h:head>
+    <h:body>
+        <ui:composition template="Template.xhtml">
+            <ui:define name="arborescence">
+                <h:outputText value="Consulation Chef d'équipe --> Salarie" style="color:#000066; font-size: 14px;  font-family: Times New Roman, Georgia, Serif; margin-left: -920px;"/>
+            </ui:define>
+            <ui:define name="content">
+                <p:blockUI block="tableSS" widgetVar="block">
+                    Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                </p:blockUI>
+                <h:form id="tableSS">
+                    <p:growl showDetail="true" id="messages"   autoUpdate="true"  />
+
+                    <p:dataTable id="salarieSuppCons" widgetVar="salarieSuppCons" editable="true" var="sal" value="#{affectSalarieMb.salarieList}" rowKey="#{sal.id}"
+                                 rows="10" 
+                                 class="table table-bordered "
+                                 rowsPerPageTemplate="5,10,15"
+                                 paginator="true" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                 paginatorPosition="bottom">
+                        <f:facet name="header">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <h:commandLink>
+                                        <p:commandButton value="Exporter" icon="ui-icon-arrowthickstop-1-s"/>
+                                        <p:dataExporter  type="xls" target=":tableSS:salarieSuppCons" fileName="AffectationSalarieSupp" />
+                                    </h:commandLink>
+                                </div>
+                                <div class="col-lg-6">
+                                    <p:commandButton  icon="ui-icon-search"
+                                                      onclick="PF('find').show(); PF('salarieSuppCons').clearFilters();" 
+                                                      style="margin-bottom: 3px;" /> 
+                                    
+                                </div>
+                            </div>
+                        </f:facet> 
+                        <p:column  id="matricule" headerText="Maricule" filterBy="#{sal.salaries.matricule}" filterFunction="#{filterMb.filterByX}" >
+                            <h:outputText value="#{sal.salaries.matricule}" />
+                        </p:column>
+                        <p:column id="function" headerText="Fonction" filterBy="#{sal.salaries.fonction.fonction}" filterFunction="#{filterMb.filterByX}">
+                            <h:outputText value="#{sal.salaries.fonction.fonction}" />
+                        </p:column>
+                        <p:column id="nom" headerText="Nom" filterBy="#{sal.salaries.nom}" filterFunction="#{filterMb.filterByX}">
+                            <h:outputText value="#{sal.salaries.nom}" />
+                        </p:column>
+                        <p:column headerText="Prenom" filterBy="#{sal.salaries.prenom}" filterFunction="#{filterMb.filterByX}">
+                            <h:outputText value="#{sal.salaries.prenom}" />
+                        </p:column>
+                        <p:column headerText="Chantier" filterBy="#{sal.chantier.code}" filterFunction="#{filterMb.filterByX}">
+                            <h:outputText value="#{sal.chantier.code}" />
+                        </p:column> 
+                        <p:column headerText="Chef Equipe" filterBy="#{sal.chefEquipeString}" filterFunction="#{filterMb.filterByX}">
+                            <h:outputText value="#{sal.chefEquipeString}" />
+                        </p:column>
+                        <p:column headerText="Date" sortBy="#{sal.dateAffectatio}" filterFunction="#{filterMb.filterByX}">
+                            <h:outputText value="#{constanteMb.getDateFormatFR(sal.dateAffectatio)}" />
+                        </p:column>
+                        <p:column exportable="false" headerText="opérations"  >
+
+                            <p:commandButton icon="ui-icon-pencil" action="#{affectSalarieMb.onRowEditInit()}"
+                                             onstart="PF('block').show();" 
+                                             oncomplete="PF('block').hide();PF('update').show();"
+                                             update=":up">
+                                <f:setPropertyActionListener value="#{sal}" target="#{affectSalarieMb.salarieToUpdate}" />
+                            </p:commandButton>
+                            <p:commandButton onstart="PF('block').show();" oncomplete="PF('block').hide();PF('salarieSuppCons').clearFilters()"
+                                             title="désaffecter" action="#{affectSalarieMb.desaffecter(sal)}" 
+                                             icon="ui-icon-minus" update="salarieSuppCons"/>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+                <p:dialog header="Recherche" widgetVar="find" modal="true">
+                    <p:blockUI block="form" widgetVar="blockDialog">
+                        Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                    </p:blockUI>
+                    <h:form id="form" >
+                        <h:panelGrid columns="3">
+                            <h:outputText value="Chantier :"/>
+                            <p:selectOneMenu id="cha" value="#{affectSalarieMb.idChantierSearch}"
+                                             filter="true" filterMatchMode="contains" style="width: 150px"> 
+                                <f:selectItem itemLabel="-- Chantier --" itemValue="" /> 
+                                <f:selectItems value="#{evol_chantierMb.chantiers}" var="c" itemLabel="#{c.code}" itemValue="#{c.id}" />
+                                <p:ajax event="change" update=":form:chef"  
+                                        onstart="PF('blockDialog').show()"
+                                        oncomplete="PF('blockDialog').hide()"
+                                        listener="#{affectSalarieMb.getListeChefEquipeByChantier()}"/>
+                            </p:selectOneMenu>
+                            <h:outputText/>
+
+                            <h:outputText value="Chef D'équipe :"/>
+                            <p:selectOneMenu id="chef" value="#{affectSalarieMb.idSuppSearch}" label="chefE"
+                                             filter="true" filterMatchMode="contains" panelStyle="width:250px"> 
+                                <f:selectItem itemLabel="-- Chef d'équipe --" itemValue="" /> 
+                                <f:selectItems value="#{affectSalarieMb.salarieChefByChantierAffect}" var="s"
+                                               itemLabel="#{s.nom} #{s.prenom}" itemValue="#{s.id}"/>
+                            </p:selectOneMenu>
+                            <h:outputText/>
+
+                            <h:outputText value="Date de"/>
+                             <p:calendar pattern="dd/MM/yyyy" value="#{affectSalarieMb.dateSearch}"  />
+                            <h:outputText/>
+
+                            <h:outputText value="Date a"/>
+                             <p:calendar pattern="dd/MM/yyyy" value="#{affectSalarieMb.dateSearchEnd}" />
+                            <h:outputText/>
+
+                            <h:outputText/>
+                            <p:commandButton value="Recherche" update=":tableSS:salarieSuppCons" 
+                                             onstart="PF('blockDialog').show();PF('salarieSuppCons').clearFilters();"
+                                             
+                                             oncomplete="PF('blockDialog').hide();PF('find').hide();"
+                                             actionListener="#{affectSalarieMb.rechercheSalarieConsul()}"/>
+                        </h:panelGrid>
+                    </h:form>
+                </p:dialog>
+                <p:dialog header="Modification" widgetVar="update" modal="true">
+                    <p:blockUI block="up" widgetVar="blockModif">
+                        Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                    </p:blockUI>
+                    <h:form id="up">
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Chantier"/>
+                            <p:outputLabel id="cha1" value="#{affectSalarieMb.salarieToUpdate.chantier.code}"/>
+                            <h:outputText value="Chef d'équipe"/>
+                            <p:selectOneMenu id="chef1" value="#{affectSalarieMb.idSalarieSuppUpdate}" style="width: 100px"> 
+                                <f:selectItems value="#{affectSalarieMb.salarieChefByChantier}" var="s"
+                                               itemLabel="#{s.nom}" itemValue="#{s.id}"/>
+                            </p:selectOneMenu>
+                            <p:commandButton value="Modifier" update=":tableSS:salarieSuppCons"
+                                             onstart="PF('blockModif').show()" 
+                                             oncomplete="PF('blockModif').hide();PF('update').hide();"
+                                             actionListener="#{affectSalarieMb.updateSuppSalarie()}"/>
+                        </h:panelGrid>
+                    </h:form>
+                </p:dialog>
+            </ui:define>
+        </ui:composition>   
+    </h:body>
+</html>

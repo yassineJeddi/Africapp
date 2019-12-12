@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="Template.xhtml">
+            <ui:define name="arborescence">
+                <h:outputText value="RH > Pointage Salarie" style="color:#000066; margin-left: -920px; font-size: 14px;  font-family: Times New Roman, Georgia, Serif;"/>
+            </ui:define>
+            <ui:define name="content">
+                <p:blockUI block="form" widgetVar="block">
+                    Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                </p:blockUI>
+                <h:form id="form">
+                    <p:growl showDetail="true" id="messages"   autoUpdate="true"  />
+
+                    <p:panel class="col-lg-12 without-border" >
+                        <f:facet name="header">
+                            <div class="col-lg-12" style="height: 50px">
+                                <h:panelGrid columns="28" class="without-border"> 
+                                    <h:outputText value="Pointage" />
+                                    <p:spacer width="5px"/>
+                                    <p:selectOneMenu value="#{pointageSalarieMb.e_S}" id="pointageES" required="true" label="Pointage" requiredMessage="Veuillez choisir le pointage a effectuée" >
+                                        <f:selectItem itemLabel="--Type Pointage--" itemValue=""/>
+                                        <f:selectItem itemLabel="Entrée" itemValue="E" />
+                                        <f:selectItem itemLabel="Sortie" itemValue="S"/>
+                                        <p:ajax onstart="PF('block').show()" oncomplete ="PF('block').hide();" listener="#{pointageSalarieMb.updateHeurMin()}" update="heure,min,btnPoint"/>
+                                    </p:selectOneMenu>
+                                    <p:spacer width="5px"/>
+                                    <h:outputText value="Chantier"/>
+                                    <p:spacer width="5px"/>
+                                    <p:selectOneMenu style="width:250px" filter="true" value="#{pointageSalarieMb.idChantier}"
+                                                     filterMatchMode="contains"
+                                                     required="true" label="Chantier" requiredMessage="le chantier est obligatoir">
+                                        <f:selectItem itemLabel="--Chantier--" itemValue=""/>
+                                        <f:selectItems value="#{chantier.chantiers}" var="c" 
+                                                       itemLabel="#{c.code}" itemValue="#{c.id}" />
+                                        <p:ajax onstart="PF('block').show()" oncomplete ="PF('block').hide();" listener="#{pointageSalarieMb.updateHeurMin()}" update="heure,min,btnPoint"/>
+                                    </p:selectOneMenu>
+                                    <p:spacer width="5px"/>
+                                    <h:outputText value="date"/>
+                                    <p:spacer width="5px"/>
+                                    <h:outputText style="width: 30px;" value="#{constanteMb.getDateFormatFR(pointageSalarieMb.datePointage)}"/>
+                                    <p:spacer width="5px"/>
+                                    <h:outputText value="Heure"/>
+                                    <p:spacer width="5px"/>
+                                    <p:inputText id="heure" style="width: 40px" value="#{pointageSalarieMb.heure}">
+                                        <f:convertNumber maxIntegerDigits="23" minIntegerDigits="0"/>
+                                        <f:ajax event="blur" />
+                                    </p:inputText><p:spacer width="5px"/>h
+                                    <p:spacer width="5px"/>
+                                    <p:inputText id="min" style="width: 40px" value="#{pointageSalarieMb.min}" >
+                                        <f:convertNumber maxIntegerDigits="59" minIntegerDigits="0"/>
+                                        <f:ajax event="blur" />
+                                    </p:inputText><p:spacer width="5px"/>min
+                                    <p:spacer width="5px"/>
+                                    <p:selectBooleanCheckbox  value="#{pointageSalarieMb.tach}"  style="display: #{pointageSalarieMb.e_S eq 'E' ? 'none':'block'}"  >
+                                        <p:ajax listener="#{pointageSalarieMb.updateHeurMin}" update="heure,min" />
+                                    </p:selectBooleanCheckbox>
+                                    <p:spacer width="15px"/>
+                                    <h:outputText style="display: #{pointageSalarieMb.e_S eq 'E' ? 'none':'block'}"  value="Ouvrier à la tâche"/>
+                                </h:panelGrid>
+                            </div>
+                        </f:facet>
+                        <div class="col-lg-6 col-lg-offset-2">
+
+
+                            <h:panelGrid columns="8" id ="panel2" class="without-border" >
+                                <h:outputText value="Matricule"/>
+                                <p:spacer width="5px"/>
+                                <p:inputText required="true" 
+                                             validatorMessage="Matricule : veuillez indiquer une valeur"
+                                             onkeydown="if(event.keyCode === 9)
+                                                 {
+                                                     event.preventDefault();
+                                                 }"
+                                                 
+                                             value="#{pointageSalarieMb.findSalarie.matricule}"
+                                             onkeypress="
+                                                     if (event.keyCode === 13) {
+                                                         this.blur(); 
+                                                         return false;
+                                                     }                                                          
+                                             "
+                                             
+                                             id="matricule" >
+                                    <p:ajax event="blur" onstart="PF('block').show()" oncomplete ="PF('block').hide();" 
+                                            listener="#{pointageSalarieMb.find()}"
+                                            update="panel2, :form:pointageES, :form:btnPoint,min,heure" />
+                                </p:inputText>
+                                <p:spacer width="15px"/>
+                                <h:outputText value="Nom"/>
+                                <p:spacer width="5px"/>
+                                <p:inputText  onmousedown="event.preventDefault();" value="#{pointageSalarieMb.findSalarie.nom}"  readonly="true" />    
+                                <br/>
+                                <h:outputText value="Prénom"/>
+                                <p:spacer width="5px"/>
+                                <p:inputText onmousedown="event.preventDefault();" value="#{pointageSalarieMb.findSalarie.prenom}"  readonly="true" /> 
+                                <p:spacer width="15px"/>
+                                <h:outputText value="CIN"/>
+                                <p:spacer width="5px"/>
+                                <p:inputText onmousedown="event.preventDefault();" value="#{pointageSalarieMb.findSalarie.cin}" readonly="true" /> 
+                                <br/>
+                                <h:outputText value="Civilite"/>
+                                <p:spacer width="5px"/>
+                                <p:inputText onmousedown="event.preventDefault();" value="#{pointageSalarieMb.findSalarie.civilite.civilite}" readonly="true" />
+                                <p:spacer width="15px"/>
+                                <h:outputText value="Fonction"/>
+                                <p:spacer width="5px"/>
+                                <p:inputText onmousedown="event.preventDefault();" value="#{pointageSalarieMb.findSalarie.fonction.fonction}" readonly="true" />
+                                <br/>
+                                <h:outputText value="Type"/>
+                                <p:spacer width="5px"/>
+                                <p:inputText onmousedown="event.preventDefault();" value="#{pointageSalarieMb.findSalarie.type.type}" readonly="true" />
+                                <p:spacer width="15px"/>
+                                <h:outputText value="Etat"/>
+                                <p:spacer width="5px"/>
+                                <p:inputText onmousedown="event.preventDefault();" value="#{pointageSalarieMb.findSalarie.etat.etat}" readonly="true" />
+                                <br/>
+                                <br/>
+                            </h:panelGrid>
+                            <div class="pull-right">
+                                <p:commandButton onstart="PF('block').show()" oncomplete ="PF('block').hide(); PrimeFaces.focus('form:matricule')"  value="#{pointageSalarieMb.btnPoint}" action="#{pointageSalarieMb.pointer()}" id="btnPoint" class="btn btn-switch active" update=":form:panel2" />
+
+                            </div>
+                        </div>
+                    </p:panel>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

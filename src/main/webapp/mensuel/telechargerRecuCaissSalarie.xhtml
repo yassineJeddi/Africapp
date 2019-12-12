@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+    <h:head>
+        <title>Editer Reçu Caisse pour un loyer Salarie</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+            <ui:define name="arborescence">
+
+                
+               <h:form>
+                    <p:remoteCommand name="onload" 
+                                     action="#{loyer_SalarieMb.visualiserRecuSalarie(loyer_SalarieMb.loyerSalarieSelectMensuel)}"
+                                     autoRun="true"
+                                     />
+                
+                    Mensuel > <h:commandLink action="/mensuel/affectLoyer.xhtml"> 
+                        Affecter Loyer à un salarié </h:commandLink> >
+                    <h:commandLink action="/mensuel/consultLoyer.xhtml">
+                        Consultation Loyer à un salarié </h:commandLink> > 
+                    <strong>Télécharger Recu caisse</strong> 
+                </h:form>
+
+            </ui:define>
+            <ui:define name="content">
+                <p:panel id="pannel">
+
+                    <p:spacer width="20"/>
+                    <h:panelGrid columns="4" cellpadding="5">
+                        <h:outputText value="Identifiant de la fiche loyer :" />
+                        <h:outputText value="#{control_recu_caisse_Mb.loyerSalarieSelectMensuel.id}" />
+                    </h:panelGrid>
+
+                    <h:form id="form">
+
+                        <p:messages id="msgsM" autoUpdate="true" closable="true" />
+
+                        <p:dataTable id="tbl" var="boncaissIt" value="#{control_recu_caisse_Mb.BCRecu}" 
+                                     rowKey="#{boncaissIt.id}" selection="#{loyer_SalarieMb.BCSelectedSalarie}" selectionMode="single"
+                                     rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+
+                            <p:column headerText="Document">
+                                <p:commandButton icon="ui-icon-document"
+                                                 title ="Visualiser Bon Caisse Loyer" 
+                                                 disabled="#{boncaissIt.chemin == null ? true : false}"
+                                                 actionListener="#{control_recu_caisse_Mb.setCodeCurrent(boncaissIt.chemin)}"
+                                                 update=":bonC"
+                                                 oncomplete="PF('consultBC').show();"
+                                                 >
+
+                                </p:commandButton>
+                            </p:column>
+
+                            <p:column headerText="Mois"   >
+                                <h:outputText value="#{boncaissIt.mois}" />
+                            </p:column>
+                            <p:column headerText="Année"   >
+                                <h:outputText value="#{boncaissIt.annee}" />
+                            </p:column>
+
+
+                            <p:column headerText="Matricule Bénéficiaire"   >
+                                <h:outputText value="#{control_recu_caisse_Mb.loyerSalarieSelectMensuel.mensuel_Principal.matricule}" />
+                            </p:column>
+
+
+                            <p:column headerText="Nom Bénéficiaire"   >
+                                <h:outputText value="#{control_recu_caisse_Mb.loyerSalarieSelectMensuel.mensuel_Principal.nom}" />
+                            </p:column>
+
+
+                            <p:column headerText="Prénom Bénéficiaire"   >
+                                <h:outputText value="#{control_recu_caisse_Mb.loyerSalarieSelectMensuel.mensuel_Principal.prenom}" />
+                            </p:column>
+
+                            <p:column headerText="Nom Proprietaire"   >
+                                <h:outputText value="#{control_recu_caisse_Mb.loyerSalarieSelectMensuel.nomproprietaire}" />
+                            </p:column>
+
+
+                            <p:column headerText="Actions">
+
+                                <p:commandButton 
+                                    icon="ui-icon-arrowthickstop-1-n"
+                                    title="Importer recu de caisse"
+                                    oncomplete="PF('importerRC').show();"                                   
+                                    actionListener="#{control_recu_caisse_Mb.initImportRC(boncaissIt)}"
+                                    update=":form_upload"
+                                    >
+                                </p:commandButton>
+
+                                <p:commandButton 
+                                    icon="ui-icon-document"
+                                    title="visualiser recu de caisse"                                    
+                                    disabled="#{boncaissIt.cheminRecu == null ? true : false}"
+                                    actionListener="#{control_recu_caisse_Mb.setCodeCurrent(boncaissIt.cheminRecu)}"
+                                    update=":bonC"
+                                    oncomplete="PF('consultBC').show();"
+                                    >
+                                </p:commandButton>
+
+
+
+                            </p:column>
+
+
+                            <f:facet name="footer">
+
+                            </f:facet>                          
+                        </p:dataTable>
+                    </h:form>
+
+
+
+                    <p:dialog showEffect="fade" 
+                              hideEffect="fade"
+                              header="Bon de Caisse" 
+                              modal="true"
+                              resizable="false" 
+                              widgetVar="consultBC"
+                              >
+
+                        <h:form id="bonC">                           
+                            <p:media value="#{imageBean.documentMensuel}" width="1000px" height="500px" player="pdf"> 
+                                <f:param name="path" value="#{control_recu_caisse_Mb.codeCurrent}" />
+                            </p:media>                            
+                        </h:form>
+                    </p:dialog> 
+
+                    <p:dialog header="importer fichier Recu caisse"
+                              widgetVar="importerRC"
+                              modal="true"
+                              showEffect="fade" 
+                              hideEffect="fade"
+                              resizable="false" 
+                              >
+
+                        <h:form id="form_upload" 
+                                enctype="multipart/form-data">
+
+                            <h:panelGrid columns="2" cellpadding="2">
+
+                                <h:outputText value="Le mois" /> 
+                                <h:outputText value="#{control_recu_caisse_Mb.bc.mois}" />
+
+
+
+                                <h:outputText value="Année"/>
+                                <h:outputText value="#{control_recu_caisse_Mb.bc.annee}" />
+
+
+
+
+
+                                <p:fileUpload  required="true" 
+                                               requiredMessage="veuillez selectionner un fichier" 
+                                               value="#{control_recu_caisse_Mb.uploadedFile}" mode="simple"></p:fileUpload>
+
+                            </h:panelGrid>
+
+
+                            <p:commandButton  update=":form:tbl, :form:msgsM"
+                                              value="Ajouter"
+                                              actionListener="#{control_recu_caisse_Mb.save()}"
+                                              oncomplete="PF('uploader_var').hide()" ajax="false"
+                                              >
+                            </p:commandButton>
+
+
+
+                        </h:form>
+                    </p:dialog>
+
+                </p:panel>
+            </ui:define>
+
+
+
+
+        </ui:composition>
+
+    </body>
+
+
+
+
+
+</html>
+

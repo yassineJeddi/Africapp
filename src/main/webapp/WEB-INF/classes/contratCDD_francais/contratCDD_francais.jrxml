@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="contratCDD_francais" pageWidth="700" pageHeight="900" columnWidth="660" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="79592302-95b4-4592-be32-d234e5be7d03">
+    <property name="ireport.zoom" value="1.0"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="362"/>
+    <parameter name="NOM_PRENOM_SAL" class="java.lang.String"/>
+    <parameter name="ADRESSE_SAL" class="java.lang.String"/>
+    <parameter name="DATE_D" class="java.lang.String"/>
+    <parameter name="FONCTION" class="java.lang.String"/>
+    <parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA["C:\\Users\\n.bourjila\\Desktop\\JasperReport\\"]]></defaultValueExpression>
+    </parameter>
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    <title>
+        <band height="57" splitType="Stretch">
+            <staticText>
+                <reportElement uuid="aae014dc-1405-4522-90f4-510c6d949e33" x="138" y="20" width="291" height="20"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font isBold="true" isUnderline="false"/>
+                </textElement>
+                <text><![CDATA[CONTRAT DE TRAVAIL A DUREE DETERMINEE]]></text>
+            </staticText>
+        </band>
+    </title>
+    <pageHeader>
+        <band splitType="Stretch"/>
+    </pageHeader>
+    <columnHeader>
+        <band splitType="Stretch"/>
+    </columnHeader>
+    <detail>
+        <band height="726" splitType="Stretch">
+            <staticText>
+                <reportElement uuid="3ec3a8d8-4a34-4c69-8bd8-52b0444faca2" x="41" y="113" width="481" height="17"/>
+                <textElement/>
+                <text><![CDATA[ayant son siège au  4, rue imam mouslim  oasis ,Casablanca, prise en la personne de son représentant ]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="5d9fcfef-028b-4b8a-ba5d-3a4b7163a6f1" x="390" y="230" width="132" height="17"/>
+                <textElement/>
+                <text><![CDATA[pour son compte, Monsieur ]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="f2452618-b2d6-4f71-8f91-6d43031153ea" x="322" y="96" width="169" height="17"/>
+                <textElement/>
+                <text><![CDATA[, société à responsabilité limitée, ]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="33abc3ec-bfa2-4fcb-8183-68f41653d8bf" x="430" y="145" width="94" height="20"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[D’une part]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="e6c54464-cc5e-4f57-9736-e5560c5aa5cf" x="204" y="247" width="288" height="17"/>
+                <textElement/>
+                <text><![CDATA[accepte pour y exercer les fonctions ci-après définies.]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="33abc3ec-bfa2-4fcb-8183-68f41653d8bf" x="430" y="199" width="94" height="17"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[D’autre part ]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="f67c0f7b-dead-4f14-876d-e874ef7e83a8" x="54" y="96" width="225" height="17"/>
+                <textElement/>
+                <text><![CDATA[ La société de travaux généraux de Casablanca]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="7956f327-30c2-4958-8c70-4a97d3a15ed4" x="54" y="230" width="276" height="17"/>
+                <textElement/>
+                <text><![CDATA[La T.G.C.C a, par le présent contrat, engagé à compter du]]></text>
+            </staticText>
+            <textField>
+                <reportElement uuid="548bb43d-c640-45b8-a380-0503472a534c" x="110" y="182" width="412" height="17" forecolor="#8A0808"/>
+                <textElement/>
+                <textFieldExpression><![CDATA[$P{ADRESSE_SAL}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement uuid="d66ea3a3-3bd4-4064-9493-2831e1944c84" x="279" y="96" width="44" height="17"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[(T.G.C.C)]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="a116b6a1-c456-490c-80be-9e8a7fa900f5" x="56" y="295" width="484" height="17"/>
+                <textElement/>
+                <text><![CDATA[Le présent engagement a lieu conformément aux dispositions de l’article 230 du dahir des obligations]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="f7acdef5-d724-4631-b954-93f8f300809b" x="102" y="434" width="312" height="17"/>
+                <textElement>
+                    <font isBold="true" isUnderline="true"/>
+                </textElement>
+                <text><![CDATA[Durée du contrat et résiliation]]></text>
+            </staticText>
+            <textField>
+                <reportElement uuid="8b5a9d75-dc48-47ff-99f8-9723555855e3" x="330" y="230" width="60" height="17" forecolor="#8A0808"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression><![CDATA[$P{DATE_D}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement uuid="2013f543-17fb-4968-addb-eabee845434c" x="39" y="329" width="501" height="17"/>
+                <textElement/>
+                <text><![CDATA[ actuellement lié à aucune entreprise et libre de tout engagement.  Toute fausse déclaration sur ce point ]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="5bcd102a-d805-4192-9def-7bd8666f4262" x="39" y="346" width="84" height="17"/>
+                <textElement/>
+                <text><![CDATA[ expose Monsieur ]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="971ee770-0439-44df-a078-bee7baebb1fb" x="54" y="165" width="56" height="17"/>
+                <textElement/>
+                <text><![CDATA[Et Monsieur]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="befb3e32-31e0-4a3d-9154-cf964b40e3ca" x="39" y="312" width="249" height="17"/>
+                <textElement/>
+                <text><![CDATA[ et contrat et la loi 65-99 relative au code du travail, ]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="6579d5ff-b955-4f07-8319-307bef3d4d2d" x="102" y="390" width="203" height="17"/>
+                <textElement>
+                    <font isBold="true" isUnderline="true"/>
+                </textElement>
+                <text><![CDATA[ Attributions des fonctions]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="366bc285-b86c-4528-8340-c23637e3879b" x="39" y="547" width="63" height="17"/>
+                <textElement/>
+                <text><![CDATA[ARTICLE 3 :]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="d2827e65-6c5c-4e7d-b4ae-7a8ae06e1615" x="54" y="213" width="280" height="17"/>
+                <textElement/>
+                <text><![CDATA[Il a été convenu et arrêté ce qui suit : ]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="87ef3e22-d82e-438e-9d44-333009330401" x="10" y="74" width="100" height="22"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Entre soussignés]]></text>
+            </staticText>
+            <textField>
+                <reportElement uuid="c6fc5aa9-9ac4-45a0-99d6-f1dc4d31fabb" x="123" y="346" width="150" height="17" forecolor="#8A0808"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression><![CDATA[$P{NOM_PRENOM_SAL}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement uuid="c6fc5aa9-9ac4-45a0-99d6-f1dc4d31fabb" mode="Transparent" x="54" y="247" width="150" height="17" forecolor="#8A0808"/>
+                <textElement textAlignment="Left" verticalAlignment="Top">
+                    <paragraph lineSpacing="Proportional"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{NOM_PRENOM_SAL}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement uuid="cb76274c-99a7-49f1-80aa-f73a3d93d59f" x="39" y="434" width="63" height="17"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[ARTICLE 2 : ]]></text>
+            </staticText>
+            <textField>
+                <reportElement uuid="c6fc5aa9-9ac4-45a0-99d6-f1dc4d31fabb" x="288" y="312" width="150" height="17" forecolor="#8A0808"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression><![CDATA[$P{NOM_PRENOM_SAL}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement uuid="5e7a3ce9-7052-4b37-93fc-0701864da196" x="39" y="581" width="391" height="17"/>
+                <textElement/>
+                <text><![CDATA[pourra rompre le contrat sons indemnité de rupture, ni préavis.]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="49694192-b192-4db7-91c8-1c95f22dff2a" x="274" y="346" width="144" height="17"/>
+                <textElement/>
+                <text><![CDATA[à des dommages et intérêts.]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="019518ad-c630-4c8b-95b0-f056bc22dae1" x="232" y="407" width="193" height="17"/>
+                <textElement/>
+                <text><![CDATA[entre au service de la société en qualité ]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="796696ef-7f7b-4790-a0e4-5fbf2227c900" x="39" y="390" width="63" height="17"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[ARTICLE 1 : ]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="aa0ae9b7-f82d-417b-b54a-3c5504f3f21d" x="39" y="564" width="224" height="17"/>
+                <textElement/>
+                <text><![CDATA[La période d’essai est fixée à trois mois à partir ]]></text>
+            </staticText>
+            <textField>
+                <reportElement uuid="c6fc5aa9-9ac4-45a0-99d6-f1dc4d31fabb" x="110" y="165" width="150" height="17" forecolor="#8A0808"/>
+                <textElement/>
+                <textFieldExpression><![CDATA[$P{NOM_PRENOM_SAL}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement uuid="c6fc5aa9-9ac4-45a0-99d6-f1dc4d31fabb" x="82" y="407" width="150" height="17" forecolor="#8A0808"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression><![CDATA[$P{NOM_PRENOM_SAL}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement uuid="3ec3a8d8-4a34-4c69-8bd8-52b0444faca2" x="41" y="130" width="481" height="17"/>
+                <textElement/>
+                <text><![CDATA[sis à la même adresse ]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="5d9c700f-dccc-4660-b94b-5ebc0d698562" x="69" y="182" width="41" height="17"/>
+                <textElement/>
+                <text><![CDATA[adresse: ]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="47208751-7cc5-49ec-8c9f-d026bcbdd124" x="323" y="564" width="219" height="17"/>
+                <textElement/>
+                <text><![CDATA[au cours de cette période chacune des parties ]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="c6a7e165-72c9-49b8-9a37-3f8f6fd3f2ce" x="102" y="547" width="100" height="17"/>
+                <textElement>
+                    <font isBold="true" isUnderline="true"/>
+                </textElement>
+                <text><![CDATA[Période d’essai]]></text>
+            </staticText>
+            <textField>
+                <reportElement uuid="8b5a9d75-dc48-47ff-99f8-9723555855e3" x="263" y="564" width="60" height="17" forecolor="#8A0808"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression><![CDATA[$P{DATE_D}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement uuid="36318f38-3e1d-4312-bbbb-72738fe205a6" x="39" y="407" width="43" height="17"/>
+                <textElement/>
+                <text><![CDATA[Monsieur]]></text>
+            </staticText>
+            <subreport>
+                <reportElement uuid="c56bbc6f-88b9-4a5d-b3e7-5cf541dd53ee" x="0" y="625" width="200" height="100"/>
+                <subreportParameter name="NOM_SAL"/>
+                <subreportParameter name="PRENOM_SAL"/>
+                <subreportParameter name="SALAIRE"/>
+                <subreportParameter name="SALAIRE_L"/>
+                <subreportParameter name="MODE_PAIEMENT"/>
+                <subreportParameter name="SUBREPORT_DIR"/>
+                <dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
+                <subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sous1ContratCDD_francais.jasper"]]></subreportExpression>
+            </subreport>
+            <staticText>
+                <reportElement uuid="befb3e32-31e0-4a3d-9154-cf964b40e3ca" x="438" y="312" width="84" height="17"/>
+                <textElement/>
+                <text><![CDATA[déclarant n’être]]></text>
+            </staticText>
+            <textField>
+                <reportElement uuid="c850a16f-e7a3-4ec7-bd42-c0d476efafea" x="426" y="407" width="100" height="17" forecolor="#8A0808"/>
+                <textElement/>
+                <textFieldExpression><![CDATA[$P{FONCTION}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement uuid="a116b6a1-c456-490c-80be-9e8a7fa900f5" x="38" y="451" width="494" height="17"/>
+                <textElement/>
+                <text><![CDATA[Le présent contrat est conclu pour une durée déterminée d’une année renouvelable par tacite]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="a116b6a1-c456-490c-80be-9e8a7fa900f5" x="38" y="468" width="494" height="17"/>
+                <textElement/>
+                <text><![CDATA[reconduction pour la même durée .]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="a116b6a1-c456-490c-80be-9e8a7fa900f5" x="38" y="485" width="494" height="17"/>
+                <textElement/>
+                <text><![CDATA[Il prendra fin à terme du contrat ou à la volonté de l’une ou l’autre parties sous respect, et hormis d’une ]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="a116b6a1-c456-490c-80be-9e8a7fa900f5" x="38" y="502" width="494" height="17"/>
+                <textElement/>
+                <text><![CDATA[des fautes graves énumérées par l’article 39 de la loi 65-99, ou cas de force majeure, d’un préavis de]]></text>
+            </staticText>
+            <staticText>
+                <reportElement uuid="a116b6a1-c456-490c-80be-9e8a7fa900f5" x="39" y="519" width="494" height="17"/>
+                <textElement/>
+                <text><![CDATA[deux mois avant terme du contrat.]]></text>
+            </staticText>
+        </band>
+    </detail>
+    <columnFooter>
+        <band splitType="Stretch"/>
+    </columnFooter>
+    <pageFooter>
+        <band height="54" splitType="Stretch">
+            <textField>
+                <reportElement uuid="47d48e74-23d2-47a2-a042-02ed05912b77" x="570" y="17" width="16" height="20"/>
+                <textElement textAlignment="Right">
+                    <font isBold="false"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$V{PAGE_NUMBER}+" /"]]></textFieldExpression>
+            </textField>
+            <textField evaluationTime="Report">
+                <reportElement uuid="b5dec3ad-7eeb-4689-87cb-f0724c70aef8" x="586" y="17" width="40" height="20"/>
+                <textElement/>
+                <textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
+    <summary>
+        <band height="1" splitType="Stretch"/>
+    </summary>
+</jasperReport>

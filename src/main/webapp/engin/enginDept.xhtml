@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+    <h:head>
+        <link rel="stylesheet" type="text/css" href="../resources/css/main.css" />
+        <title>Parc Engins département logistique</title>
+    </h:head>
+    <body>
+        <ui:composition template="./enginTemplate.xhtml">
+            <ui:define name="arborescence">
+                <h:outputText value="ENGIN > Engins Archivés" style="color:#000066; font-size: 14px;  font-family: Times New Roman, Georgia, Serif; "/>
+            </ui:define>
+            <ui:define name="content">
+                <p:blockUI block="tablePE" widgetVar="block">
+                    Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                </p:blockUI>
+                <p:panel id="pannelPE">
+                    <!--<h:form id="parcEnginForm">-->
+                    <h:form id="form">
+                        <p:growl id="msgsM"  autoUpdate="false"/>
+                        <h:panelGrid columns="10" cellpadding="5">
+                            <p:spacer width="10px" />
+                            <h:commandLink>
+                                <p:commandButton class="btn btn-switch active" value="Exporter" icon="ui-icon-arrowthickstop-1-s"/>
+                                <p:dataExporter type="xls" target=":tablePE:tbl" fileName="Engins" pageOnly="false"/>
+                            </h:commandLink>
+                            <p:spacer width="10px" />
+                            <p:commandButton class="btn btn-switch active" value="Actualiser" 
+                                             onstart="PF('block').show()" oncomplete="PF('block').hide()"
+                                             actionListener="#{parcEngins.enginsDept()}"
+                                             update=":tablePE:tbl"/> 
+                        </h:panelGrid>  
+                    </h:form>
+                    <br /><br />
+                    <h:form id="tablePE">
+                        <p:growl id="growlM" autoUpdate="false" showDetail="true" life="10000" />
+                        <p:dataTable id="tbl" var="parcEnginsIt" value="#{parcEngins.engins}" widgetVar="tableEng"   rowKey="#{parcEnginsIt.IDEngin}"
+                                        rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                     >
+                                    <p:ajax event="page" process="tbl" update="tbl"/>
+                            <!--<p:ajax event="rowSelect"   />--> 
+                            <p:column headerText="Date Affectation" filterBy="#{parcEnginsIt.dateAFFECTATION}" sortBy="#{parcEnginsIt.dateAFFECTATION}">
+                                <h:outputText value="#{parcEnginsIt.dateAFFECTATION}" />
+                            </p:column>
+                            <p:column headerText="Rèference" filterBy="#{parcEnginsIt.IDEngin}">
+                                <h:outputText value="#{parcEnginsIt.IDEngin}" />
+                            </p:column>
+                            <p:column headerText="Code" filterBy="#{parcEnginsIt.code}" >
+                                <h:outputText value="#{parcEnginsIt.code}" />
+                            </p:column>
+                            <p:column headerText="Designation" filterBy="#{parcEnginsIt.designation}" >
+                                <h:outputText value="#{parcEnginsIt.designation}" />
+                            </p:column>
+                            <p:column headerText="Marque" filterBy="#{parcEnginsIt.marque}">
+                                <h:outputText value="#{parcEnginsIt.marque}" />
+                            </p:column>
+                            <p:column headerText="Numéro de châssis" filterBy="#{parcEnginsIt.numchassis}">
+                                <h:outputText value="#{parcEnginsIt.numchassis}" />
+                            </p:column>
+                            <p:column headerText="Type Pointage" filterBy="#{parcEnginsIt.typePointageDept}">
+                                <h:outputText value="#{parcEnginsIt.typePointageDept}" />
+                            </p:column>
+                            <p:column headerText="Type Pointage" exportable="false">
+                                <p:selectOneMenu class="value_dis" 
+                                                 value="#{parcEnginsIt.typePointageDept}" required="true">
+                                    <f:selectItem itemLabel="Manuel"  itemValue="manuel" />
+                                    <f:selectItem itemLabel="Automatique"  itemValue="automatique" />
+                                    <p:ajax listener="#{parcEngins.editEnginsDept(parcEnginsIt)}" />
+                                </p:selectOneMenu> 
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>
+
+
+
+

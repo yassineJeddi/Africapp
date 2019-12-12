@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+    <h:head>
+        <title>Parc Engins</title>
+    </h:head>
+
+    <body>
+
+        <ui:composition template="./mensuelTemplate.xhtml">
+
+            <ui:define name="arborescence">
+
+
+
+
+                <h:form>
+                    Mensuel > <h:commandLink action="/mensuel/affecterModem3gMensuel.xhtml"> Affecter Le 3G à un salarié </h:commandLink> > <strong>Consultation</strong> 
+                </h:form>
+
+            </ui:define>
+
+            <ui:define name="content">
+                <p:panel id="pannel">
+                    <h:form id="form">
+                        <br/>
+                        <div class="affectation-switch">
+                            <div class="btn-group" data-toggle="buttons">
+                                <p:commandButton  class="btn btn-switch active" 
+                                                  value="Consulter Modem 3G" actionListener="#{modem3gMb.afficherModem3gAffecte()}" 
+                                                  update=":form:tb" ajax="true" immediate="true"/>
+                                <p:commandButton  class="btn btn-default" 
+                                                  action="/mensuel/GestionModem3G.xhtml?faces-redirect=true"
+                                                  value="Gestion Modem 3G"  actionListener="#{gestion_modem3G.afficherModem3g()}"/>
+
+                                <p:commandButton  class="btn btn-default" 
+                                                  action="/mensuel/HistoriqueModem3G.xhtml?faces-redirect=true"
+                                                  value="Historique Modem 3G"  actionListener="#{gestion_modem3G.afficherModem3g()}"/>
+                            </div>
+                        </div>
+                        <br/>
+                        <p:messages id="msgsM" closable="true"/>
+                        <p:commandButton value="Rechercher salarié" onclick="PF('dlg').show();"
+                                         action="#{modem3gMb.afficherMensuelRechercher()}"
+                                         update=":formA:tbl"/>
+                        <p:commandButton value="Réinitialiser"
+                                         actionListener="#{modem3gMb.afficherModem3gAffecte()}" 
+                                         update=":form:tb" ajax="true" immediate="true" />
+
+                        <br /><br />
+
+                        <p:dataTable id="tb" widgetVar="tableau" value="#{modem3gMb.modemList}" var="v"
+                                     rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+
+                            <p:column headerText="Numéro Imei" filterBy="#{v.imei}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText  value="#{v.imei}"  />
+                            </p:column>
+
+
+
+                            <p:column headerText="Date Début"  filterBy="#{modem3gMb.convertDateFormat(v.dateDebut)}" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText  value="#{modem3gMb.convertDateFormat(v.dateDebut)}"  >
+                                </h:outputText >
+                            </p:column>
+
+<!--                            <p:column headerText="Date Rendu"    filterBy="#{modem3gMb.convertDateFormat(v.dateRendu)}" filterFunction="#{filterMb.filterByX}">
+                                <h:outputText  value="#{modem3gMb.convertDateFormat(v.dateRendu)}"  >
+
+                                </h:outputText >
+                            </p:column>-->
+
+                            <p:column headerText="Matricule Bénéficiaire"  filterBy="#{v.mensuel.matricule}" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText  value="#{v.mensuel.matricule}"/>
+                            </p:column>
+
+
+                            <p:column headerText="Nom Bénéficiaire"  filterBy="#{v.mensuel.nom}" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText  value="#{v.mensuel.nom}"/>
+                            </p:column>
+
+
+                            <p:column headerText="Prénom Bénéficiaire"  filterBy="#{v.mensuel.prenom}" filterFunction="#{filterMb.filterByX}" >
+                                <h:outputText  value="#{v.mensuel.prenom}"/>
+                            </p:column>
+
+
+                            <p:column headerText="Désaffecter"  exportable="false" style="width: 250px;">
+                                <p:commandButton  value="Annuler" actionListener="#{modem3gMb.desaffecter_Modem3g(v)}" update=":form:tb, :form">
+                                    <p:confirm header="Confirmation" message=" Voulez vous vraiment annuler l'affectation ce modem ?" icon="ui-icon-alert" />
+                                </p:commandButton>
+
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                    <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                </p:confirmDialog>
+                                
+                                <p:commandButton value="Désaffecter"  onclick="PF('dateR').show();" update=":find"   >
+                                    <f:setPropertyActionListener value="#{v}" target="#{modem3gMb.modem3GSelected}" />
+                                </p:commandButton>
+                                <p:commandButton icon ="ui-icon-document" onclick="PF('detail').show();" update=":detail"  title="Afficher le détail du modem 3G" >
+                                    <f:setPropertyActionListener value="#{v}" target="#{modem3gMb.modem3GSelected}" />
+                                </p:commandButton>
+                            </p:column>
+
+                        </p:dataTable>
+
+
+                    </h:form>
+
+                    <p:dialog header="Détail du modem 3G" widgetVar="detail" modal="true" width="350px">
+                        <h:form id="detail">
+                            <h:panelGrid columns="2">
+                                <p:outputLabel value="Numéro 3G :"/>        
+                                <h:outputText value="#{modem3gMb.modem3GSelected.numero}"/>
+                                <p:outputLabel value="Numero IMEI :"/>        
+                                <h:outputText value="#{modem3gMb.modem3GSelected.imei}"/>  
+                                <p:outputLabel value="Operateur :"/>        
+                                <h:outputText value="#{modem3gMb.modem3GSelected.operateur}"/>
+                                <p:outputLabel value="Nom Mensuel"/>        
+                                <h:outputText value="#{modem3gMb.modem3GSelected.mensuel.nom}"/>
+                                <p:outputLabel value="Prénom Mensuel"/>        
+                                <h:outputText value="#{modem3gMb.modem3GSelected.mensuel.prenom}"/>
+                                <p:outputLabel value="Matricule Mensuel"/>        
+                                <h:outputText value="#{modem3gMb.modem3GSelected.mensuel.matricule}"/>
+                                <p:outputLabel value="Numéro Série :"/>        
+                                <h:outputText value="#{modem3gMb.modem3GSelected.serie_numero}"/>
+                             
+
+                                <br/>
+
+                                <h:outputText/>
+                                <p:commandButton value="Quitter" onclick="PF('detail').hide();"/>
+
+                            </h:panelGrid>   
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog header="Désaffectation Modem 3G" widgetVar="dateR" modal="true" width="400px">
+                        <h:form id="find">
+                            <h:panelGrid columns="2">
+                                <h:outputText value="Date Rendu :"/>        
+                                <p:calendar pattern="dd/MM/yyyy" id="date"    
+                                            value="#{modem3gMb.dateRendu}"
+                                            locale="fr"                                            
+                                            mindate="#{modem3gMb.modem3GSelected.dateDebut}"
+                                            maxdate="#{operationStock.dateOfToday}"
+                                            showOn="button"
+                                            required="true" requiredMessage="date rendu est obligatoire"
+                                            label="date rendu"/>
+
+                                <br/>
+
+                                <h:outputText/>
+                                <p:commandButton value="Valider" 
+                                                 onclick="PF('dateR').hide();"
+                                                 action="#{modem3gMb.addDateRendu()}" 
+                                                 update=":form:msgsM,:form:tb"
+                                                 oncomplete="PF('tableau').clearFilters()"/>
+
+                            </h:panelGrid>   
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog header="Rechercher Salarié Par " width="80%" widgetVar="dlg" minHeight="40" >
+                        <h:form id="formA">
+                            
+                           
+
+                            <br/>
+
+
+
+                            <br /><br />
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <p:dataTable id="tbl" style="width:100%;" var="m" value="#{modem3gMb.mensuels}"
+                                             rowKey="#{m.id}" 
+                                             rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                             {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                             {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" scrollable="true" scrollHeight="150">
+
+                                    <p:ajax event="rowSelect"   /> 
+
+                                    <p:column headerText="Matricule" filterBy="#{m.matricule}" filterFunction="#{filterMb.filterByX}">
+                                        <h:outputText  value="#{m.matricule}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Nom" filterBy="#{m.nom}" filterFunction="#{filterMb.filterByX}"  >
+                                        <h:outputText  value="#{m.nom}"/>
+                                    </p:column>
+
+
+                                    <p:column headerText="Prénom" filterBy="#{m.prenom}" filterFunction="#{filterMb.filterByX}"  >
+                                        <h:outputText value="#{m.prenom}" />
+                                    </p:column>
+
+                                    <p:column headerText="Date Début" filterBy="#{m.dateCreation}" filterFunction="#{filterMb.filterByX}"  >
+                                        <h:outputText value="#{telephoneMb.convertDateFormat(m.dateCreation)}" />
+                                    </p:column>
+
+
+                                    <p:column>
+                                        <p:commandButton icon="ui-icon-check"  onclick="PF('dlg').hide();"  actionListener="#{modem3gMb.consultation(m)}" update=":form ,:form:tb" />
+
+                                    </p:column>
+                                </p:dataTable>
+
+                            </h:panelGrid>   
+                            <p:commandButton value="Annuler"  onclick="PF('dlg').hide();"  ajax="true"/>
+                        </h:form>
+
+                    </p:dialog>
+
+                </p:panel>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+
+
+
+
+
+</html>

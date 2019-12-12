@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      >
+
+    <body>
+        <ui:composition template="./Template.xhtml">
+            <ui:define name="arborescence">
+                Pointage -> Fiche Pointage 
+            </ui:define>
+            <ui:define name="content">
+                <p:growl showDetail="true" id="messages"   autoUpdate="true" />
+                <h:form id="fiche" enctype="multipart/form-data" prependId="false">
+                    <h:panelGrid columns="4" id="codeFiche">
+                        <h:outputText value="Code " />
+                        <p:spacer width="15px"/>
+                        <p:inputText id="acMinLength" value="#{pointageLotMb.codeFiche}"  />
+                        <p:spacer width="15px"/>
+                        
+                        <h:outputText value="Importer La Fiche : " />
+                        <p:spacer width="15px"/>
+                        <p:fileUpload value="#{pointageLotMb.uploadedFile}"  label="Choisir Fiche de Pointage"  mode="simple" ></p:fileUpload>
+                        <p:spacer width="15px"/>
+                        
+                        <p:spacer width="15px"/>
+                        <p:spacer width="15px"/>
+                        <p:spacer width="15px"/>
+                        <p:commandButton ajax="false" value="Importer la fiche" action="#{pointageLotMb.upload()}"/>
+                    </h:panelGrid>
+                </h:form>     
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

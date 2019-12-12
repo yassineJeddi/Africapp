@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets" 
+      >
+    <h:head>
+        <title>TGCC - Présence Salarie</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="Template.xhtml">
+
+            <ui:define name="content">
+                <p:blockUI block="formRecherche" widgetVar="block">
+                    Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                </p:blockUI>
+                <p:growl showDetail="true" autoUpdate="true" id="msgs"/> 
+                <h:form id="formRecherche">
+                        <h:panelGrid columns="7" cellpadding="6">
+                            <p:outputLabel value="Chantier"/>
+                            <p:selectOneMenu  filter="true" filterMatchMode="contains" value="#{PresenceSMb.idChantier}">
+                                <f:selectItem itemLabel="--Chantier--" itemValue="" />
+                                <f:selectItems value="#{chantier.chantiers}" var="c" itemLabel="#{c.code}" itemValue="#{c.id}" />
+                            </p:selectOneMenu>
+                            <p:outputLabel for="db" value="De :"/>
+                             <p:calendar pattern="dd/MM/yyyy" id="db" label="de" value="#{PresenceSMb.dateDe}" />
+                            <p:outputLabel for="df" value="A :"/>
+                             <p:calendar pattern="dd/MM/yyyy" id="df" label="date a" value="#{PresenceSMb.dateA}" /> 
+                            <p:commandButton class="btn-switch active" value="Rechercher" 
+                                             onstart="PF('block').show()" oncomplete="PF('block').hide()"
+                                             update=":form:presenceTable" 
+                                             actionListener="#{PresenceSMb.findPresenceSalarie()}"/>
+                        </h:panelGrid>
+                    </h:form>
+                <br /><br />
+                    <h:form id="form"> 
+                        
+                            <h:commandLink>
+                                <!--<p:graphicImage style="width: 21px" value="../resources/img/excel.png" />-->
+                                <p:commandButton class="btn btn-switch active" value="Exporter" icon="ui-icon-arrowthickstop-1-s"/>
+                                <p:dataExporter type="xls" target=":form:presenceTable" fileName="Salaries" pageOnly="false"/>
+                            </h:commandLink>
+                        <p:dataTable id="presenceTable" var="presence" value="#{PresenceSMb.presences}" 
+                                     widgetVar="presenceTable"   rowKey="#{presence.id}"
+                                     selection="#{parcEngins.engin}"
+                                     rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                     selectionMode="single" >
+                        
+                        <p:column headerText="Chantier" filterBy="#{presence.chantier.code}" filterMatchMode="contains">
+                            <h:outputText value="#{presence.chantier.code} "/>
+                        </p:column>
+                        <p:column headerText="Matricule" filterBy="#{presence.salarie.matricule}" filterMatchMode="contains">
+                            <h:outputText value="#{presence.salarie.matricule} "/>
+                        </p:column>
+                        <p:column headerText="CIN" filterBy="#{presence.salarie.cin}" filterMatchMode="contains">
+                            <h:outputText value="#{presence.salarie.cin} "/>
+                        </p:column>
+                        <p:column headerText="CNSS" filterBy="#{presence.salarie.cnss}" filterMatchMode="contains">
+                            <h:outputText value="#{presence.salarie.cnss} "/>
+                        </p:column>
+                        <p:column headerText="Nom et Prenom" filterBy="#{presence.salarie.nom} #{presence.salarie.prenom}" filterMatchMode="contains">
+                            <h:outputText value="#{presence.salarie.nom} #{presence.salarie.prenom}"/>
+                        </p:column>
+                        <p:column headerText="Date" filterBy="#{presence.date}" filterMatchMode="contains">
+                            <h:outputText value="#{presence.date}">
+                                 <f:convertDateTime pattern="yyyy-MM-dd" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Heure d'entrée" filterBy="#{presence.heureEntree}" filterMatchMode="contains">
+                            <h:outputText value="#{presence.heureEntree}" />
+                        </p:column>
+                        <p:column headerText="Heure Sortie" filterBy="#{presence.heureSortie}" filterMatchMode="contains">
+                            <h:outputText value="#{presence.heureSortie}"/>
+                        </p:column>
+                        <p:column headerText="Durée" >
+                            <h:outputText value="#{presence.nombreHeures }#{presence.nombreHeures  eq null ? '' :'h'} #{presence.nombreMinutes} #{presence.nombreMinutes eq null ? '' : 'min'}"/>
+                        </p:column> 
+                    </p:dataTable>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+

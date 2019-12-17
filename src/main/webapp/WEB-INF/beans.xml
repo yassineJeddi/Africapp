@@ -135,6 +135,24 @@
     <bean id="accidentTravailDao" class="ma.bservices.dao.AccidentTravailDaoImp">
         <property name="sessionFactory" ref="sessionFactory" />    
     </bean>
+    <!-- Detail AccidentTravail-->
+    
+    <bean id="detailATService" class="ma.bservices.services.DetailATServiceImp">
+        <property name="detailATDao" ref="detailATDao" />  
+    </bean>
+   
+    <bean id="detailATDao" class="ma.bservices.dao.DetailATDaoImp">
+        <property name="sessionFactory" ref="sessionFactory" />    
+    </bean>
+    <!-- Document Detail AccidentTravail-->
+    
+    <bean id="documentDetailATService" class="ma.bservices.services.DocumentDetailAtServiceImp">
+        <property name="documentDetailATDao" ref="documentDetailATDao" />  
+    </bean>
+   
+    <bean id="documentDetailATDao" class="ma.bservices.dao.DocumentDetailAtDaoImp">
+        <property name="sessionFactory" ref="sessionFactory" />    
+    </bean>
     
     <!--Designiation ENGIN-->
     

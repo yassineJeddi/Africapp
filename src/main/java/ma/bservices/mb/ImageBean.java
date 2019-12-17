@@ -108,7 +108,7 @@ public class ImageBean implements Serializable {
             ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
 
             //String chemin= context.getRealPath("/");
-            String chemin = ConstanteMb.getRepertoire();
+            String chemin  = ConstanteMb.getRepertoire();
             String fichier = context.getRequestParameterMap().get("path");
             System.out.println("file " + fichier);
            // String codeCurrent = "resources/document/bonTransfert" + refTr + ".pdf";

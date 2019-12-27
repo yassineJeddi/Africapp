@@ -421,29 +421,22 @@
                               widgetVar="dlg_historique_citerne"  >
                         <h:form id="form_historique"  enctype="multipart/form-data">
                             <br />
-
                             <div class="row">
-
                                 <div class="col-lg-3">
                                     <p:outputLabel  value="Nom de la citerne :" />
                                     <h:outputText  value="#{citerneMb.historique_searchBonLivraison.libelle_citerne}"/>
                                 </div>
-
                                 <div class="col-lg-3">
                                     <p:outputLabel  value="Capacité  :" />
                                     <h:outputText  value="#{citerneMb.historique_searchBonLivraison.capacite}"/>
                                 </div>
-
-
                                 <div class="col-lg-6">
                                     <p:outputLabel  value="Chantier Principal  :" />
                                     <h:outputText  value=" #{citerneMb.historique_searchBonLivraison.chantier_Principal.code} - #{citerneMb.historique_searchBonLivraison.chantier_Principal.codeNovapaie}"/>
                                 </div>
                             </div>
-                            
                             <br/>
                             <br/>
-
                              <h:panelGrid columns="8" cellpadding="5">
                                 <p:outputLabel  value="Date  :" />
                                 <p:calendar pattern="dd/MM/yyyy" class="value_dis"  showOn="button" 
@@ -451,30 +444,19 @@
                                    <p:outputLabel  value="  Action:" />
                                 <p:selectOneMenu required="true" requiredMessage="L'action est obligatoire"
                                                  id="id_action" value="#{citerneMb.action_search}" filter="true" filterMatchMode="contains">
-
                                     <f:selectItem itemLabel="" itemValue="-1"/>
                                     <f:selectItem itemLabel="LIVRAISON" itemValue="LIVRAISON"/>
                                     <f:selectItem itemLabel="BON_GASOIL_ENGIN" itemValue="BON_GASOIL_ENGIN"/>
                                     <f:selectItem itemLabel="BON_GASOIL_MENSUEL" itemValue="BON_GASOIL_MENSUEL"/>
-
                                 </p:selectOneMenu>
-
                                <p:outputLabel  value="Num Commande  :" />
-
                                 <p:inputText  value="#{citerneMb.numCommande_search}" style="width: 80px"/>
-
-                                
-
-                                 <p:outputLabel  value="Num Livraison  :" />
-
-                                 <p:inputText  value="#{citerneMb.numLivraison_search}" style="width: 80px"/>
-
+                                <p:outputLabel  value="Num Livraison  :" />
+                                <p:inputText  value="#{citerneMb.numLivraison_search}" style="width: 80px"/>
                             </h:panelGrid>
-
                             <br/>
                             <p:commandButton value="Rechercher"  actionListener="#{citerneMb.rechercher_historique_citerne()}" update=":form_historique:tbl" />
                             <p:commandButton value="Reinitialiser"  actionListener="#{citerneMb.reinitHistoCiterne()}" update=":form_historique:tbl" />
-
                             <br/>
                             <br/>
                             <p:dataTable id="tbl" var="citerneIt" value="#{citerneMb.l_detail_citerne_historique}"   
@@ -529,11 +511,8 @@
                                                      ajax="false" />
 
                                 </p:column>
-
                             </p:dataTable>
-
                         </h:form>
-
                     </p:dialog>
 
 
@@ -548,7 +527,7 @@
                               draggable="false"
                               maximizable="true"
                               style="max-height:90%;overflow:auto" 
-                              widgetVar="dlg_bon_gasoil_mensuel" 
+                              widgetVar="dlg_modifierMvmt" 
                               >
                         <h:form id="form_bon_gasoil_mensuel" 
                                 enctype="multipart/form-data">

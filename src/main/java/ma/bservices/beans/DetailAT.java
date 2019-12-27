@@ -29,68 +29,68 @@ public class DetailAT implements Serializable {
     private AccidentTravail accidentTravail;
     
     /*** CAUSE AT**/
-    private Boolean chuteEnHaut;
-    private Boolean chuteDObjet;
-    private Boolean trebuchement;
-    private Boolean manutentionManuelle;
-    private Boolean manutentionMecanique;
-    private String  causeProbable;
+    private Boolean chuteEnHaut =Boolean.FALSE ;
+    private Boolean chuteDObjet =Boolean.FALSE ;
+    private Boolean trebuchement =Boolean.FALSE ;
+    private Boolean manutentionManuelle =Boolean.FALSE ;
+    private Boolean manutentionMecanique =Boolean.FALSE ;
+    private String  causeProbable = "";
     
     /** Lieu AT**/
-    private Boolean interieurLieuTravail;
-    private Boolean mission;
-    private Boolean trajet;
-    private String  LieuPrecis;
+    private Boolean interieurLieuTravail =Boolean.FALSE ;
+    private Boolean mission =Boolean.FALSE ;
+    private Boolean trajet =Boolean.FALSE ;
+    private String  LieuPrecis = "";
         
     /**Description AT **/
-    private String description;
-    private String decriptionArabe;
+    private String description = "";
+    private String decriptionArabe = "";
     
     /**Nature de la blessure**/
-    private Boolean plaieSimple;
-    private Boolean plaieGrave;
-    private Boolean contusion;
-    private Boolean piqure;
-    private Boolean entorse;
-    private Boolean fracture;
-    private Boolean douleur;
-    private Boolean luxation;
-    private Boolean bruleurSimple;
-    private Boolean bruleurGrave;
-    private Boolean ecrasement;
-    private Boolean sectionnement;
-    private Boolean penetrationCorpEtranger;
-    private String autreNature;
+    private Boolean plaieSimple =Boolean.FALSE ;
+    private Boolean plaieGrave =Boolean.FALSE ;
+    private Boolean contusion =Boolean.FALSE ;
+    private Boolean piqure =Boolean.FALSE ;
+    private Boolean entorse =Boolean.FALSE ;
+    private Boolean fracture =Boolean.FALSE ;
+    private Boolean douleur =Boolean.FALSE ;
+    private Boolean luxation =Boolean.FALSE ;
+    private Boolean bruleurSimple =Boolean.FALSE ;
+    private Boolean bruleurGrave =Boolean.FALSE ;
+    private Boolean ecrasement =Boolean.FALSE ;
+    private Boolean sectionnement =Boolean.FALSE ;
+    private Boolean penetrationCorpEtranger =Boolean.FALSE ;
+    private String autreNature = "";
 
     
     /**Siège de la blessure**/
-    private Boolean yeuxD;
-    private Boolean yeuxG;
-    private Boolean mainD;
-    private Boolean mainG;
-    private Boolean brasD;
-    private Boolean brasG;
-    private Boolean cuisseD;
-    private Boolean cuisseG;
-    private Boolean piedD;
-    private Boolean piedG;
-    private Boolean jambeD;
-    private Boolean jambeG;
-    private Boolean tete;
-    private Boolean tronc;
-    private String autreSiege;
+    private Boolean yeuxD =Boolean.FALSE ;
+    private Boolean yeuxG =Boolean.FALSE ;
+    private Boolean mainD =Boolean.FALSE ;
+    private Boolean mainG =Boolean.FALSE ;
+    private Boolean brasD =Boolean.FALSE ;
+    private Boolean brasG =Boolean.FALSE ;
+    private Boolean cuisseD =Boolean.FALSE ;
+    private Boolean cuisseG =Boolean.FALSE ;
+    private Boolean piedD =Boolean.FALSE ;
+    private Boolean piedG =Boolean.FALSE ;
+    private Boolean jambeD =Boolean.FALSE ;
+    private Boolean jambeG =Boolean.FALSE ;
+    private Boolean tete =Boolean.FALSE ;
+    private Boolean tronc =Boolean.FALSE ;
+    private String autreSiege = "";
     
     
     /**Mesures prises immédiatement**/
-    private Boolean secourInterne;
-    private Boolean secourExterne;
+    private Boolean secourInterne =Boolean.FALSE ;
+    private Boolean secourExterne =Boolean.FALSE ;
     
     
     /**Suite**/
-    private Boolean hospitalisation;
-    private Boolean atSansArret;
-    private Boolean atAvecArret;
-    private Boolean deces;
+    private Boolean hospitalisation =Boolean.FALSE ;
+    private Boolean atSansArret =Boolean.FALSE ;
+    private Boolean atAvecArret =Boolean.FALSE ;
+    private Boolean deces =Boolean.FALSE ;
     private Integer nbrJour=0;
     
     /***  CAUSE AT**/

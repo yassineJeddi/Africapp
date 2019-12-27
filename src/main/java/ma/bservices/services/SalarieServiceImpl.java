@@ -202,4 +202,12 @@ public class SalarieServiceImpl implements Serializable, SalarieServiceIn {
          return salarieDao.getSalarieByID(idc);
     }
 
+    @Override
+    public List<Salarie> listSalarieByListChantier(String listChantiers) {
+        return salarieDao.listSalarieByListChantier(listChantiers);
+    }
+    @Override
+    public List<Salarie> listSalarieBlackListSorti() {
+         return salarieDao.listSalarieBlackListSorti();
+    } 
 }

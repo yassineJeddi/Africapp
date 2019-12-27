@@ -33,6 +33,7 @@ import ma.bservices.beans.TypeAbsence;
 import ma.bservices.beans.TypeContrat;
 import ma.bservices.beans.TypeDocument;
 import ma.bservices.constantes.Constantes;
+import ma.bservices.tgcc.utilitaire.MbHibernateDaoSupport;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
@@ -50,19 +51,12 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service("parametrageService")
 @Transactional
-public class ParametrageService {
+public class ParametrageService  extends MbHibernateDaoSupport {
 
     protected static Logger logger = Logger.getLogger("service");
     @Resource(name = "sessionFactory")
     private SessionFactory sessionFactory;
 
-    public SessionFactory getSessionFactory() {
-        return sessionFactory;
-    }
-
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
 
     // ----- PARAMETRAGE RESSSOURCES HUMAINES ----- 
     /**
@@ -184,9 +178,11 @@ public class ParametrageService {
     public List<Fonction> listeAllFonctions(){
         List<Fonction> l = new ArrayList<Fonction> ();
         try {
-            Session session = sessionFactory.getCurrentSession();
-            Query query = session.createQuery("FROM Fonction order by fonction");
-             l = query.list();
+            l = (List<Fonction>) this.getHibernateTemplate().find("SELECT f FROM Fonction f order by fonction");
+           /* Session session = sessionFactory.getCurrentSession();
+              Query query = session.createQuery("FROM Fonction order by fonction");
+              l = query.list();
+            */
         } catch (Exception e) {
             System.out.println("Erreur de récupération liste des fonction car "+e.getMessage());
         }

@@ -80,4 +80,7 @@ public interface SalarieServiceIn {
     
     public List<Object> getSalarieHearchChef(Integer idChantier, Integer idChef);
     public Salarie getSalarieByID(Integer idc);
+    
+    public List<Salarie> listSalarieByListChantier(String listChantiers);
+    public List<Salarie> listSalarieBlackListSorti();
 }

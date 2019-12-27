@@ -32,12 +32,32 @@ public class AccidentTravail implements Serializable {
     String lieu;
     @Column(name = "DESCRIPTION")
     String description;
+    @Column(name = "CHEFPROJET")
+    String chefProjet ;
+    @Column(name = "CHEFCHANTIER")
+    String chefChantier ; 
     
     @ManyToOne
     Chantier chantier;
     
     @ManyToOne
     Salarie salarie;
+
+    public String getChefProjet() {
+        return chefProjet;
+    }
+
+    public void setChefProjet(String chefProjet) {
+        this.chefProjet = chefProjet;
+    }
+
+    public String getChefChantier() {
+        return chefChantier;
+    }
+
+    public void setChefChantier(String chefChantier) {
+        this.chefChantier = chefChantier;
+    }
 
     public Date getDateAccident() {
         return dateAccident;

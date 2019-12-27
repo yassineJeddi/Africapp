@@ -1,0 +1,298 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+      xmlns:ui="http://java.sun.com/jsf/facelets"      
+      >
+    <h:head>
+        <title>Gestion Des Citerne</title>
+    </h:head>
+    <body>
+        <ui:composition template="./enginTemplate.xhtml">
+            <ui:define name="arborescence">
+                <h:form>
+                    Engin > <strong>Gestion des Citernes</strong> 
+                </h:form>
+            </ui:define>
+            <ui:define name="content">
+                <p:panel id="pannel">
+                    <h:form id="form">
+                        <p:messages id="msgsM" autoUpdate="false" closable="true" />
+                        <br /><br />
+                        <div class="row">
+                            <div class="col-lg-offset-1 col-lg-4">
+
+                                <div>
+                                    <p:commandButton style="width: 100%" update=":formA, :formA:typeInput, :formA:grid1" 
+                                                     class="btn btn-switch active" value="Ajouter Citerne" 
+                                                     oncomplete="PF('dlg').show();" 
+                                                     actionListener="#{Gestion_CiterneMb.initRenderBtn}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <br /><br />
+                        <p:dataTable id="tbl" var="citerneIt" value="#{Gestion_CiterneMb.l_citernes}"   rowKey="#{citerneIt.id}"
+                                     rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                     {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                     >
+                            <p:column headerText="Libelle Citerne"  filterBy="#{citerneIt.libelle_citerne}" filterFunction="#{filterMb.filterByX}" >
+                                <p:outputLabel value="#{citerneIt.libelle_citerne}" />
+                            </p:column>
+
+                            <p:column headerText="Type Citerne" filterBy="#{citerneIt.type_citerne}" filterFunction="#{filterMb.filterByX}">
+                                <p:outputLabel value="#{citerneIt.type_citerne}" />
+                            </p:column>
+
+                            <p:column headerText="Capacite" sortBy="#{citerneIt.capacite/1000}">
+                                <p:outputLabel value="#{citerneIt.capacite/1000}" />m³
+                            </p:column>
+
+
+                            <p:column headerText="Chantier Principal" filterBy="#{citerneIt.chantier_Principal.code}" filterFunction="#{filterMb.filterByX}">
+                                <p:outputLabel value="#{citerneIt.chantier_Principal.code}" />
+                            </p:column>
+
+
+                            <p:column headerText="Volume Actuel" filterBy="#{citerneIt.volume_actuel}" filterFunction="#{filterMb.filterByX}">
+                                <p:outputLabel value="#{citerneIt.volume_actuel_}" /> Litre
+                            </p:column>
+
+                            <p:column style="text-align: center" headerText="Actions &amp; Info." >
+                                <p:commandButton  title="Détails chantiers secondaires" oncomplete="PF('affectation_info').show()" icon="ui-icon-document-b" update=":form_info" actionListener="#{Gestion_CiterneMb.redirect_Togle_Affectation(citerneIt)}" />
+                                <p:commandButton  title="Modifier Citerne" icon="ui-icon-pencil" oncomplete="PF('dlg_modfication').show()"   update=":form_modification" actionListener="#{Gestion_CiterneMb.redirect_modification_citerne(citerneIt)}" />
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                    <h:form>                        
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                            <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                            <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                        </p:confirmDialog>
+                    </h:form>
+                    <p:dialog header="Ajouter Citerne" 
+                              height="50%" 
+                              style="max-height:100%;overflow:auto"
+                              modal="true"
+                              showEffect="fade"
+                              widgetVar="dlg"
+                              hideEffect="fade" 
+                              resizable="false" >
+                        <h:form id="formA">
+                            <p:defaultCommand target="btn" />
+                            <p:messages id="msgsCiterne" autoUpdate="false" showDetail="true" closable="true"/>
+
+
+                            <p:remoteCommand  name="executeOnOnhide"
+                                              update=":formA" process="@this formA:chantier_id_sec"
+                                              action="#{Gestion_CiterneMb.afficher_chantier_selectionne()}"/>  
+
+                            <h:panelGrid id="grid1" columns="4" cellpadding="5">
+
+                                <p:outputLabel value="Nom Citerne (*) :" />
+                                <p:spacer width="10" height="1" />
+                                <p:inputText disabled="#{Gestion_CiterneMb.isCiterneAdded}"
+                                             required="true"
+                                             requiredMessage="le nom est obligatoire"
+                                             value="#{Gestion_CiterneMb.citerneToAdd.libelle_citerne}"/>
+                                <p:spacer />
+
+                                <p:outputLabel value="Type Citerne (*):" />
+                                <p:spacer width="10" height="1" />
+
+                                <p:selectOneMenu disabled="#{Gestion_CiterneMb.isCiterneAdded}"      
+                                                 id="id_type_citerne" value="#{Gestion_CiterneMb.citerneToAdd.type_citerne}"
+                                                 style="width:125px"
+                                                 >
+
+
+                                    <f:selectItem itemLabel="" itemValue="" />  
+                                    <f:selectItem itemLabel="Diesel" itemValue="Diesel" />
+                                    <f:selectItem itemLabel="Essence" itemValue="Essence" />
+
+                                    <p:ajax update=":formA:typeInput, formA:btn, formA:litre_id"
+                                            listener="#{Gestion_CiterneMb.afficherType(Gestion_CiterneMb.citerneToAdd.type_citerne)}" />
+                                </p:selectOneMenu>
+                                <p:spacer />
+                                <p:outputLabel value="Capacité (*):" />
+                                <p:spacer width="10" height="1" />
+                                <p:inputText id="typeInput" 
+                                             required="true"
+                                             requiredMessage="La capacité est obligatoire!"
+                                             disabled="#{Gestion_CiterneMb.isTypeChanged eq false or Gestion_CiterneMb.isCiterneAdded}"  
+                                             value="#{Gestion_CiterneMb.capaciteMetreCube}"                                               
+                                             >
+                                    <f:convertNumber 
+                                        integerOnly="true" 
+                                        type="number" 
+                                        />
+                                    <p:ajax event="change" 
+                                            listener="#{Gestion_CiterneMb.converti(Gestion_CiterneMb.capaciteMetreCube)}"
+                                            update="litre_id, litre"
+                                            />                                    
+                                </p:inputText>                            
+                                <p:outputLabel id ="litre" value="metre cube (m³)" />
+                                <p:outputLabel value="En Tonne :" />
+                                <p:spacer width="10" height="1" />
+                                <p:inputText id="litre_id" value="#{Gestion_CiterneMb.tons}"
+                                             disabled="true"
+                                             >
+                                    <f:convertNumber integerOnly="true" type="number"/>
+                                    <p:ajax event="change" 
+                                            listener="#{Gestion_CiterneMb.convertiMetreCube(Gestion_CiterneMb.tons)}" 
+                                            update="typeInput" />
+                                </p:inputText>
+                                <p:outputLabel value="Tons (t)" />
+                            </h:panelGrid>
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <p:outputLabel value="Code Chantier Principale (*)" />
+                                <p:selectOneMenu disabled="#{Gestion_CiterneMb.isCiterneAdded}" 
+                                                 id="chantier_id_principal"
+                                                 requiredMessage="Attention! Chantier principal n'est pas saisi!"
+                                                 filter="true" filterMatchMode="contains"  
+                                                 value="#{Gestion_CiterneMb.code_chantier_ToAdd}"
+                                                 >
+                                    <f:selectItem itemLabel="" itemValue="-1" noSelectionOption="true"/>
+
+                                    <f:selectItems value="#{chantierServMb.chantiers}" var="ch"                                                   
+                                                   itemLabel=" #{ch.code} - #{ch.codeNovapaie}"  
+                                                   itemValue="#{ch.id}" />
+
+                                    <p:ajax  update="chantier_id_sec" event="change" 
+                                             listener="#{Gestion_CiterneMb.displayChantierPrincipal}" 
+                                             process="@form" 
+                                             />
+                                </p:selectOneMenu>
+                                <p:outputLabel value="Code Chantier Secondaire : " />
+                                <p:selectCheckboxMenu disabled="#{Gestion_CiterneMb.isCiterneAdded}" 
+                                                      id="chantier_id_sec" label="Choisir des chantiers sec." 
+                                                      value="#{Gestion_CiterneMb.l_code_chantier_ToAdd}"
+                                                      widgetVar="chantier_sec"
+                                                      filter="true" filterMatchMode="contains" 
+                                                      onHide="executeOnOnhide();">
+                                    <f:selectItems value="#{Gestion_CiterneMb.l_chantier_Sec}" var="ch" itemDisabled="#{ch.display_chantier_Principal == false}"
+                                                   itemLabel="#{ch.code} - #{ch.codeNovapaie}" itemValue="#{ch.id}" />
+
+                                </p:selectCheckboxMenu>
+                                <p:outputLabel value="Chantiers Secondaires : " />
+                                <p:panel id="liste">
+                                    <ui:repeat value="#{Gestion_CiterneMb.l_chantier_sec_afficher}" var="l">
+                                        <div class="row">
+                                            <p:outputLabel id="o1" value="#{l.code}" /> 
+                                        </div>
+                                    </ui:repeat>
+                                </p:panel>
+                            </h:panelGrid>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <p:commandButton id="btn"  action="#{Gestion_CiterneMb.addCiterne_To_Chantier()}"
+                                             update=":formA, :formA:msgsCiterne, :form:tbl" 
+                                             style="width: 50%" class="pull-right btn btn-switch active"
+                                             value="Ajouter Citerne" />
+
+                            <p:blockUI block=" :formA" trigger=":formA:btn" >
+                                Ajout de Citerne en cours ... <br />
+                                <p:graphicImage url="https://upload.wikimedia.org/wikipedia/commons/5/53/Loading_bar.gif"/>
+                            </p:blockUI>
+                        </h:form>
+                    </p:dialog>
+                    <p:dialog header="Affectation Chantier Secondaire" modal="true" resizable="false" widgetVar="affectation_info"  >
+                        <h:form id="form_info">
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <p:selectCheckboxMenu id="ajouter_chantier_id_sec" 
+                                                      label="Choisir Chantiers Sec." 
+                                                      required="false" value="#{Gestion_CiterneMb.table_chantier_sec_to_add}"
+                                                      filter="true" filterMatchMode="contains" panelStyle="width:500px">
+                                    <f:selectItems value="#{Gestion_CiterneMb.l_chantiers_sec_to_add}" 
+                                                   var="ch" 
+                                                   itemDisabled="#{ch.display_chantier_Principal == false}" 
+                                                   itemLabel="#{ch.code} - #{ch.codeNovapaie}" 
+                                                   itemValue="#{ch.id}" />
+
+                                </p:selectCheckboxMenu>
+                                <p:commandButton style="width: 100%" class="btn btn-switch active"
+                                                 value="Ajouter les chantiers"                                       
+                                                 actionListener="#{Gestion_CiterneMb.add_Chantier_Sec()}" 
+                                                 update=":form_info"/>
+                            </h:panelGrid>
+                            <p:dataTable id="tabl_info" var="afec" value="#{Gestion_CiterneMb.l_chantier}" 
+                                         rowKey="#{afec.id}" style="margin-bottom:0;width:800px;"  
+                                         rows="5"  paginator="true"  paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+                                <p:column headerText=" Code Chantier  "   >
+                                    <p:outputLabel value="#{afec.codeNovapaie}" />
+                                </p:column>
+
+                                <p:column headerText="Le nom chantier "   >
+                                    <p:outputLabel value="#{afec.code}" />
+                                </p:column>
+                                <p:column headerText="Supprime Chantier sec " >
+                                    <p:commandButton   icon="ui-icon-trash" update=":form_info:ajouter_chantier_id_sec , :form_info" actionListener="#{Gestion_CiterneMb.supprime_chantier_sec(afec)}" ajax="true"/>
+                                </p:column>
+                                <f:facet name="footer">
+                                    cette citerne est affectée à #{fn:length(Gestion_CiterneMb.l_chantier)} chantiers secondaires
+                                </f:facet>
+                            </p:dataTable>
+                        </h:form>
+
+                    </p:dialog>
+                    <p:dialog header="Modifier la Citerne" height="50%" 
+                              style="max-height:100%;overflow:auto" modal="true" 
+                              showEffect="fade" 
+                              widgetVar="dlg_modfication" 
+                              hideEffect="fade"
+                              resizable="false" >
+                        <h:form id="form_modification"  >
+                            <br />
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <p:outputLabel value="Nom Citerne :" />
+                                <h:inputText  
+                                    onkeypress="if (event.keyCode === 13) {
+                                        event.preventDefault();
+                                               return false;
+                                           }"
+                                    required="true" requiredMessage="le nom est obligatoire" 
+                                    value="#{Gestion_CiterneMb.citern_to_update.libelle_citerne}"/>
+
+                                <p:outputLabel value="Type Citerne :" />
+
+                                <p:selectOneMenu id="id_type_citerne" value="#{Gestion_CiterneMb.citern_to_update.type_citerne}" style="width:125px">                                    
+                                    <f:selectItem itemLabel="Diesel" itemValue="Diesel" />
+                                    <f:selectItem itemLabel="Essence" itemValue="Essence" />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel value="Capacite :" />
+                                <p:inputText  required="true" requiredMessage="la capacité est obligatoire" value="#{Gestion_CiterneMb.capacite_toUpdate}"/>
+                                
+                                <p:outputLabel value="Volume Actuel :" />
+                                <p:inputText  required="true" requiredMessage="la capacité est obligatoire" value="#{Gestion_CiterneMb.citern_to_update.volume_actuel_}"/>
+
+                                <p:outputLabel value="Code Chantier Pricipal" />
+                                <p:selectOneMenu id="chantier_id_principal"  value="#{Gestion_CiterneMb.code_chantier_toUpdate}" filter="true" filterMatchMode="contains">
+                                    <f:selectItem itemLabel="#{Gestion_CiterneMb.citern_to_update.chantier_Principal.code}" itemValue="#{Gestion_CiterneMb.citern_to_update.chantier_Principal.id}"/>
+                                    <f:selectItems value="#{Gestion_CiterneMb.l_chantiers_pricipal}" var="ch" 
+                                                   itemDisabled="#{ch.display_chantier_Principal == false}"
+                                                   itemLabel=" #{ch.code} - #{ch.codeNovapaie} " itemValue="#{ch.id}" />
+                                </p:selectOneMenu>
+                            </h:panelGrid>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <p:commandButton  actionListener="#{Gestion_CiterneMb.modifie_citerne_()}"
+                                              ajax="true" update=":form:tbl,:form:msgsM" 
+                                              style="width: 50%" class="pull-right btn btn-switch active" 
+                                              value="Modifier Citerne" onclick="PF('dlg_modfication').hide();"/>
+                            <br /><br />
+                            <br />
+                        </h:form>
+                    </p:dialog>
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

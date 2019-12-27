@@ -1,0 +1,1990 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html >
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+       >
+     
+    <h:head>
+        <title>Liste des Dossiers Médicaux</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="Template.xhtml">
+            <ui:define name="arborescence">
+                RH > <strong> Les Dossiers Médicaux (Soumis au secret médical) </strong>
+            </ui:define>
+            <ui:define name="content">
+                <p:blockUI widgetVar="block" block="tableDM" >
+                    Chargement<br /> <h:graphicImage value="../images/loading.gif" />
+                </p:blockUI>
+                <p:panel id="pannel"> 
+                <h:form id="tableDM">    
+                    <p:growl showDetail="true" autoUpdate="true" id="msgs"  />
+                    <h:panelGrid columns="4" style="width:98%" cellpadding="5">
+                        <p:selectOneMenu id="listChantierId" value="#{dossMb.idChantier}" panelStyle="width:180px" style="width:100%" filter="true" filterMatchMode="contains" >
+                            <f:selectItem itemLabel="--- Selectionner Chantier ---" itemValue="0" />
+                            <f:selectItems value="#{dossMb.chantiers}" var="c" itemLabel="#{c.code}" itemValue="#{c.id}" />
+                            <p:ajax event="change" listener="#{dossMb.listeDossiers()}" update=":tableDM" />
+                            <p:ajax event="select" listener="#{dossMb.listeDossiers()}" update=":tableDM" />
+                        </p:selectOneMenu> 
+                         
+                        <p:selectOneRadio id="actifId" value="#{dossMb.idStatut}"  style="float:right" > 
+                            <f:selectItem itemLabel="Actifs"   itemValue="1" />
+                            <f:selectItem itemLabel="Archivés" itemValue="0" />
+                            <p:ajax event="change" listener="#{dossMb.listeDossiersStatut()}" update=":tableDM" />
+                            <p:ajax event="select" listener="#{dossMb.listeDossiersStatut()}" update=":tableDM" />
+                        </p:selectOneRadio> 
+                         
+                        <p:commandButton id="btnCharger" onstart="PF('block').show()" oncomplete="PF('block').hide()"  
+                                         class="btn btn-switch active"  value="Charger" icon="fa fa-spinner " 
+                                         update=":tableDM" style="float:right" 
+                                         action="#{dossMb.chargerDonnees()}"   />
+                        
+                        <p:commandButton id="btnAjouter" onstart="PF('block').show()" oncomplete="PF('block').hide()"  
+                                         rendered="#{dossMb.idStatut eq 0}"
+                                         class="btn btn-switch active"  value="Ajouter" action="#{dossMb.listenerDlgAdd()}"
+                                         icon="fa fa-plus" update=":formdlgId" style="float:right" />
+                        
+                          
+                    </h:panelGrid>
+                    
+                      
+                    <p:dataTable var="dos" rows="5" value="#{dossMb.dossiersMedicaux}" sortBy="#{dos.triOrdre}" sortOrder="ASCENDING" 
+                                 class="table table-responsive table-bordered" emptyMessage="Aucun enregistrement..." 
+                                 paginatorPosition="bottom" paginator="true" 
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15" widgetVar="vtWidget"
+                                 id="dossierTable" 
+                                 
+                                 >
+                         
+                    <f:facet name="header">
+                        Dossiers Médicaux 
+                    </f:facet>
+                    <p:column headerText ="Etat" width="10px">
+                        <img  width="20px" heigth="20px" style="margin-left: 3px" src="#{dossMb.systemDateFormat(dos.prochaineVisite)}"
+                              />
+                    </p:column>
+                        <p:column rendered="false" headerText="SITUATION" filterMatchMode="contains" >
+                        <p:commandButton  styleClass="#{dos.prochaineVisite lt '2020-12-19' ? 'coleurR' : dos.titularisation eq 'NON' ? 'coleurM' : null }" ></p:commandButton>
+                    </p:column>  
+                    <p:column headerText="Nom Prénom" filterBy="#{dos.salarie.nom} #{dos.salarie.prenom}" filterMatchMode="contains" >
+                        <h:outputText value="#{dos.salarie.nom} #{dos.salarie.prenom}" />
+                    </p:column>     
+                        <p:column headerText="Maricule" width="25px" filterBy="#{dos.salarie.matricule}" filterMatchMode="contains" >
+                        <h:outputText value="#{dos.salarie.matricule}" />
+                    </p:column>
+                        <p:column headerText="CIN" width="30px" filterBy="#{dos.salarie.cin}" filterMatchMode="contains" >
+                        <h:outputText value="#{dos.salarie.cin}" />
+                    </p:column>
+                    <p:column headerText="Fonction" filterBy="#{dos.salarie.fonction.fonction}" filterMatchMode="contains"  >
+                        <h:outputText value="#{dos.salarie.fonction.fonction}" />
+                    </p:column>
+                    <p:column headerText="Aptitude Au Travail" filterBy="#{dos.etat}" filterMatchMode="contains">
+                        <h:outputText value="#{dos.etat}" />
+                    </p:column> 
+                    <p:column headerText="Docteur" filterBy="#{dos.docteur}" filterMatchMode="contains" >
+                        <h:outputText value="#{dos.docteur}" />
+                    </p:column> 
+                        <p:column rendered="false" headerText="Infos AT" filterBy="#{dos.docteur}" filterMatchMode="contains" >
+                        <h:outputText value="#{dos.titularisation}" />
+                    </p:column>   
+                    <p:column headerText="Dernière Visite" filterBy="" filterMatchMode="contains" >
+                        <h:outputText value="#{dos.lastVisite}" />
+                    </p:column>   
+                    <p:column headerText="Prochaine visite" filterBy="" filterMatchMode="contains" >
+                        <h:outputText value="#{dos.prochaineVisite}" />
+                    </p:column> 
+                    <p:column headerText="Actions" >
+                        <p:commandButton rendered="false" style="float:left" icon="fa fa-plus"   title="Créer dossier"
+                                         onstart="PF('block').show()" oncomplete="PF('block').hide()"
+                                         action="#{dossMb.creeDossier(dos.salarie)}" 
+                                         update=":formdlgId" >
+                        </p:commandButton>  
+                        <p:commandButton icon="fa fa-list" title="Détail" style="background-color:#712D35;float:left"
+                                         onstart="PF('block').show()" oncomplete="PF('block').hide()"
+                                         action="#{dossMb.afficherDossier(dos)}" 
+                                         update=":shomFormId," >
+                        </p:commandButton> 
+                        
+                         
+                        <p:commandButton icon="fa fa-file-pdf-o" style="background-color:#712D35" action="#{dossMb.chargerFichier(dos)}" 
+                                         oncomplete="PF('tableDoc').show()" update=":formTableDoc"/>
+                    
+                    </p:column>  
+                        
+                    </p:dataTable>
+                </h:form>
+                    
+                    
+                <p:dialog header="Documents" width="80%" height="500" resizable="false" modal="true" widgetVar="tableDoc" closable="true">
+                     <h:form id="formTableDoc"> 
+                        <p:tabView id="tabview_1">
+                            <p:tab title="Document">
+                                <p:commandButton value="Ajouter document pdf" icon="fa fa-upload" oncomplete="PF('telechargerVar').show()" update=":form_uploader" /> 
+                                <br /><br />
+                                <h:form id="form11">
+                                    <p:dataTable id="tbl" var="documentIt" value="#{dossMb.listaFichiers}" 
+                                                 rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                                 {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                                 {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                                 > 
+                                        
+                                        <p:column headerText="Date de Creation">
+                                            <p:calendar readonly="true"  value="#{documentIt.dateCreation}" pattern="dd/MM/yyyy HH:mm" >  </p:calendar>
+                                        </p:column>
+                                        <p:column headerText="Titre"  >
+                                            <p:cellEditor>
+                                                <f:facet name="output"><h:outputText value="#{documentIt.titre}"  /></f:facet>
+                                                <f:facet name="input"><p:inputText value="#{documentIt.titre}"  /></f:facet>
+                                            </p:cellEditor>
+                                        </p:column> 
+                                        <p:column headerText="Ajouter Par"   >
+                                            <h:outputText value="#{documentIt.creePar}" />
+                                        </p:column>
+                                        <p:column headerText="Opérations" style="width:150px">
+                                            <p:commandButton icon="ui-icon-document"
+                                                             title ="Consulter Document" 
+                                                             action="#{dossMb.visualiser(documentIt.chemin)}" 
+                                                             oncomplete="PF('consulterDoc').show()" update=":visuliser_id"/> 
+                                        </p:column> 
+                                    </p:dataTable>
+                                </h:form>
+                            </p:tab>
+                        </p:tabView>
+                    </h:form>
+                </p:dialog>
+                    <p:dialog header="Ajouter un nouvel type à " width="300" resizable="false" height="150" modal="true" widgetVar="addAntecedent">
+                    <h:form id="addAntecedent">    
+                        <p:panelGrid columns="1"  styleClass="ui-noborder" style="width:100%" >
+                            
+                                <p:inputText value="#{dossMb.antecedentToAdd.libelle}"  style="width:100%" ></p:inputText>
+                            
+                                <p:selectOneMenu id="textB2" value="#{dossMb.antecedentToAdd.type}" panelStyle="width:180px"  style="width:100%"  filter="true" filterMatchMode="startsWith" >
+                                    <f:selectItem itemLabel="--- selectionne ---" itemValue="0" /> 
+                                    <f:selectItem itemLabel="Risques" itemValue="RISQUE" />  
+                                    <f:selectItem itemLabel="ATCD MD" itemValue="ATCD MD" /> 
+                                    <f:selectItem itemLabel="ATCD CH" itemValue="ATCD CH" /> 
+                                    <f:selectItem itemLabel="ANTECEDANTS FAMILIAUX" itemValue="AUTRE" /> 
+                                    <f:selectItem itemLabel="TYPE FICHIER" itemValue="FICHIER" /> 
+
+                                </p:selectOneMenu>
+                            
+                        </p:panelGrid>
+                            <p:commandButton onclick="PF('addAntecedent').hide()" value="Annuler" update=":shomFormId, :formdlgId"></p:commandButton>
+                            <p:commandButton action="#{dossMb.saveAntecedent()}" value="Enregistrer" update=":shomFormId, :formdlgId"></p:commandButton>
+                    </h:form>
+                </p:dialog>
+                <p:dialog header="PDF" width="80%" resizable="false" height="500" modal="true" widgetVar="consulterDoc">
+                    <h:form id="visuliser_id">    
+                        <p:media value="#{imageBean.bon}" width="100%" height="500" player="pdf"> 
+                            <f:param name="path" value="#{dossMb.selectedDoc}" />
+                        </p:media>
+                    </h:form>
+                </p:dialog>
+                <!--                Dialogs                 -->
+                <p:dialog header="AUTRES VISITES" widgetVar="dlg500"  modal="true" width="80%"   height="350">
+                    <h:form id="visiteShowFormIdAutre">  
+                         <p:panelGrid  styleClass="ui-noborder" style="width:100%" > 
+                            <p:row>   
+                                <p:column><p:outputLabel value="Date:"></p:outputLabel> </p:column> 
+                                <p:column> 
+                                    <p:calendar id="dateB" value="#{dossMb.visiteToShow.dateVisite}" disabled="true"  pattern="dd-MM-yyyy"  style="width:100%" > </p:calendar> 
+                                </p:column>  
+                                <p:column><p:outputLabel value="Docteur: "></p:outputLabel> </p:column> 
+                                 <p:column> 
+                                    <p:inputText id="textB1" value="#{dossMb.visiteToShow.docteur}"  disabled="true"></p:inputText>
+                                </p:column> 
+                                <p:column><p:outputLabel value="Type visite:"></p:outputLabel> </p:column> 
+                                <p:column> 
+                                    <p:selectOneMenu id="textB2" value="#{dossMb.visiteToShow.type}" panelStyle="width:180px"  filter="true" filterMatchMode="startsWith" >
+                                        <f:selectItem itemLabel="--- Type Visite ---" itemValue="0" />  
+                                        <f:selectItem itemLabel="VISITE P.P" itemValue="V.P.P." />  
+                                        <f:selectItem itemLabel="VISITE ANNUELLE" itemValue="V.A." /> 
+                                        <f:selectItem itemLabel="VISITE DEPART" itemValue="V.D." /> 
+                                        <f:selectItem itemLabel="VISITE SPONTANNEE" itemValue="V.S." />  
+                                    </p:selectOneMenu> 
+                                </p:column>  
+                            </p:row>   
+                            <p:row>   
+                                <p:column>    
+                                   <p:outputLabel value="Examen Clinique:"></p:outputLabel>
+                                </p:column> 
+                                <p:column colspan="5">    
+                                   <p:inputText value="#{dossMb.visiteToShow.examenRadio}" style="width:100%" ></p:inputText>
+                               </p:column>   
+                            </p:row>
+                        </p:panelGrid> 
+                             
+                         
+                        
+                            <p:panelGrid styleClass="ui-noborder" style="width:100%" > 
+                                 <p:row>   
+                                    <p:column>
+                                        <p:outputLabel value="Sucre/Urine:"></p:outputLabel> 
+                                        <p:selectOneMenu value="#{dossMb.visiteToShow.sucre}" style="top: 4px; width:50px;display: inline-flex;" >
+                                            <f:selectItem itemLabel="-" itemValue="-" />
+                                            <f:selectItem itemLabel="+" itemValue="+" />
+                                            <f:selectItem itemLabel="++" itemValue="++" />
+                                            <f:selectItem itemLabel="+++" itemValue="+++" />  
+                                        </p:selectOneMenu> 
+                                    </p:column>
+                                    <p:column>  
+                                        <p:outputLabel value="Albumine/Urine:"></p:outputLabel> 
+                                        <p:selectOneMenu value="#{dossMb.visiteToShow.albumine}" style="top: 4px; width:50px;display: inline-flex;">
+                                            <f:selectItem itemLabel="-" itemValue="-" />
+                                            <f:selectItem itemLabel="+" itemValue="+" />
+                                            <f:selectItem itemLabel="++" itemValue="++" />
+                                            <f:selectItem itemLabel="+++" itemValue="+++" />  
+                                       </p:selectOneMenu> 
+                                    </p:column>
+                                    <p:column> 
+                                        <p:outputLabel value="Sang/Urine:"></p:outputLabel> 
+                                        <p:selectOneMenu value="#{dossMb.visiteToShow.sang}"  style="top: 4px; width:50px;display: inline-flex;">
+                                            <f:selectItem itemLabel="-" itemValue="-" />
+                                            <f:selectItem itemLabel="+" itemValue="+" />
+                                            <f:selectItem itemLabel="++" itemValue="++" />
+                                            <f:selectItem itemLabel="+++" itemValue="+++" />  
+                                       </p:selectOneMenu>
+                                    </p:column> 
+                                     <p:column colspan="2"> 
+                                         <p:outputLabel value="Rx pulmonaire:"></p:outputLabel>    
+                                        <p:inputText value="#{dossMb.visiteToShow.rxPulmonaire}" ></p:inputText> 
+                                    </p:column> 
+                                     <p:column colspan="2"> 
+                                         <p:outputLabel value="Date RX:"></p:outputLabel>  
+                                        <p:calendar value="#{dossMb.visiteToShow.dateRxpulmonaire}"  pattern="dd-MM-yyyy" style="width:30px;"></p:calendar>  
+                                    </p:column>
+                                    </p:row> 
+                                    <p:row>
+                                        <p:column> 
+                                            <p:outputLabel value="T.A:"></p:outputLabel>    
+                                            <p:inputText value="#{dossMb.visiteToShow.ta}" style="width:50px;"></p:inputText>mmHg 
+                                        </p:column>
+                                        <p:column colspan="2">
+                                            <p:outputLabel value="VISION(OD/OG): "></p:outputLabel>        
+                                            <p:inputText value="#{dossMb.visiteToShow.visionOD}" style="width:50px;"> </p:inputText>/10  
+                                            <p:inputText value="#{dossMb.visiteToShow.visionOG}" style="width:50px;"></p:inputText>/10 
+                                        </p:column>
+                                        <p:column colspan="2"> 
+                                            <p:outputLabel value="TAILLE:"></p:outputLabel>  
+                                            <p:inputText value="#{dossMb.visiteToShow.taille}" style="width:50px;"></p:inputText>/CM
+                                        </p:column>
+                                        <p:column>  
+                                            <p:outputLabel value="POIDS:"></p:outputLabel>  
+                                            <p:inputText value="#{dossMb.visiteToShow.poids}" style="width:50px;"></p:inputText>/KG 
+                                        </p:column>  
+                                        <p:column>
+                                            <p:outputLabel value="Pouls:"></p:outputLabel>  
+                                            <p:inputText value="#{dossMb.visiteToShow.pauls}" style="width:50px;"></p:inputText> /mn
+                                        </p:column>     
+                                </p:row> 
+
+                            </p:panelGrid>
+                           
+                            <p:panel header="CONCLUSION">
+                                <p:panelGrid  styleClass="ui-noborder" style="width:100%" id="panelId">    
+                                   <p:row> 
+                                       <p:column>
+                                           <p:outputLabel value="Etat:" />
+                                       </p:column>
+                                       <p:column>
+                                           <p:selectOneRadio value="#{dossMb.visiteToShow.apte}"  style="float:right" > 
+                                               <f:selectItem itemLabel="Apte"         itemValue="Apte" />
+                                               <f:selectItem itemLabel="Inapte"       itemValue="Inapte" /> 
+                                               <f:selectItem itemLabel="Inapte temporaire"  itemValue="Inapte temporaire" />  
+                                           </p:selectOneRadio> 
+                                       </p:column>
+                                       <p:column>
+                                           <p:outputLabel value="A surveiller tous les: " />
+                                           <p:selectOneMenu value="#{dossMb.visiteToShow.surviller}" style="top: 8px; width:50px">
+                                            <f:selectItem itemLabel="" itemValue="" />
+                                            <f:selectItem itemLabel="1" itemValue="1" />
+                                            <f:selectItem itemLabel="3" itemValue="3" />
+                                            <f:selectItem itemLabel="6" itemValue="6" />
+                                            <f:selectItem itemLabel="12" itemValue="12" />
+                                            <f:selectItem itemLabel="18" itemValue="18" />
+                                            <f:selectItem itemLabel="24" itemValue="24" />
+                                            <p:ajax event="change" listener="#{dossMb.calculateDateProcVisite}" update="idDateProchaineVisite" />
+                                            <p:ajax event="select" listener="#{dossMb.calculateDateProcVisite}" update="idDateProchaineVisite" />
+                                        </p:selectOneMenu>
+                                       </p:column> 
+                                       <p:column>  
+                                           <p:outputLabel value="Prochaine visite:" />  
+                                           <p:calendar id="idDateProchaineVisite" disabled="true" value="#{dossMb.visiteToShow.prochaineVisite}"  pattern="dd/MM/yyyy" style="width:60px;"></p:calendar>
+                                       </p:column>  
+                                   </p:row> 
+                                    <p:row> 
+                                        <p:column>    
+                                            <p:outputLabel value="Commentaire:"></p:outputLabel>
+                                        </p:column>  
+                                        <p:column colspan="3"  >     
+                                           <p:inputTextarea value="#{dossMb.visiteToShow.commentaire}" style="width:100%;"></p:inputTextarea>
+                                       </p:column> 
+                                  
+                                   </p:row>
+                               </p:panelGrid> 
+                           </p:panel>
+                        
+                        <br></br>
+                        <p:commandButton icon="ui-icon-circle-check" value="Générer Fiche"  actionListener="#{dossMb.addFichier(dossMb.visiteToShow)}" update=":visuliser_id"
+                                                      oncomplete="PF('consulterDoc').show()"  ></p:commandButton>
+                        <p:commandButton style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()" onclick="PF('vtWidget').clearFilters()" 
+                                         action="#{dossMb.updateVisite()}"  update=":shomFormId, :tableDM" value="Modifier"  ></p:commandButton>  
+                        <p:commandButton style="float:right" value="Annuler"  onclick="PF('dlg500').hide()"  ></p:commandButton>  
+                    </h:form>
+                </p:dialog> 
+                
+                
+                <p:dialog header="AJOUT VISITE AT" widgetVar="dlg40"  modal="true" width="80%" height="280">
+                    <h:form id="visiteAddFormIdAt"> 
+                        <p:panelGrid  styleClass="ui-noborder" >
+                            <p:row>
+                                <p:column> 
+                                   <p:outputLabel value="Date:" /> 
+                                </p:column>
+                                <p:column> 
+                                    <p:calendar id="dateB" value="#{dossMb.visiteToAdd.dateVisite}" disabled="true"  pattern="dd-MM-yyyy"  style="width:auto" ></p:calendar> 
+                                </p:column>
+                                <p:column>  
+                                   <p:outputLabel value="Docteur:" />
+                                </p:column>
+                                <p:column> 
+                                    <p:inputText id="textB1" value="#{dossMb.visiteToAdd.docteur}" style="width:100%"  disabled="true" ></p:inputText>
+                                </p:column>
+                                <p:column> 
+                                   <p:outputLabel value="Type visite:" /> 
+                                </p:column>
+                                <p:column> 
+                                    <p:selectOneMenu id="textB2" value="#{dossMb.visiteToAdd.type}" disabled="true" style="width:100%"   panelStyle="width:100%"  filter="true" filterMatchMode="startsWith" >
+                                        <f:selectItem itemLabel="--- Type Visite ---" itemValue="0" /> 
+                                        <f:selectItem itemLabel="VISITE EMBAUCHE" itemValue="V.E." /> 
+                                        <f:selectItem itemLabel="VISITE ANNUELLE" itemValue="V.A." /> 
+                                        <f:selectItem itemLabel="VISITE P.P" itemValue="V.P.P." /> 
+                                        <f:selectItem itemLabel="VISITE AT" itemValue="V.A.T." /> 
+                                        <f:selectItem itemLabel="VISITE DEPART" itemValue="V.D." /> 
+                                        <f:selectItem itemLabel="VISITE SPONTANNEE" itemValue="V.S." />  
+                                    </p:selectOneMenu>
+                                </p:column> 
+                            </p:row>
+                            <p:row>
+                                <p:column>  
+                                   <p:outputLabel value="Date AT:" />  
+                                </p:column> 
+                                <p:column>    
+                                    <p:calendar value="#{dossMb.visiteToAdd.date_AT}" pattern="dd-MM-yyyy"  style="width:50px" > </p:calendar> 
+                                </p:column> 
+                                <p:column>  
+                                   <p:outputLabel value="Diagnostic:" />  
+                                </p:column> 
+                                <p:column colspan="3">  
+                                    <p:inputText value="#{dossMb.visiteToAdd.examenRadio}" style="width:100%" ></p:inputText>
+                                </p:column> 
+                            </p:row>
+                            <p:row>   
+                                <p:column>    
+                                   <p:inputText value="#{dossMb.visiteToAdd.ittGlobale}" style="width:40px;" >ITT Globale:</p:inputText>jours.
+                                </p:column>
+                                <p:column>
+                                    <p:inputText value="#{dossMb.visiteToAdd.ippTaux}" style="width:30px;" >Taux IPP accordée:</p:inputText> %
+                               </p:column>
+                                <p:column> 
+                                    <p:outputLabel value="Séquelles:" /> 
+                                </p:column> 
+                                <p:column  colspan="3">    
+                                   
+                                   <p:inputTextarea value="#{dossMb.visiteToAdd.commentaire}" style="width:100%;"></p:inputTextarea> 
+                                </p:column>
+                            </p:row>
+                                
+                            <p:row>
+                                 
+                                <p:column colspan="1"> 
+                                   <p:outputLabel value="Réaménagement de poste:" /> 
+                                </p:column>
+                                <p:column colspan="2">
+                                   <p:selectOneRadio value="#{dossMb.visiteToAdd.reamenagement}"  > 
+                                        <f:selectItem itemLabel="OUI"         itemValue="oui" />
+                                        <f:selectItem itemLabel="NON"       itemValue="non" />   
+                                    </p:selectOneRadio> 
+                                </p:column>  
+                                <p:column> 
+                                    <p:inputText value="#{dossMb.visiteToAdd.duree}" style="width:30px;">Durée:</p:inputText>jours.
+                               </p:column>  
+                                <p:column colspan="2">
+                                   <p:inputText value="#{dossMb.visiteToAdd.poste}">Nouveau poste/Condition de travail: </p:inputText>
+                                </p:column>
+                            </p:row>
+                            
+                        </p:panelGrid>
+                           
+                        
+                        <br></br> 
+                        <p:commandButton style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()" onclick="PF('vtWidget').clearFilters()"
+                                         action="#{dossMb.enregistrerVisite()}"  update=":shomFormId, :tableDM" value="Enregistrer"   ></p:commandButton>  
+                        <p:commandButton style="float:right" value="Annuler"  onclick="PF('dlg40').hide()"  ></p:commandButton>  
+                    </h:form>
+                </p:dialog> 
+                
+                <p:dialog header="Uploader" widgetVar="telechargerVar" width="40%" minHeight="50" >
+                        <h:form id="form_uploader" enctype="multipart/form-data">  
+                            <div class="row">
+                                <div class="col-lg-6 form-group">
+                                    <p:outputLabel value="Type (*):" /> 
+                                    <p:selectOneMenu value="#{dossMb.titre}" required="true" panelStyle="width:180px" style="width:100%" filter="true" filterMatchMode="startsWith" >
+                                        <f:selectItem itemLabel="--TYPE--" itemValue="" />
+                                        <f:selectItems value="#{dossMb.listeTypeFichiers}" var="c" itemLabel="#{c.libelle}" itemValue="#{c.libelle}" />   
+                                    </p:selectOneMenu>
+                                      
+                                </div>
+                            </div>
+                            <p:fileUpload  required="true" requiredMessage="veuillez scelectionner un fichier"  value="#{dossMb.uploadedFile}" mode="simple"></p:fileUpload>
+                             
+                            <br/>
+                            <p:commandButton  value="Ajouter" oncomplete="PF('telechargerVar').hide()"   action="#{dossMb.uploader}" ajax="false"  />
+                        </h:form>
+                    </p:dialog>
+                
+		<p:dialog header="AJOUT AUTRES VISITES" widgetVar="dlg400"  modal="true" width="80%" height="400">
+                    <h:form id="visiteAddFormIdAu"> 
+                        <p:panelGrid  styleClass="ui-noborder" style="width:100%" > 
+                            <p:row>   
+                                <p:column><p:outputLabel value="Date:"></p:outputLabel> </p:column> 
+                                <p:column> 
+                                    <p:calendar id="dateB" value="#{dossMb.visiteToAdd.dateVisite}" disabled="true"  pattern="dd-MM-yyyy"  style="width:100%" > </p:calendar> 
+                                </p:column>  
+                                <p:column><p:outputLabel value="Docteur: "></p:outputLabel> </p:column> 
+                                 <p:column> 
+                                    <p:inputText id="textB1" value="#{dossMb.visiteToAdd.docteur}"  disabled="true"></p:inputText>
+                                </p:column> 
+                                <p:column><p:outputLabel value="Type visite:"></p:outputLabel> </p:column> 
+                                <p:column> 
+                                    <p:selectOneMenu id="textB2" value="#{dossMb.visiteToAdd.type}" panelStyle="width:180px"  filter="true" filterMatchMode="startsWith" >
+                                        <f:selectItem itemLabel="--- Type Visite ---" itemValue="0" />  
+                                        <f:selectItem itemLabel="VISITE P.P" itemValue="V.P.P." />  
+                                        <f:selectItem itemLabel="VISITE ANNUELLE" itemValue="V.A." /> 
+                                        <f:selectItem itemLabel="VISITE DEPART" itemValue="V.D." /> 
+                                        <f:selectItem itemLabel="VISITE SPONTANNEE" itemValue="V.S." />  
+                                    </p:selectOneMenu> 
+                                </p:column>  
+                            </p:row>   
+                            <p:row>   
+                                <p:column>    
+                                   <p:outputLabel value="Examen Clinique:"></p:outputLabel>
+                                </p:column> 
+                                <p:column colspan="5">    
+                                   <p:inputText value="#{dossMb.visiteToAdd.examenRadio}" style="width:100%" ></p:inputText>
+                               </p:column>   
+                            </p:row>
+                        </p:panelGrid> 
+                             
+                         
+                        
+                            <p:panelGrid styleClass="ui-noborder" style="width:100%" > 
+                                 <p:row>   
+                                    <p:column>
+                                        <p:outputLabel value="Sucre/Urine:"></p:outputLabel> 
+                                        <p:selectOneMenu value="#{dossMb.visiteToAdd.sucre}" style="top: 4px; width:50px;display: inline-flex;" >
+                                            <f:selectItem itemLabel="-" itemValue="-" />
+                                            <f:selectItem itemLabel="+" itemValue="+" />
+                                            <f:selectItem itemLabel="++" itemValue="++" />
+                                            <f:selectItem itemLabel="+++" itemValue="+++" />  
+                                        </p:selectOneMenu> 
+                                    </p:column>
+                                    <p:column>  
+                                        <p:outputLabel value="Albumine/Urine:"></p:outputLabel> 
+                                        <p:selectOneMenu value="#{dossMb.visiteToAdd.albumine}" style="top: 4px; width:50px;display: inline-flex;">
+                                            <f:selectItem itemLabel="-" itemValue="-" />
+                                            <f:selectItem itemLabel="+" itemValue="+" />
+                                            <f:selectItem itemLabel="++" itemValue="++" />
+                                            <f:selectItem itemLabel="+++" itemValue="+++" />  
+                                       </p:selectOneMenu> 
+                                    </p:column>
+                                    <p:column> 
+                                        <p:outputLabel value="Sang/Urine:"></p:outputLabel> 
+                                        <p:selectOneMenu value="#{dossMb.visiteToAdd.sang}"  style="top: 4px; width:50px;display: inline-flex;">
+                                            <f:selectItem itemLabel="-" itemValue="-" />
+                                            <f:selectItem itemLabel="+" itemValue="+" />
+                                            <f:selectItem itemLabel="++" itemValue="++" />
+                                            <f:selectItem itemLabel="+++" itemValue="+++" />  
+                                       </p:selectOneMenu>
+                                    </p:column> 
+                                     <p:column colspan="2"> 
+                                         <p:outputLabel value="Rx pulmonaire:"></p:outputLabel>    
+                                        <p:inputText value="#{dossMb.visiteToAdd.rxPulmonaire}" ></p:inputText> 
+                                    </p:column> 
+                                     <p:column colspan="2"> 
+                                         <p:outputLabel value="Date RX:"></p:outputLabel>  
+                                        <p:calendar value="#{dossMb.visiteToAdd.dateRxpulmonaire}"  pattern="dd-MM-yyyy" style="width:30px;"></p:calendar>  
+                                    </p:column>
+                                    </p:row> 
+                                    <p:row>
+                                        <p:column> 
+                                            <p:outputLabel value="T.A:"></p:outputLabel>    
+                                            <p:inputText value="#{dossMb.visiteToAdd.ta}" style="width:50px;"></p:inputText>mmHg 
+                                        </p:column>
+                                        <p:column colspan="2">
+                                            <p:outputLabel value="VISION(OD/OG): "></p:outputLabel>        
+                                            <p:inputText value="#{dossMb.visiteToAdd.visionOD}" style="width:50px;"> </p:inputText>/10  
+                                            <p:inputText value="#{dossMb.visiteToAdd.visionOG}" style="width:50px;"></p:inputText>/10 
+                                        </p:column>
+                                        <p:column colspan="2"> 
+                                            <p:outputLabel value="TAILLE:"></p:outputLabel>  
+                                            <p:inputText value="#{dossMb.visiteToAdd.taille}" style="width:50px;"></p:inputText>/CM
+                                        </p:column>
+                                        <p:column>  
+                                            <p:outputLabel value="POIDS:"></p:outputLabel>  
+                                            <p:inputText value="#{dossMb.visiteToAdd.poids}" style="width:50px;"></p:inputText>/KG 
+                                        </p:column>  
+                                        <p:column>
+                                            <p:outputLabel value="Pouls:"></p:outputLabel>  
+                                            <p:inputText value="#{dossMb.visiteToAdd.pauls}" style="width:50px;"></p:inputText> /mn
+                                        </p:column>     
+                                </p:row> 
+
+                            </p:panelGrid>
+                           
+                            <p:panel header="CONCLUSION">
+                                <p:panelGrid  styleClass="ui-noborder" style="width:100%" id="panelId">    
+                                   <p:row> 
+                                       <p:column>
+                                           <p:outputLabel value="Etat:" />
+                                       </p:column>
+                                       <p:column>
+                                           <p:selectOneRadio value="#{dossMb.visiteToAdd.apte}"  style="float:right" > 
+                                               <f:selectItem itemLabel="Apte"         itemValue="Apte" />
+                                               <f:selectItem itemLabel="Inapte"       itemValue="Inapte" /> 
+                                               <f:selectItem itemLabel="Inapte temporaire"  itemValue="Inapte temporaire" />  
+                                           </p:selectOneRadio> 
+                                       </p:column>
+                                       <p:column>
+                                           <p:outputLabel value="A surveiller tous les: " />
+                                           <p:selectOneMenu value="#{dossMb.visiteToAdd.surviller}" style="top: 8px; width:50px">
+                                            <f:selectItem itemLabel="" itemValue="" />
+                                            <f:selectItem itemLabel="1" itemValue="1" />
+                                            <f:selectItem itemLabel="3" itemValue="3" />
+                                            <f:selectItem itemLabel="6" itemValue="6" />
+                                            <f:selectItem itemLabel="12" itemValue="12" />
+                                            <f:selectItem itemLabel="18" itemValue="18" />
+                                            <f:selectItem itemLabel="24" itemValue="24" />
+                                            <p:ajax event="change" listener="#{dossMb.calculateDateProcVisite1}" update="idDateProchaineVisite" />
+                                            <p:ajax event="select" listener="#{dossMb.calculateDateProcVisite1}" update="idDateProchaineVisite" />
+                                        </p:selectOneMenu>
+                                       </p:column> 
+                                       <p:column>  
+                                           <p:outputLabel value="Prochaine visite:" />  
+                                           <p:calendar id="idDateProchaineVisite" disabled="true" value="#{dossMb.visiteToAdd.prochaineVisite}"  pattern="dd/MM/yyyy" style="width:60px;"></p:calendar>
+                                       </p:column>  
+                                   </p:row> 
+                                    <p:row> 
+                                        <p:column>    
+                                            <p:outputLabel value="Commentaire:"></p:outputLabel>
+                                        </p:column>  
+                                        <p:column colspan="3"  >     
+                                           <p:inputTextarea value="#{dossMb.visiteToAdd.commentaire}" style="width:100%;"></p:inputTextarea>
+                                       </p:column> 
+                                  
+                                   </p:row>
+                               </p:panelGrid> 
+                           </p:panel>
+                        <br></br>
+                        <br></br>
+                        <p:commandButton style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()" onclick="PF('vtWidget').clearFilters()"
+                                         action="#{dossMb.enregistrerVisite()}"  update=":shomFormId, :tableDM" value="Enregistrer"   ></p:commandButton>  
+                        <p:commandButton style="float:right" value="Annuler"  onclick="PF('dlg400').hide()"  ></p:commandButton>  
+                    </h:form>
+                </p:dialog>
+                <p:dialog header="VISITE AT" widgetVar="dlg50"  modal="true" width="80%"   height="250">
+                    <h:form id="visiteShowFormIAT">  
+                        
+                        <p:panelGrid  styleClass="ui-noborder" >
+                            <p:row>
+                                <p:column> 
+                                   <p:outputLabel value="Date:" /> 
+                                </p:column>
+                                <p:column> 
+                                    <p:calendar id="dateB" value="#{dossMb.visiteToShow.dateVisite}" disabled="true"  pattern="dd-MM-yyyy"  style="width:auto" ></p:calendar> 
+                                </p:column>
+                                <p:column>  
+                                   <p:outputLabel value="Docteur:" />
+                                </p:column>
+                                <p:column> 
+                                    <p:inputText id="textB1" value="#{dossMb.visiteToShow.docteur}" style="width:100%"  disabled="true" ></p:inputText>
+                                </p:column>
+                                <p:column> 
+                                   <p:outputLabel value="Type visite:" /> 
+                                </p:column>
+                                <p:column> 
+                                    <p:selectOneMenu id="textB2" value="#{dossMb.visiteToShow.type}" disabled="true" style="width:100%"   panelStyle="width:100%"  filter="true" filterMatchMode="startsWith" >
+                                        <f:selectItem itemLabel="--- Type Visite ---" itemValue="0" /> 
+                                        <f:selectItem itemLabel="VISITE EMBAUCHE" itemValue="V.E." /> 
+                                        <f:selectItem itemLabel="VISITE ANNUELLE" itemValue="V.A." /> 
+                                        <f:selectItem itemLabel="VISITE P.P" itemValue="V.P.P." /> 
+                                        <f:selectItem itemLabel="VISITE AT" itemValue="V.A.T." /> 
+                                        <f:selectItem itemLabel="VISITE DEPART" itemValue="V.D." /> 
+                                        <f:selectItem itemLabel="VISITE SPONTANNEE" itemValue="V.S." />  
+                                    </p:selectOneMenu>
+                                </p:column> 
+                            </p:row>
+                            <p:row>
+                                <p:column>  
+                                   <p:outputLabel value="Date AT:" />  
+                                </p:column> 
+                                <p:column>    
+                                    <p:calendar value="#{dossMb.visiteToShow.date_AT}"  pattern="dd-MM-yyyy"  style="width:50px" > </p:calendar> 
+                                </p:column> 
+                                <p:column>  
+                                   <p:outputLabel value="Diagnostic:" />  
+                                </p:column> 
+                                <p:column colspan="5">  
+                                    <p:inputText value="#{dossMb.visiteToShow.examenRadio}" style="width:100%" ></p:inputText>
+                                </p:column> 
+                            </p:row>
+                            <p:row>   
+                                <p:column>    
+                                   <p:inputText value="#{dossMb.visiteToShow.ittGlobale}" style="width:40px;" >ITT Globale:</p:inputText>jours.
+                                </p:column>
+                                <p:column>
+                                   <p:inputText value="#{dossMb.visiteToShow.ippTaux}" style="width:30px;" >Taux IPP accordée:</p:inputText> %
+                               </p:column>
+                                <p:column>
+                                   <p:outputLabel value="Séquelles:" /> 
+                                </p:column>
+                                <p:column  colspan="3">    
+                                   <p:inputTextarea value="#{dossMb.visiteToShow.commentaire}" style="width:100%;"></p:inputTextarea> 
+                                </p:column>
+                            </p:row>
+                                
+                            <p:row>
+                                 
+                                <p:column colspan="1"> 
+                                   <p:outputLabel value="Réaménagement de poste:" /> 
+                                </p:column>
+                                <p:column colspan="2">
+                                   <p:selectOneRadio value="#{dossMb.visiteToShow.reamenagement}"  > 
+                                        <f:selectItem itemLabel="OUI"         itemValue="oui" />
+                                        <f:selectItem itemLabel="NON"       itemValue="non" />   
+                                    </p:selectOneRadio> 
+                                </p:column>  
+                                <p:column> 
+                                    <p:inputText value="#{dossMb.visiteToShow.duree}" style="width:30px;">Durée:</p:inputText>jours.
+                               </p:column>  
+                                <p:column colspan="2">
+                                   <p:inputText value="#{dossMb.visiteToShow.poste}">Nouveau poste/Condition de travail: </p:inputText>
+                                </p:column>
+                            </p:row>
+                            
+                        </p:panelGrid>
+                        
+                        
+                        
+                        
+                         
+                        <br></br>
+                        <p:commandButton icon="ui-icon-circle-check" value="Générer Fiche"  actionListener="#{dossMb.addFichier(dossMb.visiteToShow)}" update=":visuliser_id"
+                                                      oncomplete="PF('consulterDoc').show()"  ></p:commandButton>
+                        <p:commandButton style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()" onclick="PF('vtWidget').clearFilters()"
+                                         action="#{dossMb.updateVisite()}"  update=":shomFormId, :tableDM" value="Modifier"  ></p:commandButton>  
+                        <p:commandButton style="float:right" value="Annuler"  onclick="PF('dlg50').hide()"  ></p:commandButton>  
+                    </h:form>
+                </p:dialog> 
+                <p:dialog header="VISITE EMBAUCHE" widgetVar="dlg5"  modal="true" width="80%"   height="500">
+                    <h:form id="visiteShowFormId">  
+                        <p:panelGrid columns="6" styleClass="ui-noborder" >
+                            <p:outputLabel for="textB1" value="Docteur" />
+                            <p:inputText disabled="true" id="textB1" value="#{dossMb.visiteToShow.docteur}" />
+
+                            <p:outputLabel for="textB2" value="Type visite" />
+                            <p:selectOneMenu id="textB2" value="#{dossMb.visiteToShow.type}" disabled="true" panelStyle="width:180px"  filter="true" filterMatchMode="startsWith" >
+                                <f:selectItem itemLabel="--- Type Visite ---" itemValue="0" /> 
+                                <f:selectItem itemLabel="VISITE EMBAUCHE" itemValue="V.E." /> 
+                                <f:selectItem itemLabel="VISITE ANNUELLE" itemValue="V.A." /> 
+                                <f:selectItem itemLabel="VISITE P.P" itemValue="V.P.P." /> 
+                                <f:selectItem itemLabel="VISITE AT" itemValue="V.A.T." /> 
+                                <f:selectItem itemLabel="VISITE DEPART" itemValue="V.D." /> 
+                                <f:selectItem itemLabel="VISITE SPONTANNEE" itemValue="V.S." />  
+                                
+                            </p:selectOneMenu>
+
+                            <p:outputLabel for="dateB" value="Date" />
+                            <p:calendar id="dateB" value="#{dossMb.visiteToShow.dateVisite}" style="width:100%" disabled="true"   pattern="dd-MM-yyyy"  ></p:calendar> 
+                        </p:panelGrid>
+                        <p:panelGrid  styleClass="ui-noborder" style="width:100%" >
+                            <p:row>
+                                <p:column rowspan="2">
+                                    <p:outputLabel value="DENTAIRE:"  ></p:outputLabel>
+                                       
+                                    <p:selectOneRadio value="#{dossMb.visiteToShow.etat}"    > 
+                                        <f:selectItem itemLabel="BONNE"    itemValue="B" />
+                                        <f:selectItem itemLabel="MAUVAISE" itemValue="M" /> 
+                                    </p:selectOneRadio> 
+                                
+                                </p:column>
+                                <p:column>    
+                                    <p:inputText value="#{dossMb.visiteToShow.auditionOD}"  style="width: 50px;" >AUDITION D:</p:inputText>  
+                                </p:column>
+                                <p:column>   
+                                    <p:inputText value="#{dossMb.visiteToShow.visionOD}" style="width: 30px;" >VISION OD:</p:inputText>/10   
+                                </p:column>
+                                <p:column> 
+                                    <p:outputLabel value="CORRECTION OPTIQUE: "  ></p:outputLabel>
+                                </p:column>
+                                <p:column>    
+                                    <p:inputText value="#{dossMb.visiteToShow.taille}"  style="width: 30px;" >TAILLE:</p:inputText>Cm
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:inputText value="#{dossMb.visiteToShow.auditionOG}"  style="width: 50px;" >AUDITION G:</p:inputText> 
+                                </p:column>
+                                <p:column>
+                                    <p:inputText value="#{dossMb.visiteToShow.visionOG}" style="width: 30px;" >VISION OG:</p:inputText>/10 
+                                </p:column>
+                                <p:column>
+                                    <p:selectBooleanCheckbox value="#{dossMb.visiteToShow.optique}" itemLabel="">
+                                        <p:ajax update="optiqueId"  />
+                                    </p:selectBooleanCheckbox>
+                                    <p:inputText id="optiqueId" disabled="#{!dossMb.visiteToShow.optique}" value="#{dossMb.visiteToShow.dureeOptique}"  ></p:inputText>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText value="#{dossMb.visiteToShow.poids}"  style="width: 30px;">POIDS:</p:inputText> Kg
+                                </p:column> 
+                            </p:row> 
+                        </p:panelGrid>
+                        <p:panel style="width:100%" >
+                            <p:panelGrid  styleClass="ui-noborder" style="width:100%" >
+                                <p:row>
+                                    <p:column>    
+                                    <p:outputLabel value="PEAU PHANERES:"></p:outputLabel>
+                                    </p:column>
+                                    <p:column >    
+                                        <p:inputText value="#{dossMb.visiteToShow.peauPhanere}" ></p:inputText>
+                                    </p:column>
+                                    <p:column>    
+                                        <p:outputLabel value="APP LOCOMOTEUR:"></p:outputLabel>
+                                    </p:column>
+                                    <p:column>    
+                                        <p:inputText value="#{dossMb.visiteToShow.locoMoteur}"></p:inputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column rendered="false" >     
+                                        <p:outputLabel value="Dynamomètre:"></p:outputLabel>
+                                    </p:column> 
+                                    <p:column rendered="false" >    
+                                        <p:inputText value="#{dossMb.visiteToShow.dynamometre}" ></p:inputText>
+                                    </p:column> 
+                                    <p:column>    
+                                        <p:outputLabel value="EXAMEN RADIOLOGIQUE:"></p:outputLabel>
+                                    </p:column> 
+                                    <p:column>    
+                                        <p:inputText value="#{dossMb.visiteToShow.examenRadio}" ></p:inputText>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>  
+                        </p:panel>
+                            
+                        
+                        <p:panel header="APPAREIL CIRCULATOIRE" >
+                            <p:panelGrid styleClass="ui-noborder" style="width:100%" >
+                                <p:row>
+                                    <p:column> 
+                                        <p:outputLabel value="E.C.G:"></p:outputLabel>
+                                    </p:column> 
+                                    <p:column> 
+                                        <p:inputText value="#{dossMb.visiteToShow.ecg}" style="width:100%;"></p:inputText>
+                                    </p:column> 
+                                    <p:column colspan="2"> 
+                                        <p:outputLabel value="Pouls:"></p:outputLabel> 
+                                        <p:inputText value="#{dossMb.visiteToShow.pauls}" style="width:50px;"></p:inputText>/mn
+                                    </p:column> 
+                                    <p:column> 
+                                        <p:outputLabel value="Vaisseaux:"></p:outputLabel>  
+                                    </p:column> 
+                                    <p:column> 
+                                        <p:selectOneRadio value="#{dossMb.visiteToShow.vaisseaux}"  > 
+                                           <f:selectItem itemLabel="PERCUS"    itemValue="PERCUS" />
+                                           <f:selectItem itemLabel="N.P" itemValue="N.P" /> 
+                                       </p:selectOneRadio>
+                                    </p:column> 
+                                </p:row>
+                                <p:row>
+                                    <p:column> 
+                                        <p:outputLabel value="Varices:"></p:outputLabel>
+                                    </p:column> 
+                                    <p:column> 
+                                        <p:inputText value="#{dossMb.visiteToShow.varices}" style="width:100%;"></p:inputText>
+                                    </p:column> 
+                                    <p:column colspan="2"> 
+                                        <p:outputLabel value="T.A:"></p:outputLabel>  
+                                        <p:inputText value="#{dossMb.visiteToShow.ta}" style="width:50px;"></p:inputText>mmHg
+                                    </p:column> 
+                                    <p:column> 
+                                        <p:outputLabel value="Ganglions:"></p:outputLabel>  
+                                    </p:column> 
+                                    <p:column> 
+                                        <p:selectOneRadio value="#{dossMb.visiteToShow.ganglions}" > 
+                                           <f:selectItem itemLabel="O"    itemValue="O" />
+                                           <f:selectItem itemLabel="N" itemValue="N" /> 
+                                       </p:selectOneRadio>
+                                    </p:column> 
+                                </p:row> 
+                            </p:panelGrid>
+                       </p:panel> 
+                        <p:panel header="APPAREIL DIGESTIF">
+                                <p:panelGrid columns="6"  styleClass="ui-noborder" style="width:100%" >
+                                    
+                                    <p:outputLabel value="Abdomen:"></p:outputLabel>  
+                                    <p:selectOneRadio value="#{dossMb.visiteToShow.abdomen}"   > 
+                                       <f:selectItem itemLabel="SOUPLE"    itemValue="SOUPLE" />
+                                       <f:selectItem itemLabel="N SOUPLE" itemValue="N SOUPLE" /> 
+                                   </p:selectOneRadio>
+                                    <p:outputLabel value="Foie:"></p:outputLabel> 
+                                    <p:selectOneRadio value="#{dossMb.visiteToShow.foie}"   > 
+                                       <f:selectItem itemLabel="P"    itemValue="P" />
+                                       <f:selectItem itemLabel="NP" itemValue="N" /> 
+                                   </p:selectOneRadio>
+                                    <p:outputLabel value="Rate:"></p:outputLabel>
+                                    <p:selectOneRadio value="#{dossMb.visiteToShow.rate}"   > 
+                                       <f:selectItem itemLabel="P"    itemValue="P" />
+                                       <f:selectItem itemLabel="NP" itemValue="N" /> 
+                                   </p:selectOneRadio>
+                                    <p:outputLabel value="Hernies:"></p:outputLabel>  
+                                    <p:inputText value="#{dossMb.visiteToShow.hernies}" style="width:100%;"></p:inputText>
+                                    
+                                    <p:outputLabel value="Bouche:"></p:outputLabel>
+                                    <p:inputText value="#{dossMb.visiteToShow.bouche}" style="width:100%;"></p:inputText>
+                                    <p:outputLabel value="Amygdales:"></p:outputLabel>
+                                    <p:inputText value="#{dossMb.visiteToShow.amygdales}" style="width:100%;"></p:inputText>
+                                </p:panelGrid>
+                           </p:panel> 
+                        <p:panel header="APPAREIL GENITO-URINAIRE" >
+                                <p:panelGrid styleClass="ui-noborder" style="width:100%" >
+                                    <p:row>
+                                        <p:column>
+                                            <p:outputLabel value="Cicatrice:"></p:outputLabel> 
+                                        </p:column> 
+                                        <p:column>
+                                            <p:inputText value="#{dossMb.visiteToShow.cicatrice}" style="width:100%;"></p:inputText>
+                                        </p:column>  
+                                        <p:column>
+                                        </p:column>
+                                        <p:column>
+                                        </p:column> 
+                                        <p:column>  
+                                            <p:outputLabel value="Cycle/Règles:"></p:outputLabel> 
+                                        </p:column> 
+                                        <p:column>
+                                            <p:inputText value="#{dossMb.visiteToShow.regle}" style="width:100%;"></p:inputText>
+                                        </p:column> 
+                                    </p:row> 
+                                    <p:row>    
+                                        <p:column>       
+                                            <p:outputLabel value="Sucre/Urine:"></p:outputLabel>   
+                                        </p:column> 
+                                        <p:column> 
+                                            <p:selectOneMenu value="#{dossMb.visiteToShow.sucre}"   filter="true" filterMatchMode="startsWith" panelStyle="width:50px">
+                                                <f:selectItem itemLabel="-" itemValue="-" />
+                                                <f:selectItem itemLabel="+" itemValue="+" />
+                                                <f:selectItem itemLabel="++" itemValue="++" />
+                                                <f:selectItem itemLabel="+++" itemValue="+++" />  
+                                            </p:selectOneMenu> 
+                                        </p:column> 
+                                        <p:column> 
+                                            <p:outputLabel value="Albumine/Urine:"></p:outputLabel>   
+                                        </p:column> 
+                                        <p:column> 
+                                             <p:selectOneMenu value="#{dossMb.visiteToShow.albumine}" filter="true" filterMatchMode="startsWith" panelStyle="width:50px">
+                                                 <f:selectItem itemLabel="-" itemValue="-" />
+                                                 <f:selectItem itemLabel="+" itemValue="+" />
+                                                 <f:selectItem itemLabel="++" itemValue="++" />
+                                                 <f:selectItem itemLabel="+++" itemValue="+++" />  
+                                            </p:selectOneMenu> 
+                                        </p:column> 
+                                        <p:column> 
+                                            <p:outputLabel value="Sang/Urine:"></p:outputLabel>  
+                                        </p:column> 
+                                        <p:column> 
+                                             <p:selectOneMenu value="#{dossMb.visiteToShow.sang}"  label="Sucre/Urine:" filter="true" filterMatchMode="startsWith" panelStyle="width:50px">
+                                                 <f:selectItem itemLabel="-" itemValue="-" />
+                                                 <f:selectItem itemLabel="+" itemValue="+" />
+                                                 <f:selectItem itemLabel="++" itemValue="++" />
+                                                 <f:selectItem itemLabel="+++" itemValue="+++" />  
+                                            </p:selectOneMenu> 
+                                        </p:column> 
+                                    </p:row>
+                                </p:panelGrid>
+                           </p:panel> 
+                            <p:panel header="APPAREIL ENDOCRINIEN" >
+                                    <p:panelGrid columns="1"  styleClass="ui-noborder" style="width:100%" > 
+                                        <p:inputText value="#{dossMb.visiteToShow.endocrinien}" style="width:100%;"></p:inputText>  
+                                    </p:panelGrid>
+                           </p:panel> 
+                            <p:panel header="NEURO-PSYCHISME: antécédents manganiques">
+                                <p:panelGrid styleClass="ui-noborder" style="width:100%" >
+                                    <p:row>
+                                        <p:column>
+                                            <p:outputLabel value="Nervotisme"></p:outputLabel>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText value="#{dossMb.visiteToShow.nervotisme}" style="width:100%;"></p:inputText>
+                                        </p:column>
+                                        <p:column>
+                                            <p:outputLabel value="Tremblement:"></p:outputLabel>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText value="#{dossMb.visiteToShow.tramblement}" style="width:100%;"></p:inputText>
+                                        </p:column>
+                                        <p:column>
+                                            <p:outputLabel value="Equilibre:"></p:outputLabel> 
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText value="#{dossMb.visiteToShow.equilibre}" style="width:100%;"></p:inputText>
+                                        </p:column> 
+                                    </p:row>
+                                    <p:row> 
+                                        <p:column>
+                                            <p:outputLabel value="E.E.G:"></p:outputLabel>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText value="#{dossMb.visiteToShow.eeg}" style="width:100%;"></p:inputText>
+                                        </p:column>
+                                        <p:column>
+                                            <p:outputLabel value="S.de Remberg:"></p:outputLabel>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText value="#{dossMb.visiteToShow.remberg}" style="width:100%;"></p:inputText> 
+                                        </p:column>
+                                        <p:column>
+                                            <p:outputLabel value="Réflexes OC:"></p:outputLabel> 
+                                            <p:selectOneRadio value="#{dossMb.visiteToShow.reflexeOc}" > 
+                                               <f:selectItem itemLabel="OUI" itemValue="OUI" />
+                                               <f:selectItem itemLabel="NON" itemValue="NON" /> 
+                                            </p:selectOneRadio>
+                                        </p:column>
+                                        <p:column>
+                                            <p:outputLabel value="Réflexes TEND:"></p:outputLabel> 
+                                            <p:selectOneRadio value="#{dossMb.visiteToShow.reflexeTend}"> 
+                                               <f:selectItem itemLabel="OUI" itemValue="OUI" />
+                                               <f:selectItem itemLabel="NON" itemValue="NON" /> 
+                                            </p:selectOneRadio>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                           </p:panel> 
+                            <p:panel header="CONCLUSION">
+                                <p:panelGrid  styleClass="ui-noborder" style="width:100%">    
+                                   <p:row>
+                                       <p:column>    
+                                           <p:outputLabel value="Etat:"></p:outputLabel>
+                                       </p:column>
+                                       <p:column>
+                                           <p:selectOneRadio value="#{dossMb.visiteToShow.apte}"  style="float:right" > 
+                                               <f:selectItem itemLabel="Apte"         itemValue="Apte" />
+                                               <f:selectItem itemLabel="Inapte"       itemValue="Inapte" /> 
+                                               <f:selectItem itemLabel="Inapte temporaire"  itemValue="Inapte temporaire" /> 
+                                         
+                                           </p:selectOneRadio> 
+                                       </p:column> 
+                                   <p:column>    
+                                       <p:outputLabel value="A surveiller tous les:"></p:outputLabel>
+                                   </p:column> 
+                                   <p:column>      
+                                        <p:selectOneMenu value="#{dossMb.visiteToShow.surviller}" style="width:50px;top: 0px;">
+                                            <f:selectItem itemLabel="" itemValue="" />
+                                            <f:selectItem itemLabel="1" itemValue="1" />
+                                            <f:selectItem itemLabel="3" itemValue="3" />
+                                            <f:selectItem itemLabel="6" itemValue="6" />
+                                            <f:selectItem itemLabel="12" itemValue="12" />
+                                            <f:selectItem itemLabel="18" itemValue="18" />
+                                            <f:selectItem itemLabel="24" itemValue="24" />
+                                            <p:ajax event="change" listener="#{dossMb.calculateDateProcVisite()}" update="idDateProchaineVisite" />
+                                            <p:ajax event="select" listener="#{dossMb.calculateDateProcVisite()}" update="idDateProchaineVisite" />
+                                        </p:selectOneMenu>
+                                   </p:column> 
+                                   <p:column>    
+                                       <p:outputLabel value="Prochaine visite:"></p:outputLabel>
+                                   </p:column> 
+                                   <p:column>    
+                                       <p:calendar id="idDateProchaineVisite" disabled="true" value="#{dossMb.visiteToShow.prochaineVisite}"  pattern="dd-MM-yyyy" style="width:100%;"></p:calendar>
+                                   </p:column> 
+                               </p:row>
+                                <p:row> 
+                                   <p:column>    
+                                       <p:outputLabel value="Commentaire:"></p:outputLabel>
+                                   </p:column> 
+                                    <p:column colspan="6">    
+                                       <p:inputTextarea value="#{dossMb.visiteToShow.commentaire}" style="width:100%;"></p:inputTextarea>
+                                   </p:column> 
+
+                               </p:row>
+                               </p:panelGrid> 
+                           </p:panel>
+                        <br></br>
+                        <p:commandButton icon="ui-icon-circle-check" value="Générer Fiche"  actionListener="#{dossMb.addFichier(dossMb.visiteToShow)}" update=":visuliser_id"
+                                                      oncomplete="PF('consulterDoc').show()"  ></p:commandButton>
+                        <p:commandButton style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()" onclick="PF('vtWidget').clearFilters()"
+                                         action="#{dossMb.updateVisite()}"  update=":shomFormId" value="Enregistrer"  ></p:commandButton>  
+                        <p:commandButton style="float:right" value="Annuler"  onclick="PF('dlg5').hide()"  ></p:commandButton>  
+                    </h:form>
+                </p:dialog> 
+                        
+                            
+                <p:dialog header="AJOUT VISITE EMBAUCHE" widgetVar="dlg4"  modal="true" width="80%" height="500">
+                    <h:form id="visiteAddFormIdEm"> 
+                        <p:panelGrid columns="6" styleClass="ui-noborder" >
+                            <p:outputLabel for="textB1" value="Docteur" />
+                            <p:inputText disabled="true" id="textB1" value="#{dossMb.visiteToAdd.docteur}" />
+
+                            <p:outputLabel for="textB2" value="Type visite" />
+                            <p:selectOneMenu id="textB2" value="#{dossMb.visiteToAdd.type}" disabled="true" panelStyle="width:180px"  filter="true" filterMatchMode="startsWith" >
+                                <f:selectItem itemLabel="--- Type Visite ---" itemValue="0" /> 
+                                <f:selectItem itemLabel="VISITE EMBAUCHE" itemValue="V.E." /> 
+                                <f:selectItem itemLabel="VISITE ANNUELLE" itemValue="V.A." /> 
+                                <f:selectItem itemLabel="VISITE P.P" itemValue="V.P.P." /> 
+                                <f:selectItem itemLabel="VISITE AT" itemValue="V.A.T." /> 
+                                <f:selectItem itemLabel="VISITE DEPART" itemValue="V.D." /> 
+                                <f:selectItem itemLabel="VISITE SPONTANNEE" itemValue="V.S." />  
+                                 
+                            </p:selectOneMenu>
+
+                            <p:outputLabel for="dateB" value="Date" />
+                            <p:calendar id="dateB" value="#{dossMb.visiteToAdd.dateVisite}" disabled="true"   pattern="dd-MM-yyyy"  style="width:auto" ></p:calendar> 
+                        </p:panelGrid>
+                        <p:panelGrid  styleClass="ui-noborder" style="width:100%" >
+                            <p:row>
+                                <p:column rowspan="2">
+                                    <p:outputLabel value="DENTAIRE:"  ></p:outputLabel>
+                                       
+                                    <p:selectOneRadio value="#{dossMb.visiteToAdd.etat}"    > 
+                                        <f:selectItem itemLabel="BONNE"    itemValue="B" />
+                                        <f:selectItem itemLabel="MAUVAISE" itemValue="M" /> 
+                                    </p:selectOneRadio> 
+                                
+                                </p:column>
+                                <p:column>    
+                                    <p:inputText value="#{dossMb.visiteToAdd.auditionOD}"  style="width: 50px;" >AUDITION D:</p:inputText>  
+                                </p:column>
+                                <p:column>   
+                                    <p:inputText value="#{dossMb.visiteToAdd.visionOD}" style="width: 30px;" >VISION OD:</p:inputText>/10   
+                                </p:column>
+                                <p:column> 
+                                    <p:outputLabel value="CORRECTION OPTIQUE: "  ></p:outputLabel>
+                                </p:column>
+                                <p:column>    
+                                    <p:inputText value="#{dossMb.visiteToAdd.taille}"  style="width: 30px;" >TAILLE:</p:inputText>Cm
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:inputText value="#{dossMb.visiteToAdd.auditionOG}"  style="width: 50px;" >AUDITION G:</p:inputText> 
+                                </p:column>
+                                <p:column>
+                                    <p:inputText value="#{dossMb.visiteToAdd.visionOG}" style="width: 30px;" >VISION OG:</p:inputText>/10 
+                                </p:column>
+                                <p:column>
+                                    <p:selectBooleanCheckbox value="#{dossMb.visiteToAdd.optique}" itemLabel="">
+                                        <p:ajax update="optiqueId"  />
+                                    </p:selectBooleanCheckbox>
+                                    <p:inputText id="optiqueId" disabled="#{!dossMb.visiteToAdd.optique}" value="#{dossMb.visiteToAdd.dureeOptique}"  ></p:inputText>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText value="#{dossMb.visiteToAdd.poids}"  style="width: 30px;">POIDS:</p:inputText> Kg
+                                </p:column> 
+                            </p:row> 
+                            </p:panelGrid>
+                        <p:panel style="width:100%" >
+                            <p:panelGrid  styleClass="ui-noborder" style="width:100%" >
+                                <p:row>
+                                    <p:column>    
+                                    <p:outputLabel value="PEAU PHANERES:"></p:outputLabel>
+                                    </p:column>
+                                    <p:column >    
+                                        <p:inputText value="#{dossMb.visiteToAdd.peauPhanere}" ></p:inputText>
+                                    </p:column>
+                                    <p:column>    
+                                        <p:outputLabel value="APP LOCOMOTEUR:"></p:outputLabel>
+                                    </p:column>
+                                    <p:column>    
+                                        <p:inputText value="#{dossMb.visiteToAdd.locoMoteur}"></p:inputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column rendered="false" >     
+                                        <p:outputLabel value="Dynamomètre:"></p:outputLabel>
+                                    </p:column> 
+                                    <p:column rendered="false" >    
+                                        <p:inputText value="#{dossMb.visiteToAdd.dynamometre}" ></p:inputText>
+                                    </p:column> 
+                                    <p:column>    
+                                        <p:outputLabel value="EXAMEN RADIOLOGIQUE:"></p:outputLabel>
+                                    </p:column> 
+                                    <p:column>    
+                                        <p:inputText value="#{dossMb.visiteToAdd.examenRadio}" ></p:inputText>
+                                    </p:column>
+                                </p:row>
+                        </p:panelGrid>
+                        </p:panel>
+                        <p:panel id="panelId1" header="APPAREIL CIRCULATOIRE" >
+                            <p:panelGrid styleClass="ui-noborder" style="width:100%" > 
+                                <p:row>
+                                    <p:column> 
+                                        <p:outputLabel value="E.C.G:"></p:outputLabel>
+                                    </p:column> 
+                                    <p:column> 
+                                        <p:inputText value="#{dossMb.visiteToAdd.ecg}" style="width:100%;"></p:inputText>
+                                    </p:column> 
+                                    <p:column colspan="2" > 
+                                        <p:outputLabel value="Pouls:"></p:outputLabel>  
+                                        <p:inputText value="#{dossMb.visiteToAdd.pauls}" style="width:50px;"></p:inputText>/mn
+                                    </p:column> 
+                                    <p:column> 
+                                        <p:outputLabel value="Vaisseaux:"></p:outputLabel>  
+                                    </p:column> 
+                                    <p:column> 
+                                        <p:selectOneRadio value="#{dossMb.visiteToAdd.vaisseaux}"  > 
+                                           <f:selectItem itemLabel="PERCUS"    itemValue="PERCUS" />
+                                           <f:selectItem itemLabel="N.P" itemValue="N.P" /> 
+                                       </p:selectOneRadio>
+                                    </p:column> 
+                                </p:row>
+                                <p:row>
+                                    <p:column> 
+                                        <p:outputLabel value="Varices:"></p:outputLabel>
+                                    </p:column> 
+                                    <p:column> 
+                                        <p:inputText value="#{dossMb.visiteToAdd.varices}" style="width:100%;"></p:inputText>
+                                    </p:column> 
+                                    <p:column colspan="2" > 
+                                        <p:outputLabel value="T.A:"></p:outputLabel>   
+                                        <p:inputText value="#{dossMb.visiteToAdd.ta}" style="width:50px;"></p:inputText>mmHg
+                                    </p:column> 
+                                    <p:column > 
+                                        <p:outputLabel value="Ganglions:"></p:outputLabel> 
+                                     
+                                    </p:column> 
+                                    <p:column> 
+                                        <p:selectOneRadio value="#{dossMb.visiteToAdd.ganglions}" > 
+                                           <f:selectItem itemLabel="O"    itemValue="O" />
+                                           <f:selectItem itemLabel="N" itemValue="N" /> 
+                                       </p:selectOneRadio>
+                                    </p:column> 
+                                </p:row> 
+                                     
+                            </p:panelGrid>
+                       </p:panel> 
+                        <p:panel header="APPAREIL DIGESTIF">
+                                <p:panelGrid columns="6"  styleClass="ui-noborder" style="width:100%" >
+                                    
+                                    <p:outputLabel value="Abdomen:"></p:outputLabel>  
+                                    <p:selectOneRadio value="#{dossMb.visiteToAdd.abdomen}" > 
+                                       <f:selectItem itemLabel="SOUPLE"    itemValue="SOUPLE" />
+                                       <f:selectItem itemLabel="N SOUPLE" itemValue="N SOUPLE" /> 
+                                   </p:selectOneRadio>
+                                    <p:outputLabel value="Foie:"></p:outputLabel> 
+                                    <p:selectOneRadio value="#{dossMb.visiteToAdd.foie}"  > 
+                                       <f:selectItem itemLabel="P"    itemValue="P" />
+                                       <f:selectItem itemLabel="NP" itemValue="N" /> 
+                                   </p:selectOneRadio>
+                                    <p:outputLabel value="Rate:"></p:outputLabel>
+                                    <p:selectOneRadio value="#{dossMb.visiteToAdd.rate}" > 
+                                       <f:selectItem itemLabel="P"    itemValue="P" />
+                                       <f:selectItem itemLabel="NP" itemValue="N" /> 
+                                   </p:selectOneRadio>
+                                    <p:outputLabel value="Hernies:"></p:outputLabel>  
+                                    <p:inputText value="#{dossMb.visiteToAdd.hernies}" style="width:100%;"></p:inputText>
+                                    
+                                    <p:outputLabel value="Bouche:"></p:outputLabel>
+                                    <p:inputText value="#{dossMb.visiteToAdd.bouche}" style="width:100%;"></p:inputText>
+                                    <p:outputLabel value="Amygdales:"></p:outputLabel>
+                                    <p:inputText value="#{dossMb.visiteToAdd.amygdales}" style="width:100%;"></p:inputText>
+                                </p:panelGrid>
+                           </p:panel> 
+                        <p:panel header="APPAREIL GENITO-URINAIRE" >
+                                <p:panelGrid  styleClass="ui-noborder" style="width:100%" >
+                                    <p:row>
+                                        <p:column> 
+                                            <p:outputLabel value="Cicatrice:"></p:outputLabel> 
+                                        </p:column> 
+                                        <p:column>
+                                            <p:inputText value="#{dossMb.visiteToAdd.cicatrice}" style="width:100%;"></p:inputText>
+                                        </p:column>  
+                                        <p:column>
+                                        </p:column>
+                                        <p:column> 
+                                        </p:column> 
+                                        <p:column>
+                                            <p:outputLabel value="Règles/Cycle:"></p:outputLabel> 
+                                        </p:column> 
+                                        <p:column>
+                                            <p:inputText value="#{dossMb.visiteToAdd.regle}" style="width:100%;"></p:inputText>
+                                        </p:column> 
+                                    </p:row>
+                                    <p:row>
+                                        <p:column> 
+                                            <p:outputLabel value="Sucre/Urine:"></p:outputLabel> 
+                                        </p:column> 
+                                        <p:column>  
+                                            <p:selectOneMenu value="#{dossMb.visiteToAdd.sucre}"   filter="true" filterMatchMode="startsWith" panelStyle="width:50px">
+                                                <f:selectItem itemLabel="-" itemValue="-" />
+                                                <f:selectItem itemLabel="+" itemValue="+" />
+                                                <f:selectItem itemLabel="++" itemValue="++" />
+                                                <f:selectItem itemLabel="+++" itemValue="+++" />  
+                                            </p:selectOneMenu>  
+                                        </p:column>
+                                        <p:column> 
+                                            <p:outputLabel value="Albumine/Urine:"></p:outputLabel>  
+                                        </p:column> 
+                                        <p:column>
+                                             <p:selectOneMenu value="#{dossMb.visiteToAdd.albumine}" filter="true" filterMatchMode="startsWith" panelStyle="width:50px">
+                                                 <f:selectItem itemLabel="-" itemValue="-" />
+                                                 <f:selectItem itemLabel="+" itemValue="+" />
+                                                 <f:selectItem itemLabel="++" itemValue="++" />
+                                                 <f:selectItem itemLabel="+++" itemValue="+++" />  
+                                            </p:selectOneMenu> 
+                                        </p:column>
+                                        <p:column> 
+                                            <p:outputLabel value="Sang/Urine:"></p:outputLabel>  
+                                        </p:column> 
+                                        <p:column>
+                                             <p:selectOneMenu value="#{dossMb.visiteToAdd.sang}"  label="Sucre/Urine:" filter="true" filterMatchMode="startsWith" panelStyle="width:50px">
+                                                 <f:selectItem itemLabel="-" itemValue="-" />
+                                                 <f:selectItem itemLabel="+" itemValue="+" />
+                                                 <f:selectItem itemLabel="++" itemValue="++" />
+                                                 <f:selectItem itemLabel="+++" itemValue="+++" />  
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                           </p:panel> 
+                            <p:panel header="APPAREIL ENDOCRINIEN" >
+                                    <p:panelGrid columns="1"  styleClass="ui-noborder" style="width:100%" > 
+                                        <p:inputText value="#{dossMb.visiteToAdd.endocrinien}" style="width:100%;"></p:inputText>  
+                                    </p:panelGrid>
+                           </p:panel> 
+                            <p:panel header="NEURO-PSYCHISME: antécédents manganiques">
+                                <p:panelGrid styleClass="ui-noborder" style="width:100%" >
+                                    <p:row>
+                                        <p:column>
+                                            <p:outputLabel value="Nervotisme"></p:outputLabel>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText value="#{dossMb.visiteToAdd.nervotisme}" style="width:100%;"></p:inputText>
+                                        </p:column>
+                                        <p:column>
+                                            <p:outputLabel value="Tremblement:"></p:outputLabel>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText value="#{dossMb.visiteToAdd.tramblement}" style="width:100%;"></p:inputText>
+                                        </p:column>
+                                        <p:column>
+                                            <p:outputLabel value="Equilibre:"></p:outputLabel> 
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText value="#{dossMb.visiteToAdd.equilibre}" style="width:100%;"></p:inputText>
+                                        </p:column> 
+                                    </p:row>
+                                    <p:row> 
+                                        <p:column>
+                                            <p:outputLabel value="E.E.G:"></p:outputLabel>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText value="#{dossMb.visiteToAdd.eeg}" style="width:100%;"></p:inputText>
+                                        </p:column>
+                                        <p:column>
+                                            <p:outputLabel value="S.de Remberg:"></p:outputLabel>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText value="#{dossMb.visiteToAdd.remberg}" style="width:100%;"></p:inputText> 
+                                        </p:column>
+                                        <p:column>
+                                            <p:outputLabel value="Réflexes OC:"></p:outputLabel> 
+                                            <p:selectOneRadio value="#{dossMb.visiteToAdd.reflexeOc}" > 
+                                               <f:selectItem itemLabel="OUI" itemValue="OUI" />
+                                               <f:selectItem itemLabel="NON" itemValue="NON" /> 
+                                            </p:selectOneRadio>
+                                        </p:column>
+                                        <p:column>
+                                            <p:outputLabel value="Réflexes TEND:"></p:outputLabel> 
+                                            <p:selectOneRadio value="#{dossMb.visiteToAdd.reflexeTend}"> 
+                                               <f:selectItem itemLabel="OUI" itemValue="OUI" />
+                                               <f:selectItem itemLabel="NON" itemValue="NON" /> 
+                                            </p:selectOneRadio>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                           </p:panel> 
+                            <p:panel header="CONCLUSION">
+                                <p:panelGrid  styleClass="ui-noborder" style="width:100%">    
+                                   <p:row>
+                                       <p:column>    
+                                           <p:outputLabel value="Etat:"></p:outputLabel>
+                                       </p:column>
+                                       <p:column>
+                                           <p:selectOneRadio value="#{dossMb.visiteToAdd.apte}"  style="float:right" > 
+                                               <f:selectItem itemLabel="Apte"         itemValue="Apte" />
+                                               <f:selectItem itemLabel="Inapte"       itemValue="Inapte" /> 
+                                               <f:selectItem itemLabel="Inapte temporaire"  itemValue="Inapte temporaire" /> 
+                                                
+                                           </p:selectOneRadio> 
+                                       </p:column>   
+                                     
+                                        <p:column>    
+                                            <p:outputLabel value="A surveiller tous les:"></p:outputLabel>
+                                        </p:column> 
+                                        <p:column>      
+                                             <p:selectOneMenu value="#{dossMb.visiteToAdd.surviller}" style="width:50px;top: 0px;">
+                                                 <f:selectItem itemLabel="" itemValue="" />
+                                                 <f:selectItem itemLabel="1" itemValue="1" />
+                                                 <f:selectItem itemLabel="3" itemValue="3" />
+                                                 <f:selectItem itemLabel="6" itemValue="6" />
+                                                 <f:selectItem itemLabel="12" itemValue="12" />
+                                                 <f:selectItem itemLabel="18" itemValue="18" />
+                                                 <f:selectItem itemLabel="24" itemValue="24" />
+                                                 <p:ajax event="change" listener="#{dossMb.calculateDateProcVisite1()}" update="idDateProchaineVisite" />
+                                                 <p:ajax event="select" listener="#{dossMb.calculateDateProcVisite1()}" update="idDateProchaineVisite" />
+                                             </p:selectOneMenu>
+                                        </p:column> 
+                                        <p:column>    
+                                            <p:outputLabel value="Prochaine visite:"></p:outputLabel>
+                                        </p:column> 
+                                        <p:column>    
+                                            <p:calendar id="idDateProchaineVisite" disabled="true" value="#{dossMb.visiteToAdd.prochaineVisite}"  pattern="dd-MM-yyyy" style="width:100%;"></p:calendar>
+                                        </p:column> 
+                               </p:row>
+                                <p:row> 
+                                   <p:column>    
+                                       <p:outputLabel value="Commentaire:"></p:outputLabel>
+                                   </p:column> 
+                                    <p:column colspan="5">    
+                                       <p:inputTextarea value="#{dossMb.visiteToAdd.commentaire}" style="width:100%;"></p:inputTextarea>
+                                   </p:column> 
+
+                               </p:row>
+                               </p:panelGrid> 
+                           </p:panel>
+                        <br></br>
+                        <br></br>
+                        <p:commandButton style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()" onclick="PF('vtWidget').clearFilters()"
+                                         action="#{dossMb.enregistrerVisite()}"  update=":shomFormId, :tableDM" value="Enregistrer"   ></p:commandButton>  
+                        <p:commandButton style="float:right" value="Annuler"  onclick="PF('dlg4').hide()"  ></p:commandButton>  
+                    </h:form>
+                </p:dialog>  
+                <p:dialog header="Détail Dossier médical" widgetVar="dlg1"  modal="true" width="80%" height="500">
+                    <h:form id="shomFormId"> 
+                            <p:panel id="salarieId" header="INFOS SALARIE">
+                                <p:panelGrid id="panelSalId" styleClass="ui-noborder" style="width:100%"> 
+                                    <p:row>
+                                        <p:column colspan="2">
+                                            <p:selectOneMenu id="listChantierId" value="#{dossMb.idSalarie}" disabled="true" panelStyle="width:180px" style="width:100%" filter="true" filterMatchMode="startsWith" >
+                                            <f:selectItem itemLabel="--- Selectionner Salarie ---" itemValue="0" />
+                                            <f:selectItems value="#{dossMb.salaries}" var="c" itemLabel="#{c.matricule} #{c.nom}#{c.prenom}" itemValue="#{c.id}" />
+                                                <!--<p:ajax event="change" listener="#{dossMb.listenrSalarieShow()}" update="panelSalId" />-->
+                                                <!--<p:ajax event="select" listener="#{dossMb.listenrSalarieShow()}" update="panelSalId" />-->
+                                            </p:selectOneMenu> 
+                                        </p:column> 
+                                        <p:column>    <p:outputLabel value="N° CIN:"></p:outputLabel></p:column>
+                                        <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToshow.salarie.cin}" style="width:100%;"></p:inputText></p:column>
+                                        <p:column>    <p:outputLabel value="N° Mle:"></p:outputLabel></p:column>
+                                        <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToshow.salarie.matricule}" style="width:100%;"></p:inputText></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>    <p:outputLabel value="Nom:"></p:outputLabel></p:column>
+                                        <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToshow.salarie.nom}" style="width:100%;"></p:inputText></p:column>
+                                        <p:column>    <p:outputLabel value="Né le:"></p:outputLabel></p:column>
+                                        <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToshow.salarie.dateNaissance}" style="width:100%;"></p:inputText></p:column>
+                                        <p:column>    <p:outputLabel value="à"></p:outputLabel></p:column>
+                                        <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToshow.salarie.lieuNaissance}" style="width:100%;"></p:inputText></p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>    <p:outputLabel value="Prénom:"></p:outputLabel></p:column>
+                                        <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToshow.salarie.prenom}" style="width:100%;"></p:inputText></p:column>
+                                        <p:column>    <p:outputLabel value="Adresse:"></p:outputLabel></p:column>
+                                        <p:column colspan="3"><p:inputText disabled="true" value="#{dossMb.dosMedToshow.salarie.adresse}" style="width:100%;"></p:inputText></p:column> 
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>    <p:outputLabel value="Situation familiale:"></p:outputLabel></p:column>
+                                        <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToshow.salarie.situationFamiliale}" style="width:100%;"></p:inputText></p:column>
+                                        <p:column>    <p:outputLabel value="Nombre d'enfants:"></p:outputLabel></p:column>
+                                        <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToshow.salarie.nombreEnfants}" style="width:100%;"></p:inputText></p:column>
+                                        <p:column>    <p:outputLabel value="Email:"></p:outputLabel></p:column>
+                                        <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToshow.salarie.email}" style="width:100%;"></p:inputText> </p:column>
+                                    </p:row>
+                                </p:panelGrid>   
+                            </p:panel>
+                                     
+                            <p:panel id="entrepriseId" header="ENTREPRISE">
+                                <p:panelGrid styleClass="ui-noborder" style="width:100%">  
+                                    <p:row>
+                                        <p:column>    <p:outputLabel value="Depuis le:"></p:outputLabel></p:column>
+                                        <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToshow.salarie.contrat.dateEmbauche}"  style="width:100%"></p:inputText></p:column>
+                                        <p:column>    <p:outputLabel value="Service:"></p:outputLabel></p:column>
+                                        <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToshow.salarie.fonction.fonction}" style="width:100%"></p:inputText></p:column> 
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>  <p:outputLabel value="Fonction:"></p:outputLabel></p:column>
+                                        <p:column>  <p:inputText disabled="true" value="#{dossMb.dosMedToshow.salarie.fonction.fonction}" style="width:100%;"></p:inputText></p:column> 
+                                        <p:column>  <p:outputLabel value="Tél:"></p:outputLabel></p:column>
+                                        <p:column>  <p:inputText disabled="true" value="#{dossMb.dosMedToshow.salarie.telephone}" style="width:100%;"></p:inputText></p:column> 
+                                    </p:row> 
+                                </p:panelGrid> 
+                            </p:panel> 
+                        <p:panel id="personelsId" header="ANTECEDANTS PERSONNELS">
+                            <p:panelGrid styleClass="ui-noborder" style="width:100%">  
+                                <p:row>
+                                    <p:column>    <p:outputLabel value="Activités professionnelles:"></p:outputLabel></p:column>
+                                    <p:column>     
+                                        <p:selectOneMenu value="#{dossMb.dosMedToshow.activiteProfessionel}" panelStyle="width:100px" style="width:100%" filter="true" filterMatchMode="startsWith" >
+                                            <f:selectItem itemLabel="-selectionner-" itemValue="" />
+                                            <f:selectItem itemLabel="SIEGE" itemValue="S" />
+                                            <f:selectItem itemLabel="DEPOT" itemValue="D" />
+                                            <f:selectItem itemLabel="CHANTIER" itemValue="C" />
+                                        </p:selectOneMenu>
+                                    </p:column> 
+                                    <p:column> 
+                                    </p:column> 
+                                    <p:column>    <p:outputLabel value="Accidents de travail:"></p:outputLabel></p:column>
+                                    <p:column>    
+                                        <p:inputText value="#{dossMb.dosMedToshow.accident}" style="width:100%;"></p:inputText>
+                                    </p:column>  
+                                </p:row> 
+                                <p:row>
+                                    <p:column>    <p:outputLabel value="F.S.P:"></p:outputLabel></p:column>
+                                    <p:column>     
+                                        <p:selectOneMenu value="#{dossMb.dosMedToshow.formationProfessionel}" panelStyle="width:100px" style="width:100%" filter="true" filterMatchMode="startsWith" >
+                                            <f:selectItem itemLabel="-selectionner-" itemValue="" />
+                                            <f:selectItem itemLabel="AUCUN"   itemValue="AUCUN" />
+                                            <f:selectItem itemLabel="BAC"     itemValue="BAC" />
+                                            <f:selectItem itemLabel="BAC + 2" itemValue="BAC2" />
+                                            <f:selectItem itemLabel="BAC + 3" itemValue="BAC3" />
+                                            <f:selectItem itemLabel="BAC + 4" itemValue="BAC4" />
+                                            <f:selectItem itemLabel="BAC + 5" itemValue="BAC5" />
+                                        </p:selectOneMenu>
+                                    </p:column> 
+                                    <p:column>
+                                        
+                                    </p:column> 
+                                    <p:column>    <p:outputLabel value="I.P.P:"></p:outputLabel></p:column>
+                                    <p:column>    <p:inputText value="#{dossMb.dosMedToshow.ipp}" style="width:100%;"></p:inputText></p:column> 
+
+                                </p:row>   
+                                <p:row>
+                                    <p:column>    
+                                        <p:outputLabel value="ATCD MD:"></p:outputLabel></p:column>
+                                    <p:column>     
+                                        <p:selectCheckboxMenu  value="#{dossMb.ATCDMD}"  label="Cities" multiple="true" style="width:350px;"
+                                                            filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
+                                            <f:selectItems value="#{dossMb.antecedentATCDMD}" var="c" itemLabel="#{c.libelle}" itemValue="#{c.libelle}" /> 
+
+                                       </p:selectCheckboxMenu>
+                                    </p:column>
+                                    <p:column>
+                                        <p:commandButton title="Ajouter" icon="fa fa-plus" onclick="PF('addAntecedent').show()" update=":addAntecedent"></p:commandButton> 
+                                    </p:column> 
+                                    <p:column>    
+                                        <p:outputLabel value="Intoxications:"></p:outputLabel></p:column>
+                                    <p:column>    
+                                        <p:inputText value="#{dossMb.dosMedToshow.intoxication}" style="width:100%;"></p:inputText>
+                                    </p:column> 
+                                </p:row>
+                                <p:row>
+                                    <p:column>    <p:outputLabel value="ATCD CH:"></p:outputLabel></p:column>
+                                    <p:column>      
+                                        <p:selectCheckboxMenu  value="#{dossMb.ATCDCH}"  label="Cities" multiple="true" style="width:350px;"
+                                                            filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
+                                            <f:selectItems value="#{dossMb.antecedentATCDCH}" var="c" itemLabel="#{c.libelle}" itemValue="#{c.libelle}" />
+
+                                       </p:selectCheckboxMenu>
+                                    </p:column>
+                                    <p:column>
+                                        <p:commandButton title="Ajouter" icon="fa fa-plus" onclick="PF('addAntecedent').show()" update=":addAntecedent"></p:commandButton> 
+                                    </p:column> 
+                                    <p:column>    <p:outputLabel value="Maladies  professionnelles:"></p:outputLabel></p:column>
+                                    <p:column>    <p:inputText value="#{dossMb.dosMedToshow.maladiePersonnelle}" style="width:100%;"></p:inputText></p:column> 
+                                </p:row>
+                                <p:row>     
+                                    <p:column>    <p:outputLabel value="A.V.P:"></p:outputLabel></p:column>
+                                    <p:column>    <p:inputText value="#{dossMb.dosMedToshow.avp}" style="width:100%;"></p:inputText></p:column> 
+                                    <p:column>  
+                                    </p:column> 
+                                    <p:column>    <p:outputLabel value="Risques:"></p:outputLabel></p:column>
+                                    <p:column>         
+                                        <p:selectCheckboxMenu value="#{dossMb.RISQUE}"  label="risque" multiple="true" filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
+                                            <f:selectItems value="#{dossMb.antecedentRisque}" var="c" itemLabel="#{c.libelle}" itemValue="#{c.libelle}" />  
+                                       </p:selectCheckboxMenu>
+                                         
+                                    </p:column> 
+                                </p:row>    
+                            </p:panelGrid> 
+                            <p:dataTable var="anteced" rows="5" value="#{dossMb.antecedentProfessionnelHorsTGCC}" emptyMessage="Aucun enregistrement..." 
+                                paginatorPosition="bottom" paginator="true"
+                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rowsPerPageTemplate="5,10,15" sortBy="#{anteced.id}" sortOrder="DESCENDING" 
+                                id="antTable"  editable="true">
+                                    <f:facet name="header">
+                                        CURRICULUM LABORIS
+                                        <p:commandButton id="toggler"  title="Ajouter un nouveau enregistrement" 
+                                                         action="#{dossMb.addAntecedent}" style="margin-top: -4px; float:right" value="Ajouter" icon="fa fa-plus" update="antTable" />
+                                    </f:facet>
+                                <p:ajax event="rowEdit" listener="#{dossMb.onRowEdit}" update="antTable" />
+                                <p:ajax event="rowEditCancel" listener="#{dossMb.onRowCancel}"  />
+                                <p:column headerText="Société" > 
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{anteced.societe}" /></f:facet>
+                                        <f:facet name="input"><p:inputText  value="#{anteced.societe}" style="width:100%"/></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+                                <p:column headerText="Activité" > 
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{anteced.activite}" /></f:facet>
+                                        <f:facet name="input"><p:inputText  value="#{anteced.activite}" style="width:100%"/></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+                                <p:column headerText="Poste" > 
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{anteced.poste}" /></f:facet>
+                                        <f:facet name="input"><p:inputText  value="#{anteced.poste}" style="width:100%"/></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+                                <p:column headerText="Période" > 
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{anteced.periode}" /></f:facet>
+                                        <f:facet name="input"><p:inputText  value="#{anteced.periode}" style="width:100%"/></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+                                <p:column headerText="Commentaire" > 
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{anteced.commentaire}" /></f:facet>
+                                        <f:facet name="input"><p:inputText  value="#{anteced.commentaire}" style="width:100%"/></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+                                <p:column style="width:35px">
+                                    <p:rowEditor />
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                                     
+                        <p:panel id="vacciuId" header="VACCINATIONS,SEROTHERAPIE">
+                            <p:panelGrid styleClass="ui-noborder"   style="width:100%">  
+                                <p:row>  
+                                    <p:column>
+                                        <p:outputLabel value="B.C.G:"></p:outputLabel>
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText value="#{dossMb.dosMedToshow.bcg}" style="width:100%"></p:inputText>
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputLabel value="Infections:"></p:outputLabel>
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText value="#{dossMb.dosMedToshow.bcg}" style="width:100%"></p:inputText>
+                                    </p:column> 
+                                    <p:column>
+                                         <p:outputLabel value="Tétanos:"></p:outputLabel>
+                                    </p:column>
+                                    <p:column>
+                                         <p:inputText value="#{dossMb.dosMedToshow.tetanos}" style="width:100%"></p:inputText>
+                                    </p:column> 
+                                </p:row>
+                                <p:row>  
+                                    <p:column>
+                                        <p:outputLabel value="B.C.G 2:"></p:outputLabel>
+                                    </p:column>
+                                    <p:column>
+                                         <p:inputText value="#{dossMb.dosMedToshow.bcg3}" style="width:100%"></p:inputText>
+                                    </p:column>  
+                                    <p:column>
+                                        <p:outputLabel value="Date B.C.G:"></p:outputLabel> 
+                                    </p:column>  
+                                    <p:column>
+                                        <p:calendar value="#{dossMb.dosMedToshow.bcg2}"  pattern="dd/MM/yyyy" style="width:100%;float: right;text-align: right;"></p:calendar>
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputLabel value="Autres:"></p:outputLabel>
+                                    </p:column>
+                                    <p:column>
+                                         <p:inputText value="#{dossMb.dosMedToshow.autres}" style="width:100%"></p:inputText>
+                                    </p:column>  
+                                </p:row>  
+                            </p:panelGrid> 
+                        </p:panel>
+                                     
+                        <p:panel id="anteId" header="ANTECEDANTS HEREDITAIRES ET FAMILIAUX">
+                            <p:panelGrid styleClass="ui-noborder" style="width:100%">  
+                                <p:row>
+                                    <p:column>    <p:outputLabel value="Père:"></p:outputLabel></p:column>
+                                    <p:column>      
+                                        <p:selectCheckboxMenu  value="#{dossMb.PERE}"  label="Cities" multiple="true" style="width:350px;"
+                                                            filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
+                                            <f:selectItems value="#{dossMb.antecedentAutre}" var="c" itemLabel="#{c.libelle}" itemValue="#{c.libelle}" />  
+
+                                       </p:selectCheckboxMenu>
+                                    </p:column> 
+                                    <p:column>    <p:outputLabel value="Soeurs:"></p:outputLabel></p:column>
+                                    <p:column>            
+                                       <p:selectCheckboxMenu  value="#{dossMb.SOEURS}"  label="Cities" multiple="true" style="width:350px;"
+                                                            filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
+                                            <f:selectItems value="#{dossMb.antecedentAutre}" var="c" itemLabel="#{c.libelle}" itemValue="#{c.libelle}" />
+
+                                       </p:selectCheckboxMenu>
+                                    </p:column> 
+                                </p:row>
+                                <p:row>
+                                    <p:column>    <p:outputLabel value="Mère:"></p:outputLabel></p:column>
+                                    <p:column>            
+                                        <p:selectCheckboxMenu  value="#{dossMb.MERE}"  label="Cities" multiple="true" style="width:350px;"
+                                                            filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
+                                            <f:selectItems value="#{dossMb.antecedentAutre}" var="c" itemLabel="#{c.libelle}" itemValue="#{c.libelle}" />
+
+                                       </p:selectCheckboxMenu>
+                                    </p:column> 
+                                    <p:column>    <p:outputLabel value="Conjoint:"></p:outputLabel></p:column>
+                                    <p:column>            
+                                        <p:selectCheckboxMenu  value="#{dossMb.CONJOINT}"  label="Cities" multiple="true" style="width:350px;"
+                                                            filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
+                                            <f:selectItems value="#{dossMb.antecedentAutre}" var="c" itemLabel="#{c.libelle}" itemValue="#{c.libelle}" />
+
+                                       </p:selectCheckboxMenu>
+                                    </p:column> 
+                                </p:row>
+                                <p:row>
+                                    <p:column>    <p:outputLabel value="Frères:"></p:outputLabel></p:column>
+                                    <p:column>            
+                                        <p:selectCheckboxMenu  value="#{dossMb.FRERES}"  label="Cities" multiple="true" style="width:350px;"
+                                                            filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
+                                            <f:selectItems value="#{dossMb.antecedentAutre}" var="c" itemLabel="#{c.libelle}" itemValue="#{c.libelle}" />
+                                       </p:selectCheckboxMenu>
+                                    </p:column> 
+                                    <p:column>    <p:outputLabel value="Enfants:"></p:outputLabel></p:column>
+                                    <p:column>            
+
+                                        <p:selectCheckboxMenu  value="#{dossMb.ENFANTS}"  label="Cities" multiple="true" style="width:350px;"
+                                                            filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
+                                            <f:selectItems value="#{dossMb.antecedentAutre}" var="c" itemLabel="#{c.libelle}" itemValue="#{c.libelle}" />
+
+                                       </p:selectCheckboxMenu>
+                                    </p:column> 
+                                </p:row> 
+                            </p:panelGrid> 
+                        </p:panel>
+                                     
+                        <p:panel id="visiteId" header="LISTE DES VISITES"> 
+                            <p:dataTable var="vis" rows="10" value="#{dossMb.listaVisite}" rendered="#{not empty dossMb.listaVisite}"
+                                         class="table table-responsive table-bordered" emptyMessage="Aucun enregistrement..." 
+                                         paginatorPosition="both" paginator="true"
+                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="5,10,15" sortBy="#{vis.id}" sortOrder="DESCENDING" 
+                                         id="visiteTable" >
+                                <f:facet name="header">
+                                        Visites
+                                        <p:commandButton style="margin-top: -4px;float:right" value="Visite embauche" icon="fa fa-plus" title="Ajouter Visite"
+                                                        onstart="PF('block').show()" oncomplete="PF('block').hide()"
+                                                        action="#{dossMb.listenerAjoutVisite('EM')}"
+                                                        update=":visiteAddFormIdEm" > 
+                                        </p:commandButton> 
+                                        <p:commandButton style="margin-top: -4px;float:right" value="Visite AT" icon="fa fa-plus" title="Ajouter Visite"
+                                                        onstart="PF('block').show()" oncomplete="PF('block').hide()"
+                                                        action="#{dossMb.listenerAjoutVisite('AT')}"
+                                                        update=":visiteAddFormIdAt" > 
+                                        </p:commandButton> 
+                                        <p:commandButton style="margin-top: -4px;float:right" value="Autres visites" icon="fa fa-plus" title="Ajouter Visite"
+                                                        onstart="PF('block').show()" oncomplete="PF('block').hide()"
+                                                        action="#{dossMb.listenerAjoutVisite('AU')}"
+                                                        update=":visiteAddFormIdAu" > 
+                                        </p:commandButton> 
+                                        
+                                </f:facet>
+                                <p:column headerText="TYPE" filterBy="#{vis.type}" filterMatchMode="contains" > 
+                                    <p:selectOneMenu value="#{vis.type}" panelStyle="width:180px" style="width:100%" filter="true" filterMatchMode="startsWith" disabled="true" > 
+                                            <f:selectItem itemLabel="VISITE EMBAUCHE"   itemValue="V.E." /> 
+                                            <f:selectItem itemLabel="VISITE ANNUELLE"   itemValue="V.A." /> 
+                                            <f:selectItem itemLabel="VISITE P.P"        itemValue="V.P.P." /> 
+                                            <f:selectItem itemLabel="VISITE AT"         itemValue="V.A.T." /> 
+                                            <f:selectItem itemLabel="VISITE DEPART"     itemValue="V.D." /> 
+                                            <f:selectItem itemLabel="VISITE SPONTANNEE" itemValue="V.S." />  
+                                        </p:selectOneMenu> 
+                                </p:column> 
+                                <p:column headerText="DOCTEUR" filterBy="#{vis.docteur}" filterMatchMode="contains" >
+                                     <h:outputText value="#{vis.docteur}" />
+                                </p:column> 
+                                <p:column headerText="DATE VISITE" filterBy="#{vis.dateVisite}" filterMatchMode="contains" >
+                                     <h:outputText value="#{vis.dateVisite}" >
+                                         <f:convertDateTime pattern="yyyy-MM-dd" ></f:convertDateTime>
+                                     </h:outputText>
+                                </p:column> 
+                                <p:column headerText="ETAT" filterBy="#{vis.apte}" filterMatchMode="contains" >
+                                     <h:outputText value="#{vis.apte}" />
+                                </p:column> 
+                                <p:column headerText="DATE PROCHAINE VISITE" filterBy="#{vis.prochaineVisite}" filterMatchMode="contains" >
+                                     <h:outputText value="#{vis.prochaineVisite}"> 
+                                         <f:convertDateTime pattern="yyyy-MM-dd" > </f:convertDateTime>
+                                     </h:outputText>
+                                </p:column> 
+                                <p:column headerText="ACTIONS" >
+
+                                     <p:commandButton icon="fa fa-align-justify"  title="Afficher détail"  style="background-color:#712D35" 
+                                                      action="#{dossMb.listenerShowVisite(vis)}" update=":visiteShowFormIAT,:visiteShowFormId,:visiteShowFormIdAutre"
+                                                      onstart="PF('block').show()" oncomplete="PF('block').hide()" 
+                                                      >
+                                     </p:commandButton>   
+                                     <p:commandButton icon="fa fa-file-pdf-o" title="Générer fiche"  style="background-color:#712D35" 
+                                                      action="#{dossMb.addFichier(vis)}"  update=":visuliser_id"
+                                                      oncomplete="PF('consulterDoc').show()" 
+                                                      >
+                                     </p:commandButton> 
+                                 </p:column> 
+
+                            </p:dataTable>
+                        </p:panel> 
+                        <br></br>
+                   <p:commandButton value="Enregistrer" style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()" onclick="PF('vtWidget').clearFilters()"
+                                    action="#{dossMb.modifierDossier()}" update=":shomFormId, :tableDM" ></p:commandButton>
+
+                    </h:form>
+                </p:dialog>
+                <p:dialog header="Création Dossier médical" widgetVar="dlg2"  modal="true" width="80%" height="500">
+                    <h:form id="formdlgId">  
+                        <p:panel id="salarieId" header="INFOS SALARIE">
+                        <p:panelGrid id="panelSalId" styleClass="ui-noborder" style="width:100%"> 
+                            <p:row>
+                                <p:column colspan="2">
+                                    <p:selectOneMenu id="listChantierId" disabled="#{dossMb.idStatut eq 1}" value="#{dossMb.idSalarie}" panelStyle="width:180px" style="width:100%" filter="true" filterMatchMode="startsWith" >
+                                    <f:selectItem itemLabel="--- Selectionner Salarie ---" itemValue="0" />
+                                    <f:selectItems value="#{dossMb.salaries}" var="c" itemLabel="#{c.matricule} #{c.nom} #{c.prenom}" itemValue="#{c.id}" />
+                                        <p:ajax event="change" listener="#{dossMb.listenrSalarieAdd()}" update="panelSalId" />
+                                        <p:ajax event="select" listener="#{dossMb.listenrSalarieAdd()}" update="panelSalId" />
+                                    </p:selectOneMenu> 
+                                </p:column> 
+                                <p:column>    <p:outputLabel value="N° CIN:"></p:outputLabel></p:column>
+                                <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToAdd.salarie.cin}" style="width:100%;"></p:inputText></p:column>
+                                <p:column>    <p:outputLabel value="N° Mle:"></p:outputLabel></p:column>
+                                <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToAdd.salarie.matricule}" style="width:100%;"></p:inputText></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>    <p:outputLabel value="Nom:"></p:outputLabel></p:column>
+                                <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToAdd.salarie.nom}" style="width:100%;"></p:inputText></p:column>
+                                <p:column>    <p:outputLabel value="Né le:"></p:outputLabel></p:column>
+                                <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToAdd.salarie.dateNaissance}" style="width:100%;"></p:inputText></p:column>
+                                <p:column>    <p:outputLabel value="à"></p:outputLabel></p:column>
+                                <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToAdd.salarie.lieuNaissance}" style="width:100%;"></p:inputText></p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>    <p:outputLabel value="Prénom:"></p:outputLabel></p:column>
+                                <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToAdd.salarie.prenom}" style="width:100%;"></p:inputText></p:column>
+                                <p:column>    <p:outputLabel value="Adresse:"></p:outputLabel></p:column>
+                                <p:column colspan="3"><p:inputText disabled="true" value="#{dossMb.dosMedToAdd.salarie.adresse}" style="width:100%;"></p:inputText></p:column> 
+                            </p:row>
+                            <p:row>
+                                <p:column>    <p:outputLabel value="Situation familiale:"></p:outputLabel></p:column>
+                                <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToAdd.salarie.situationFamiliale}" style="width:100%;"></p:inputText></p:column>
+                                <p:column>    <p:outputLabel value="Nombre d'enfants:"></p:outputLabel></p:column>
+                                <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToAdd.salarie.nombreEnfants}" style="width:100%;"></p:inputText></p:column>
+                                <p:column>    <p:outputLabel value="Email:"></p:outputLabel></p:column>
+                                <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToAdd.salarie.email}" style="width:100%;"></p:inputText> </p:column>
+                            </p:row>
+
+                        </p:panelGrid>   
+                    </p:panel>  
+                    <p:panel id="entrepriseId" header="ENTREPRISE">
+                        <p:panelGrid styleClass="ui-noborder" style="width:100%">  
+                            <p:row>
+                                <p:column>    <p:outputLabel value="Depuis le:"></p:outputLabel></p:column>
+                                <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToAdd.salarie.contrat.dateEmbauche}"  style="width:100%"></p:inputText></p:column>
+                                <p:column>    <p:outputLabel value="Service:"></p:outputLabel></p:column>
+                                <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToAdd.salarie.fonction.fonction}" style="width:100%"></p:inputText></p:column> 
+                            </p:row>
+                            <p:row>
+                                <p:column><p:outputLabel value="Fonction:"></p:outputLabel></p:column>
+                                <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToAdd.salarie.fonction.fonction}" style="width:100%;"></p:inputText></p:column> 
+                                <p:column><p:outputLabel value="Tél:"></p:outputLabel></p:column>
+                                <p:column><p:inputText disabled="true" value="#{dossMb.dosMedToAdd.salarie.telephone}" style="width:100%;"></p:inputText></p:column> 
+                            </p:row>  
+                        </p:panelGrid> 
+                    </p:panel>  
+                        <p:panel id="personelsId" header="ANTECEDANTS PERSONNELS">
+                            <p:panelGrid styleClass="ui-noborder" style="width:100%">  
+                                <p:row>
+                                    <p:column>    <p:outputLabel value="Activités professionnelles:"></p:outputLabel></p:column>
+                                    <p:column>     
+                                        <p:selectOneMenu value="#{dossMb.dosMedToAdd.activiteProfessionel}" panelStyle="width:100px" style="width:100%" filter="true" filterMatchMode="startsWith" >
+                                            <f:selectItem itemLabel="-selectionner-" itemValue="" />
+                                            <f:selectItem itemLabel="SIEGE" itemValue="S" />
+                                            <f:selectItem itemLabel="DEPOT" itemValue="D" />
+                                            <f:selectItem itemLabel="CHANTIER" itemValue="C" />
+                                        </p:selectOneMenu>
+                                    </p:column> 
+                                    <p:column>    <p:outputLabel value="Accidents de travail:"></p:outputLabel></p:column>
+                                    <p:column>    
+                                        <p:inputText value="#{dossMb.dosMedToAdd.accident}" style="width:100%;"></p:inputText>
+                                    </p:column>  
+                                </p:row> 
+                                <p:row>
+                                    <p:column>    <p:outputLabel value="F.S.P:"></p:outputLabel></p:column>
+                                    <p:column>     
+                                        <p:selectOneMenu value="#{dossMb.dosMedToAdd.formationProfessionel}" panelStyle="width:100px" style="width:100%" filter="true" filterMatchMode="startsWith" >
+                                            <f:selectItem itemLabel="-selectionner-" itemValue="" />
+                                            <f:selectItem itemLabel="AUCUN"   itemValue="AUCUN" />
+                                            <f:selectItem itemLabel="BAC"     itemValue="BAC" />
+                                            <f:selectItem itemLabel="BAC + 2" itemValue="BAC2" />
+                                            <f:selectItem itemLabel="BAC + 3" itemValue="BAC3" />
+                                            <f:selectItem itemLabel="BAC + 4" itemValue="BAC4" />
+                                            <f:selectItem itemLabel="BAC + 5" itemValue="BAC5" />
+                                        </p:selectOneMenu>
+                                    </p:column> 
+                                    <p:column>    <p:outputLabel value="I.P.P:"></p:outputLabel></p:column>
+                                    <p:column>    <p:inputText value="#{dossMb.dosMedToAdd.ipp}" style="width:100%;"></p:inputText></p:column> 
+
+                                </p:row>   
+                                <p:row>
+                                    <p:column>    <p:outputLabel value="ATCD MD:"></p:outputLabel></p:column>
+                                    <p:column>     
+                                        <p:selectCheckboxMenu  value="#{dossMb.ATCDMD}"  label="Cities" multiple="true" style="width:350px;"
+                                                            filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
+                                            <f:selectItems value="#{dossMb.antecedentATCDMD}" var="c" itemLabel="#{c.libelle}" itemValue="#{c.libelle}" />
+                                       </p:selectCheckboxMenu>
+                                    </p:column> 
+                                    <p:column>    <p:outputLabel value="Intoxications:"></p:outputLabel></p:column>
+                                    <p:column>    <p:inputText value="#{dossMb.dosMedToAdd.intoxication}" style="width:100%;"></p:inputText></p:column> 
+                                </p:row>
+                                <p:row>
+                                    <p:column>    <p:outputLabel value="ATCD CH:"></p:outputLabel></p:column>
+                                    <p:column>     
+                                        <p:selectCheckboxMenu  value="#{dossMb.ATCDCH}"  label="Cities" multiple="true" style="width:350px;"
+                                                            filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
+                                            <f:selectItems value="#{dossMb.antecedentATCDCH}" var="c" itemLabel="#{c.libelle}" itemValue="#{c.libelle}" />
+                                       </p:selectCheckboxMenu>
+                                    </p:column>
+                                    <p:column>    <p:outputLabel value="Maladies professionnelles:"></p:outputLabel></p:column>
+                                    <p:column>    <p:inputText value="#{dossMb.dosMedToAdd.maladiePersonnelle}" style="width:100%;"></p:inputText></p:column> 
+                                </p:row>
+                                <p:row>     
+                                    <p:column>    <p:outputLabel value="A.V.P:"></p:outputLabel></p:column>
+                                    <p:column>    <p:inputText value="#{dossMb.dosMedToAdd.avp}" style="width:100%;"></p:inputText></p:column> 
+                                    <p:column>    <p:outputLabel value="Risques:"></p:outputLabel></p:column>
+                                    <p:column>   
+                                        <p:selectCheckboxMenu id="multiple" value="#{dossMb.RISQUE}"  label="Cities" multiple="true"
+                                                            filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
+                                            <f:selectItems value="#{dossMb.antecedentRisque}" var="c" itemLabel="#{c.libelle}" itemValue="#{c.libelle}" /> 
+                                       </p:selectCheckboxMenu>
+                                    </p:column> 
+                                </p:row>
+
+                            </p:panelGrid> 
+                        </p:panel> 
+                        <p:panel id="vacciuId" header="VACCINATIONS,SEROTHERAPIE">
+                            <p:panelGrid styleClass="ui-noborder"   style="width:100%">  
+                                <p:row>  
+                                    <p:column>
+                                        <p:outputLabel value="B.C.G:"></p:outputLabel>
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText value="#{dossMb.dosMedToAdd.bcg}" style="width:100%"></p:inputText>
+                                    </p:column> 
+                                    <p:column>
+                                        <p:outputLabel value="Infections:"></p:outputLabel>
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText value="#{dossMb.dosMedToAdd.bcg}" style="width:100%"></p:inputText>
+                                    </p:column>   
+                                    <p:column>
+                                         <p:outputLabel value="Tétanos:"></p:outputLabel>
+                                    </p:column>
+                                    <p:column>
+                                         <p:inputText value="#{dossMb.dosMedToAdd.tetanos}" style="width:100%"></p:inputText>
+                                    </p:column> 
+                                </p:row>
+                                <p:row>  
+                                    <p:column>
+                                        <p:outputLabel value="B.C.G 2:"></p:outputLabel>
+                                    </p:column>
+                                    <p:column>
+                                         <p:inputText value="#{dossMb.dosMedToAdd.bcg3}" style="width:100%"></p:inputText>
+                                    </p:column>  
+                                    <p:column>
+                                        <p:outputLabel value="Date B.C.G:"></p:outputLabel>
+                                    </p:column>
+                                    <p:column>
+                                        <p:calendar value="#{dossMb.dosMedToAdd.bcg2}"  pattern="dd/MM/yyyy" style="width:100%;float: right;text-align: right;"></p:calendar>
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputLabel value="Autres:"></p:outputLabel>
+                                    </p:column>
+                                    <p:column>
+                                         <p:inputText value="#{dossMb.dosMedToAdd.autres}" style="width:100%" ></p:inputText>
+                                    </p:column>  
+                                </p:row> 
+                            </p:panelGrid> 
+                        </p:panel> 
+                        <p:panel id="anteId" header="ANTECEDANTS HEREDITAIRES ET FAMILIAUX">
+                            <p:panelGrid styleClass="ui-noborder" style="width:100%">  
+                                <p:row>
+                                    <p:column>    <p:outputLabel value="Père:"></p:outputLabel></p:column>
+                                    <p:column>           
+                                        <p:selectCheckboxMenu  value="#{dossMb.PERE}"  label="Cities" multiple="true" style="width:350px;"
+                                                            filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
+                                            <f:selectItems value="#{dossMb.antecedentAutre}" var="c" itemLabel="#{c.libelle}" itemValue="#{c.id}" />   
+                                       </p:selectCheckboxMenu>
+                                    </p:column> 
+                                    <p:column>    <p:outputLabel value="Soeurs:"></p:outputLabel></p:column>
+                                    <p:column>               
+                                        <p:selectCheckboxMenu  value="#{dossMb.SOEURS}"  label="Cities" multiple="true" style="width:350px;"
+                                                            filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
+                                            <f:selectItems value="#{dossMb.antecedentAutre}" var="c" itemLabel="#{c.libelle}" itemValue="#{c.libelle}" />
+
+                                       </p:selectCheckboxMenu>
+                                    </p:column> 
+                                </p:row>
+                                <p:row>
+                                    <p:column>    <p:outputLabel value="Mère:"></p:outputLabel></p:column>
+                                    <p:column>          
+                                        <p:selectCheckboxMenu  value="#{dossMb.MERE}"  label="Cities" multiple="true" style="width:350px;"
+                                                            filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
+                                            <f:selectItems value="#{dossMb.antecedentAutre}" var="c" itemLabel="#{c.libelle}" itemValue="#{c.libelle}" />
+
+                                       </p:selectCheckboxMenu>
+                                    </p:column> 
+                                    <p:column>    <p:outputLabel value="Conjoint:"></p:outputLabel></p:column>
+                                    <p:column>            
+                                        <p:selectCheckboxMenu  value="#{dossMb.CONJOINT}"  label="Cities" multiple="true" style="width:350px;"
+                                                            filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
+                                            <f:selectItems value="#{dossMb.antecedentAutre}" var="c" itemLabel="#{c.libelle}" itemValue="#{c.libelle}" />
+
+                                       </p:selectCheckboxMenu>
+                                    </p:column> 
+                                </p:row>
+                                <p:row>
+                                    <p:column>    <p:outputLabel value="Frères:"></p:outputLabel></p:column>
+                                    <p:column>           
+                                        <p:selectCheckboxMenu  value="#{dossMb.FRERES}"  label="Cities" multiple="true" style="width:350px;"
+                                                            filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
+                                            <f:selectItems value="#{dossMb.antecedentAutre}" var="c" itemLabel="#{c.libelle}" itemValue="#{c.libelle}" />
+
+                                       </p:selectCheckboxMenu>
+                                    </p:column> 
+                                    <p:column>    <p:outputLabel value="Enfants:"></p:outputLabel></p:column>
+                                    <p:column>            
+                                        <p:selectCheckboxMenu  value="#{dossMb.ENFANTS}"  label="Cities" multiple="true" style="width:350px;"
+                                                            filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
+                                            <f:selectItems value="#{dossMb.antecedentAutre}" var="c" itemLabel="#{c.libelle}" itemValue="#{c.libelle}" />
+
+                                       </p:selectCheckboxMenu>
+                                    </p:column> 
+                                </p:row> 
+                            </p:panelGrid> 
+                        </p:panel> 
+
+                        <br></br>
+                        <p:commandButton value="Enregistrer" style="float:right" 
+                                         onstart="PF('block').show()" oncomplete="PF('block').hide()" onclick="PF('vtWidget').clearFilters()"
+                                         action="#{dossMb.enregistrerDossier()}" update=":formdlgId, :tableDM" ></p:commandButton>
+                    </h:form>
+                </p:dialog>
+                 
+                <!--                Fin Dialogs             -->
+                </p:panel>   
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

@@ -426,5 +426,27 @@ public class SalarieDaoImpl extends MbHibernateDaoSupport implements SalarieDao 
         
         return this.getHibernateTemplate().load(Salarie.class, idc);
     }
+    
+    @Override
+    public List<Salarie> listSalarieBlackListSorti() {
+        List l = this.getHibernateTemplate().find( "SELECT s FROM Salarie s WHERE s.etat.id  in (2,3) AND s.type.id=2 " );
+
+        if (l.size() > 0) {
+            return l;
+        }
+
+        return null;
+    }
+    @Override
+    public List<Salarie> listSalarieByListChantier(String listChantiers) { 
+        List<Salarie> l = new ArrayList<Salarie>();  
+        try {   
+             String req=" FROM Salarie s where s.id in (SELECT SALARIE_ID FROM CHANTIER_SALARIE WHERE CHANTIER_ID in ("+listChantiers+"))";
+             l = (List<Salarie>) this.getHibernateTemplate().find(req);    
+        } catch (Exception e) {
+            logger.error("Erreur de récupération des salarier par chantier "+e.getMessage());
+        }   
+        return l;
+    }
 
 }

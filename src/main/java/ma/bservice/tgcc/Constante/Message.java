@@ -61,7 +61,9 @@ public class Message {
     public static final String UPDATE_CITERNE_CANCEL = "Modification de la citerne est annulée ";
     public static final String UPDATE_CITERNE_SUCCESS = "La citerne est modifiée avec succès ";
 
-    public static final String VOLUMEDEPPASE0_ERREUR = "le modification n'est pas possible. Il y a déjà eu des livraisons sur cette citerne.";
+    public static final String VOLUMEDEPPASE0_ERREUR = "la modification n'est pas possible. Il y a déjà eu des livraisons sur cette citerne.";
+
+    public static final String VOLUMEMOIN0_ERREUR = "la modification n'est pas possible. La quantité doit être supérieur à 0.";
 
     public static final String CAPACITE_INFERIURE_VOLUME_ACTUEL = "capacite de citerne est inferieur au volume actuel";
 

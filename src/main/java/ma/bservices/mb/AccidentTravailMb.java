@@ -43,6 +43,7 @@ import ma.bservices.services.IAccidentTravailService;
 import ma.bservices.services.IDetailATService;
 import ma.bservices.services.IDocumentDetailAtService;
 import ma.bservices.services.SalarieServiceIn;
+import ma.bservices.tgcc.pdf.GenRapportAT;
 import ma.bservices.tgcc.service.Engin.ChantierService;
 import static org.apache.catalina.connector.InputBuffer.DEFAULT_BUFFER_SIZE;
 import org.apache.commons.io.FilenameUtils;
@@ -314,16 +315,6 @@ public class AccidentTravailMb {
             if(detailATs.size()>0){
                 detailAT = detailATs.get(0);
             }
-            if(detailAT.getId()>0){
-                try {
-                    System.out.println("MB---------> ma.bservices.mb.AccidentTravailMb.init() : "+detailAT.toString());
-                    documentDetailAts = documentDetailAtService.allDocumentDetailAtByIdDetailAt(detailAT.getId());
-                    
-                } catch (Exception e) {
-                    System.out.println("MB---> Erreur de chargement les document  car "+e.getMessage());
-                }
-                    
-            } 
         }
         
     }
@@ -398,62 +389,51 @@ public class AccidentTravailMb {
         }
     }
     
+    public void imprimer(){
+        GenRapportAT rp = new GenRapportAT();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        Date date = new Date(); 
+        String nomFichier = detailAT.getId()+"_"+dateFormat.format(date);
+        
+        String test = rp.generationRapportAt("/opt/files/docsDetAT/", "Test"+nomFichier, detailAT);
+        System.out.println("MB------------->Impression detailAT"+detailAT.toString());
+        System.out.println("MB------------->Impression test"+test);
+    }
+    
     public void prepAddDocumentDeatilAt(){
         documentDetailAt = new DocumentDetailAt();
     }
     
     public void uploader() throws IOException {
-                System.out.println("MB uploader -------> 1");
 
         // String chemin = TgccFileManager.getCheminFichier("Documents Engin");
         String chemin = ConstanteMb.getRepertoire() + "/files/docsDetAT";
         Path folder = Paths.get(chemin);
         Files.createDirectories(folder);
         if (uploadedFile == null) {
-            System.out.println("MB uploader -------> 2");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, Message.STRING_CHARGE_DOCUMENT, Message.STRING_CHARGE_DOCUMENT));
 
         } else if (uploadedFile.getFileName().equals("")) {
-                System.out.println("MB uploader -------> 3");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, Message.STRING_CHARGE_DOCUMENT, Message.STRING_CHARGE_DOCUMENT));
         } else {
-                System.out.println("MB uploader -------> 4");
             String filename = FilenameUtils.getBaseName(uploadedFile.getFileName());
             String extension = FilenameUtils.getExtension(uploadedFile.getFileName());
             
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-                    Date date = new Date(); 
-                    String nomFichier = detailAT.getId()+"_"+dateFormat.format(date);
+                    
 
             if (!"pdf".equals(extension)) {
-                System.out.println("MB uploader -------> 5");
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, Message.STRING_CHARGE_DOCUMENT_PDF, Message.STRING_CHARGE_DOCUMENT_PDF));
             } else {
-                System.out.println("MB uploader -------> 6");
                 Path file = Files.createTempFile(folder, filename, "." + extension);
 
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
                 try (InputStream input = uploadedFile.getInputstream()) {
-                System.out.println("MB uploader -------> 7");
                     Files.copy(input, file, StandardCopyOption.REPLACE_EXISTING);
                     documentDetailAt.setChemin(chemin + "/" +file.getFileName());
                     documentDetailAt.setCreePar(auth.getPrincipal().toString());
                     documentDetailAt.setDateCreation(new Date());
                     documentDetailAt.setDetailAT(detailAT);
                     documentDetailAtService.addDocumentDetailAt(documentDetailAt);
-                    /*if(documentDetailAt.getNbrjour()>0){
-                        System.out.println("MB uploader -------> 8");
-                                if(detailAT.getNbrJour()!=null){
-                        System.out.println("MB uploader -------> 9");
-                                    detailAT.setNbrJour(detailAT.getNbrJour()+documentDetailAt.getNbrjour());
-                                }
-                                else{
-                        System.out.println("MB uploader -------> 10");
-                            detailAT.setNbrJour(documentDetailAt.getNbrjour());
-                        }
-                        detailATService.editDetailAT(detailAT);
-                    }*/
-                System.out.println("MB uploader -------> 8");
                     documentDetailAts = documentDetailAtService.allDocumentDetailAtByIdDetailAt(detailAT.getId()); 
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, Message.STRING_CHARGE_DOCUMENT_DONE, Message.STRING_CHARGE_DOCUMENT_DONE));
                 }
@@ -539,5 +519,16 @@ public class AccidentTravailMb {
             context.responseComplete();
         }
 
+    }
+    public void chargerDocumentDetailAt(){
+        if(detailAT.getId()>0){
+                    try {
+                        documentDetailAts = documentDetailAtService.allDocumentDetailAtByIdDetailAt(detailAT.getId());
+
+                    } catch (Exception e) {
+                        System.out.println("MB---> Erreur de chargement les document  car "+e.getMessage());
+                    }
+
+                }  
     }
 }

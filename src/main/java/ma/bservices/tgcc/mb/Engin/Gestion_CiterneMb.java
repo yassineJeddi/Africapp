@@ -621,6 +621,46 @@ public class Gestion_CiterneMb implements Serializable {
         }
 
     }
+    
+    public void modifie_citerne_() {
+
+        /**
+         * test si capacite modifie est inferieur volume actuel dans la citerne
+         * ( message d 'erreur )
+         */
+        if (citern_to_update.getVolume_actuel_() <= 0) {
+            System.out.println("=============> 1 ");
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, Message.VOLUMEMOIN0_ERREUR, Message.VOLUMEMOIN0_ERREUR));
+
+        } else if (capacite_toUpdate < citern_to_update.getVolume_actuel_() / 1000) {
+            System.out.println("=============> 2 ");
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, Message.CAPACITE_INFERIURE_VOLUME_ACTUEL, Message.CAPACITE_INFERIURE_VOLUME_ACTUEL));
+
+        } else {
+            System.out.println("=============> 1 ");
+
+            Chantier c_ = this.chantierService.findById_String(code_chantier_toUpdate);
+
+            citern_to_update.setChantier_Principal(c_);
+
+            citern_to_update.setCapacite(capacite_toUpdate * 1000);
+
+            this.citerneService.update_citerne(citern_to_update);
+
+//        ELContext elContext = FacesContext.getCurrentInstance().getELContext();
+//
+//        ma.bservices.tgcc.mb.services.CiterneMb citerne_bean = (ma.bservices.tgcc.mb.services.CiterneMb) FacesContext.getCurrentInstance().getApplication().getELResolver().getValue(elContext, null, "citerne_ServMb");
+//
+//        citerne_bean.reload();
+            l_citernes = citerneService.find_allCiterneNon_archiver();
+
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage(null, new FacesMessage("" + Message.UPDATE_CITERNE_SUCCESS, ""));
+
+        }
+
+    }
 
     public void afficherType(String selectionne) {
         type_citerne_afficher = selectionne;

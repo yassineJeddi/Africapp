@@ -38,14 +38,9 @@
                             <p:graphicImage value="#{imageBean.image}" width="150px" height="150px">
                                 <f:param name="path" value="#{detailMb.salarie.cheminPhoto}" />
                             </p:graphicImage>
-
-
                         </div>
                         <div class="col-lg-4 ">
                             <h:panelGrid columns="2" cellpadding="8px" class="without-border">
-
-
-
                                 <h:outputText value="Matricule"/>
                                 <h:outputText value="#{detailMb.salarie.matricule}" />
                                 <h:outputText value="Civilité"/>
@@ -68,24 +63,18 @@
                         </div>
                         <div class="col-lg-4">
                             <h:panelGrid class="without-border" cellpadding="8px" columns="3" id="infos1">
-
                                 <h:outputText value="Matricule Nova"/>
                                 <h:outputText value="#{detailMb.salarie.matriculeDivalto}" />
                                 <h:outputText  />
-
-
                                 <h:outputText value="CIN"/>
                                 <h:outputText value="#{detailMb.salarie.cin}" />
                                 <h:outputText  />
-
                                 <h:outputText value="Fonction :"/>
                                 <h:outputText value="#{detailMb.salarie.fonction!=null ?detailMb.salarie.fonction.fonction:'---'}"/>
                                 <h:outputText  />
-
                                 <h:outputText value="Type :"/>
                                 <h:outputText value="#{detailMb.salarie.type!=null ?detailMb.salarie.type.type:'---'}"/>
                                 <h:outputText  />
-
                                 <h:outputText value="Etat :"/>
                                 <h:outputText value="#{detailMb.salarie.etat!=null ?detailMb.salarie.etat.etat :'---'}"/>
                                 <c:if test="#{authentification.hasPermission(constanteMb.modifierEtat)}">
@@ -98,7 +87,6 @@
                                 <h:outputText value="#{detailMb.salarie.modePaiement!=null ?detailMb.salarie.modePaiement.modePaiement:'---'}"/>
                                 <h:outputText  />
                             </h:panelGrid>
-
                         </div>
                     </div>
                 </h:form> 
@@ -178,7 +166,8 @@
                                         <h:outputText value="Fonction :"/>
                                         <p:selectOneMenu id="fonction" value="#{detailMb.salarie.fonction.id}" styleClass="widthChamp"
                                                          filter="true" filterMatchMode="contains"> 
-                                            <f:selectItems value="#{detailMb.fonctions}" var="f" itemLabel="#{f.fonction}" itemValue="#{f.id}" />
+                                            <f:selectItems itemLabel="#{detailMb.salarie.fonction.fonction}" itemValue="#{detailMb.salarie.fonction.id}" />
+                                            <f:selectItems value="#{evol_fonctionMb.fonctions}" var="f" itemLabel="#{f.fonction}" itemValue="#{f.id}" />
                                         </p:selectOneMenu>
 
                                         <h:outputText value="Type :"/>

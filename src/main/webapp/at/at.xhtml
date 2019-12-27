@@ -47,6 +47,8 @@ and open the template in the editor.
                                  <h:outputText value="Date:" /> <p:calendar value="#{accidentTravailMb.accidentTravail.dateAccident}" pattern="MM/dd/yyyy HH:mm:ss" />
                                  <h:outputText value="Lieu :" /> <p:inputText value="#{accidentTravailMb.accidentTravail.lieu}" />
                                  <h:outputText value="Description :" /> <p:inputText value="#{accidentTravailMb.accidentTravail.description}" /> 
+                                 <h:outputText value="Chef de Projet :" /> <p:inputText value="#{accidentTravailMb.accidentTravail.chefProjet}" /> 
+                                 <h:outputText value="Chef de chantier :" /> <p:inputText value="#{accidentTravailMb.accidentTravail.chefChantier}" /> 
                                  <p:commandButton value="Valider" action="#{accidentTravailMb.addAT()}" update="@this, :forme"/>
                             </h:panelGrid>
                         </p:panel>

@@ -83,6 +83,7 @@ public class CiterneMb implements Serializable {
     private Citerne citerne_bon_gasoil_mensuel;
     private Engin engin=new Engin(); 
     private Bon_Livraison_Citerne bon_gasoil = new Bon_Livraison_Citerne();
+    private Bon_Livraison_Citerne bon_gasoil_To_Edit = new Bon_Livraison_Citerne();
     
     private Utilisateur u  = new Utilisateur();
     
@@ -1213,6 +1214,13 @@ public class CiterneMb implements Serializable {
             this.citerneServiceBean.telecharger_fichier(livraison_Citerne.getChemin_fichier());
         }
 
+    }
+    public void prepModifierMvmt(Bon_Livraison_Citerne livraison_Citerne){
+        bon_gasoil_To_Edit = livraison_Citerne;
+    }
+    public void modifierMvmt(Bon_Livraison_Citerne livraison_Citerne){
+        bon_gasoil_To_Edit = livraison_Citerne;
+        
     }
 
     /**

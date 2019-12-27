@@ -94,7 +94,7 @@ and open the template in the editor.
                              </h:panelGrid>
                              <h:panelGrid columns="2" cellpadding="10">
                                  <h:outputText value="Cause probable :" />
-                                 <p:inputText value="#{accidentTravailMb.detailAT.chuteEnHaut}" />
+                                 <p:inputText value="#{accidentTravailMb.detailAT.causeProbable}" />
                              </h:panelGrid>
                         </p:panel>
                         <!-- Information Lieu AT -->
@@ -214,6 +214,12 @@ and open the template in the editor.
                                                   update=":form_uploader" 
                                                   action="#{accidentTravailMb.prepAddDocumentDeatilAt()}" 
                                                   oncomplete="PF('uploaderVar').show()" />
+                                 <h:outputLabel value=" " />                                 
+                                 <h:outputLabel value=" " />
+                                 <h:outputLabel value=" " />
+                                 <p:commandButton value="Charger " class="btn" 
+                                                  update=":forme:tblDoc" 
+                                                  action="#{accidentTravailMb.chargerDocumentDetailAt()}" />
                              </h:panelGrid>
                              <h:panelGrid columns="1" cellpadding="10">
                                  <p:dataTable id="tblDoc" var="documentIt" value="#{accidentTravailMb.documentDetailAts}" 
@@ -230,10 +236,10 @@ and open the template in the editor.
                                         <p:column headerText="Date de Fichier" filterBy="#{documentIt.dateFiche}" sortBy="#{documentIt.dateFiche}" filterMatchMode="contains" >
                                             <h:outputText  value="#{documentIt.dateFiche}"  ></h:outputText>
                                         </p:column>
-                                        <p:column headerText="Ajouter Par" filterBy="#{documentIt.creePar}"  sortBy="#{documentIt.creePar}"  filterMatchMode="contains"    >
+                                        <p:column headerText="Ajoutée Par" filterBy="#{documentIt.creePar}"  sortBy="#{documentIt.creePar}"  filterMatchMode="contains"    >
                                             <h:outputText value="#{documentIt.creePar}" />
                                         </p:column>
-                                        <p:column headerText="Ajouter Par" filterBy="#{documentIt.description}"  sortBy="#{documentIt.description}"  filterMatchMode="contains"    >
+                                        <p:column headerText="Description" filterBy="#{documentIt.description}"  sortBy="#{documentIt.description}"  filterMatchMode="contains"    >
                                             <h:outputText value="#{documentIt.description}" />
                                         </p:column>
                                         <p:column headerText="Opérations" style="width:150px">
@@ -273,11 +279,40 @@ and open the template in the editor.
                                 <p:commandButton value="Enregistrer" action="#{accidentTravailMb.saveOrUpdateDetailAt()}" class="btn active" />
                             </div>
                             <div class="col-lg-2">
-                                <p:commandButton value="Imprimer"  class="btn active" />
+                                <p:commandButton value="Imprimer" action="#{accidentTravailMb.imprimer()}"  class="btn active" />
                             </div>
                             <div class="col-lg-1"></div>
                         </div>
                         <br /><br />
+                        <!-- Information Description AT -->
+                        <p:panel id="id_hImprim" header="Historique d'impression" toggleable="true" 
+                                 toggleSpeed="500" closeSpeed="500"
+                                 widgetVar="id_hImprim" style="margin-bottom:20px">
+                             <h:panelGrid columns="1" cellpadding="10">
+                                 <p:dataTable id="tbl_hImprim" var="documentIt" value="#{accidentTravailMb.documentDetailAts}" 
+                                                 rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
+                                                 {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                                 {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                                 >
+                                        <p:column headerText="Date de Création" filterBy="#{documentIt.dateCreation}" sortBy="#{documentIt.dateCreation}" filterMatchMode="contains" >
+                                            <h:outputText value="#{documentIt.dateCreation}" ></h:outputText>
+                                        </p:column>
+                                        <p:column headerText="Titre"  filterBy="#{documentIt.titre}"  sortBy="#{documentIt.titre}"  filterMatchMode="contains"   >
+                                            <h:outputText value="#{documentIt.titre}"  />
+                                        </p:column>
+                                        <p:column headerText="Imprimé Par" filterBy="#{documentIt.creePar}"  sortBy="#{documentIt.creePar}"  filterMatchMode="contains"    >
+                                            <h:outputText value="#{documentIt.creePar}" />
+                                        </p:column>
+                                        <p:column headerText="Opérations" style="width:150px">
+                                            <p:commandButton icon="ui-icon-arrowthick-1-s"
+                                                             title ="Télecharger Document" 
+                                                             action="#{accidentTravailMb.downLoad(documentIt)}" 
+                                                             ajax="false" />
+                                        </p:column>
+                                    </p:dataTable>
+                             </h:panelGrid>
+                        </p:panel>
+                        
                     </div>
                 </h:form>
                     <p:dialog header="Ajouter Document" widgetVar="uploaderVar" width="40%" minHeight="50" >

@@ -4,19 +4,23 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui">
+
     <h:head>
         <title>TGCC-INTEGRATION</title>
         <meta charset="UTF-8"></meta>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" ></meta>
         <meta http-equiv="refresh" content="#{session.maxInactiveInterval};url=#{request.contextPath}/login.xhtml"/>
+
+
         <link rel="stylesheet" type="text/css" href="../resources/bower_components/bootstrap/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" type="text/css" href="../resources/bower_components/bootstrap/dist/css/bootstrap-theme.min.css" />
-        <link rel="stylesheet" type="text/css" href="../resources/css/main.css" />
-        <link href='https://fonts.googleapis.com/css?family=Lato:400,300' rel='stylesheet' type='text/css'/>
         <link rel="stylesheet" type="text/css" href="../resources/lib/font-awesome-4.3.0/css/font-awesome.min.css" />
+        <link href='https://fonts.googleapis.com/css?family=Lato:400,300' rel='stylesheet' type='text/css'/>
         <link rel="stylesheet" type="text/css" href="../resources/bower_components/bootstrap-submenu/dist/css/bootstrap-submenu.min.css" />
         <link rel="stylesheet" type="text/css" href="../resources/bower_components/bootstrap-submenu/dist/css/bootstrap-submenu.min.css.map" />
+        <link rel="stylesheet" type="text/css" href="../resources/css/main.css" />
         <link rel="icon" type="img/ico" href="../resources/img/logo.ico" />
+        <!--<link rel="stylesheet" type="text/css" href="../resources/css/wizard/wizard.css"/>-->
     </h:head>
 
     <h:body>
@@ -28,6 +32,7 @@
                 <div id="logo-zone">
                     <img class="logo-img center center-block" alt="logo-tgcc" src="../resources/img/logo.png" />
                 </div>
+
                 <div>
                     <ul class="sidebar-nav">
                         <li>
@@ -37,37 +42,36 @@
                                         <div class="row user_connected">
 
                                             <div class="col-lg-3 user"></div>
-                                            <div style="margin-left: -35px;color:#fff;" 
-                                                 class="col-lg-9">#{authentification.get_connected_user().nom} #{authentification.get_connected_user().prenom}</div>
+                                         <!--   <div style="margin-left: -35px;" class="col-lg-9">#{authentification.get_connected_user().mensuel.nom} #{authentification.get_connected_user().mensuel.prenom}</div>-->
+                                            <div style="margin-left: -35px;color:#fff" class="col-lg-9">#{authentification.get_connected_user().nom} #{authentification.get_connected_user().prenom}</div>
+
                                         </div>
                                     </a>
                                 </span>
                             </div>
                         </li>
-                        <!--                        <li >
-                                                    <a href="../projet/chantier.xhtml">Chantier 
-                                                        <div class="icon-arrow-menu"></div>
-                                                    </a>
-                                                </li>
-                        -->                        
+<!--                        <li>
+                            <a href="../projet/chantier.xhtml">Chantier 
+                                <div class="icon-arrow-menu"></div>
+                            </a>
+                        </li>
+-->
                         <li >
                             <a href="../achat/nouvelledemandeappro.xhtml">Achat 
                                 <div class="icon-arrow-menu"></div>
                             </a>
-                        </li>
+                        </li> 
                         <li>
-                            <div>
-                                <a href="../evol/salaries.xhtml">Quinzainiers 
-                                    <div class="icon-arrow-menu"></div>
-                                </a>
-                            </div>
-                        </li>
-                        <li class="active">
+                            <a href="../evol/salaries.xhtml">Quinzainiers 
+                                <div class="icon-arrow-menu"></div>
+                            </a>
+                        </li> 
+                        <li>
                             <a href="../mensuel/mensuel.xhtml">Mensuels
                                 <div class="icon-arrow-menu"></div>
                             </a>
-                        </li>
-                        <li>
+                        </li>    
+                        <li class="active">
                             <a href="../dossiersMedicaux/dossiersMedicaux.xhtml">Dossiers Médicaux 
                                 <div class="icon-arrow-menu"></div>
                             </a>
@@ -83,7 +87,6 @@
                             </a>
                         </li>
 
-
                         <li>
                             <a href="../stock/stock.xhtml">Stock
                                 <div class="icon-arrow-menu"></div>
@@ -95,19 +98,23 @@
                                 <div class="icon-arrow-menu"></div>
                             </a>
                         </li>
-
-                        <li>
+                        
+                         <li>
                             <a href="../config/Gestion_Citerne.xhtml">Configuration
                                 <div class="icon-arrow-menu"></div>
                             </a>
                         </li>
                     </ul>
                 </div>
+
             </div>
             <!-- /#sidebar-wrapper -->
 
             <!-- Page Content -->
             <div id="page-content-wrapper">
+
+
+
                 <div class="menu-vertical">
                     <div class="row">
 
@@ -117,133 +124,145 @@
                                     <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
                                 </div>
                             </a>
+
                         </div>
+
+
+
                         <div class="col-lg-9 col-sm-9 col-xs-9 col-md-9">
                             <div class="row nav-row">
                                 <ul class="nav nav-pills nav-tgcc" role="menu" aria-labelledby="dropdownMenu">
                                     <li class="nav-divider nav-divider-atl-header"></li>
-                                    <li class="nav-tgcc vertical-center" role="maintenance">
+                                    <li class="nav-tgcc  vertical-center" role="maintenance">
                                         <a class="trigger right-caret" tabindex="0" data-toggle="dropdown" aria-expanded="false">
                                             <span class="menu-logo"><img src="../resources/img/Mensuels.png" /></span> 
-                                            <span class="text-menu visible-lg visible-md">Mensuels</span> 
+                                            <span class="text-menu visible-lg visible-md">Salaries</span> 
                                             <span class="fa fa-caret-down fa-fw" ></span>
                                         </a>
                                         <ul class="dropdown-menu">
-                                            <li > <a href="mensuel.xhtml" tabindex="0">Liste des mensuels</a></li>
+                                            <li > <a href="salaries.xhtml" tabindex="0">Consultation</a></li>
                                             <!--<li > <a href="pointageMensuelQuinzinier.xhtml" tabindex="0">Pointage Mensuel Type Quinzinier</a></li>-->
-                                            <li> <a href="pointage.xhtml" tabindex="0">Déclaration de pointage</a></li>
-                                            <li> <a href="mensuelInActif.xhtml" tabindex="0">Mensuel inActif</a></li>
+                                            <li> <a href="nouveausalarie.xhtml" tabindex="0">Nouveau Salarie</a></li>
+                                            <li> <a href="affectSalarieSupp.xhtml" tabindex="0">Affecter Supérieur Hiérarchique</a></li>
+                                            <li> <a href="consultSalarieSupp.xhtml" tabindex="0">Consulter Supérieur Hiérarchique </a></li>
                                         </ul>
                                     </li>
+
+
                                     <li class="nav-divider nav-divider-atl-header"></li>
-                                    <li class="dropdown nav-tgcc vertical-center" role="maintenance">
+
+                                    <li class="nav-tgcc  vertical-center" role="maintenance">
                                         <a class="trigger right-caret" tabindex="0" data-toggle="dropdown" aria-expanded="false">
-                                            <span class="menu-logo"><img src="../resources/img/affecter.png" /></span>    
-                                            <span class="text-menu visible-lg visible-md">Elements affectés</span>
-                                            <span class="fa fa-caret-down fa-fw" ></span>                                                
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li class="dropdown-submenu">
-                                                <a class="trigger right-caret dropdown-toggle" tabindex="0" data-hover="dropdown" data-delay="100" data-close-others="true" data-toggle="dropdown" aria-expanded="false">Voiture</a>
-                                                <ul class="dropdown-menu sub-menu">
-                                                    <li>
-                                                        <a href="affectVoiture.xhtml" tabindex="-1" >Affecter</a>
-                                                        <a href="consultVoitureSalarie.xhtml" tabindex="-1" >Consulter</a>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                            <li class="dropdown-submenu">
-                                                <a class="trigger right-caret dropdown-toggle" tabindex="0" data-hover="dropdown" data-delay="100" data-close-others="true" data-toggle="dropdown" aria-expanded="false">Clé 3G</a>
-                                                <ul class="dropdown-menu sub-menu">
-                                                    <li>
-                                                        <a href="affecterModem3gMensuel.xhtml" tabindex="0">Affecter</a>
-                                                        <a href="consulter3g.xhtml" tabindex="-1" >Consulter</a>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                            <li class="dropdown-submenu">
-                                                <a class="trigger right-caret dropdown-toggle" tabindex="0" data-hover="dropdown" data-delay="100" data-close-others="true" data-toggle="dropdown" aria-expanded="false">Ordinateur</a>
-                                                <ul class="dropdown-menu sub-menu">
-                                                    <li>
-                                                        <a href="affectOrdinateurs.xhtml" tabindex="0">Affecter</a>
-                                                        <a href="consultOrdinateurs.xhtml" tabindex="-1" >Consulter</a>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                            <li class="dropdown-submenu">
-                                                <a class="trigger right-caret dropdown-toggle" tabindex="0" data-hover="dropdown" data-delay="100" data-close-others="true" data-toggle="dropdown" aria-expanded="false">Loyer</a>
-                                                <ul class="dropdown-menu sub-menu">
-                                                    <li>
-                                                        <a href="affectLoyer.xhtml" tabindex="0">Affecter</a>
-                                                        <a href="consultLoyer.xhtml" tabindex="-1" >Consulter</a>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                            <li class="dropdown-submenu">
-                                                <a class="trigger right-caret dropdown-toggle" tabindex="0" data-hover="dropdown" data-delay="100" data-close-others="true" data-toggle="dropdown" aria-expanded="false">Téléphone</a>
-                                                <ul class="dropdown-menu sub-menu">
-                                                    <li>
-                                                        <a href="telephone.xhtml" tabindex="0">Affecter</a>
-                                                        <a href="consultationtelephone.xhtml" tabindex="-1" >Consulter</a>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                            <li class="dropdown-submenu">
-                                                <a class="trigger right-caret dropdown-toggle" tabindex="0" data-hover="dropdown" data-delay="100" data-close-others="true" data-toggle="dropdown" aria-expanded="false">Carte Gasoil</a>
-                                                <ul class="dropdown-menu sub-menu">
-                                                    <li>
-                                                        <a href="affectCarteGasoil.xhtml" tabindex="0">Affecter</a>
-                                                        <a href="consultCarteGS.xhtml" tabindex="-1" >Consulter</a>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li class="nav-divider nav-divider-atl-header"></li>
-                                    <li class="nav-tgcc vertical-center" role="user">
-                                        <a class="trigger right-caret" tabindex="0" data-toggle="dropdown" aria-expanded="false">
-                                            <span class="menu-logo"><img src="../resources/img/Gestion.png" /></span>    
-                                            <span class="text-menu visible-lg visible-md">GESTION ELEMENT</span>
+                                            <span class="menu-logo"><img src="../resources/img/pointage.png" /></span> 
+                                            <span class="text-menu visible-lg visible-md">Pointage</span> 
                                             <span class="fa fa-caret-down fa-fw" ></span>
                                         </a>
                                         <ul class="dropdown-menu">
-                                            <li><a href="CreationVoiture.xhtml" tabindex="0">Voiture</a></li> 
-                                            <li><a href="GestionModem3G.xhtml" tabindex="0">Modem 3G</a></li>
-                                            <li><a href="gestionOrdinateur.xhtml" tabindex="0">Ordinateur</a></li>
-                                            <li><a href="gestionTelephone.xhtml" tabindex="0">Téléphone</a></li>
-                                            <li><a href="cartesGazoile.xhtml" tabindex="0">Carte Gasoil</a></li>
-                                            <li><a href="caisse.xhtml" tabindex="0">Caisse RH</a></li>
+                                            <li ><a href="pointageSalarie.xhtml" tabindex="0">Pointage Par Salarie</a></li>
+                                            <li> <a href="pointageEntre.xhtml" tabindex="0">Pointage d'entrée</a></li>
+                                            <li> <a href="pointageSortie.xhtml" tabindex="0">Pointage de Sortie</a></li>
+                                            <li> <a href="heuressupplementaires.xhtml" tabindex="0">Heures Supplementaires</a></li>  
+                                            <li class="dropdown-submenu">
+                                                <a class="trigger right-caret" data-hover="dropdown" data-delay="100" 
+                                                   data-close-others="true" tabindex="0" data-toggle="dropdown" aria-expanded="false">Présences</a>
+                                                <ul class="dropdown-menu sub-menu">
+                                                    <li>
+                                                        <a href="presenceSalarie.xhtml" tabindex="0">Présences</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="absences.xhtml" tabindex="1">Absences</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="importation.xhtml" tabindex="1">Importation</a>
+                                                    </li>
+
+                                                </ul>
+                                            </li>
+                                            <li class="dropdown-submenu">
+                                                <a class="trigger right-caret" data-hover="dropdown" data-delay="100" 
+                                                   data-close-others="true" tabindex="0" data-toggle="dropdown" aria-expanded="false">Pointage par Lot</a>
+                                                <ul class="dropdown-menu sub-menu">
+                                                    <li>
+                                                        <a href="pointageLot.xhtml" tabindex="0">Pointage</a>
+                                                    </li>
+                                                     <li>
+                                                        <a href="fichepointages.xhtml" tabindex="0">Consulter fiches</a>
+                                                    </li>
+                                                  
+                                                </ul>
+                                            </li>
                                         </ul>
                                     </li>
                                     <li class="nav-divider nav-divider-atl-header"></li>
+
+
+
+
                                     <li class="nav-tgcc vertical-center" role="parametre">
+
                                         <a class="trigger right-caret" tabindex="0" data-toggle="dropdown" aria-expanded="false">
                                             <span class="menu-logo"><img src="../resources/img/Administration.png" /></span>    
-                                            <span class="text-menu visible-lg visible-md">Absences</span>
+                                            <span class="text-menu visible-lg visible-md">Parametrages</span>
                                             <span class="fa fa-caret-down fa-fw" ></span>
                                         </a>
+
                                         <ul class="dropdown-menu">
-                                            <li><a href="absenceValide.xhtml" tabindex="0">Absence  - validation </a></li>
-                                            <li><a href="valideAbsenceMensuel.xhtml" tabindex="0">Absence - Consultation</a></li>
-                                            <li><a href="absenceAjout.xhtml" tabindex="0">Absence - Ajout</a></li>
+                                          
+                                            <li > <a href="hierarchieChantier.xhtml" >Organigramme</a></li>
+                                            <li > <a href="lots.xhtml" >Lot Fonction</a></li>
+                                            <li > <a href="salarieChefEquipe.xhtml" >Associer Zone Chef Equipe</a></li>
+                                            <!--<li > <a href="zonesChantier.xhtml" >Consulter Zone - Chef Equipe</a></li>-->
                                         </ul>
-                                    </li>                                <li class="nav-divider nav-divider-atl-header"></li>
-
-                                    <li class="nav-tgcc vertical-center" role="maintenance">
-
-                                        <a class="trigger right-caret" tabindex="0" data-toggle="dropdown" aria-expanded="false">
-                                            <span class="menu-logo"><img src="../resources/img/icon-maintenance.png" /></span>    
-                                            <span class="text-menu visible-lg visible-md">ADMINISTRATION</span>
-
-                                        </a>
-
-
-
 
                                     </li>
+                                    
+                                    <li class="nav-divider nav-divider-atl-header"></li>
+
+                                    <li class="nav-tgcc  vertical-center" role="parametre">
+                                        <a class="trigger right-caret" tabindex="0"  aria-expanded="false" href="badges.xhtml">
+                                            <span class="menu-logo"><img src="../resources/img/icon-badge.png" /></span>    
+                                            <span class="text-menu visible-lg visible-md">Badges</span>
+                                        </a>
+                                    </li>
+
+                                  <li class="nav-divider nav-divider-atl-header"></li>
+                               
+                                <li class="dropdown nav-tgcc vertical-center" role="maintenance">
+                                      <a class="trigger right-caret" tabindex="0" data-toggle="dropdown" aria-expanded="false">
+                                          <span class="menu-logo"><img src="../resources/img/icon-maintenance.png" /></span>    
+                                          <span class="text-menu visible-lg visible-md">ADMINISTRATION</span>
+                                          <span class="fa fa-caret-down fa-fw" ></span>                                                
+                                      </a>
+                                      <ul class="dropdown-menu">
+                                          <li class="dropdown-submenu">
+                                              <a class="trigger right-caret dropdown-toggle" tabindex="0" data-hover="dropdown" data-delay="100" data-close-others="true" data-toggle="dropdown" aria-expanded="false">Loyer</a>
+                                              <ul class="dropdown-menu sub-menu">
+                                                  <li>
+                                                      <a href="affectLoyer.xhtml" tabindex="0">Affecter</a>
+                                                      <a href="consultLoyer.xhtml" tabindex="-1" >Consulter</a>
+                                                  </li>
+                                              </ul>
+                                          </li>
+                                           <li><a href="caisse.xhtml" tabindex="0">Caisse RH</a></li>
+                                      </ul>
+                                  </li>
+
                                 </ul>
                             </div>
                         </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
                         <form id="form1" action="${request.contextPath}/j_spring_security_logout" method="post">
                             <div class="col-lg-2 col-sm-2 col-xs-2 col-md-2">
                                 <div class="logout">
@@ -260,14 +279,12 @@
                     </div>
                 </div>
 
-
                 <div class="arborescence">
-                    <h6><ui:insert name="arborescence">Content</ui:insert></h6>
+                    <h6><ui:insert name="arborescence"></ui:insert></h6>
 
                 </div>
 
                 <div class="content">
-                    <!--<p:ajaxStatus  oncomplete="updateDate();"/>-->
                     <ui:insert name="content">Content</ui:insert>
                     <p:dialog widgetVar="alerteDialog" closable="true">
                         <div class="alert alert-danger alert-dismissable">
@@ -277,48 +294,33 @@
                         </div>
                     </p:dialog>
                 </div>
-
-                <!--                <br />  
-                                <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">T</a>-->
             </div>
-            <!-- /#page-content-wrapper -->
 
         </div>
-        <!-- /#wrapper -->
-
-        <!-- jQuery -->
-        <!--<script src="resources/js/jquery.js"></script>-->
-
-        <!-- Bootstrap Core JavaScript -->
-        <!--        <script src="../resources/js/bootstrap.min.js"></script>-->
-
-        <!-- jQuery -->
-        <!--<script type="text/javascript" src="resources/bower_components/jquery/dist/jquery.min.js"></script>-->        
 
         <!-- Bootstrap Core JavaScript -->
         <script src="../resources/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
         <script src="../resources/bower_components/bootstrap-submenu/dist/js/bootstrap-submenu.min.js" ></script>
         <script src="../resources/bower_components/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" ></script>
-
+        <!--<script type="text/javascript" src="../resources/css/wizard/wizard.js"></script>-->
         <!-- Menu Toggle Script -->
-        <script>
+        <script type="text/javascript">
                                             $("#menu-toggle").click(function (e) {
                                                 e.preventDefault();
                                                 $("#wrapper").toggleClass("toggled");
                                             });
-
                                             $('[data-submenu]').submenupicker();
-
                                             $(".dropdown-submenu").click(function (event) {
                                                 // stop bootstrap.js to hide the parents
-                                                event.stopPropagation();
-                                                // hide the open children
+                                                // event.stopPropagation();
+                                                // // hide the open children
                                                 $(this).find(".dropdown-submenu").removeClass('open');
-                                                // add 'open' class to all parents with class 'dropdown-submenu'
+                                                //// add 'open' class to all parents with class 'dropdown-submenu'
                                                 $(this).parents(".dropdown-submenu").addClass('open');
-                                                // this is also open (or was)
+                                                //// this is also open (or was)
                                                 $(this).toggleClass('open');
                                             });
+                                            $('.dropdown-toggle').dropdownHover();
                                             $("input[id$='filter']").on('keypress', function (event) {
                                                 if (event.keyCode === 13) {
                                                     event.preventDefault();
@@ -342,14 +344,6 @@
 //                                                    console.log('annuler modifier date manualement ');
 //                                                });
 //                                            }
-
-                                            $('li.vertical-center a').click(function () {
-                                                $('li.vertical-center').removeClass("active");
-                                                $(this).parent().addClass("active");
-                                                console.log("object ", $(this));
-                                                console.log("object parent", $(this).parent());
-                                            });
-
         </script>
 
 

@@ -47,6 +47,11 @@ and open the template in the editor.
                         <br />
                         <p:growl id="msgsM" />
                         <p:commandButton class="btn btn-switch active" value="Ajouter" icon="ui-icon-plus" onclick="PF('dlg_Ajouter').show();" />
+                        
+                        <h:commandLink>
+                            <p:commandButton class="btn btn-switch active"  value="Exporter" icon="ui-icon-arrowthickstop-1-s"/>
+                            <p:dataExporter  type="xls" target=":form:tbl" fileName="Voitures"  pageOnly="false"  />
+                        </h:commandLink>
                         <br/><br/>
                         <p:dataTable id="tbl" var="voitureIt" value="#{gestion_voitureMb.voitures}"
                                      rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
@@ -73,7 +78,7 @@ and open the template in the editor.
                             <p:column headerText="Affectation" filterBy="#{voitureIt.affect}"  style="width:200px; " filterMatchMode="contains" >
                                 <h:outputText value="#{(voitureIt.affect==true)?((voitureIt.chantier != null)? voitureIt.chantier.code :(gestion_voitureMb.chantierBySalaryID(voitureIt.salarie.id))):'Non affecté'}"/>
                             </p:column>
-                            <p:column headerText="Actions" style="width: 200px;"> 
+                            <p:column headerText="Actions" style="width: 200px;" exportable="false"> 
                                 <p:commandButton  icon="ui-icon-trash"  update=":form:tbl,:pannel" actionListener="#{gestion_voitureMb.delete(voitureIt)}" >
                                     <p:confirm header="Confirmation" message=" Voulez Vous Vraiment Supprimer Cette Voiture ?" icon="ui-icon-alert" />
                                 </p:commandButton>
@@ -208,6 +213,7 @@ and open the template in the editor.
                                     <f:selectItem itemLabel="TGCC" itemValue="TGCC" />
                                     <f:selectItem itemLabel="Personnelle" itemValue="Personnelle" />
                                     <f:selectItem itemLabel="Location" itemValue="Location" />
+                                    <f:selectItem itemLabel="ALD" itemValue="ALD" />
                                 </p:selectOneMenu>
                                 <h:outputText value="Statut" />
                                 <p:selectOneMenu  value="#{gestion_voitureMb.voitureSelected.statut}" style="width:125px">
@@ -280,6 +286,7 @@ and open the template in the editor.
                                     <f:selectItem itemLabel="TGCC" itemValue="TGCC" />
                                     <f:selectItem itemLabel="Personnelle" itemValue="Personnelle" />
                                     <f:selectItem itemLabel="Location" itemValue="Location" />
+                                    <f:selectItem itemLabel="ALD" itemValue="ALD" />
                                 </p:selectOneMenu>
                             </h:panelGrid>
                             <p:commandButton value="Ajouter" action="#{gestion_voitureMb.ajouterVoiture()}"

@@ -59,7 +59,12 @@ http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
         <intercept-url pattern="/evol/consultLoyerChantier.xhtml"         access="hasAnyRole('consulter Loyer Chantier','admin')" />  
         <intercept-url pattern="/evol/histoLoyerS.xhtml"                  access="hasAnyRole('historique Loyer Sal','admin')" />  
         <intercept-url pattern="/evol/caisse.xhtml"                       access="hasAnyRole('Caisse','admin')" />      
-        <intercept-url pattern="/evol/mensuel.xhtml"                      access="hasAnyRole('Affectation Mensuelle','admin')" />        
+        <intercept-url pattern="/evol/mensuel.xhtml"                      access="hasAnyRole('Affectation Mensuelle','admin')" />       
+        
+        
+         
+        <!-- Dossier Medical -->
+        <intercept-url pattern="/dossiersMedicaux/dossiersMedicaux.xhtml"                      access="hasAnyRole('Dossier Medical','admin')" />        
 
         
         
@@ -101,9 +106,11 @@ http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
         <intercept-url pattern="/engin/enginArchive.xhtml"  access= "hasAnyRole('parc_engin', 'admin')" />
         <intercept-url pattern="/engin/enginDept.xhtml"     access= "hasAnyRole('parc_engin', 'admin')" />
         <intercept-url pattern="/engin/panne.xhtml"         access= "hasAnyRole('maintenance', 'admin')" />
-        <intercept-url pattern="/engin/Citerne.xhtml"       access= "hasAnyRole('citerne', 'admin')" />
         <intercept-url pattern="/engin/pointage.xhtml"      access= "hasAnyRole('pointage_des_engins','admin')" />
         <intercept-url pattern="/engin/index.xhtml"         access= "hasAnyRole('pointage_des_engins','admin')" />
+        
+        <intercept-url pattern="/engin/Citerne.xhtml"       access= "hasAnyRole('citerne', 'admin')" />
+        <intercept-url pattern="/engin/Gestion_Citerne.xhtml"       access= "hasAnyRole('Gestion Citerne', 'admin')" />
         
         
         <intercept-url pattern="/stock/stock.xhtml"                     access="hasAnyRole('stock','admin')" />

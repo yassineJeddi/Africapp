@@ -20,8 +20,15 @@ http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
         <intercept-url pattern="/administration/**"  access="hasRole('admin')" />
         <intercept-url pattern="/config/**"          access="hasRole('admin')" /> 
         <intercept-url pattern="/mensuel/**"         access="hasRole('admin')" /> 
-        <intercept-url pattern="/at/**"              access="hasRole('admin')" /> 
         <intercept-url pattern="/mensuel/**"         access="hasRole('mensuel')" /> 
+        
+        
+        
+        <!-- AT -->
+        <intercept-url pattern="/at/at.xhtml"                      access="hasAnyRole('At','admin')" />  
+        <intercept-url pattern="/at/gestion.xhtml"                 access="hasAnyRole('Gestion At','admin')" /> 
+        <intercept-url pattern="/at/detailAt.xhtml"                access="hasAnyRole('Detail At','admin')" />  
+        
         
         <intercept-url pattern="/achat/achatBL.xhtml"               access="hasAnyRole('admin','liste des bons de livraison','EMAIL_CONTRIBUTORS')" />	
         <intercept-url pattern="/achat/newBL.xhmtl"                 access="hasAnyRole('admin','valider un bon de livraison','EMAIL_CONTRIBUTORS')" />		
@@ -66,12 +73,6 @@ http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
         <!-- Dossier Medical -->
         <intercept-url pattern="/dossiersMedicaux/dossiersMedicaux.xhtml"                      access="hasAnyRole('Dossier Medical','admin')" />        
 
-        
-        
-        <!-- AT -->
-        <intercept-url pattern="/at/at.xhtml"                       access="hasAnyRole('AT','Ajouter_AT','admin')" />  
-        <intercept-url pattern="/at/gestion.xhtml"                  access="hasAnyRole('AT','Gerer_AT','admin')" />  
-        
         <!--
         <intercept-url pattern="/mensuel/mensuel.xhtml"                 access="hasAnyRole('mensuel')" />
         <intercept-url pattern="/mensuel/pointage.xhtml"                access="hasAnyRole('mensuel')" />

@@ -25,8 +25,8 @@ and open the template in the editor.
                     <div class="ui-fluid">
                         <p:growl id="msgs" showDetail="true" />
                         <p:messages id="msgsP" showDetail="true" autoUpdate="true" closable="true" />
-                        <p:panel id="basic" header="Déclaration Accident de travail" style="margin-bottom:20px">
-                            <h:panelGrid columns="2" columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2,ui-g-12 ui-md-4"
+                        <p:panel id="basic" header="Déclaration Accident de travail" >
+                            <h:panelGrid columns="2" columnClasses="ui-g-12 ui-md-5,ui-g-12 ui-md-4"
                                          styleClass="ui-panelgrid-blank ui-fluid"
                                          cellpadding="10">
                                  <h:outputText value="Chantier :" />
@@ -36,7 +36,7 @@ and open the template in the editor.
                                     <f:selectItems value="#{accidentTravailMb.chantiers}" var="C" itemLabel="#{C.code.trim()}" itemValue="#{C.id}" />
                                     <p:ajax listener="#{accidentTravailMb.listSalarieByChantier()}" update=":forme:salarieAt" />
                                 </p:selectOneMenu>
-                                <h:outputText value="Salarier :" />
+                                <h:outputText value="Salarie :" />
                                 <p:selectOneMenu filter="true" filterMatchMode="contains" id="salarieAt"
                                                  value="#{accidentTravailMb.idSalarie}" required="true">
                                     <f:selectItem itemLabel=""  itemValue="-1" />
@@ -44,12 +44,18 @@ and open the template in the editor.
                                     <p:ajax listener="#{accidentTravailMb.selectSalarieByChantier()}" update=":forme:salarieFancAt" />
                                 </p:selectOneMenu>
                                  <h:outputText value="Fonction : " /><h:outputLabel value="#{accidentTravailMb.salarie.fonction.fonction}" id="salarieFancAt"/>
-                                 <h:outputText value="Date:" /> <p:calendar value="#{accidentTravailMb.accidentTravail.dateAccident}" pattern="MM/dd/yyyy HH:mm:ss" />
+                                 <h:outputText value="Date:" /> <p:calendar value="#{accidentTravailMb.accidentTravail.dateAccident}" pattern="MM/dd/yyyy HH:mm:ss" maxdate="#{accidentTravailMb.verifDateAt}" />
                                  <h:outputText value="Lieu :" /> <p:inputText value="#{accidentTravailMb.accidentTravail.lieu}" />
-                                 <h:outputText value="Description :" /> <p:inputText value="#{accidentTravailMb.accidentTravail.description}" /> 
+                                 <h:outputText value="Description :" /> 
+                                 <p:inputTextarea id="descriptionSecourInterne" rows="2" cols="50" value="#{accidentTravailMb.accidentTravail.description}" />
                                  <h:outputText value="Chef de Projet :" /> <p:inputText value="#{accidentTravailMb.accidentTravail.chefProjet}" /> 
                                  <h:outputText value="Chef de chantier :" /> <p:inputText value="#{accidentTravailMb.accidentTravail.chefChantier}" /> 
-                                 <p:commandButton value="Valider" action="#{accidentTravailMb.addAT()}" update="@this, :forme"/>
+                                 <h:outputText value="Tele Personne a contacter :" /> <p:inputText value="#{accidentTravailMb.accidentTravail.telContacter}" /> 
+                                 <p:selectBooleanCheckbox itemLabel="Accident Mortel" value="#{accidentTravailMb.accidentTravail.mortel}"/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="1" columnClasses="ui-g-12 "
+                                         styleClass="ui-panelgrid-blank ui-fluid" >
+                                <p:commandButton value="Valider" action="#{accidentTravailMb.addAT()}" class="btn" update=" :forme"/>
                             </h:panelGrid>
                         </p:panel>
                     </div>

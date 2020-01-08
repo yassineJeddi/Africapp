@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import org.springframework.security.core.Authentication;
 
 /**
  *
@@ -36,12 +37,36 @@ public class AccidentTravail implements Serializable {
     String chefProjet ;
     @Column(name = "CHEFCHANTIER")
     String chefChantier ; 
+    @Column(name = "NBJARRET")
+    Integer nbjArret ; 
+    @Column(name = "NBJPAYE")
+    Integer nbjPaye ; 
+    @Column(name = "DATERETOUR")
+    Date dateRetour ; 
+    @Column(name = "MTNPAYE")
+    Double mtnPaye ; 
+    @Column(name = "MORTEL")
+    Boolean mortel =Boolean.FALSE;
+    @Column(name = "VALIDRH")
+    Boolean valideRH =Boolean.FALSE;
+    @Column(name = "VALIDQHSE")
+    Boolean valideQhse =Boolean.FALSE;
+    @Column(name = "TELCONTACTER")
+    String telContacter ; 
+    @Column(name = "DATECREATION")
+    Date dateCreation ; 
+    @Column(name = "CERTIFICATINITIAL")
+    Boolean certificatInitial =Boolean.FALSE;
+    
     
     @ManyToOne
     Chantier chantier;
     
     @ManyToOne
     Salarie salarie;
+    
+    @ManyToOne
+    Utilisateur creePar;
 
     public String getChefProjet() {
         return chefProjet;
@@ -98,6 +123,54 @@ public class AccidentTravail implements Serializable {
     public void setSalarie(Salarie salarie) {
         this.salarie = salarie;
     }  
+
+    public Integer getNbjArret() {
+        return nbjArret;
+    }
+
+    public void setNbjArret(Integer nbjArret) {
+        this.nbjArret = nbjArret;
+    }
+
+    public Integer getNbjPaye() {
+        return nbjPaye;
+    }
+
+    public void setNbjPaye(Integer nbjPaye) {
+        this.nbjPaye = nbjPaye;
+    }
+
+    public Date getDateRetour() {
+        return dateRetour;
+    }
+
+    public void setDateRetour(Date dateRetour) {
+        this.dateRetour = dateRetour;
+    }
+
+    public Double getMtnPaye() {
+        return mtnPaye;
+    }
+
+    public void setMtnPaye(Double mtnPaye) {
+        this.mtnPaye = mtnPaye;
+    }
+
+    public Boolean getValideRH() {
+        return valideRH;
+    }
+
+    public void setValideRH(Boolean valideRH) {
+        this.valideRH = valideRH;
+    }
+
+    public Boolean getValideQhse() {
+        return valideQhse;
+    }
+
+    public void setValideQhse(Boolean valideQhse) {
+        this.valideQhse = valideQhse;
+    }
     
     
 
@@ -108,6 +181,49 @@ public class AccidentTravail implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public Boolean getMortel() {
+        return mortel;
+    }
+
+    public void setMortel(Boolean mortel) {
+        this.mortel = mortel;
+    }
+
+    public String getTelContacter() {
+        return telContacter;
+    }
+
+    public void setTelContacter(String telContacter) {
+        this.telContacter = telContacter;
+    }
+
+    public Utilisateur getCreePar() {
+        return creePar;
+    }
+
+    public void setCreePar(Utilisateur creePar) {
+        this.creePar = creePar;
+    }
+
+    public Date getDateCreation() {
+        return dateCreation;
+    }
+
+    public void setDateCreation(Date dateCreation) {
+        this.dateCreation = dateCreation;
+    }
+
+    public Boolean getCertificatInitial() {
+        return certificatInitial;
+    }
+
+    public void setCertificatInitial(Boolean certificatInitial) {
+        this.certificatInitial = certificatInitial;
+    }
+
+
+    
 
     @Override
     public int hashCode() {

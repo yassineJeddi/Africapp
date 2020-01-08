@@ -22,6 +22,7 @@ public interface IAccidentTravailDao {
     public List<AccidentTravail> allAccidentTravail();
     public AccidentTravail allAccidentTravailById(Long id);
     public List<AccidentTravail> allAccidentTravailByChantier(Chantier c);
+    public List<AccidentTravail> allAccidentTravailByListChantier(List<Chantier> c);
     public List<AccidentTravail> allAccidentTravailBySalarie(Salarie s);
     
     

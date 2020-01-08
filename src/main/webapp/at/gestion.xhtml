@@ -10,9 +10,10 @@ and open the template in the editor.
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"      
-
+          
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
     <h:head>
+        <link rel="stylesheet" type="text/css" href="../resources/css/main.css" />
         <title>Voiture</title>
     </h:head>
     <body>
@@ -21,15 +22,23 @@ and open the template in the editor.
                 <h:form id="formeSolde">RH > Accident Travail</h:form>
             </ui:define>
             <ui:define name="content">
+                <p:blockUI block="forme" widgetVar="block">
+                    Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                </p:blockUI>
                 <h:form id="forme">
                     <div class="ui-fluid">
                         <p:growl id="msgs" showDetail="true" />
-                        <p:panel id="basic" header="" style="margin-bottom:20px">
+                        <p:spacer />
                             <h:commandButton value="Charger " action="#{accidentTravailMb.chargerAccident()}"  />
                             <h:panelGrid  
                                          styleClass="ui-panelgrid-blank ui-fluid"
                                          cellpadding="10">
-                                   <p:dataTable var="at" value="#{accidentTravailMb.accidentTravails}" widgetVar="atTable" emptyMessage="Aucun mot trouvé" >
+                                   <p:dataTable var="at" value="#{accidentTravailMb.accidentTravails}"
+                                                id="atTable" widgetVar="atTable" emptyMessage="Aucun mot trouvé"
+                                                rows="5"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                                {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                                {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                                >
                                     <f:facet name="Entête">
                                         <p:outputPanel>
                                             <h:outputText value="Chercher dans touts les champs :" />
@@ -37,30 +46,59 @@ and open the template in the editor.
                                         </p:outputPanel>
                                     </f:facet>
                                        
-                                    <p:column headerText="N°" filterBy="#{at.id}"  filterMatchMode="contains" >
+                                    <p:column headerText="N°" filterBy="#{at.id}"  filterMatchMode="contains"  >
                                         <h:outputText value="#{at.id}" />
                                     </p:column> 
-                                    <p:column headerText="Chantier" filterBy="#{at.chantier.code}"  filterMatchMode="contains" >
+                                    <p:column headerText="Chantier At" filterBy="#{at.chantier.code}"  filterMatchMode="contains" >
                                         <h:outputText value="#{at.chantier.code}" />
                                     </p:column> 
-                                    <p:column headerText="Salarie" filterBy="#{at.salarie.cin.trim()} | #{at.salarie.matricule.trim()} | #{at.salarie.nom.trim()} #{at.salarie.prenom.trim()}"  filterMatchMode="contains" >
-                                        <h:outputText value="#{at.salarie.cin.trim()} | #{at.salarie.matricule.trim()} | #{at.salarie.nom.trim()} #{at.salarie.prenom.trim()}" />
+                                    <p:column headerText="Victime" filterBy="#{at.salarie.cin.trim()} | #{at.salarie.matricule.trim()} | #{at.salarie.nom.trim()} #{at.salarie.prenom.trim()}"  filterMatchMode="contains" >
+                                        <h:outputText value="#{at.salarie.cin.trim()} | #{at.salarie.matricule.trim()} | #{at.salarie.nom.trim()} #{at.salarie.prenom.trim()} |  #{at.salarie.fonction.fonction.trim() }" />
                                     </p:column> 
-                                    <p:column headerText="Date" filterBy="#{at.dateAccident}"  filterMatchMode="contains" >
+                                    <p:column headerText="Date At" filterBy="#{at.dateAccident}"  filterMatchMode="contains" >
                                            <h:outputText value="#{at.dateAccident}" />
                                     </p:column> 
+                                       <p:column headerText="Jours Arret" filterBy="#{at.nbjArret}"  filterMatchMode="contains" >
+                                           <h:outputText value="#{at.nbjArret}" />
+                                    </p:column> 
+                                       <p:column headerText="Date de reprise" filterBy="#{at.dateRetour}"  filterMatchMode="contains" >
+                                           <p:calendar value="#{at.dateRetour}" pattern="yyyy-MM-dd" disabled="true" />
+                                    </p:column> 
                                     <p:column headerText="Action" >
-                                           <p:commandButton icon="ui-icon-document-b" 
-                                                            oncomplete="PF('dlg_detailAccident').show()" 
-                                                            title="Détail accident" 
-                                                            class="btn btn-sm"
-                                                            actionListener="#{accidentTravailMb.detailAccident(at)}"
-                                                            update=":forme,:forme:form_detailAccident" 
-                                                            immediate="true" />
-                                           <p:commandButton icon="ui-icon-clock" 
-                                                            class="btn btn-sm"
-                                                            title="Suivi accident" 
-                                                            actionListener="#{accidentTravailMb.redirectEnginDetAT(at)}" />
+                                        <div class="row">
+                                            <div class="col-sm-4">
+                                                <p:commandButton icon="ui-icon-document-b" 
+                                                                 oncomplete="PF('dlg_detailAccident').show()" 
+                                                                 title="Détail accident" 
+                                                                 actionListener="#{accidentTravailMb.detailAccident(at)}"
+                                                                 update=":forme,:forme:form_detailAccident" 
+                                                                 immediate="true" />
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <p:commandButton icon="ui-icon-clock" 
+                                                                 title="Rapport AT" 
+                                                                 actionListener="#{accidentTravailMb.redirectEnginDetAT(at)}" />
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <p:commandButton icon="ui-icon-suitcase" 
+                                                                 title="Certificats" 
+                                                                 actionListener="#{accidentTravailMb.ChargerAccidentForGestion(at)}"
+                                                                 oncomplete="PF('dlg_CertificatAccident').show()"
+                                                                 update=":form_CertificatAccident:tbl_CertificatAccident" />
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <p:commandButton icon="	ui-icon-battery-2" 
+                                                                 title="Quittances"
+                                                                 actionListener="#{accidentTravailMb.ChargerAccidentForGestion(at)}"
+                                                                 oncomplete="PF('dlg_QuittanceAccident').show()"    />
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <p:commandButton icon="	ui-icon-folder-open" 
+                                                                title="Document AT" 
+                                                                actionListener="#{accidentTravailMb.ChargerAccidentForGestion(at)}" 
+                                                                 oncomplete="PF('dlg_DocumentAccident').show()"  />
+                                            </div>
+                                        </div>
                                     </p:column> 
                                        
                                    </p:dataTable>
@@ -84,9 +122,426 @@ and open the template in the editor.
                             <h:outputText value="Description : #{accidentTravailMb.accidentTravail.description}" /><br />
                         </h:form>
                     </p:dialog>
-                        </p:panel>
+                      
+                            
                     </div>
-                </h:form>
+                </h:form>      
+                <p:dialog   draggable="true" width="80%" responsive="true"
+                            resizable="false" 
+                            modal="true" 
+                            widgetVar="consulterDoc">
+                    <h:form id="visuliser_id">    
+                        <p:media value="#{imageBean.bon}" width="100%" height="500" player="pdf"> 
+                            <f:param name="path" value="#{accidentTravailMb.selectedDoc}" />
+                        </p:media>
+                    </h:form>
+                </p:dialog>
+                <p:dialog header="Certificats Accident" 
+                          resizable="true" modal="true"
+                          style="margin-right:80px;" 
+                          styleClass="btnNoWith"
+                          draggable="true"
+                          maximizable="true"
+                          id="dlg_CertificatAccident"
+                          widgetVar="dlg_CertificatAccident"  >
+                    <h:form id="form_CertificatAccident" >
+                        <h:panelGrid styleClass="ui-panelgrid-blank ui-fluid"
+                                     cellpadding="10">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <p:commandButton value="Charger " 
+                                                     action="#{accidentTravailMb.chargeCertificat()}" 
+                                                     update=":form_CertificatAccident" class="btn" />
+                                </div>
+                                <div class="col-sm-4">
+                                    <p:commandButton value="Ajouter " action="#{accidentTravailMb.prepCertificat()}"
+                                                     oncomplete="PF('dlg_AjoutCertificatAccident').show()" 
+                                                     update=":form_AjoutCertificatAccident" class="btn" />
+                                </div>
+                                
+                                <div class="col-sm-4">
+                                    <p:spacer />
+                                </div>
+                            </div>
+                            <p:dataTable var="c" value="#{accidentTravailMb.certificatAts}" id="tbl_CertificatAccident"
+                                            widgetVar="certificatTable" emptyMessage="Aucun mot trouvé"
+                                            rows="5"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                            {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                            {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                            >
+                                <f:facet name="Entête">
+                                    <p:outputPanel>
+                                        <h:outputText value="Chercher dans touts les champs :" />
+                                        <p:inputText id="globalFilter" onkeyup="PF('atTable').filter()" style="width:250px" placeholder="Entrer un mot"/>
+                                    </p:outputPanel>
+                                </f:facet>
+
+                                <p:column headerText="N°" filterBy="#{c.id}"  filterMatchMode="contains"  >
+                                    <h:outputText value="#{c.id}" />
+                                </p:column> 
+                                <p:column headerText="Titre" filterBy="#{c.titre}"  filterMatchMode="contains"  >
+                                    <h:outputText value="#{c.titre}" />
+                                </p:column> 
+                                <p:column headerText="NBJ Arret" filterBy="#{c.nbjArret}"  filterMatchMode="contains"  >
+                                    <h:outputText value="#{c.nbjArret}" />
+                                </p:column> 
+                                <p:column headerText="Date reprise" filterBy="#{c.dateReprise}"  filterMatchMode="contains"  >
+                                    <h:outputText value="#{c.dateReprise}" />
+                                </p:column> 
+                                <p:column headerText="Date Gerison" filterBy="#{c.dateGerison}"  filterMatchMode="contains"  >
+                                    <h:outputText value="#{c.dateGerison}" />
+                                </p:column> 
+                                <p:column headerText="IPP" filterBy="#{c.ipp}"  filterMatchMode="contains"  >
+                                    <h:outputText value="#{(c.ipp!=null)?((c.ipp)?'OUI':'NON'):'NON'}" />
+                                </p:column> 
+                                <p:column headerText="Taux IPP" filterBy="#{c.tauxIpp}"  filterMatchMode="contains"  >
+                                    <h:outputText value="#{c.tauxIpp}" />
+                                </p:column> 
+                                <p:column headerText="Description" filterBy="#{c.description}"  filterMatchMode="contains"  >
+                                    <h:outputText value="#{c.description}" />
+                                </p:column> 
+                                <p:column headerText="Réception original"  >
+                                    <p:commandButton icon="ui-icon-check"
+                                             title ="Consulter Document"
+                                             disabled="#{c.recuOriginal}"
+                                             action="#{accidentTravailMb.recuCertificatOriginal(c)}"
+                                             update=":form_CertificatAccident:tbl_CertificatAccident" />
+                                </p:column> 
+                                    <p:column headerText="Opérations" style="width:150px">
+                                        <div class="row">
+                                            <div class="col-sm-4">
+                                                <p:commandButton icon="ui-icon-document"
+                                                         title ="Consulter Document"
+                                                         action="#{accidentTravailMb.visualiser(c.chemin)}" 
+                                                         oncomplete="PF('consulterDoc').show()"
+                                                         update=":visuliser_id" />
+                                            </div>                                        
+                                            <div class="col-sm-4">
+                                                <p:commandButton icon="ui-icon-arrowthick-1-s"
+                                                         title ="Télecharger Document" 
+                                                         action="#{accidentTravailMb.downLoadFichier(c.chemin)}" 
+                                                         ajax="false" />
+                                            </div>                                        
+                                            <div class="col-sm-4">
+                                                <p:commandButton  icon="ui-icon-trash"  
+                                                          action="#{accidentTravailMb.remouveCertificat(c)}"
+                                                          update=":form_CertificatAccident,:forme:atTable" 
+                                                          ajax="true" >
+                                                <p:confirm header="Confirmation" message="Voulez vous vraiment supprimer ce document ?" />
+                                                </p:commandButton>
+                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                    <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                    <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                </p:confirmDialog>
+                                            </div> 
+                                        </div>
+                                    </p:column>
+                               </p:dataTable>
+                        </h:panelGrid>
+                    </h:form>
+                </p:dialog>                
+                    <p:dialog header="Ajouter Certificats " widgetVar="dlg_AjoutCertificatAccident" width="40%" minHeight="50"
+                              maximizable="false" resizable="false" draggable="false" id="dlg_AjoutCertificatAccident"
+                              >
+                        <h:form id="form_AjoutCertificatAccident" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Type Certificat (*) "/>
+                                    <p:selectOneMenu   filter="true" filterMatchMode="contains" 
+                                                       style="width: 90%;float: left; " class="form-control"
+                                                       value="#{accidentTravailMb.certificatAt.typeCertificat}" 
+                                                      
+                                                       >
+                                        <f:selectItem itemLabel="Initial"  itemValue="Initial" itemDisabled="#{accidentTravailMb.accidentTravail.certificatInitial}"/> 
+                                        <f:selectItem itemLabel="Prolongation"  itemValue="Prolongation"/> 
+                                        <f:selectItem itemLabel="Reprise de travail"  itemValue="Reprise de travail"/> 
+                                        <f:selectItem itemLabel="Consolidation"  itemValue="Consolidation"/> 
+                                        <f:selectItem itemLabel="Guerison"  itemValue="Guerison"/> 
+                                        <p:ajax listener="#{accidentTravailMb.changeTypeCertificat()}" update=":form_AjoutCertificatAccident, :form_AjoutCertificatAccident" /> 
+                                    </p:selectOneMenu> 
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Nombre du jour (*) "/>
+                                    <p:inputNumber  value="#{accidentTravailMb.certificatAt.nbjArret}" />
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Date reprise "/>
+                                    <p:calendar value="#{accidentTravailMb.certificatAt.dateReprise}" mindate="#{accidentTravailMb.certificatAt.at.dateRetour}" pattern="yyyy-MM-dd"/>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Date Guerison "/>
+                                    <p:calendar value="#{accidentTravailMb.certificatAt.dateGerison}" pattern="yyyy-MM-dd"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value=" IPP"/><br />
+                                    <p:selectBooleanCheckbox id="certIpp" itemLabel="" 
+                                                             value="#{accidentTravailMb.certificatAt.ipp}"
+                                                             disabled="#{!accidentTravailMb.selectGuerison}"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Taux IPP "/>
+                                    <p:inputNumber id="tauxIpp" 
+                                                   value="#{accidentTravailMb.certificatAt.tauxIpp}"
+                                                   disabled="#{!accidentTravailMb.selectGuerison}" />
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-lg-12 form-group">
+                                    <p:outputLabel value="Description :"/>
+                                    <p:inputText class="form-control" id="iddescrptionDoc" value="#{accidentTravailMb.certificatAt.description}" />
+                                </div>
+                            </div>
+                            <div class="spacer30"/>
+                            <p:fileUpload  requiredMessage="veuillez selectionner un fichier" required="true" 
+                                           value="#{accidentTravailMb.uploadedFileCertificat}"
+                                           mode="simple"
+                                           >
+                            </p:fileUpload>
+                            <br/>
+                            <br/>
+                            <p:commandButton  value="Ajouter"
+                                              action="#{accidentTravailMb.addCertificat()}"
+                                              update=":dlg_CertificatAccident:form_CertificatAccident:tbl_CertificatAccident"
+                                              onclick="PF('dlg_AjoutCertificatAccident').hide()"
+                                              ajax="false"/>
+                        </h:form>
+                    </p:dialog>
+                <p:dialog header="Quittance Accident" 
+                          resizable="true" modal="true"
+                          style="margin-right:80px;" 
+                          styleClass="btnNoWith"
+                          draggable="true"
+                          maximizable="true"
+                          id="dlg_QuittanceAccident"
+                          widgetVar="dlg_QuittanceAccident"  >
+                    <h:form id="form_QuittanceAccident" >
+                        <h:panelGrid styleClass="ui-panelgrid-blank ui-fluid"
+                                     cellpadding="10">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <p:commandButton value="Charger " style="width: 150px"
+                                                     action="#{accidentTravailMb.chargeQuitance()}" 
+                                                     update=":form_QuittanceAccident" class="btn" />
+                               
+                                    <p:commandButton value="Ajouter " action="#{accidentTravailMb.prepQuitance()}" style="width: 150px"
+                                                     oncomplete="PF('dlg_AjoutQuittanceAccident').show()" 
+                                                     update=":form_AjoutQuittanceAccident" class="btn" />
+                                </div>
+                                
+                                <div class="col-sm-4">
+                                    <p:spacer />
+                                </div>
+                            </div>
+                            <p:dataTable var="c" value="#{accidentTravailMb.quittanceAts}" id="tbl_QuittanceAccident"
+                                            widgetVar="certificatTable" emptyMessage="Aucun mot trouvé"
+                                            rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                            {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                            {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                            >
+
+                                <p:column headerText="N°" filterBy="#{c.id}"  filterMatchMode="contains"  >
+                                    <h:outputText value="#{c.id}" />
+                                </p:column> 
+                                <p:column headerText="Titre" filterBy="#{c.titre}"  filterMatchMode="contains"  >
+                                    <h:outputText value="#{c.titre}" />
+                                </p:column> 
+                                <p:column headerText="NBJ payé" filterBy="#{c.nbjPaye}"  filterMatchMode="contains"  >
+                                    <h:outputText value="#{c.nbjPaye}" />
+                                </p:column>
+                                <p:column headerText="MTN payé" filterBy="#{c.mtnPaye}"  filterMatchMode="contains"  >
+                                    <h:outputText value="#{c.mtnPaye}" />
+                                </p:column> 
+                                <p:column headerText="Description" filterBy="#{c.description}"  filterMatchMode="contains"  >
+                                    <h:outputText value="#{c.description}" />
+                                </p:column> 
+                                    <p:column headerText="Opérations" style="width:150px">
+                                        <div class="row">
+                                            <div class="col-sm-4">
+                                                <p:commandButton icon="ui-icon-document"
+                                                         title ="Consulter Document"
+                                                         action="#{accidentTravailMb.visualiser(c.chemin)}" 
+                                                         oncomplete="PF('consulterDoc').show()"
+                                                         update=":visuliser_id" />
+                                            </div>                                        
+                                            <div class="col-sm-4">
+                                                <p:commandButton icon="ui-icon-arrowthick-1-s"
+                                                         title ="Télecharger Document" 
+                                                         action="#{accidentTravailMb.downLoadFichier(c.chemin)}" 
+                                                         ajax="false" />
+                                            </div>                                        
+                                            <div class="col-sm-4">
+                                                <p:commandButton  icon="ui-icon-trash"  
+                                                                  action="#{accidentTravailMb.remouveQuitance(c) }"
+                                                          update=":form_QuittanceAccident,:forme:atTable" 
+                                                          ajax="true" >
+                                                <p:confirm header="Confirmation" message="Voulez vous vraiment supprimer ce document ?" />
+                                                </p:commandButton>
+                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                    <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                    <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                </p:confirmDialog>
+                                            </div> 
+                                        </div>
+                                    </p:column>
+                               </p:dataTable>
+                        </h:panelGrid>
+                    </h:form>
+                </p:dialog>
+                
+                    <p:dialog header="Ajouter Quittance " widgetVar="dlg_AjoutQuittanceAccident" width="40%" minHeight="50"
+                              maximizable="false" resizable="false" draggable="false" id="dlg_AjoutQuittanceAccident"
+                              >
+                        <h:form id="form_AjoutQuittanceAccident" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Type Quittance (*) "/>
+                                    <p:selectOneMenu   filter="true" filterMatchMode="contains" 
+                                                       style="width: 90%;float: left; " class="form-control"
+                                                       value="#{accidentTravailMb.quittanceAt.typeQuitance }" >
+                                        <f:selectItem itemLabel="Avance"  itemValue="Avance"/> 
+                                        <f:selectItem itemLabel="Reglement"  itemValue="Reglement"/> 
+                                        <f:selectItem itemLabel="Complet "  itemValue="Complet"/> 
+                                    </p:selectOneMenu> 
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                     <p:outputLabel value="Nombre du jour (*) "/>
+                                    <p:inputNumber  style="width: 90%;float: left; " class="form-control"
+                                                    value="#{accidentTravailMb.quittanceAt.nbjPaye}" />
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                     <p:outputLabel value="Montant Payé(*) "/>
+                                    <p:inputNumber  style="width: 90%;float: left; " class="form-control"
+                                                    value="#{accidentTravailMb.quittanceAt.mtnPaye}" />
+                                </div>
+                                <div class="col-lg-12 form-group">
+                                    <p:outputLabel value="Description :"/>
+                                    <p:inputText class="form-control" id="iddescrptionDoc" value="#{accidentTravailMb.quittanceAt.description}" />
+                                </div>
+                            </div>
+                            <div class="spacer30"/>
+                            <p:fileUpload  requiredMessage="veuillez selectionner un fichier" required="true" 
+                                           value="#{accidentTravailMb.uploadedFileQuitance}"
+                                           mode="simple"
+                                           >
+                            </p:fileUpload>
+                            <br/>
+                            <br/>
+                            <p:commandButton  value="Ajouter"
+                                              action="#{accidentTravailMb.addQuitance()}"
+                                              update=":form_QuittanceAccident:tbl_QuittanceAccident"
+                                              onclick="PF('dlg_AjoutQuittanceAccident').hide()"
+                                              ajax="false"/>
+                        </h:form>
+                    </p:dialog>
+                <p:dialog header="Documents Accident" 
+                          resizable="true" modal="true"
+                          style="margin-right:80px;" 
+                          styleClass="btnNoWith"
+                          draggable="true"
+                          maximizable="true"
+                          id="dlg_DocumentAccident"
+                          widgetVar="dlg_DocumentAccident"  >
+                    <h:form id="form_DocumentAccident" >
+                        <h:panelGrid styleClass="ui-panelgrid-blank ui-fluid"
+                                     cellpadding="10">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <p:commandButton value="Charger " style="width: 150px"
+                                                     action="#{accidentTravailMb.chargeDocumentAt()}" 
+                                                     update=":form_DocumentAccident" class="btn" />
+                               
+                                    <p:commandButton value="Ajouter " action="#{accidentTravailMb.prepDocumentAt()}" style="width: 150px"
+                                                     oncomplete="PF('dlg_AjoutDocumentAccident').show()" 
+                                                     update=":form_AjoutDocumentAccident" class="btn" />
+                                </div>
+                                
+                                <div class="col-sm-4">
+                                    <p:spacer />
+                                </div>
+                            </div>
+                            <p:dataTable var="dscAt" value="#{accidentTravailMb.documentAts}" id="tbl_DocumentAccident"
+                                            widgetVar="certificatTable" emptyMessage="Aucun mot trouvé"
+                                            rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                            {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                            {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                            >
+
+                                <p:column headerText="N°" filterBy="#{dscAt.id}"  filterMatchMode="contains"  >
+                                    <h:outputText value="#{dscAt.id}" />
+                                </p:column> 
+                                <p:column headerText="Titre" filterBy="#{dscAt.titre}"  filterMatchMode="contains"  >
+                                    <h:outputText value="#{dscAt.titre}" />
+                                </p:column> 
+                                <p:column headerText="Description" filterBy="#{dscAt.description}"  filterMatchMode="contains"  >
+                                    <h:outputText value="#{dscAt.description}" />
+                                </p:column> 
+                                    <p:column headerText="Opérations" style="width:150px">
+                                        <div class="row">
+                                            <div class="col-sm-4">
+                                                <p:commandButton icon="ui-icon-document"
+                                                         title ="Consulter Document"
+                                                         action="#{accidentTravailMb.visualiser(dscAt.chemin)}" 
+                                                         oncomplete="PF('consulterDoc').show()"
+                                                         update=":visuliser_id" />
+                                            </div>                                        
+                                            <div class="col-sm-4">
+                                                <p:commandButton icon="ui-icon-arrowthick-1-s"
+                                                         title ="Télecharger Document" 
+                                                         action="#{accidentTravailMb.downLoadFichier(dscAt.chemin)}" 
+                                                         ajax="false" />
+                                            </div>                                        
+                                            <div class="col-sm-4">
+                                                <p:commandButton  icon="ui-icon-trash"  
+                                                                  action="#{accidentTravailMb.remouveDocumentAt() }"
+                                                          update=":form_DocumentAccident" 
+                                                          ajax="true" >
+                                                <p:confirm header="Confirmation" message="Voulez vous vraiment supprimer ce document ?" />
+                                                </p:commandButton>
+                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                    <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                    <p:commandButton value="Annuler" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                </p:confirmDialog>
+                                            </div> 
+                                        </div>
+                                    </p:column>
+                               </p:dataTable>
+                        </h:panelGrid>
+                    </h:form>
+                </p:dialog>
+                    <p:dialog header="Ajouter Document " widgetVar="dlg_AjoutDocumentAccident" width="40%" minHeight="50"
+                              maximizable="false" resizable="false" draggable="false" id="dlg_AjoutDocumentAccident"
+                              >
+                        <h:form id="form_AjoutDocumentAccident" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-lg-4 form-group">
+                                     <p:outputLabel value="Titre "/>
+                                    <p:inputText  style="width: 90%;float: left; " class="form-control"
+                                                    value="#{accidentTravailMb.documentAt.titre}" />
+                                </div> 
+                                <div class="col-lg-12 form-group">
+                                    <p:outputLabel value="Description :"/>
+                                    <p:inputText class="form-control"  value="#{accidentTravailMb.documentAt.description}" />
+                                </div>
+                            </div>
+                            <div class="spacer30"/>
+                            <p:fileUpload  requiredMessage="veuillez selectionner un fichier" required="true" 
+                                           value="#{accidentTravailMb.uploadedFileAt }"
+                                           mode="simple"
+                                           >
+                            </p:fileUpload>
+                            <br/>
+                            <br/>
+                            <p:commandButton  value="Ajouter"
+                                              action="#{accidentTravailMb.addDocumentAt()}"
+                                              update=":form_DocumentAccident:tbl_DocumentAccident"
+                                              onclick="PF('dlg_AjoutDocumentAccident').hide()"
+                                              ajax="false"/>
+                        </h:form>
+                    </p:dialog>
             </ui:define>
         </ui:composition>
     </body>

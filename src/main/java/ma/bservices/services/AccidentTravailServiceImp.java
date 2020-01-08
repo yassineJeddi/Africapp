@@ -66,5 +66,10 @@ public class AccidentTravailServiceImp implements Serializable,IAccidentTravailS
     public List<AccidentTravail> allAccidentTravailBySalarie(Salarie s) {
         return accidentTravailDao.allAccidentTravailBySalarie(s);
     }
+
+    @Override
+    public List<AccidentTravail> allAccidentTravailByListChantier(List<Chantier> c) {
+       return accidentTravailDao.allAccidentTravailByListChantier(c);
+    }
     
 }

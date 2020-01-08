@@ -6,11 +6,13 @@
 package ma.bservices.beans;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import org.springframework.security.core.Authentication;
 
 /**
  *
@@ -27,6 +29,10 @@ public class DetailAT implements Serializable {
     
     @ManyToOne
     private AccidentTravail accidentTravail;
+    @ManyToOne
+    private Utilisateur userValidRH;
+    @ManyToOne
+    private Utilisateur userValidQHSE;
     
     /*** CAUSE AT**/
     private Boolean chuteEnHaut =Boolean.FALSE ;
@@ -84,6 +90,8 @@ public class DetailAT implements Serializable {
     /**Mesures prises immédiatement**/
     private Boolean secourInterne =Boolean.FALSE ;
     private Boolean secourExterne =Boolean.FALSE ;
+    private String descriptionSecourInterne="";
+    private String descriptionSecourExterne="";
     
     
     /**Suite**/
@@ -91,7 +99,14 @@ public class DetailAT implements Serializable {
     private Boolean atSansArret =Boolean.FALSE ;
     private Boolean atAvecArret =Boolean.FALSE ;
     private Boolean deces =Boolean.FALSE ;
+    private Boolean presqueAccident =Boolean.FALSE ;
     private Integer nbrJour=0;
+    
+ 
+    private Boolean valideRH = Boolean.FALSE ;
+    private Boolean valideQhse = Boolean.FALSE ;
+    private Date dateValidRh;
+    private Date dateValidQhse;
     
     /***  CAUSE AT**/
     public AccidentTravail getAccidentTravail() {
@@ -493,6 +508,85 @@ public class DetailAT implements Serializable {
     public void setNbrJour(Integer nbrJour) {
         this.nbrJour = nbrJour;
     }
+
+    
+
+    public String getDescriptionSecourInterne() {
+        return descriptionSecourInterne;
+    }
+
+    public void setDescriptionSecourInterne(String descriptionSecourInterne) {
+        this.descriptionSecourInterne = descriptionSecourInterne;
+    }
+
+    public String getDescriptionSecourExterne() {
+        return descriptionSecourExterne;
+    }
+
+    public void setDescriptionSecourExterne(String descriptionSecourExterne) {
+        this.descriptionSecourExterne = descriptionSecourExterne;
+    }
+
+    public Boolean getPresqueAccident() {
+        return presqueAccident;
+    }
+
+    public void setPresqueAccident(Boolean presqueAccident) {
+        this.presqueAccident = presqueAccident;
+    }
+
+    public Boolean getValideRH() {
+        return valideRH;
+    }
+
+    public void setValideRH(Boolean valideRH) {
+        this.valideRH = valideRH;
+    }
+
+    public Boolean getValideQhse() {
+        return valideQhse;
+    }
+
+    public void setValideQhse(Boolean valideQhse) {
+        this.valideQhse = valideQhse;
+    }
+
+    public Utilisateur getUserValidRH() {
+        return userValidRH;
+    }
+
+    public void setUserValidRH(Utilisateur userValidRH) {
+        this.userValidRH = userValidRH;
+    }
+
+    public Utilisateur getUserValidQHSE() {
+        return userValidQHSE;
+    }
+
+    public void setUserValidQHSE(Utilisateur userValidQHSE) {
+        this.userValidQHSE = userValidQHSE;
+    }
+
+    public Date getDateValidRh() {
+        return dateValidRh;
+    }
+
+    public void setDateValidRh(Date dateValidRh) {
+        this.dateValidRh = dateValidRh;
+    }
+
+    public Date getDateValidQhse() {
+        return dateValidQhse;
+    }
+
+    public void setDateValidQhse(Date dateValidQhse) {
+        this.dateValidQhse = dateValidQhse;
+    }
+    
+
+    
+    
+
     
     
 

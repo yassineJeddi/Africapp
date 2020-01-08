@@ -8,7 +8,8 @@ package ma.bservices.dao;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import ma.bservices.beans.DocumentDetailAt;
+import ma.bservices.beans.AccidentTravail;
+import ma.bservices.beans.CertificatAt;
 import ma.bservices.mb.services.MbHibernateDaoSupport;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
@@ -20,12 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author yassine
  */
-@Repository("documentDetailATDao")
+@Repository("certificatAtDao")
 @Transactional
-public class DocumentDetailAtDaoImp  extends MbHibernateDaoSupport implements IDocumentDetailAtDao, Serializable  {
+public class CertificatAtDaoImp  extends MbHibernateDaoSupport implements ICertificatAtDao, Serializable {
 
     @Override
-    public void addDocumentDetailAt(DocumentDetailAt d) {
+    public void addCertificatAt(CertificatAt d) {
         Transaction tx = null;
         Session session = getSessionFactory().openSession();
         try {
@@ -38,11 +39,11 @@ public class DocumentDetailAtDaoImp  extends MbHibernateDaoSupport implements ID
             System.out.println("exception : " + exp.getMessage());
             tx.rollback();
             session.close();            
-        }       
+        }
     }
 
     @Override
-    public void editDocumentDetailAt(DocumentDetailAt d) {
+    public void editCertificatAt(CertificatAt d) {
         Transaction tx = null;
         Session session = getSessionFactory().openSession();
         try {
@@ -55,11 +56,11 @@ public class DocumentDetailAtDaoImp  extends MbHibernateDaoSupport implements ID
             System.out.println("exception : " + exp.getMessage());
             tx.rollback();
             session.close();            
-        } 
+        }
     }
 
     @Override
-    public void remouveDocumentDetailAt(DocumentDetailAt d) {
+    public void remouvCertificatAt(CertificatAt d) {
         Transaction tx = null;
         Session session = getSessionFactory().openSession();
         try {
@@ -76,34 +77,23 @@ public class DocumentDetailAtDaoImp  extends MbHibernateDaoSupport implements ID
     }
 
     @Override
-    public DocumentDetailAt infoDocumentDetailAtById(Long id) {
-        DocumentDetailAt d = new DocumentDetailAt();
+    public CertificatAt certificatAtById(Integer id) {
+        CertificatAt c = new CertificatAt();
         try {
-             d =  this.getHibernateTemplate().load(DocumentDetailAt.class, id);
+             c =  this.getHibernateTemplate().load(CertificatAt.class, id);
         } catch (Exception e) {
             System.out.println("Erreur de récupération liste des documents Accidents de Travail car "+e.getMessage());
         }
-        return d;
+        return c;
     }
 
     @Override
-    public List<DocumentDetailAt> allDocumentDetailAt() {
-        List<DocumentDetailAt>  l = new ArrayList<DocumentDetailAt>();
+    public List<CertificatAt> allCertificatAtByAt(AccidentTravail a) {
+        List<CertificatAt>  l = new ArrayList<CertificatAt>();
         try {
-             l =  this.getHibernateTemplate().loadAll(DocumentDetailAt.class);
+             l =  (List<CertificatAt>) this.getHibernateTemplate().find("SELECT d From CertificatAt d where d.at.id="+a.getId());
         } catch (Exception e) {
-            System.out.println("Erreur de récupération liste des documents Accidents de Travail car "+e.getMessage());
-        }
-        return l;
-    }
-
-    @Override
-    public List<DocumentDetailAt> allDocumentDetailAtByIdDetailAt(Long id) {
-        List<DocumentDetailAt>  l = new ArrayList<DocumentDetailAt>();
-        try {
-             l =  (List<DocumentDetailAt>) this.getHibernateTemplate().find("SELECT d From DocumentDetailAt d where d.detailAT.id="+id);
-        } catch (Exception e) {
-            System.out.println("Erreur de récupération  documents car "+e.getMessage());
+            System.out.println("Erreur de récupération  QuittanceAt car "+e.getMessage());
         }
         return l;
     }

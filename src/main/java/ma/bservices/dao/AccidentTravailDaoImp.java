@@ -50,6 +50,7 @@ public class AccidentTravailDaoImp extends MbHibernateDaoSupport implements IAcc
         Transaction tx = null;
         Session session = getSessionFactory().openSession();
         try {
+            System.out.println("DAO -------> ma.bservices.dao.AccidentTravailDaoImp.editAccidentTravail()");
             session.setFlushMode(FlushMode.AUTO);
             tx = session.beginTransaction();
             session.merge(a);
@@ -94,7 +95,7 @@ public class AccidentTravailDaoImp extends MbHibernateDaoSupport implements IAcc
     public List<AccidentTravail> allAccidentTravail() {
         List<AccidentTravail>  l = new ArrayList<AccidentTravail>();
         try {
-             l =  this.getHibernateTemplate().loadAll(AccidentTravail.class);
+             l =  (List<AccidentTravail>) this.getHibernateTemplate().find("SELECT a FROM AccidentTravail a order by a.id desc ");
         } catch (Exception e) {
             System.out.println("Erreur de récupération liste des Accidents de Travail car "+e.getMessage());
         }
@@ -120,6 +121,24 @@ public class AccidentTravailDaoImp extends MbHibernateDaoSupport implements IAcc
              l = (List<AccidentTravail>) this.getHibernateTemplate().find(" FROM AccidentTravail a where a.salarie.id = " + s.getId());
         } catch (Exception e) {
             System.out.println("Erreur de récupération liste des Accidents de Travail par salarie car "+e.getMessage());
+        }
+        return l;
+    }
+
+    @Override
+    public List<AccidentTravail> allAccidentTravailByListChantier(List<Chantier> c) {
+            List<AccidentTravail>  l = new ArrayList<AccidentTravail>();
+            String idChan ="(0";
+            if(c.size()>0){
+                for(int i=0;i<c.size();i++){
+                    idChan=idChan+","+c.get(i).getId().toString();
+                }
+                idChan =idChan+")";
+            }
+        try {
+             l = (List<AccidentTravail>) this.getHibernateTemplate().find(" FROM AccidentTravail a where a.chantier.id in " + idChan + " order by a.id desc");
+        } catch (Exception e) {
+            System.out.println("Erreur de récupération liste des Accidents de Travail par chantier car "+e.getMessage());
         }
         return l;
     }

@@ -8,7 +8,8 @@ package ma.bservices.dao;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import ma.bservices.beans.DocumentDetailAt;
+import ma.bservices.beans.AccidentTravail;
+import ma.bservices.beans.QuittanceAt;
 import ma.bservices.mb.services.MbHibernateDaoSupport;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
@@ -20,12 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author yassine
  */
-@Repository("documentDetailATDao")
+@Repository("quittanceAtDao")
 @Transactional
-public class DocumentDetailAtDaoImp  extends MbHibernateDaoSupport implements IDocumentDetailAtDao, Serializable  {
+public class QuittanceAtDaoImp   extends MbHibernateDaoSupport implements IQuittanceAtDao, Serializable {
 
     @Override
-    public void addDocumentDetailAt(DocumentDetailAt d) {
+    public void addQuittanceAt(QuittanceAt d) {
         Transaction tx = null;
         Session session = getSessionFactory().openSession();
         try {
@@ -38,11 +39,11 @@ public class DocumentDetailAtDaoImp  extends MbHibernateDaoSupport implements ID
             System.out.println("exception : " + exp.getMessage());
             tx.rollback();
             session.close();            
-        }       
+        }
     }
 
     @Override
-    public void editDocumentDetailAt(DocumentDetailAt d) {
+    public void editQuittanceAt(QuittanceAt d) {
         Transaction tx = null;
         Session session = getSessionFactory().openSession();
         try {
@@ -59,7 +60,7 @@ public class DocumentDetailAtDaoImp  extends MbHibernateDaoSupport implements ID
     }
 
     @Override
-    public void remouveDocumentDetailAt(DocumentDetailAt d) {
+    public void remouvQuittanceAt(QuittanceAt d) {
         Transaction tx = null;
         Session session = getSessionFactory().openSession();
         try {
@@ -76,10 +77,10 @@ public class DocumentDetailAtDaoImp  extends MbHibernateDaoSupport implements ID
     }
 
     @Override
-    public DocumentDetailAt infoDocumentDetailAtById(Long id) {
-        DocumentDetailAt d = new DocumentDetailAt();
+    public QuittanceAt quittanceAtById(Integer id) {
+        QuittanceAt d = new QuittanceAt();
         try {
-             d =  this.getHibernateTemplate().load(DocumentDetailAt.class, id);
+             d =  this.getHibernateTemplate().load(QuittanceAt.class, id);
         } catch (Exception e) {
             System.out.println("Erreur de récupération liste des documents Accidents de Travail car "+e.getMessage());
         }
@@ -87,23 +88,12 @@ public class DocumentDetailAtDaoImp  extends MbHibernateDaoSupport implements ID
     }
 
     @Override
-    public List<DocumentDetailAt> allDocumentDetailAt() {
-        List<DocumentDetailAt>  l = new ArrayList<DocumentDetailAt>();
+    public List<QuittanceAt> allQuittanceAtByAt(AccidentTravail a) {
+        List<QuittanceAt>  l = new ArrayList<QuittanceAt>();
         try {
-             l =  this.getHibernateTemplate().loadAll(DocumentDetailAt.class);
+             l =  (List<QuittanceAt>) this.getHibernateTemplate().find("SELECT d From QuittanceAt d where d.at.id="+a.getId());
         } catch (Exception e) {
-            System.out.println("Erreur de récupération liste des documents Accidents de Travail car "+e.getMessage());
-        }
-        return l;
-    }
-
-    @Override
-    public List<DocumentDetailAt> allDocumentDetailAtByIdDetailAt(Long id) {
-        List<DocumentDetailAt>  l = new ArrayList<DocumentDetailAt>();
-        try {
-             l =  (List<DocumentDetailAt>) this.getHibernateTemplate().find("SELECT d From DocumentDetailAt d where d.detailAT.id="+id);
-        } catch (Exception e) {
-            System.out.println("Erreur de récupération  documents car "+e.getMessage());
+            System.out.println("Erreur de récupération  QuittanceAt car "+e.getMessage());
         }
         return l;
     }

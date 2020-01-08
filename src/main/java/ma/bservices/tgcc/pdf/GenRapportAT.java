@@ -92,6 +92,8 @@ public class GenRapportAT {
                         table.setSpacingBefore(0f);
                         table.setSpacingAfter(0f);
                         
+                        try {
+                
                         String imageFile = new File(ConstanteMb.getRepertoire()+"/SOURCES/logo_at.png").getAbsolutePath();
                         Image img = Image.getInstance(imageFile);
                         img.scaleAbsolute(159, 47);
@@ -117,7 +119,13 @@ public class GenRapportAT {
                          
 			document.add(table);
                         
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'ajouter au rapport car 1 "+e.getMessage());
+                        }
+                        
 			document.add(vide);
+                        
+                        try {
                         
                         table = new PdfPTable(2);
                         table.setWidthPercentage(100);
@@ -126,8 +134,8 @@ public class GenRapportAT {
                         
                         c1 = new PdfPCell(new Paragraph("Projet : "+detailAT.getAccidentTravail().getChantier().getCode()+" \n ",fontTitreTab));
                         c2 = new PdfPCell(new Paragraph("Date & Heure : "+detailAT.getAccidentTravail().getDateAccident()+" \n ",fontTitreTab));
-                        c3 = new PdfPCell(new Paragraph("Directeur Projet /ou Chef de Projet :  \n ",fontTitreTab));
-                        c4 = new PdfPCell(new Paragraph("Chef de chantier : \n ",fontTitreTab));
+                        c3 = new PdfPCell(new Paragraph("Directeur Projet /ou Chef de Projet :  \n "+((detailAT.getAccidentTravail().getChefProjet()!=null)?detailAT.getAccidentTravail().getChefProjet():""),fontTitreTab));
+                        c4 = new PdfPCell(new Paragraph("Chef de chantier : \n "+((detailAT.getAccidentTravail().getChefChantier()!=null)?detailAT.getAccidentTravail().getChefChantier():""),fontTitreTab));
                         
                         
                         c1.setPadding(1); 
@@ -157,7 +165,13 @@ public class GenRapportAT {
                                                 
 			document.add(table);
                         
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'ajouter au rapport car 2 "+e.getMessage());
+                        }
+                        
 			document.add(vide);
+                        
+                        try {
                         
                         table = new PdfPTable(1);
                         
@@ -221,16 +235,21 @@ public class GenRapportAT {
 			table.addCell(c5);
 			table.addCell(c6);
                         
+			document.add(table);
                         
-                        c1 = new PdfPCell(new Paragraph(detailAT.getAccidentTravail().getSalarie().getNom()
-                                                        +" "+detailAT.getAccidentTravail().getSalarie().getPrenom()+" \n ",fontVal));
-                        c2 = new PdfPCell(new Paragraph(detailAT.getAccidentTravail().getSalarie().getEtat().getEtat()+" \n ",fontVal));
-                        c3 = new PdfPCell(new Paragraph(detailAT.getAccidentTravail().getSalarie().getFonction().getFonction()+" \n ",fontVal));
-                        c4 = new PdfPCell(new Paragraph(detailAT.getAccidentTravail().getSalarie().getDateNaissance()+" \n ",fontVal));
-                        c5 = new PdfPCell(new Paragraph(detailAT.getAccidentTravail().getSalarie().getCin()+" \n ",fontVal));
-                        c6 = new PdfPCell(new Paragraph(detailAT.getAccidentTravail().getSalarie().getCnss()+" \n ",fontVal));
+                            try {
+                        table = new PdfPTable(6);
+                                
+                        String nomPrenom =((detailAT.getAccidentTravail().getSalarie().getNom()!=null)?detailAT.getAccidentTravail().getSalarie().getNom():"")
+                                +" "+((detailAT.getAccidentTravail().getSalarie().getPrenom()!=null)?detailAT.getAccidentTravail().getSalarie().getPrenom():"");
+                        c1 = new PdfPCell(new Paragraph(nomPrenom+" \n ",fontVal));
+                        c2 = new PdfPCell(new Paragraph(((detailAT.getAccidentTravail().getSalarie().getEtat()!=null)?detailAT.getAccidentTravail().getSalarie().getEtat().getEtat():"")+" \n ",fontVal));
+                        c3 = new PdfPCell(new Paragraph(((detailAT.getAccidentTravail().getSalarie().getFonction()!=null)?detailAT.getAccidentTravail().getSalarie().getFonction().getFonction():"")+" \n ",fontVal));
+                        c4 = new PdfPCell(new Paragraph(((detailAT.getAccidentTravail().getSalarie().getDateNaissance()!=null)?detailAT.getAccidentTravail().getSalarie().getDateNaissance():"")+" \n ",fontVal));
+                        c5 = new PdfPCell(new Paragraph(((detailAT.getAccidentTravail().getSalarie().getCin()!=null)?detailAT.getAccidentTravail().getSalarie().getDateNaissance():"")+" \n ",fontVal));
+                        c6 = new PdfPCell(new Paragraph(((detailAT.getAccidentTravail().getSalarie().getCnss()!=null)?detailAT.getAccidentTravail().getSalarie().getCnss():"")+" \n ",fontVal));
                         
-                         table.setWidthPercentage(100);
+                        table.setWidthPercentage(100);
                         table.setSpacingBefore(0f);
                         table.setSpacingAfter(0f);
                         
@@ -265,6 +284,13 @@ public class GenRapportAT {
 			table.addCell(c5);
 			table.addCell(c6);
                         
+			document.add(table);
+                         
+                    } catch (Exception e) {
+                        System.out.println("Probleme d'ajouter les valeur de victime etape 1 car "+e.getMessage());
+                    }
+                             
+                        table = new PdfPTable(6);
                         c1 = new PdfPCell(new Paragraph("Adresse \n ",fontTitreTab));
                         c2 = new PdfPCell(new Paragraph("N° de téléphone \n ",fontTitreTab));
                         c3 = new PdfPCell(new Paragraph("Nationalité  \n ",fontTitreTab));
@@ -307,11 +333,15 @@ public class GenRapportAT {
 			table.addCell(c5);
 			table.addCell(c6);
                         
+			document.add(table);
                         
-                        c1 = new PdfPCell(new Paragraph(detailAT.getAccidentTravail().getSalarie().getAdresse()+" \n ",fontVal));
-                        c2 = new PdfPCell(new Paragraph(detailAT.getAccidentTravail().getSalarie().getGsm()+" \n ",fontVal));
-                        c3 = new PdfPCell(new Paragraph(detailAT.getAccidentTravail().getSalarie().getNationalite().getNationalite()+" \n ",fontVal));
-                        c4 = new PdfPCell(new Paragraph(detailAT.getAccidentTravail().getSalarie().getSituationFamiliale().getSituationFamiliale()+" \n ",fontVal));
+                    try {
+                        table = new PdfPTable(6);
+                                
+                        c1 = new PdfPCell(new Paragraph(((detailAT.getAccidentTravail().getSalarie().getAdresse()!=null)?detailAT.getAccidentTravail().getSalarie().getAdresse():"")+" \n ",fontVal));
+                        c2 = new PdfPCell(new Paragraph(((detailAT.getAccidentTravail().getSalarie().getGsm()!=null)?detailAT.getAccidentTravail().getSalarie().getGsm():"")+" \n ",fontVal));
+                        c3 = new PdfPCell(new Paragraph(((detailAT.getAccidentTravail().getSalarie().getNationalite()!=null)?detailAT.getAccidentTravail().getSalarie().getNationalite().getNationalite():"")+" \n ",fontVal));
+                        c4 = new PdfPCell(new Paragraph(((detailAT.getAccidentTravail().getSalarie().getSituationFamiliale()!=null)?detailAT.getAccidentTravail().getSalarie().getSituationFamiliale().getSituationFamiliale():"")+" \n ",fontVal));
                         c5 = new PdfPCell(new Paragraph(" \n ",fontTitreTab));
                         c6 = new PdfPCell(new Paragraph(((detailAT.getAccidentTravail().getSalarie().getNombreEnfants()!=null)?detailAT.getAccidentTravail().getSalarie().getNombreEnfants():"0")+" \n ",fontVal)); 
                         
@@ -351,8 +381,18 @@ public class GenRapportAT {
 			table.addCell(c5);
 			table.addCell(c6);
                         
-			document.add(table);
+			document.add(table); 
                         
+                        } catch (Exception e) {
+                            System.out.println("Probleme d'ajouter les valeur de victime etape 2 car "+e.getMessage());
+                        } 
+                        
+                    } catch (Exception e) {
+                        System.out.println("Erreur d'ajouter au rapport car 4 "+e.getMessage());
+                    }
+                         
+                        
+                        try {
                         table = new PdfPTable(1);
                         
                         table.setWidthPercentage(100);
@@ -370,6 +410,12 @@ public class GenRapportAT {
 			table.addCell(c1);
                         
 			document.add(table);
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'ajouter au rapport car 5 "+e.getMessage());
+                        }
+                         
+                        
+                        try {
                         
                         table = new PdfPTable(5);
                         
@@ -419,6 +465,12 @@ public class GenRapportAT {
 			table.addCell(c5);
                         
 			document.add(table);
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'ajouter au rapport car 6 "+e.getMessage());
+                        }
+                         
+                        
+                        try {
                         
                         table = new PdfPTable(1);
                         
@@ -436,6 +488,11 @@ public class GenRapportAT {
 			table.addCell(c1);
                         
 			document.add(table);
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'ajouter au rapport car 7 "+e.getMessage());
+                        } 
+                        
+                        try {
                         
                         
                         table = new PdfPTable(1);
@@ -456,6 +513,12 @@ public class GenRapportAT {
                         
 			document.add(table);
                         
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'ajouter au rapport car 8 "+e.getMessage());
+                        }
+                         
+                        
+                        try {
                         
                         table = new PdfPTable(3);
                         
@@ -492,6 +555,12 @@ public class GenRapportAT {
 			table.addCell(c3);
                         
 			document.add(table);
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'ajouter au rapport car 9 "+e.getMessage());
+                        }
+                         
+                        
+                        try {
                         
                         table = new PdfPTable(1);
                         
@@ -509,6 +578,12 @@ public class GenRapportAT {
 			table.addCell(c1);
                         
 			document.add(table);
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'ajouter au rapport car 10 "+e.getMessage());
+                        }
+                         
+                        
+                        try {
                         
                         
                         table = new PdfPTable(1);
@@ -528,6 +603,12 @@ public class GenRapportAT {
 			table.addCell(c1);
                         
 			document.add(table);
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'ajouter au rapport car 11 "+e.getMessage());
+                        }
+                         
+                        
+                        try {
                         
                         
                         table = new PdfPTable(1);
@@ -554,6 +635,12 @@ public class GenRapportAT {
 			table.addCell(c1);
                         
 			document.add(table);
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'ajouter au rapport car 12 "+e.getMessage());
+                        }
+                         
+                        
+                        try {
                          
                         table = new PdfPTable(1);
                         
@@ -572,6 +659,12 @@ public class GenRapportAT {
 			table.addCell(c1);
                         
 			document.add(table);
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'ajouter au rapport car 13 "+e.getMessage());
+                        }
+                         
+                        
+                        try {
                         
                         table = new PdfPTable(5);
                         
@@ -666,6 +759,11 @@ public class GenRapportAT {
 			table.addCell(c5);
                         
 			document.add(table); 
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'ajouter au rapport car 14 "+e.getMessage());
+                        } 
+                        
+                        try {
                         
                         table = new PdfPTable(5);
                         
@@ -711,6 +809,12 @@ public class GenRapportAT {
 			table.addCell(c3); 
                         
 			document.add(table);
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'ajouter au rapport car 15 "+e.getMessage());
+                        }
+                         
+                        
+                        try {
                         
                         table = new PdfPTable(1);
                         c1 = new PdfPCell(new Paragraph(" Autres : "+(((detailAT.getAutreNature()!=null)?detailAT.getAutreNature():"")+" \n "),fontTitreTab));
@@ -728,6 +832,11 @@ public class GenRapportAT {
                             
 			table.addCell(c1);
 			document.add(table);
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'ajouter au rapport car 16 "+e.getMessage());
+                        } 
+                        
+                        try {
                         
                         
                         table = new PdfPTable(1);
@@ -747,6 +856,12 @@ public class GenRapportAT {
 			table.addCell(c1);
                         
 			document.add(table);
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'ajouter au rapport car 17 "+e.getMessage());
+                        }
+                         
+                        
+                        try {
                         
                         table = new PdfPTable(6);
                         
@@ -857,6 +972,12 @@ public class GenRapportAT {
 			table.addCell(c6);
                         
 			document.add(table); 
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'ajouter au rapport car 18 "+e.getMessage());
+                        }
+                         
+                        
+                        try {
                         
                         
                         table = new PdfPTable(1);
@@ -876,6 +997,12 @@ public class GenRapportAT {
 			table.addCell(c1);
                         
 			document.add(table);
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'ajouter au rapport car 19 "+e.getMessage());
+                        }
+                         
+                        
+                        try {
                         
                         table = new PdfPTable(2);
                         
@@ -902,6 +1029,12 @@ public class GenRapportAT {
 			table.addCell(c2);
                         
 			document.add(table);
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'ajouter au rapport car 20 "+e.getMessage());
+                        }
+                         
+                        
+                        try {
                         
                         
                         table = new PdfPTable(1);
@@ -921,6 +1054,12 @@ public class GenRapportAT {
 			table.addCell(c1);
                         
 			document.add(table);
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'ajouter au rapport car 21 "+e.getMessage());
+                        }
+                         
+                        
+                        try {
                         
                         table = new PdfPTable(5);
                         
@@ -971,13 +1110,19 @@ public class GenRapportAT {
 			table.addCell(c5);
                         
 			document.add(table);
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'ajouter au rapport car 22 "+e.getMessage());
+                        }
+                         
+                        
                         
                         table = new PdfPTable(5);
                         
                         table.setWidthPercentage(100);
                         table.setSpacingBefore(0f);
                         table.setSpacingAfter(0f);
-                        
+                        String nom ="",fonct="",dateAccidentEmail ="";
+                        try {
                         c1 = new PdfPCell(new Paragraph(" \n ",fontTitreTab));
                         c2 = new PdfPCell(new Paragraph("Nom & Prénom ",fontTitreTab));
                         c3 = new PdfPCell(new Paragraph("Fonction",fontTitreTab));
@@ -1011,10 +1156,24 @@ public class GenRapportAT {
 			table.addCell(c4);
 			table.addCell(c5);
                         
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'ajouter au rapport car 23 "+e.getMessage());
+                        }
+                        try{
+                        nom = (detailAT.getAccidentTravail().getCreePar().getMensuel().getNom()!= null)?detailAT.getAccidentTravail().getCreePar().getMensuel().getNom():"";
+                        nom = nom +" "+((detailAT.getAccidentTravail().getCreePar().getMensuel().getPrenom()!= null)?detailAT.getAccidentTravail().getCreePar().getMensuel().getPrenom():"");
+                        fonct = (detailAT.getAccidentTravail().getCreePar().getMensuel().getFonction()!= null)?detailAT.getAccidentTravail().getCreePar().getMensuel().getFonction().getFonction().trim().toUpperCase():"";
+                        dateAccidentEmail ="";
+                        try {
+                             dateAccidentEmail = new SimpleDateFormat("yyyy-MM-dd").format(detailAT.getAccidentTravail().getDateCreation());
+                        } catch (Exception e) {
+                            System.out.println("Erreur de récuperation date creation d'AT car "+e.getMessage());
+                        }
+                        
                         c1 = new PdfPCell(new Paragraph("Rédigé par \n ",fontTitreTab));
-                        c2 = new PdfPCell(new Paragraph("\n ",fontTitreTab));
-                        c3 = new PdfPCell(new Paragraph("\n ",fontTitreTab));
-                        c4 = new PdfPCell(new Paragraph("\n ",fontTitreTab));
+                        c2 = new PdfPCell(new Paragraph(nom.trim().toUpperCase()+"\n ",fontTitreTab));
+                        c3 = new PdfPCell(new Paragraph(fonct.trim().toUpperCase()+"\n ",fontTitreTab));
+                        c4 = new PdfPCell(new Paragraph(((dateAccidentEmail!=null)?dateAccidentEmail:"")+"\n ",fontTitreTab));
                         c5 = new PdfPCell(new Paragraph("\n ",fontTitreTab));
                         
                         c1.setPadding(1); 
@@ -1043,10 +1202,71 @@ public class GenRapportAT {
 			table.addCell(c4);
 			table.addCell(c5); 
                         
-                        c1 = new PdfPCell(new Paragraph("Vérifié par  \n ",fontTitreTab));
-                        c2 = new PdfPCell(new Paragraph("\n ",fontTitreTab));
-                        c3 = new PdfPCell(new Paragraph("\n ",fontTitreTab));
-                        c4 = new PdfPCell(new Paragraph("\n ",fontTitreTab));
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'ajouter au rapport car 24 "+e.getMessage());
+                        }
+                        try{
+                        nom="";fonct="";
+                        nom = (detailAT.getUserValidQHSE().getMensuel().getNom()!= null)?detailAT.getUserValidQHSE().getMensuel().getNom():"";
+                        nom = nom +" "+((detailAT.getUserValidQHSE().getMensuel().getPrenom()!= null)?detailAT.getUserValidQHSE().getMensuel().getPrenom():"");
+                        fonct = (detailAT.getUserValidQHSE().getMensuel().getFonction()!= null)?detailAT.getUserValidQHSE().getMensuel().getFonction().getFonction().trim().toUpperCase():"";
+                        dateAccidentEmail ="";
+                        try {
+                             dateAccidentEmail = new SimpleDateFormat("yyyy-MM-dd").format(detailAT.getDateValidQhse());
+                        } catch (Exception e) {
+                            System.out.println("Erreur de récuperation date creation d'AT car "+e.getMessage());
+                        }
+                        c1 = new PdfPCell(new Paragraph("Vérifié par(QHSE)  \n ",fontTitreTab));
+                        c2 = new PdfPCell(new Paragraph(nom+"\n ",fontTitreTab));
+                        c3 = new PdfPCell(new Paragraph(fonct+"\n ",fontTitreTab));
+                        c4 = new PdfPCell(new Paragraph(dateAccidentEmail+"\n ",fontTitreTab));
+                        c5 = new PdfPCell(new Paragraph("\n ",fontTitreTab));
+                        
+                        c1.setPadding(1); 
+                        c1.setPaddingBottom(1);
+                        c1.setHorizontalAlignment(1);
+                        
+                        c2.setPadding(1); 
+                        c2.setPaddingBottom(1);
+                        c2.setHorizontalAlignment(1);
+                        
+                        c3.setPadding(1); 
+                        c3.setPaddingBottom(1);
+                        c3.setHorizontalAlignment(1);
+                        
+                        c4.setPadding(1); 
+                        c4.setPaddingBottom(1);
+                        c4.setHorizontalAlignment(1);
+                        
+                        c5.setPadding(1); 
+                        c5.setPaddingBottom(1);
+                        c5.setHorizontalAlignment(1);
+                                             
+			table.addCell(c1);
+			table.addCell(c2);
+			table.addCell(c3);
+			table.addCell(c4);
+			table.addCell(c5); 
+                         
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'ajouter au rapport car 25 "+e.getMessage());
+                        }
+                        try{
+                        nom="";fonct="";
+                        nom = (detailAT.getUserValidRH().getMensuel().getNom()!= null)?detailAT.getUserValidRH().getMensuel().getNom():"";
+                        nom = nom +" "+((detailAT.getUserValidRH().getMensuel().getPrenom()!= null)?detailAT.getUserValidRH().getMensuel().getPrenom():"");
+                        fonct = (detailAT.getUserValidRH().getMensuel().getFonction()!= null)?detailAT.getUserValidRH().getMensuel().getFonction().getFonction().trim().toUpperCase():"";
+                        dateAccidentEmail ="";
+                        try {
+                             dateAccidentEmail = new SimpleDateFormat("yyyy-MM-dd").format(detailAT.getDateValidRh());
+                        } catch (Exception e) {
+                            System.out.println("Erreur de récuperation date creation d'AT car "+e.getMessage());
+                        }
+                        
+                        c1 = new PdfPCell(new Paragraph("Vérifié par(RH)  \n ",fontTitreTab));
+                        c2 = new PdfPCell(new Paragraph(nom+"\n ",fontTitreTab));
+                        c3 = new PdfPCell(new Paragraph(fonct+"\n ",fontTitreTab));
+                        c4 = new PdfPCell(new Paragraph(dateAccidentEmail+"\n ",fontTitreTab));
                         c5 = new PdfPCell(new Paragraph("\n ",fontTitreTab));
                         
                         c1.setPadding(1); 
@@ -1075,9 +1295,13 @@ public class GenRapportAT {
 			table.addCell(c4);
 			table.addCell(c5); 
                         
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'ajouter au rapport car 26 "+e.getMessage());
+                        }
 			document.add(vide);
                         
 			document.add(table);
+                         
                         
                         
 			document.close();

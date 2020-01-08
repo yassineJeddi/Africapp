@@ -651,4 +651,6 @@ ui-datatable ui-widget .ui-widget-header {
     background-color: #fbfbfb;
     border-bottom: #555 solid 1px;
 }
-  
+.btnNoWith{
+    width: 150px;
+}

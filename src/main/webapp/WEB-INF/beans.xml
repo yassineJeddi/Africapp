@@ -53,6 +53,33 @@
     <bean id="docsDAO" class="ma.bservices.dao.DocsDAOImpl">
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
+    <!-- documents AT -->
+    
+    <bean id="documentAtService" class="ma.bservices.services.DocumentAtServiceImp">
+        <property name="documentAtDao" ref="documentAtDao" /> 
+    </bean>
+  
+    <bean id="documentAtDao" class="ma.bservices.dao.DocumentAtDaoImp">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    <!-- documents Certificat AT -->
+    
+    <bean id="certificatAtService" class="ma.bservices.services.CertificatAtServiceImp">
+        <property name="certificatAtDao" ref="certificatAtDao" /> 
+    </bean>
+  
+    <bean id="certificatAtDao" class="ma.bservices.dao.CertificatAtDaoImp">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    <!-- documents Certificat AT -->
+    
+    <bean id="quittanceAtService" class="ma.bservices.services.QuittanceAtServiceImp">
+        <property name="quittanceAtDao" ref="quittanceAtDao" /> 
+    </bean>
+  
+    <bean id="quittanceAtDao" class="ma.bservices.dao.QuittanceAtDaoImp">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
     
     <!-- type document-->
     
@@ -151,6 +178,16 @@
     </bean>
    
     <bean id="documentDetailATDao" class="ma.bservices.dao.DocumentDetailAtDaoImp">
+        <property name="sessionFactory" ref="sessionFactory" />    
+    </bean>
+    
+    <!-- Document Imprime Detail AccidentTravail-->
+    
+    <bean id="documentImprimeDetailATService" class="ma.bservices.services.DocumentImprimeDetailAtServiceImp">
+        <property name="documentImprimeDetailATDao" ref="documentImprimeDetailATDao" />  
+    </bean>
+   
+    <bean id="documentImprimeDetailATDao" class="ma.bservices.dao.DocumentImprimeDetailAtDaoImp">
         <property name="sessionFactory" ref="sessionFactory" />    
     </bean>
     

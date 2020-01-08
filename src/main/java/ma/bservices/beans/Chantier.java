@@ -60,6 +60,12 @@ public class Chantier implements Serializable {
 
     @Column(name = "NOMBREMINUTES", columnDefinition = "numeric(2,0)")
     private Integer nombreMinutes;
+    
+    @Column(name = "ADRESSE")
+    private String adresse;
+    
+    @Column(name = "EMAIL")
+    private String email;
 
     @ManyToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @JoinTable(name = "CHANTIER_SALARIE", joinColumns = {
@@ -433,6 +439,23 @@ public class Chantier implements Serializable {
         this.zoneOfChefEquipe = zoneOfChefEquipe;
     }
 
+    public String getAdresse() {
+        return adresse;
+    }
+
+    public void setAdresse(String adresse) {
+        this.adresse = adresse;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

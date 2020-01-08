@@ -106,6 +106,7 @@ public class Authentification implements Serializable {
     public void checkDisabled() {
         Utilisateur user = get_connected_user();
         System.out.println("CONNECTED USER : " + user.getLogin());
+        System.out.println("Profil: " + user.getPermissions());
     }
 
     public void afterPhase(PhaseEvent event) {

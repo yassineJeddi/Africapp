@@ -68,6 +68,7 @@ public class MySimpleUrlAuthenticationSuccessHandler implements AuthenticationSu
         boolean isAdminTrans = false;
         boolean isAdminEcart = false;
         boolean isDocteur = false;
+        boolean isAt = false;
         authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String username = authentication.getPrincipal().toString();
@@ -108,6 +109,9 @@ public class MySimpleUrlAuthenticationSuccessHandler implements AuthenticationSu
                 case "Dossier Medical":
                     isDocteur = true;
                     break OUTER;
+                case "At":
+                    isAt = true;
+                    break OUTER;
                 case "créer une nouvelle demande d approvisionnement":
                     is_achat = true;
                     break;
@@ -134,6 +138,8 @@ public class MySimpleUrlAuthenticationSuccessHandler implements AuthenticationSu
             return "/stock/ecartStock.xhtml";
         }  else if (isDocteur) {
             return "/dossiersMedicaux/dossiersMedicaux.xhtml";
+        }else if (isAt) {
+            return "/at/at.xhtml";
         } else {
             return "/evol/salaries.xhtml";
         }

@@ -8,7 +8,7 @@ package ma.bservices.dao;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import ma.bservices.beans.DocumentDetailAt;
+import ma.bservices.beans.DocumentImprimeDetailAt;
 import ma.bservices.mb.services.MbHibernateDaoSupport;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
@@ -20,12 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author yassine
  */
-@Repository("documentDetailATDao")
+@Repository("documentImprimeDetailATDao")
 @Transactional
-public class DocumentDetailAtDaoImp  extends MbHibernateDaoSupport implements IDocumentDetailAtDao, Serializable  {
+public class DocumentImprimeDetailAtDaoImp   extends MbHibernateDaoSupport implements IDocumentImprimeDetailAtDao, Serializable {
 
     @Override
-    public void addDocumentDetailAt(DocumentDetailAt d) {
+    public void addDocumentDetailAt(DocumentImprimeDetailAt d) {
         Transaction tx = null;
         Session session = getSessionFactory().openSession();
         try {
@@ -38,11 +38,11 @@ public class DocumentDetailAtDaoImp  extends MbHibernateDaoSupport implements ID
             System.out.println("exception : " + exp.getMessage());
             tx.rollback();
             session.close();            
-        }       
+        }  
     }
 
     @Override
-    public void editDocumentDetailAt(DocumentDetailAt d) {
+    public void editDocumentDetailAt(DocumentImprimeDetailAt d) {
         Transaction tx = null;
         Session session = getSessionFactory().openSession();
         try {
@@ -59,7 +59,7 @@ public class DocumentDetailAtDaoImp  extends MbHibernateDaoSupport implements ID
     }
 
     @Override
-    public void remouveDocumentDetailAt(DocumentDetailAt d) {
+    public void remouveDocumentDetailAt(DocumentImprimeDetailAt d) {
         Transaction tx = null;
         Session session = getSessionFactory().openSession();
         try {
@@ -76,10 +76,10 @@ public class DocumentDetailAtDaoImp  extends MbHibernateDaoSupport implements ID
     }
 
     @Override
-    public DocumentDetailAt infoDocumentDetailAtById(Long id) {
-        DocumentDetailAt d = new DocumentDetailAt();
+    public DocumentImprimeDetailAt infoDocumentDetailAtById(Long id) {
+         DocumentImprimeDetailAt d = new DocumentImprimeDetailAt();
         try {
-             d =  this.getHibernateTemplate().load(DocumentDetailAt.class, id);
+             d =  this.getHibernateTemplate().load(DocumentImprimeDetailAt.class, id);
         } catch (Exception e) {
             System.out.println("Erreur de récupération liste des documents Accidents de Travail car "+e.getMessage());
         }
@@ -87,10 +87,10 @@ public class DocumentDetailAtDaoImp  extends MbHibernateDaoSupport implements ID
     }
 
     @Override
-    public List<DocumentDetailAt> allDocumentDetailAt() {
-        List<DocumentDetailAt>  l = new ArrayList<DocumentDetailAt>();
+    public List<DocumentImprimeDetailAt> allDocumentDetailAt() {
+         List<DocumentImprimeDetailAt>  l = new ArrayList<DocumentImprimeDetailAt>();
         try {
-             l =  this.getHibernateTemplate().loadAll(DocumentDetailAt.class);
+             l =  this.getHibernateTemplate().loadAll(DocumentImprimeDetailAt.class);
         } catch (Exception e) {
             System.out.println("Erreur de récupération liste des documents Accidents de Travail car "+e.getMessage());
         }
@@ -98,10 +98,10 @@ public class DocumentDetailAtDaoImp  extends MbHibernateDaoSupport implements ID
     }
 
     @Override
-    public List<DocumentDetailAt> allDocumentDetailAtByIdDetailAt(Long id) {
-        List<DocumentDetailAt>  l = new ArrayList<DocumentDetailAt>();
+    public List<DocumentImprimeDetailAt> allDocumentDetailAtByIdDetailAt(Long id) {
+        List<DocumentImprimeDetailAt>  l = new ArrayList<DocumentImprimeDetailAt>();
         try {
-             l =  (List<DocumentDetailAt>) this.getHibernateTemplate().find("SELECT d From DocumentDetailAt d where d.detailAT.id="+id);
+             l =  (List<DocumentImprimeDetailAt>) this.getHibernateTemplate().find("SELECT d From DocumentImprimeDetailAt d where d.detailAT.id="+id);
         } catch (Exception e) {
             System.out.println("Erreur de récupération  documents car "+e.getMessage());
         }

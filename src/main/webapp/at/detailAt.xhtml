@@ -9,14 +9,12 @@ and open the template in the editor.
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:ui="http://java.sun.com/jsf/facelets"      
-
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+      xmlns:ui="http://java.sun.com/jsf/facelets" >
     <h:head>
         <title>Voiture</title>
     </h:head>
     <body>
-        <ui:composition template="./Template.xhtml">
+        <ui:composition template="Template.xhtml">
             <ui:define name="arborescence"> 
                 <h:form id="formeSolde">RH > Accident Travail</h:form>
             </ui:define>
@@ -37,10 +35,10 @@ and open the template in the editor.
                                 <h:outputText value="#{accidentTravailMb.accidentTravail.dateAccident}" />
                                 
                                 <h:outputText value="Directeur Projet /ou Chef de Projet :" />
-                                <h:outputText value="" />
+                                <h:outputText value="#{accidentTravailMb.accidentTravail.chefProjet}" />
                                 
                                 <h:outputText value="Chef de chantier: " />
-                                <h:outputText value="" />
+                                <h:outputText value="#{accidentTravailMb.accidentTravail.chefChantier}" />
                                 
                                 
                             </h:panelGrid>
@@ -55,7 +53,7 @@ and open the template in the editor.
                                 <h:outputText value=": #{accidentTravailMb.accidentTravail.salarie.nom} #{accidentTravailMb.accidentTravail.salarie.prenom}" />
                                 <h:outputText value="Nom et Prenom(Arabe)" />
                                 <h:outputText value=": #{accidentTravailMb.accidentTravail.salarie.nomArabe} #{accidentTravailMb.accidentTravail.salarie.prenomArabe}" />
-                                <h:outputText value="Sex" />
+                                <h:outputText value="Sexe" />
                                 <h:outputText value=": #{accidentTravailMb.accidentTravail.salarie.civilite.civilite}" />
                                 <h:outputText value="Qualification" />
                                 <h:outputText value=": #{accidentTravailMb.accidentTravail.salarie.fonction.fonction}" />
@@ -70,7 +68,7 @@ and open the template in the editor.
                                 <h:outputText value="Adresse (arabe)" />
                                 <h:outputText value=": #{accidentTravailMb.accidentTravail.salarie.adresseArabe}" />
                                 <h:outputText value="N° de téléphone" />
-                                <h:outputText value=": #{accidentTravailMb.accidentTravail.salarie.telephone}" />
+                                <h:outputText value=": #{accidentTravailMb.accidentTravail.salarie.gsm}" />
                                 <h:outputText value="Nationalité" />
                                 <h:outputText value=": #{accidentTravailMb.accidentTravail.salarie.nationalite.nationalite}" />
                                 <h:outputText value="Situation familiale" />
@@ -94,7 +92,7 @@ and open the template in the editor.
                              </h:panelGrid>
                              <h:panelGrid columns="2" cellpadding="10">
                                  <h:outputText value="Cause probable :" />
-                                 <p:inputText value="#{accidentTravailMb.detailAT.causeProbable}" />
+                                 <p:inputTextarea rows="2" cols="100" value="#{accidentTravailMb.detailAT.causeProbable}" />
                              </h:panelGrid>
                         </p:panel>
                         <!-- Information Lieu AT -->
@@ -103,12 +101,12 @@ and open the template in the editor.
                                  widgetVar="id_infoLieuAT" style="margin-bottom:20px"> 
                              <h:panelGrid columns="3" cellpadding="10">
                                  <p:selectBooleanCheckbox itemLabel="A l'intérieur des lieux de travail" value="#{accidentTravailMb.detailAT.interieurLieuTravail}"/>
-                                 <p:selectBooleanCheckbox itemLabel="An mission" value="#{accidentTravailMb.detailAT.mission}"/>
+                                 <p:selectBooleanCheckbox itemLabel="En mission" value="#{accidentTravailMb.detailAT.mission}"/>
                                  <p:selectBooleanCheckbox itemLabel="Trajet" value="#{accidentTravailMb.detailAT.trajet}"/>
                              </h:panelGrid>
                              <h:panelGrid columns="2" cellpadding="10">
                                  <h:outputText value="Indiquer le lieu précis :" />
-                                 <p:inputText value="#{accidentTravailMb.detailAT.lieuPrecis}" />
+                                 <p:inputTextarea rows="2" cols="100" value="#{accidentTravailMb.detailAT.lieuPrecis}" />
                              </h:panelGrid>
                         </p:panel>
                         <!-- Information Description AT--> 
@@ -118,9 +116,11 @@ and open the template in the editor.
                              
                              <h:panelGrid columns="2" cellpadding="10">
                                  <h:outputText value="Description AT :" />
-                                 <p:inputText value="#{accidentTravailMb.detailAT.description}" style="width: 100%;"/>
+                                 <p:inputTextarea rows="2" cols="100" value="#{accidentTravailMb.detailAT.description}" />
                                  <h:outputText value="Description AT arabe :" />
-                                 <p:inputText value="#{accidentTravailMb.detailAT.decriptionArabe}" style="width: 100%;" />
+                                 <p:keyboard class="form-control" closeLabel="أغلق" backspaceLabel="إحدف" clearLabel="مسح" value="#{accidentTravailMb.detailAT.decriptionArabe}" 
+                                                                layout="custom" layoutTemplate="آ-1234567890-space,ضصثقفغعهخحج-back,شسيبلاتنمكط-clear,ئءؤرإأىةوزظ-close,space-space-spacebar-دذ" />
+                                                
                              </h:panelGrid>
                         </p:panel>
                         <!-- Nature de la blessure -->
@@ -144,7 +144,7 @@ and open the template in the editor.
                              </h:panelGrid>
                              <h:panelGrid columns="2" cellpadding="10">
                                  <h:outputText value="Autres :" />
-                                 <p:inputText value="#{accidentTravailMb.detailAT.autreNature}" />
+                                 <p:inputTextarea rows="2" cols="100" value="#{accidentTravailMb.detailAT.autreNature}" />
                              </h:panelGrid>
                         </p:panel> 
                         <!-- Siège de la blessure -->
@@ -169,16 +169,24 @@ and open the template in the editor.
                              </h:panelGrid>
                              <h:panelGrid columns="2" cellpadding="10">
                                  <h:outputText value="Autres :" />
-                                 <p:inputText value="#{accidentTravailMb.detailAT.autreSiege}" />
+                                 <p:inputTextarea rows="2" cols="100" value="#{accidentTravailMb.detailAT.autreSiege}" />
                              </h:panelGrid>
                         </p:panel>
                         <!-- Mesures prises immédiatement -->
                         <p:panel id="id_infoMesureAT" header="Mesures prise immédiatement" toggleable="true" 
                                  toggleSpeed="500" closeSpeed="500"
                                  widgetVar="id_infoMesureAT" style="margin-bottom:20px"> 
-                             <h:panelGrid columns="3" cellpadding="10">
-                                 <p:selectBooleanCheckbox itemLabel="Secours internes" value="#{accidentTravailMb.detailAT.secourInterne}"/>
-                                 <p:selectBooleanCheckbox itemLabel="Secours externes" value="#{accidentTravailMb.detailAT.secourExterne}"/>
+                             <h:panelGrid columns="2" cellpadding="10">
+                                 <p:selectBooleanCheckbox itemLabel="Secours internes" value="#{accidentTravailMb.detailAT.secourInterne}">
+                                    <p:ajax update=":forme:descriptionSecourInterne" />
+                                 </p:selectBooleanCheckbox>
+                                 <p:inputTextarea id="descriptionSecourInterne" rows="2" cols="100" value="#{accidentTravailMb.detailAT.descriptionSecourInterne}"
+                                                  disabled="#{!accidentTravailMb.detailAT.secourInterne}" />
+                                 <p:selectBooleanCheckbox itemLabel="Secours externes" value="#{accidentTravailMb.detailAT.secourExterne}">
+                                    <p:ajax update=":forme:descriptionSecourExterne" />
+                                 </p:selectBooleanCheckbox>
+                                 <p:inputTextarea id="descriptionSecourExterne" rows="2" cols="100" value="#{accidentTravailMb.detailAT.descriptionSecourExterne}"
+                                                  disabled="#{!accidentTravailMb.detailAT.secourExterne}" />
                              </h:panelGrid>
                         </p:panel>
                         <!-- Suite -->
@@ -187,12 +195,15 @@ and open the template in the editor.
                                  widgetVar="id_infoSuitAT" style="margin-bottom:20px"> 
                              <h:panelGrid columns="4" cellpadding="10">
                                  <p:selectBooleanCheckbox itemLabel="Hospitalisation" value="#{accidentTravailMb.detailAT.hospitalisation}"/>
-                                 <p:selectBooleanCheckbox itemLabel="AT sans Arrêt" value="#{accidentTravailMb.detailAT.atSansArret}"/>
-                                 <p:selectBooleanCheckbox itemLabel="AT avec Arrêt" value="#{accidentTravailMb.detailAT.atAvecArret}"/>
-                                 <p:selectBooleanCheckbox itemLabel="Décès " value="#{accidentTravailMb.detailAT.deces}"/>
+                                 <p:selectBooleanCheckbox itemLabel="AT sans Arrêt" value="#{accidentTravailMb.detailAT.atSansArret}" disabled="#{accidentTravailMb.detailAT.deces}"/>
+                                 <p:selectBooleanCheckbox itemLabel="AT avec Arrêt" value="#{accidentTravailMb.detailAT.atAvecArret}" disabled="#{accidentTravailMb.detailAT.deces}"/>
+                                 <p:selectBooleanCheckbox itemLabel="Presque accident" value="#{accidentTravailMb.detailAT.presqueAccident}" disabled="#{accidentTravailMb.detailAT.deces}"/>
+                                 <p:selectBooleanCheckbox itemLabel="Décès " value="#{accidentTravailMb.detailAT.deces}">
+                                     <p:ajax update=":forme:id_infoSuitAT" listener="#{accidentTravailMb.changeSuiteDece()}" />
+                                 </p:selectBooleanCheckbox>
                              </h:panelGrid> <h:panelGrid columns="2" cellpadding="10">
                                  <h:outputText value="Nombre de jour :" />
-                                 <p:inputNumber value="#{accidentTravailMb.detailAT.nbrJour}" />
+                                 <p:inputNumber value="#{accidentTravailMb.detailAT.accidentTravail.nbjArret }" disabled="true"/>
                              </h:panelGrid>
                         </p:panel>
                         <!-- Information Description AT 
@@ -269,17 +280,28 @@ and open the template in the editor.
                         <div class="row">
                             <div class="col-lg-1"></div>
                             <div class="col-lg-2">
-                                <p:commandButton value="Valider par RH"  class="btn active" />
+                                <p:commandButton id="btnValidQhse" value="Valider par QHSE"  class="btn active" 
+                                                 disabled="#{((accidentTravailMb.isQhse)?accidentTravailMb.valideQhse:true)}" 
+                                                 action="#{accidentTravailMb.validQhse()}" 
+                                                 update=":forme:btnValidQhse"/>
                             </div>
                             <div class="col-lg-2">
-                                <p:commandButton value="Valider par QHSE"  class="btn active" />
+                                <p:commandButton id="btnValidRh" value="Valider par RH"  class="btn active"
+                                                 disabled="#{((accidentTravailMb.isRH)?accidentTravailMb.valideRH:true)}" 
+                                                 action="#{accidentTravailMb.validRH()}" 
+                                                 update=":forme:btnValidRh"  />
                             </div>
                             <div class="col-lg-2"></div>
                             <div class="col-lg-2">
-                                <p:commandButton value="Enregistrer" action="#{accidentTravailMb.saveOrUpdateDetailAt()}" class="btn active" />
+                                <p:commandButton value="Enregistrer" action="#{accidentTravailMb.saveOrUpdateDetailAt()}" 
+                                                 class="btn active"
+                                                 disabled="#{(accidentTravailMb.isRH)?accidentTravailMb.valideRH:((accidentTravailMb.isQhse)?accidentTravailMb.valideQhse:false)}" 
+                                                 update=":forme:btnValidRh,:forme:btnValidRh"  />
                             </div>
                             <div class="col-lg-2">
-                                <p:commandButton value="Imprimer" action="#{accidentTravailMb.imprimer()}"  class="btn active" />
+                                <p:commandButton value="Imprimer" action="#{accidentTravailMb.imprimer()}"  
+                                                 class="btn active"
+                                                 update=":forme:tbl_hImprim"/>
                             </div>
                             <div class="col-lg-1"></div>
                         </div>
@@ -288,25 +310,32 @@ and open the template in the editor.
                         <p:panel id="id_hImprim" header="Historique d'impression" toggleable="true" 
                                  toggleSpeed="500" closeSpeed="500"
                                  widgetVar="id_hImprim" style="margin-bottom:20px">
+                             <h:panelGrid columns="5" cellpadding="10">
+                                 <p:commandButton value="Charger " class="btn" 
+                                                  update=":forme:tbl_hImprim" 
+                                                  action="#{accidentTravailMb.chargerDocumentImprimerDetailAt()}" />
+                             </h:panelGrid>
                              <h:panelGrid columns="1" cellpadding="10">
-                                 <p:dataTable id="tbl_hImprim" var="documentIt" value="#{accidentTravailMb.documentDetailAts}" 
+                                 <p:dataTable id="tbl_hImprim" var="doc" value="#{accidentTravailMb.documentImprimeDetailAts}" 
                                                  rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
                                                  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
                                                  {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
                                                  >
-                                        <p:column headerText="Date de Création" filterBy="#{documentIt.dateCreation}" sortBy="#{documentIt.dateCreation}" filterMatchMode="contains" >
-                                            <h:outputText value="#{documentIt.dateCreation}" ></h:outputText>
+                                        <p:column headerText="Date de Création" filterBy="#{doc.dateCreation}" sortBy="#{doc.dateCreation}" filterMatchMode="contains" >
+                                            <h:outputText value="#{doc.dateCreation}" ></h:outputText>
                                         </p:column>
-                                        <p:column headerText="Titre"  filterBy="#{documentIt.titre}"  sortBy="#{documentIt.titre}"  filterMatchMode="contains"   >
-                                            <h:outputText value="#{documentIt.titre}"  />
-                                        </p:column>
-                                        <p:column headerText="Imprimé Par" filterBy="#{documentIt.creePar}"  sortBy="#{documentIt.creePar}"  filterMatchMode="contains"    >
-                                            <h:outputText value="#{documentIt.creePar}" />
+                                        <p:column headerText="Imprimé Par" filterBy="#{doc.creePar}"  sortBy="#{doc.creePar}"  filterMatchMode="contains"    >
+                                            <h:outputText value="#{doc.creePar}" />
                                         </p:column>
                                         <p:column headerText="Opérations" style="width:150px">
+                                            <p:commandButton icon="ui-icon-document"
+                                                             title ="Consulter Document" 
+                                                             action="#{accidentTravailMb.visualiser(doc.chemin)}" 
+                                                             oncomplete="PF('consulterDoc').show()"
+                                                             update=":visuliser_id" />
                                             <p:commandButton icon="ui-icon-arrowthick-1-s"
                                                              title ="Télecharger Document" 
-                                                             action="#{accidentTravailMb.downLoad(documentIt)}" 
+                                                             action="#{accidentTravailMb.downLoad(doc)}" 
                                                              ajax="false" />
                                         </p:column>
                                     </p:dataTable>
@@ -348,9 +377,9 @@ and open the template in the editor.
                                               ajax="false"/>
                         </h:form>
                     </p:dialog>
-                    <p:dialog  width="800px" resizable="false" modal="true" widgetVar="consulterDoc">
+                <p:dialog   draggable="true" width="80%" resizable="true"  modal="true"  widgetVar="consulterDoc">
                         <h:form id="visuliser_id">    
-                            <p:media value="#{imageBean.bon}" width="100%" height="500px" player="pdf"> 
+                            <p:media value="#{imageBean.bon}" width="100%" height="500" player="pdf"  > 
                                 <f:param name="path" value="#{accidentTravailMb.selectedDoc}" />
                             </p:media>
                         </h:form>
@@ -358,4 +387,5 @@ and open the template in the editor.
             </ui:define>
         </ui:composition>
     </body>
+    
 </html>

@@ -276,4 +276,6 @@ public class Utilisateur implements Serializable {
         }
         return Boolean.FALSE;
     }
+
+    
 }

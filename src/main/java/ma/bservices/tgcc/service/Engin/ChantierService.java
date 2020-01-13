@@ -8,6 +8,7 @@ package ma.bservices.tgcc.service.Engin;
 import java.util.List;
 import ma.bservices.beans.Chantier;
 import ma.bservices.beans.Document;
+import ma.bservices.beans.Salarie;
 import ma.bservices.tgcc.Entity.Voiture;
 
 /**
@@ -51,6 +52,9 @@ public interface ChantierService {
     public List<Chantier> findAllInChantierByAffaire(String chantier_id);
 
     public List<Chantier> findByAffaire(String affaire);
+    
+    public void affectSalarieChatierFinance(Salarie s, Chantier c);
+    public void deleteAffectSalarieToutChatierFinance(Salarie s);
 
     /**
      * get chantier by affaire

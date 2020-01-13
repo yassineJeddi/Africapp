@@ -61,6 +61,8 @@ public class CertificatAt implements Serializable {
     private Date dateReprise ;
     @Column(name = "DATEGERISON")
     private Date dateGerison ;
+    @Column(name = "DATECONSOLIDATION")
+    private Date dateConsolidation ;
     @Column(name = "tauxIpp")
     private Double tauxIpp =0.0;
     
@@ -174,6 +176,14 @@ public class CertificatAt implements Serializable {
 
     public void setTauxIpp(Double tauxIpp) {
         this.tauxIpp = tauxIpp;
+    }
+
+    public Date getDateConsolidation() {
+        return dateConsolidation;
+    }
+
+    public void setDateConsolidation(Date dateConsolidation) {
+        this.dateConsolidation = dateConsolidation;
     }
 
     

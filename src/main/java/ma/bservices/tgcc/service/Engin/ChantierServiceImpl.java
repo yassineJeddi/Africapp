@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import ma.bservices.beans.Chantier;
 import ma.bservices.beans.Document;
+import ma.bservices.beans.Salarie;
 import ma.bservices.tgcc.Entity.Voiture;
 import ma.bservices.tgcc.dao.engin.ChantierDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -237,5 +238,16 @@ public class ChantierServiceImpl implements ChantierService, Serializable {
     public List<String> getListChantierDistinctRegionBy(String nom, String code) {
         return this.chantierDAO.getListChantierDistinctRegionBy(nom, code);
     }
+
+    @Override
+    public void affectSalarieChatierFinance(Salarie s, Chantier c) {
+        this.chantierDAO.affectSalarieChatierFinance( s,  c);
+    }
+    
+    @Override
+    public void deleteAffectSalarieToutChatierFinance(Salarie s) {
+        this.chantierDAO.deleteAffectSalarieToutChatierFinance( s);
+    }
+
 
 }

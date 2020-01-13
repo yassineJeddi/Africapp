@@ -210,4 +210,9 @@ public class SalarieServiceImpl implements Serializable, SalarieServiceIn {
     public List<Salarie> listSalarieBlackListSorti() {
          return salarieDao.listSalarieBlackListSorti();
     } 
+
+    @Override
+    public List<Salarie> listSalarieActifByChantierId(int idChantier) {
+        return salarieDao.listSalarieActifByChantierId(idChantier);
+    }
 }

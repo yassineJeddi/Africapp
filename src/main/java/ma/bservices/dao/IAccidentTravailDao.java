@@ -16,7 +16,7 @@ import ma.bservices.beans.Salarie;
  */
 public interface IAccidentTravailDao {
     
-    public void addAccidentTravail(AccidentTravail a);
+    public Long addAccidentTravail(AccidentTravail a);
     public void editAccidentTravail(AccidentTravail a);
     public void remouveAccidentTravail(AccidentTravail a);
     public List<AccidentTravail> allAccidentTravail();

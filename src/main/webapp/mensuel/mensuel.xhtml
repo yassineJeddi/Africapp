@@ -12,7 +12,6 @@
     </h:head>
 
     <body>
-
         <ui:composition template="./mensuelTemplate.xhtml">
 
             <ui:define name="arborescence">
@@ -33,31 +32,24 @@
                                      {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" paginatorPosition="bottom"
                                      rowStyleClass="#{mensuelMb.checkdocs(mensuelIt) eq false ? 'old' : null}"
                                      >
-
                             <p:column sortBy="#{mensuelIt.matricule}" filterBy="#{mensuelIt.matricule}" headerText="Matricule"  filterFunction="#{filterMb.filterByX}" >
                                 <h:outputText value="#{mensuelIt.matricule}" />
                             </p:column>
-
                             <p:column sortBy="#{mensuelIt.nom}" filterBy="#{mensuelIt.nom}" headerText="Nom" filterMatchMode="contains" filterFunction="#{filterMb.filterByX}"  >
                                 <h:outputText value="#{mensuelIt.nom}" />
                             </p:column>
-
                             <p:column sortBy="#{mensuelIt.prenom}" filterBy="#{mensuelIt.prenom}" headerText="Prénom" filterFunction="#{filterMb.filterByX}">
                                 <h:outputText value="#{mensuelIt.prenom}" />
                             </p:column>
-
                             <p:column sortBy="#{mensuelIt.fonction.fonction}" filterBy="#{mensuelIt.fonction.fonction}"  headerText="Fonction" filterFunction="#{filterMb.filterByX}" >
                                 <h:outputText value="#{mensuelIt.fonction.fonction}" />
                             </p:column>
-
                             <p:column headerText="CIN" sortBy="#{mensuelIt.cin}" filterBy="#{mensuelIt.cin}" filterFunction="#{filterMb.filterByX}">
                                 <h:outputText value="#{mensuelIt.cin}" />
                             </p:column>
-
                             <p:column  headerText="CNSS" sortBy="#{mensuelIt.cnss}" filterBy="#{mensuelIt.cnss}" filterFunction="#{filterMb.filterByX}">
                                 <h:outputText value="#{mensuelIt.cnss}"  />
                             </p:column>
-
                             <!--                            <p:column headerText="Statut" sortBy="# {mensuelIt.statut}" filterBy="# {mensuelIt.statut}"   filterFunction="# {filterMb.filterByX}">
                                                             <h:outputText value="# {mensuelIt.statut}" />
                                                         </p:column>-->
@@ -65,21 +57,15 @@
 
                             <p:column headerText="Date de Début" sortBy="#{constanteMb.getDateFormatFR(mensuelIt.dateDebut)}" filterBy="#{constanteMb.getDateFormatFR(mensuelIt.dateDebut)}" filterFunction="#{filterMb.filterByX}">
                                 <h:outputText value="#{constanteMb.getDateFormatFR(mensuelIt.dateDebut)}" />
-
                             </p:column>
-
                             <p:column headerText="Actions">
-
                                 <p:commandButton title="Détails du mensuel" icon="ui-icon-extlink"                                                  
                                                  action="#{mensuelMb.navigateToFicheMensuel(mensuelIt)}" 
                                                  >
-
                                     <f:setPropertyActionListener value="#{mensuelIt}" 
                                                                  target="#{documentMb.mensuelAffect}"
                                                                  />
-
                                 </p:commandButton> 
-
                                 <p:commandButton disabled="#{mensuelIt.statut == '0' ? true : false }" 
                                                  title="Affectations" 
                                                  icon="ui-icon-gear" 
@@ -93,25 +79,14 @@
                                         />
                                 </p:commandButton> 
                             </p:column>
-
                             <f:facet name="footer">
-                            
                             </f:facet>
-
                         </p:dataTable>
-
-                        <p:dialog header="Affectation Financière" 
-                                  closable="false" 
-                                  widgetVar="dlgAF" 
-                                  modal="true" showEffect="fade" 
-                                  hideEffect="fade" resizable="false" 
-                                  id="id_dialo_affec"
-                                  >
-
+                        <p:dialog header="Affectation Financière"  height="600px" width="600px"
+                                  closable="true" widgetVar="dlgAF"  showEffect="fade" 
+                                  hideEffect="fade" resizable="true" id="id_dialo_affec" draggable="true">
                             <p:outputPanel id="Mise">
                                 <p:messages id="msgs_affectation" closable="true" />
-
-
                                 <div class="row">
                                     <div class="col-lg-6">  
                                         <div class="row"> 
@@ -124,19 +99,14 @@
                                             <h:outputText class="col-lg-4" value="Fonction" />
                                             <h:outputText class="col-lg-8" id="marq" value="#{mensuelMb.mensuelAffect.fonction.fonction}"/>
                                         </div>
-
                                     </div>
                                 </div>
                                 <br />
-
                                 <h:panelGrid columns="3" cellpadding="7"  >  
-
                                     <h:outputText value="Date d'affection" />
                                     <p:calendar pattern="dd/MM/yyyy"   id="cpt" value="#{affectationMB.creation_date}" maxdate="#{affectationMB.today_date}" mindate="#{affectationMB.affecServInter.minDateForAffectaion}"  showOn="button" readonlyInput="true" />
                                     <h:outputText  />
-
                                 </h:panelGrid>
-
                                 <p:panel id="liste">
                                     <ui:repeat  value="#{affectationMB.affecServInter.l_sous_affectation}" var="l">
                                         <div class="row">
@@ -147,13 +117,9 @@
                                         <hr />
                                     </ui:repeat>
                                     <h:outputText /><br></br>
-
                                 </p:panel>
-
                                 <br />
-
                                 <h:panelGrid columns="4">
-
                                     <p:selectOneMenu filter="true" id="chantier" value="#{affectationMB.selected_chantier_id}">               
                                         <f:selectItem itemLabel="" itemValue="#{null}" noSelectionOption="true" />
                                         <f:selectItems value="#{affectationMB.affecServInter.l_chanier}" var="C" itemDisabled="#{C.display == false}"
@@ -170,23 +136,16 @@
                                                      action="#{affectationMB.addChantier_toAffectations()}" 
                                                      update =":tablePE:liste, :tablePE:affec, :tablePE:chantier, :tablePE:inAffect, :tablePE:genButton" 
                                                      />
-
-
                                     <br />
                                 </h:panelGrid>
-
-
-
                                 <div class="pull-right">
                                     <h:outputText id="affec" value="Somme des affectations : #{affectationMB.affecServInter.get_somme_affectation()} %"/>
                                 </div>
                                 <p:commandButton value="Annuler" id="button_valide" onclick="PF('dlgAF').hide()" update=":tablePE:tbl, :pannelPE, tablePE:Mise"/><p:spacer width="15"/>
-                                <p:commandButton value="Valider" id="genButton" action="#{affectationMB.validate(false)}" update=":tablePE:tbl, :pannelPE ,:tablePE, msgs_affectation" disabled = "#{affectationMB.affecServInter.get_somme_affectation() != 100}"/>
-
-
+                                <p:commandButton value="Valider" id="genButton" action="#{affectationMB.validate(false)}" 
+                                                 update=":tablePE:tbl, :pannelPE ,:tablePE, msgs_affectation" 
+                                                 disabled = "#{affectationMB.affecServInter.get_somme_affectation() != 100}"/>
                             </p:outputPanel>
-
-
                         </p:dialog>
                     </h:form>
 

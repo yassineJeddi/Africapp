@@ -77,4 +77,5 @@ public interface SalarieDao {
     
     public List<Salarie> listSalarieByListChantier(String listChantiers);
     public List<Salarie> listSalarieBlackListSorti();
+    public List<Salarie> listSalarieActifByChantierId(int idChantier);
 }

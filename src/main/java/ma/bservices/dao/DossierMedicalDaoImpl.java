@@ -6,7 +6,9 @@
 package ma.bservices.dao;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
 //import javax.annotation.Resource;
@@ -169,7 +171,7 @@ public class DossierMedicalDaoImpl extends MbHibernateDaoSupport implements Doss
 
     @Override 
     public List<DossierMedical> findDossierMedicalByChantierAndStatut(int idChantier, Integer Actif) {
-        System.out.println("----DAO-----idChantier--Actif--->" + idChantier+" Actif "+Actif);   
+        /*System.out.println("----DAO-----idChantier--Actif--->" + idChantier+" Actif "+Actif);   
         try {
             if(idChantier!=0){ 
                 String req = " FROM DossierMedical s where s.actif=1 AND s.salarie.id in (SELECT SALARIE_ID FROM CHANTIER_SALARIE where CHANTIER_ID= "+idChantier+")";
@@ -185,7 +187,29 @@ public class DossierMedicalDaoImpl extends MbHibernateDaoSupport implements Doss
             System.out.println("Exception: " +e.getMessage());
         }
       
-        return null;
+        return null;*/
+        List<DossierMedical> listDossierMedical = new ArrayList<DossierMedical>();         
+        try {
+            if(idChantier!=0){  
+                String temps = new SimpleDateFormat("yyyyMMdd").format(new Date()); 
+                String req = "";
+                if(idChantier==136){
+                    req = " FROM DossierMedical s where s.actif=1 AND s.salarie.id in (SELECT SALARIE_ID FROM CHANTIER_SALARIE where CHANTIER_ID= "+idChantier+")";
+                }
+                else {
+                    req = " FROM DossierMedical s where s.salarie.id in (SELECT p.salarie.id FROM Presence p WHERE p.date='"+temps+"' AND chantier.id= "+idChantier+")";
+                }
+                listDossierMedical = (List<DossierMedical>) this.getHibernateTemplate().find(req);              
+            }
+            else{ 
+                String req=" FROM DossierMedical s where s.actif=0";
+                listDossierMedical = (List<DossierMedical>) this.getHibernateTemplate().find(req);    
+            }
+        } catch (HibernateException e) {
+            System.out.println("Exception: " +e.getMessage());
+        }
+      
+        return listDossierMedical;
         }
 
     @Override

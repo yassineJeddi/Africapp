@@ -110,6 +110,12 @@ public class ConstanteMb implements Serializable {
     private String actionEngin="Action Engin";
     private String uploadDocEngin="Uploader document Engin";
 
+//AccidentTravail
+    
+    private String validerRh ="valider at rh";
+    private String validerQhse ="valider at qhse";
+    private String receptionCertif ="reception certif";
+    private String gestionQuitance ="gestion quittance";
     
     
     
@@ -488,6 +494,39 @@ public class ConstanteMb implements Serializable {
     public void setModifierTauxHoraire(String modifierTauxHoraire) {
         this.modifierTauxHoraire = modifierTauxHoraire;
     }
+
+    public String getValiderRh() {
+        return validerRh;
+    }
+
+    public void setValiderRh(String validerRh) {
+        this.validerRh = validerRh;
+    }
+
+    public String getValiderQhse() {
+        return validerQhse;
+    }
+
+    public void setValiderQhse(String validerQhse) {
+        this.validerQhse = validerQhse;
+    }
+
+    public String getReceptionCertif() {
+        return receptionCertif;
+    }
+
+    public void setReceptionCertif(String receptionCertif) {
+        this.receptionCertif = receptionCertif;
+    }
+
+    public String getGestionQuitance() {
+        return gestionQuitance;
+    }
+
+    public void setGestionQuitance(String gestionQuitance) {
+        this.gestionQuitance = gestionQuitance;
+    }
+    
     
 
     @PostConstruct

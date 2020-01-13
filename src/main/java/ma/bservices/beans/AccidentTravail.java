@@ -12,8 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import org.springframework.security.core.Authentication;
+import javax.persistence.ManyToOne; 
 
 /**
  *
@@ -43,6 +42,8 @@ public class AccidentTravail implements Serializable {
     Integer nbjPaye ; 
     @Column(name = "DATERETOUR")
     Date dateRetour ; 
+    @Column(name = "DATERETOURREEL")
+    Date dateRetourReel ; 
     @Column(name = "MTNPAYE")
     Double mtnPaye ; 
     @Column(name = "MORTEL")
@@ -171,8 +172,14 @@ public class AccidentTravail implements Serializable {
     public void setValideQhse(Boolean valideQhse) {
         this.valideQhse = valideQhse;
     }
-    
-    
+
+    public Date getDateRetourReel() {
+        return dateRetourReel;
+    }
+
+    public void setDateRetourReel(Date dateRetourReel) {
+        this.dateRetourReel = dateRetourReel;
+    } 
 
     public Long getId() {
         return id;

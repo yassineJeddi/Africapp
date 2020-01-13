@@ -9,8 +9,7 @@ and open the template in the editor.
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:ui="http://java.sun.com/jsf/facelets"      
-          
+      xmlns:ui="http://java.sun.com/jsf/facelets"   
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
     <h:head>
         <link rel="stylesheet" type="text/css" href="../resources/css/main.css" />
@@ -61,8 +60,15 @@ and open the template in the editor.
                                        <p:column headerText="Jours Arret" filterBy="#{at.nbjArret}"  filterMatchMode="contains" >
                                            <h:outputText value="#{at.nbjArret}" />
                                     </p:column> 
-                                       <p:column headerText="Date de reprise" filterBy="#{at.dateRetour}"  filterMatchMode="contains" >
-                                           <p:calendar value="#{at.dateRetour}" pattern="yyyy-MM-dd" disabled="true" />
+                                    <p:column headerText="Date de reprise prévu" filterBy="#{at.dateRetour}"  filterMatchMode="contains" >
+                                    <h:outputText value="#{at.dateRetour}" >
+                                        <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
+                                    </h:outputText>
+                                    </p:column> 
+                                    <p:column headerText="Date de reprise réelle" filterBy="#{at.dateRetourReel}"  filterMatchMode="contains" >
+                                    <h:outputText value="#{at.dateRetourReel}" >
+                                        <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
+                                    </h:outputText>
                                     </p:column> 
                                     <p:column headerText="Action" >
                                         <div class="row">
@@ -86,12 +92,14 @@ and open the template in the editor.
                                                                  oncomplete="PF('dlg_CertificatAccident').show()"
                                                                  update=":form_CertificatAccident:tbl_CertificatAccident" />
                                             </div>
-                                            <div class="col-sm-4">
-                                                <p:commandButton icon="	ui-icon-battery-2" 
-                                                                 title="Quittances"
-                                                                 actionListener="#{accidentTravailMb.ChargerAccidentForGestion(at)}"
-                                                                 oncomplete="PF('dlg_QuittanceAccident').show()"    />
-                                            </div>
+                                            <c:if test="#{authentification.hasPermission(constanteMb.gestionQuitance)}">
+                                                <div class="col-sm-4"> 
+                                                    <p:commandButton icon="	ui-icon-battery-2" 
+                                                                     title="Quittances"
+                                                                     actionListener="#{accidentTravailMb.ChargerAccidentForGestion(at)}"
+                                                                     oncomplete="PF('dlg_QuittanceAccident').show()"    />
+                                                </div>
+                                            </c:if>
                                             <div class="col-sm-4">
                                                 <p:commandButton icon="	ui-icon-folder-open" 
                                                                 title="Document AT" 
@@ -176,37 +184,45 @@ and open the template in the editor.
                                     </p:outputPanel>
                                 </f:facet>
 
-                                <p:column headerText="N°" filterBy="#{c.id}"  filterMatchMode="contains"  >
-                                    <h:outputText value="#{c.id}" />
-                                </p:column> 
-                                <p:column headerText="Titre" filterBy="#{c.titre}"  filterMatchMode="contains"  >
-                                    <h:outputText value="#{c.titre}" />
-                                </p:column> 
-                                <p:column headerText="NBJ Arret" filterBy="#{c.nbjArret}"  filterMatchMode="contains"  >
-                                    <h:outputText value="#{c.nbjArret}" />
-                                </p:column> 
-                                <p:column headerText="Date reprise" filterBy="#{c.dateReprise}"  filterMatchMode="contains"  >
-                                    <h:outputText value="#{c.dateReprise}" />
-                                </p:column> 
-                                <p:column headerText="Date Gerison" filterBy="#{c.dateGerison}"  filterMatchMode="contains"  >
-                                    <h:outputText value="#{c.dateGerison}" />
-                                </p:column> 
-                                <p:column headerText="IPP" filterBy="#{c.ipp}"  filterMatchMode="contains"  >
-                                    <h:outputText value="#{(c.ipp!=null)?((c.ipp)?'OUI':'NON'):'NON'}" />
-                                </p:column> 
-                                <p:column headerText="Taux IPP" filterBy="#{c.tauxIpp}"  filterMatchMode="contains"  >
-                                    <h:outputText value="#{c.tauxIpp}" />
-                                </p:column> 
-                                <p:column headerText="Description" filterBy="#{c.description}"  filterMatchMode="contains"  >
-                                    <h:outputText value="#{c.description}" />
-                                </p:column> 
-                                <p:column headerText="Réception original"  >
-                                    <p:commandButton icon="ui-icon-check"
-                                             title ="Consulter Document"
-                                             disabled="#{c.recuOriginal}"
-                                             action="#{accidentTravailMb.recuCertificatOriginal(c)}"
-                                             update=":form_CertificatAccident:tbl_CertificatAccident" />
-                                </p:column> 
+                                    <p:column headerText="N°" filterBy="#{c.id}"  filterMatchMode="contains"  >
+                                        <h:outputText value="#{c.id}" />
+                                    </p:column> 
+                                    <p:column headerText="Titre" filterBy="#{c.titre}"  filterMatchMode="contains"  >
+                                        <h:outputText value="#{c.titre}" />
+                                    </p:column> 
+                                    <p:column headerText="NBJ Arret" filterBy="#{c.nbjArret}"  filterMatchMode="contains"  >
+                                        <h:outputText value="#{c.nbjArret}" />
+                                    </p:column> 
+                                    <p:column headerText="Date reprise" filterBy="#{c.dateReprise}"  filterMatchMode="contains"  >
+                                        <h:outputText value="#{c.dateReprise}" >
+                                            <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
+                                        </h:outputText>
+                                    </p:column> 
+                                    <p:column headerText="Date Gerison" filterBy="#{c.dateGerison}"  filterMatchMode="contains"  >
+                                        <h:outputText value="#{c.dateGerison}" >
+                                            <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
+                                        </h:outputText>
+                                    </p:column> 
+                                    <p:column headerText="Date Consolidation " filterBy="#{c.dateConsolidation}"  filterMatchMode="contains"  >
+                                        <h:outputText value="#{c.dateConsolidation}" >
+                                            <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
+                                        </h:outputText>
+                                    </p:column> 
+                                    <p:column headerText="Taux IPP" filterBy="#{c.tauxIpp}"  filterMatchMode="contains"  >
+                                        <h:outputText value="#{c.tauxIpp}" />
+                                    </p:column> 
+                                    <p:column headerText="Description" filterBy="#{c.description}"  filterMatchMode="contains"  >
+                                        <h:outputText value="#{c.description}" />
+                                    </p:column> 
+                                    <c:if test="#{authentification.hasPermission(constanteMb.receptionCertif)}">
+                                        <p:column headerText="Réception original"  >
+                                            <p:commandButton icon="ui-icon-check"
+                                                     title ="Consulter Document"
+                                                     disabled="#{c.recuOriginal}"
+                                                     action="#{accidentTravailMb.recuCertificatOriginal(c)}"
+                                                     update=":form_CertificatAccident:tbl_CertificatAccident" />
+                                        </p:column> 
+                                    </c:if>
                                     <p:column headerText="Opérations" style="width:150px">
                                         <div class="row">
                                             <div class="col-sm-4">
@@ -241,8 +257,7 @@ and open the template in the editor.
                     </h:form>
                 </p:dialog>                
                     <p:dialog header="Ajouter Certificats " widgetVar="dlg_AjoutCertificatAccident" width="40%" minHeight="50"
-                              maximizable="false" resizable="false" draggable="false" id="dlg_AjoutCertificatAccident"
-                              >
+                              maximizable="false" resizable="false" draggable="false" id="dlg_AjoutCertificatAccident" >
                         <h:form id="form_AjoutCertificatAccident" enctype="multipart/form-data">
                             <div class="row">
                                 <div class="col-lg-4 form-group">
@@ -254,7 +269,7 @@ and open the template in the editor.
                                                        >
                                         <f:selectItem itemLabel="Initial"  itemValue="Initial" itemDisabled="#{accidentTravailMb.accidentTravail.certificatInitial}"/> 
                                         <f:selectItem itemLabel="Prolongation"  itemValue="Prolongation"/> 
-                                        <f:selectItem itemLabel="Reprise de travail"  itemValue="Reprise de travail"/> 
+                                        <f:selectItem itemLabel="Reprise de travail"  itemValue="Reprise de travail"  itemDisabled="#{(accidentTravailMb.accidentTravail.dateRetourReel!=null)?true:false}"/> 
                                         <f:selectItem itemLabel="Consolidation"  itemValue="Consolidation"/> 
                                         <f:selectItem itemLabel="Guerison"  itemValue="Guerison"/> 
                                         <p:ajax listener="#{accidentTravailMb.changeTypeCertificat()}" update=":form_AjoutCertificatAccident, :form_AjoutCertificatAccident" /> 
@@ -262,24 +277,28 @@ and open the template in the editor.
                                 </div>
                                 <div class="col-lg-4 form-group">
                                     <p:outputLabel value="Nombre du jour (*) "/>
-                                    <p:inputNumber  value="#{accidentTravailMb.certificatAt.nbjArret}" />
+                                    <p:inputNumber  value="#{accidentTravailMb.certificatAt.nbjArret}"
+                                                    disabled="#{accidentTravailMb.selectReprise || accidentTravailMb.selectConsolidation || accidentTravailMb.selectGuerison}"/>
                                 </div>
                                 <div class="col-lg-4 form-group">
                                     <p:outputLabel value="Date reprise "/>
-                                    <p:calendar value="#{accidentTravailMb.certificatAt.dateReprise}" mindate="#{accidentTravailMb.certificatAt.at.dateRetour}" pattern="yyyy-MM-dd"/>
+                                    <p:calendar value="#{accidentTravailMb.certificatAt.dateReprise}" 
+                                                mindate="#{accidentTravailMb.certificatAt.at.dateRetour}" 
+                                                pattern="yyyy-MM-dd" disabled="#{!accidentTravailMb.selectReprise}" />
                                 </div>
                             </div>
-                            
                             <div class="row">
                                 <div class="col-lg-4 form-group">
-                                    <p:outputLabel value="Date Guerison "/>
-                                    <p:calendar value="#{accidentTravailMb.certificatAt.dateGerison}" pattern="yyyy-MM-dd"/>
+                                    <p:outputLabel value="Date Consolidation "/>
+                                    <p:calendar value="#{accidentTravailMb.certificatAt.dateReprise}" 
+                                                mindate="#{accidentTravailMb.certificatAt.at.dateRetour}" 
+                                                pattern="yyyy-MM-dd" disabled="#{!accidentTravailMb.selectConsolidation}" />
                                 </div>
                                 <div class="col-lg-4 form-group">
-                                    <p:outputLabel value=" IPP"/><br />
-                                    <p:selectBooleanCheckbox id="certIpp" itemLabel="" 
-                                                             value="#{accidentTravailMb.certificatAt.ipp}"
-                                                             disabled="#{!accidentTravailMb.selectGuerison}"/>
+                                    <p:outputLabel value="Date Guerison "/>
+                                    <p:calendar value="#{accidentTravailMb.certificatAt.dateGerison}" 
+                                                mindate="#{accidentTravailMb.certificatAt.at.dateRetour}" 
+                                                pattern="yyyy-MM-dd" disabled="#{!accidentTravailMb.selectGuerison}" />
                                 </div>
                                 <div class="col-lg-4 form-group">
                                     <p:outputLabel value="Taux IPP "/>
@@ -288,7 +307,6 @@ and open the template in the editor.
                                                    disabled="#{!accidentTravailMb.selectGuerison}" />
                                 </div>
                             </div>
-                            
                             <div class="row">
                                 <div class="col-lg-12 form-group">
                                     <p:outputLabel value="Description :"/>

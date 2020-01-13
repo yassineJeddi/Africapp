@@ -35,6 +35,7 @@ import ma.bservice.tgcc.Constante.Message;
 import ma.bservices.beans.AccidentTravail;
 import ma.bservices.beans.CertificatAt;
 import ma.bservices.beans.Chantier;
+import ma.bservices.beans.Contrat;
 import ma.bservices.beans.DetailAT;
 import ma.bservices.beans.DocumentAt;
 import ma.bservices.beans.DocumentDetailAt;
@@ -45,6 +46,7 @@ import ma.bservices.beans.Utilisateur;
 import ma.bservices.mb.services.ConstanteMb;
 import ma.bservices.mb.services.Evol_ChantierMb;
 import ma.bservices.mb.services.Module;
+import ma.bservices.services.ContratService;
 import ma.bservices.services.IAccidentTravailService;
 import ma.bservices.services.ICertificatAtService;
 import ma.bservices.services.IDetailATService;
@@ -110,7 +112,11 @@ public class AccidentTravailMb {
     @ManagedProperty(value = "#{utilisateurService}")
     private UtilisateurService utilisateurService;
     
-    boolean isAdmin = false, valideRH = false, valideQhse = false, isRH = false, isQhse = false ,selectGuerison = false  ;
+    @ManagedProperty(value = "#{contratService}")
+    private ContratService contratService;
+    
+    boolean isAdmin = false, valideRH = false, valideQhse = false, isRH = false, isQhse = false 
+            ,selectGuerison = false,selectConsolidation = false ,selectReprise = false  ;
     private Module module = new Module();
     private Integer idChantier;
     private Integer idSalarie;
@@ -126,6 +132,7 @@ public class AccidentTravailMb {
     private UploadedFile uploadedFileQuitance;
     private String selectedDoc;
     private Date verifDateAt = new Date();
+    private Contrat lastContratSal = new Contrat();
     
     private QuittanceAt quittanceAt;
     private List<QuittanceAt> quittanceAts;
@@ -145,6 +152,7 @@ public class AccidentTravailMb {
     private List<Chantier> chantiers = new ArrayList<Chantier>();
     private List<Salarie> salaries = new ArrayList<Salarie>();
     private List<DetailAT> detailATs = new ArrayList<DetailAT>();
+    private List<Contrat> contrats = new ArrayList<Contrat>();
     private List<DocumentDetailAt> documentDetailAts = new ArrayList<DocumentDetailAt>();
     private List<DocumentImprimeDetailAt> documentImprimeDetailAts = new ArrayList<DocumentImprimeDetailAt>();
 
@@ -500,6 +508,47 @@ public class AccidentTravailMb {
         this.selectGuerison = selectGuerison;
     }
 
+    public Contrat getLastContratSal() {
+        return lastContratSal;
+    }
+
+    public void setLastContratSal(Contrat lastContratSal) {
+        this.lastContratSal = lastContratSal;
+    }
+
+    public ContratService getContratService() {
+        return contratService;
+    }
+
+    public void setContratService(ContratService contratService) {
+        this.contratService = contratService;
+    }
+
+    public List<Contrat> getContrats() {
+        return contrats;
+    }
+
+    public void setContrats(List<Contrat> contrats) {
+        this.contrats = contrats;
+    }
+
+    public boolean isSelectConsolidation() {
+        return selectConsolidation;
+    }
+
+    public void setSelectConsolidation(boolean selectConsolidation) {
+        this.selectConsolidation = selectConsolidation;
+    }
+
+    public boolean isSelectReprise() {
+        return selectReprise;
+    }
+
+    public void setSelectReprise(boolean selectReprise) {
+        this.selectReprise = selectReprise;
+    }
+
+    
     
     
     
@@ -515,8 +564,6 @@ public class AccidentTravailMb {
         WebApplicationContext ctx = FacesContextUtils.getWebApplicationContext(FacesContext.getCurrentInstance());
         
         utilisateurService = ctx.getBean(UtilisateurService.class);
-
-        
         chantierService = ctx.getBean(ChantierService.class);
         salarieService  = ctx.getBean(SalarieServiceIn.class);
         accidentTravailService = ctx.getBean(IAccidentTravailService.class);   
@@ -524,7 +571,8 @@ public class AccidentTravailMb {
         documentDetailAtService = ctx.getBean(IDocumentDetailAtService.class);  
         detailATService = ctx.getBean(IDetailATService.class);  
         certificatAtService = ctx.getBean(ICertificatAtService.class);  
-        quittanceAtService = ctx.getBean(IQuittanceAtService.class);     
+        quittanceAtService = ctx.getBean(IQuittanceAtService.class);  
+        contratService = Module.ctx.getBean(ContratService.class);   
         
         ELContext elContext = FacesContext.getCurrentInstance().getELContext();
         Evol_ChantierMb evol_ChantierMb = (Evol_ChantierMb) FacesContext.getCurrentInstance().getApplication().getELResolver().getValue(elContext, null, "evol_chantierMb");
@@ -533,33 +581,29 @@ public class AccidentTravailMb {
         
         utilisateur = utilisateurService.getUsersByLogin(auth.getPrincipal().toString().trim());
         
-         for (GrantedAuthority grantedAuthority : auth.getAuthorities()) {
+        for (GrantedAuthority grantedAuthority : auth.getAuthorities()) {
             if ("admin".equals(grantedAuthority.getAuthority())) { 
                 chantiers = evol_ChantierMb.getChantiers();
                 isAdmin = true;
                 break;
             }
         }
-         for (GrantedAuthority grantedAuthority : auth.getAuthorities()) {
-             System.out.println("1) RH grantedAuthority.getAuthority() ====> "+grantedAuthority.getAuthority());
+        for (GrantedAuthority grantedAuthority : auth.getAuthorities()) {
             
             if ("valider at rh".equals(grantedAuthority.getAuthority())) { 
                 isRH=Boolean.TRUE;
                 break;
             }
         }
-         for (GrantedAuthority grantedAuthority : auth.getAuthorities()) {
-             System.out.println("2) QHSE grantedAuthority.getAuthority() ====> "+grantedAuthority.getAuthority());
+        for (GrantedAuthority grantedAuthority : auth.getAuthorities()) {
             if ("valider at qhse".equals(grantedAuthority.getAuthority())) { 
                 isQhse=Boolean.TRUE;
                 break;
                     }
-         }
+        }
         if (!isAdmin) {
             chantiers = chantierService.searchByUser(auth.getPrincipal().toString());
         }
-             System.out.println("1) isQhse ====> "+isQhse);
-             System.out.println("2) isRH ====> "+isRH);
         
         
         Long id =Long.valueOf(-1);
@@ -572,8 +616,6 @@ public class AccidentTravailMb {
             detailATs = detailATService.allDetailATByAtId(id);
             if(detailATs.size()>0){
                 detailAT = detailATs.get(0);
-                
-                
             }else{
                 try {
                     if(accidentTravail != null){
@@ -587,7 +629,13 @@ public class AccidentTravailMb {
                     System.out.println("Erreur de creation detail At car "+e.getMessage());
                 }
             }
-            
+            try {
+                if((detailAT.getLieuPrecis().trim().length()<1 )|| (detailAT.getLieuPrecis()== null)){
+                    detailAT.setLieuPrecis(accidentTravail.getLieu());
+                }
+            } catch (Exception e) {
+                    System.out.println("Erreur d'initiel de detail At car "+e.getMessage());
+            }
             try {
                     valideRH = (detailAT.getValideRH()!=null)?detailAT.getValideRH():false;
                 } catch (Exception e) {
@@ -598,8 +646,12 @@ public class AccidentTravailMb {
                 } catch (Exception e) {
                     System.out.println("Erreur de charger valideQhse car "+e.getMessage());
                 }
-                System.out.println("================> valideRH "+valideRH);
-                System.out.println("================> valideQhse "+valideQhse);
+            if(accidentTravail.getSalarie()!=null){
+                contrats = contratService.listeContratsSalarie(0, Integer.parseInt(contratService.nombreContratsSalarie(accidentTravail.getSalarie().getId()).toString()), accidentTravail.getSalarie().getId());
+                if(contrats.size()>0){
+                    lastContratSal = contrats.get(0);
+                }
+            }
             
         }
         
@@ -607,15 +659,14 @@ public class AccidentTravailMb {
     
     public void listSalarieByChantier(){
         if(idChantier>0){
-            salaries = salarieService.listSalarieByChantierId(idChantier);
+            salaries = salarieService.listSalarieActifByChantierId(idChantier);
         }
     }
     public void selectSalarieByChantier(){
-        System.out.println("idSalarie " + idSalarie);
         if (idSalarie>0) {
             salarie = salarieService.getSalarieByID(idSalarie);
-        }
-        System.out.println("salarie " + salarie.toString());
+            accidentTravail.setTelContacter(salarie.getGsm());
+        } 
     }
     public void addAT(){
         
@@ -628,9 +679,9 @@ public class AccidentTravailMb {
             accidentTravail.setSalarie(salarie);
             accidentTravail.setCreePar(utilisateur);
             accidentTravail.setDateCreation(new Date());
-            accidentTravailService.addAccidentTravail(accidentTravail);
+            Long id_At = accidentTravailService.addAccidentTravail(accidentTravail);
             
-            
+            if(id_At>0){
             //email
             ApplicationContext ctx = new ClassPathXmlApplicationContext("mail.xml");
             String dateAccidentEmail = new SimpleDateFormat("yyyy-MM-dd").format(accidentTravail.getDateAccident());
@@ -643,11 +694,11 @@ public class AccidentTravailMb {
                     +"Circonstances : "+accidentTravail.getDescription().trim()
                     +"\nCordialement,";
             List<String> listDestinatairesMail = new ArrayList<String>();
-            listDestinatairesMail.add("at_notification@tgcc.ma");
+            //listDestinatairesMail.add("at_notification@tgcc.ma");
             if(chantier.getEmail() != null){
                 listDestinatairesMail.add(chantier.getEmail().trim());
             }
-            //listDestinatairesMail.add("yassine.jeddi@tgcc.ma");
+            listDestinatairesMail.add("yassine.jeddi@tgcc.ma");
             //listDestinatairesMail.add("hanane.noam@tgcc.ma");
             
             
@@ -656,13 +707,16 @@ public class AccidentTravailMb {
                     sm.sendMail("notification@tgcc.ma", m, objetMail, corpMail);
                 }
             }
-            
-            
             context.addMessage(null, new FacesMessage("AT enregistré", ""));
+            
+        }else{
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Erreur!","AT non enregistré"));
+                
+            }
            
         } catch (Exception e) { 
             System.out.println("::::::::::>ERREUR  accidentTravail "+e.getMessage());
-            context.addMessage(null, new FacesMessage("AT non enregistré", ""));
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Erreur!","AT non enregistré"));
         }
         viderVar();
         //accidentTravailService.addAccidentTravail(accidentTravail);
@@ -1062,6 +1116,11 @@ public class AccidentTravailMb {
                                 System.out.println("Erreur d'ajouter nombre des jours arreter au AT car "+e.getMessage());
                             }
                         }
+                        if("Reprise de travail".equals(certificatAt.getTypeCertificat())){
+                            System.out.println("ma.bservices.mb.AccidentTravailMb.addCertificat()======> Reprise de travail");
+                               accidentTravail.setDateRetourReel(certificatAt.getDateReprise());
+                               accidentTravailService.editAccidentTravail(accidentTravail);
+                           }
                     }
             }
         }
@@ -1110,13 +1169,17 @@ public class AccidentTravailMb {
                         calendar.add(Calendar.DATE,(-1)*certificatAt.getNbjArret());
                         accidentTravail.setDateRetour(calendar.getTime());
                         if("Initial".equals(certificatAt.getTypeCertificat())){
-                                    accidentTravail.setCertificatInitial(Boolean.FALSE);
-                                }
+                                accidentTravail.setCertificatInitial(Boolean.FALSE);
+                            }
+                        if("Reprise de travail".equals(certificatAt.getTypeCertificat())){
+                               accidentTravail.setDateRetourReel(null);
+                           }
                         accidentTravailService.editAccidentTravail(accidentTravail);
                     } catch (Exception e) {
                         System.out.println("Erreur d'ajouter nombre des jours arreter au AT car "+e.getMessage());
                     }
                 }
+                
                 certificatAtService.remouvCertificatAt(certificatAt);
                 chargeCertificat();
             } catch (Exception e) {
@@ -1195,11 +1258,17 @@ public class AccidentTravailMb {
         certificatAtService.editCertificatAt(c);
     }
     public void validQhse(){
-        detailAT.setValideQhse(Boolean.TRUE);
-        detailAT.setUserValidQHSE(utilisateur);
-        detailAT.setDateValidQhse(new Date());
-        valideQhse= Boolean.TRUE;
-        detailATService.editDetailAT(detailAT);
+        FacesContext context = FacesContext.getCurrentInstance();
+        chargerDocumentDetailAt();
+        if(documentDetailAts.size()>0){
+            detailAT.setValideQhse(Boolean.TRUE);
+            detailAT.setUserValidQHSE(utilisateur);
+            detailAT.setDateValidQhse(new Date());
+            valideQhse= Boolean.TRUE;
+            detailATService.editDetailAT(detailAT);
+        }else{
+            context.addMessage(null, new FacesMessage("Validation non effectuer, Merci d'ajouter un document(Photos /ou croquis)", ""));
+        }
     }
     public void validRH(){
         detailAT.setValideRH(Boolean.TRUE);
@@ -1215,11 +1284,45 @@ public class AccidentTravailMb {
             detailAT.setPresqueAccident(Boolean.FALSE);
         }
     }
+    public void changeSuiteAtArret(){
+        if(detailAT.getAtAvecArret()){
+            detailAT.setAtSansArret(Boolean.FALSE);
+            detailAT.setPresqueAccident(Boolean.FALSE);
+            detailAT.setDeces(Boolean.FALSE);
+        }
+    }
+    public void changeSuiteAtSnArret(){
+        if(detailAT.getAtSansArret()){
+            detailAT.setAtAvecArret(Boolean.FALSE);
+            detailAT.setPresqueAccident(Boolean.FALSE);
+            detailAT.setDeces(Boolean.FALSE);
+        }
+    }
+    public void changeSuitePresqAt(){
+        if(detailAT.getPresqueAccident()){
+            detailAT.setAtAvecArret(Boolean.FALSE);
+            detailAT.setAtSansArret(Boolean.FALSE);
+            detailAT.setDeces(Boolean.FALSE);
+        }
+    }
     public void changeTypeCertificat(){
         if("Guerison".equals(certificatAt.getTypeCertificat())){
             selectGuerison = true;
-        }else{
-             selectGuerison = false;
+            selectConsolidation = false;
+            selectReprise=false;
+        }else if("Consolidation".equals(certificatAt.getTypeCertificat())){
+            selectGuerison = false;
+            selectConsolidation = true;
+            selectReprise=false;
+        }else if("Reprise de travail".equals(certificatAt.getTypeCertificat())){
+            selectGuerison = false;
+            selectConsolidation = false;
+            selectReprise=true;
+            
+        }else {
+            selectGuerison = false;
+            selectConsolidation = false;
+            selectReprise=false;
         }
     }
 }

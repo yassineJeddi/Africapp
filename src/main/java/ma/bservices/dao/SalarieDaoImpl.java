@@ -139,11 +139,9 @@ public class SalarieDaoImpl extends MbHibernateDaoSupport implements SalarieDao 
         List<Salarie> l = new ArrayList<Salarie>(); 
         
         if(idChantier>0 ){ 
-            System.out.println("DAO =======> idChantier : "+idChantier);
             try {   
                  String req=" FROM Salarie s where s.id in (SELECT SALARIE_ID FROM CHANTIER_SALARIE WHERE CHANTIER_ID ="+idChantier+")  ";
                  l = (List<Salarie>) this.getHibernateTemplate().find(req);   
-                System.out.println("DAO =======> l : "+l.size());
             
             } catch (Exception e) {
                 logger.error("Erreur de récupération des salarier par chantier "+e.getMessage());
@@ -446,6 +444,22 @@ public class SalarieDaoImpl extends MbHibernateDaoSupport implements SalarieDao 
         } catch (Exception e) {
             logger.error("Erreur de récupération des salarier par chantier "+e.getMessage());
         }   
+        return l;
+    }
+
+    @Override
+    public List<Salarie> listSalarieActifByChantierId(int idChantier) {
+        List<Salarie> l = new ArrayList<Salarie>(); 
+        
+        if(idChantier>0 ){ 
+            try {   
+                 String req=" FROM Salarie s where s.etat.etat in('Actif','Actif provisoire') and s.id in (SELECT SALARIE_ID FROM CHANTIER_SALARIE WHERE CHANTIER_ID ="+idChantier+")  ";
+                 l = (List<Salarie>) this.getHibernateTemplate().find(req);   
+            
+            } catch (Exception e) {
+                logger.error("Erreur de récupération des salarier par chantier "+e.getMessage());
+            }  
+        }
         return l;
     }
 

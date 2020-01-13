@@ -7,9 +7,12 @@ package ma.bservices.tgcc.dao.engin;
 
 import java.io.Serializable;
 import java.util.List;
+import javax.annotation.Resource;
 import ma.bservice.tgcc.Constante.Constante;
+import ma.bservices.beans.CHANTIER_SALARIE;
 import ma.bservices.beans.Chantier;
 import ma.bservices.beans.Document;
+import ma.bservices.beans.Salarie;
 import ma.bservices.beans.Zone;
 import ma.bservices.tgcc.Entity.Voiture;
 import ma.bservices.tgcc.utilitaire.MbHibernateDaoSupport;
@@ -18,7 +21,9 @@ import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +36,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ChantierDAOImpl extends MbHibernateDaoSupport implements ChantierDAO, Serializable {
 
     private final static String HQL_instance = "m";
+    
+    
 
     @Override
     public List<Chantier> findAll() {
@@ -641,6 +648,44 @@ public class ChantierDAOImpl extends MbHibernateDaoSupport implements ChantierDA
         } else {
             return "Zone_1";
         }
+    }
+
+    @Override
+    public void affectSalarieChatierFinance(Salarie s, Chantier c) {
+        
+        CHANTIER_SALARIE chantierSalarie = new CHANTIER_SALARIE();
+        chantierSalarie.setCHANTIER_ID(c.getId());
+        chantierSalarie.setSALARIE_ID(s.getId());
+                
+        try {
+                Session session = getSessionFactory().openSession();
+                session.setFlushMode(FlushMode.AUTO);
+                session.beginTransaction();
+                session.merge(chantierSalarie);
+                session.getTransaction().commit();
+                session.close();
+        } catch (Exception e) {
+                System.out.println("Erreur d'affecter Salarie Chatier Finance car "+e.getMessage());
+        }
+
+    }
+
+    @Override
+    public void   deleteAffectSalarieToutChatierFinance(Salarie s) {
+        
+                
+        try {
+                Session session = getSessionFactory().openSession();
+                session.setFlushMode(FlushMode.AUTO);
+                session.beginTransaction(); 
+                Query query = session.createSQLQuery("DELETE FROM CHANTIER_SALARIE WHERE SALARIE_ID="+s.getId());
+                query.executeUpdate();
+                session.getTransaction().commit();
+                session.close();
+        } catch (Exception e) {
+                System.out.println("Erreur de supprimer Salarie Chatier Finance car "+e.getMessage());
+        }
+
     }
 
 }

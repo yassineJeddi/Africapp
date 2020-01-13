@@ -37,7 +37,9 @@
                             <p:ajax event="select" listener="#{dossMb.listeDossiersStatut()}" update=":tableDM" />
                         </p:selectOneRadio> 
                          
-                        <p:commandButton id="btnCharger" onstart="PF('block').show()" oncomplete="PF('block').hide()"  
+                        <p:commandButton id="btnCharger" 
+                                         onstart="PF('block').show()" 
+                                         oncomplete="PF('block').hide()"  
                                          class="btn btn-switch active"  value="Charger" icon="fa fa-spinner " 
                                          update=":tableDM" style="float:right" 
                                          action="#{dossMb.chargerDonnees()}"   />

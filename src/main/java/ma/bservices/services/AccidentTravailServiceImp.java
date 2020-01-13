@@ -33,8 +33,8 @@ public class AccidentTravailServiceImp implements Serializable,IAccidentTravailS
     }
 
     @Override
-    public void addAccidentTravail(AccidentTravail a) {
-        accidentTravailDao.addAccidentTravail(a);
+    public Long addAccidentTravail(AccidentTravail a) {
+        return accidentTravailDao.addAccidentTravail(a);
     }
 
     @Override

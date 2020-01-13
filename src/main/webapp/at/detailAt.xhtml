@@ -9,7 +9,8 @@ and open the template in the editor.
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:ui="http://java.sun.com/jsf/facelets" >
+      xmlns:ui="http://java.sun.com/jsf/facelets" 
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
     <h:head>
         <title>Voiture</title>
     </h:head>
@@ -48,7 +49,6 @@ and open the template in the editor.
                                  toggleSpeed="500" closeSpeed="500"
                                  widgetVar="id_infoVictime" style="margin-bottom:20px"> 
                              <h:panelGrid columns="6" cellpadding="10">
-                               
                                 <h:outputText value="Nom et Prenom" />
                                 <h:outputText value=": #{accidentTravailMb.accidentTravail.salarie.nom} #{accidentTravailMb.accidentTravail.salarie.prenom}" />
                                 <h:outputText value="Nom et Prenom(Arabe)" />
@@ -58,7 +58,9 @@ and open the template in the editor.
                                 <h:outputText value="Qualification" />
                                 <h:outputText value=": #{accidentTravailMb.accidentTravail.salarie.fonction.fonction}" />
                                 <h:outputText value="Date d'embauche" />
-                                <h:outputText value=": #{accidentTravailMb.accidentTravail.salarie.dateCreation}" />
+                                <h:outputText value=": #{(accidentTravailMb.accidentTravail.salarie.type.type=='Mensuel')?accidentTravailMb.accidentTravail.salarie.dateCreation:accidentTravailMb.lastContratSal.dateEmbauche}" >
+                                    <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
+                                </h:outputText>
                                 <h:outputText value="N° CIN" />
                                 <h:outputText value=": #{accidentTravailMb.accidentTravail.salarie.cin}" />
                                 <h:outputText value="N° CNSS" />
@@ -115,8 +117,8 @@ and open the template in the editor.
                                  widgetVar="id_infoDescriptionAT" style="margin-bottom:20px"> 
                              
                              <h:panelGrid columns="2" cellpadding="10">
-                                 <h:outputText value="Description AT :" />
-                                 <p:inputTextarea rows="2" cols="100" value="#{accidentTravailMb.detailAT.description}" />
+                                 <h:outputText value="Description AT(*) :" />
+                                 <p:inputTextarea rows="2" cols="100" value="#{accidentTravailMb.detailAT.description}" required="true" />
                                  <h:outputText value="Description AT arabe :" />
                                  <p:keyboard class="form-control" closeLabel="أغلق" backspaceLabel="إحدف" clearLabel="مسح" value="#{accidentTravailMb.detailAT.decriptionArabe}" 
                                                                 layout="custom" layoutTemplate="آ-1234567890-space,ضصثقفغعهخحج-back,شسيبلاتنمكط-clear,ئءؤرإأىةوزظ-close,space-space-spacebar-دذ" />
@@ -194,28 +196,67 @@ and open the template in the editor.
                                  toggleSpeed="500" closeSpeed="500"
                                  widgetVar="id_infoSuitAT" style="margin-bottom:20px"> 
                              <h:panelGrid columns="4" cellpadding="10">
-                                 <p:selectBooleanCheckbox itemLabel="Hospitalisation" value="#{accidentTravailMb.detailAT.hospitalisation}"/>
-                                 <p:selectBooleanCheckbox itemLabel="AT sans Arrêt" value="#{accidentTravailMb.detailAT.atSansArret}" disabled="#{accidentTravailMb.detailAT.deces}"/>
-                                 <p:selectBooleanCheckbox itemLabel="AT avec Arrêt" value="#{accidentTravailMb.detailAT.atAvecArret}" disabled="#{accidentTravailMb.detailAT.deces}"/>
-                                 <p:selectBooleanCheckbox itemLabel="Presque accident" value="#{accidentTravailMb.detailAT.presqueAccident}" disabled="#{accidentTravailMb.detailAT.deces}"/>
-                                 <p:selectBooleanCheckbox itemLabel="Décès " value="#{accidentTravailMb.detailAT.deces}">
-                                     <p:ajax update=":forme:id_infoSuitAT" listener="#{accidentTravailMb.changeSuiteDece()}" />
+                                 <p:selectBooleanCheckbox  itemLabel="Hospitalisation" value="#{accidentTravailMb.detailAT.hospitalisation}"/>
+                                 <p:selectBooleanCheckbox id="suitSnAret" itemLabel="AT sans Arrêt" value="#{accidentTravailMb.detailAT.atSansArret}" disabled="#{accidentTravailMb.detailAT.deces}">
+                                     <p:ajax update=":forme:suitPresqAt,:forme:suitAvcAret,:forme:suitDec" 
+                                             listener="#{accidentTravailMb.changeSuiteAtSnArret()}" />
+                                 </p:selectBooleanCheckbox>
+                                 <p:selectBooleanCheckbox id="suitAvcAret" itemLabel="AT avec Arrêt" value="#{accidentTravailMb.detailAT.atAvecArret}" disabled="#{accidentTravailMb.detailAT.deces}">
+                                     <p:ajax update=":forme:suitPresqAt,:forme:suitSnAret,:forme:suitDec" 
+                                             listener="#{accidentTravailMb.changeSuiteAtArret()}" />
+                                 </p:selectBooleanCheckbox>
+                                 <p:selectBooleanCheckbox id="suitPresqAt" itemLabel="Presque accident" value="#{accidentTravailMb.detailAT.presqueAccident}" disabled="#{accidentTravailMb.detailAT.deces}">
+                                     <p:ajax update=":forme:suitSnAret,:forme:suitAvcAret,:forme:suitDec" 
+                                             listener="#{accidentTravailMb.changeSuitePresqAt()}" />
+                                 </p:selectBooleanCheckbox>
+                                 <p:selectBooleanCheckbox id="suitDec" itemLabel="Décès " value="#{accidentTravailMb.detailAT.deces}">
+                                     <p:ajax update=":forme:suitSnAret,:forme:suitAvcAret,:forme:suitPresqAt" 
+                                             listener="#{accidentTravailMb.changeSuiteDece()}" />
                                  </p:selectBooleanCheckbox>
                              </h:panelGrid> <h:panelGrid columns="2" cellpadding="10">
                                  <h:outputText value="Nombre de jour :" />
                                  <p:inputNumber value="#{accidentTravailMb.detailAT.accidentTravail.nbjArret }" disabled="true"/>
                              </h:panelGrid>
                         </p:panel>
-                        <!-- Information Description AT 
-                        <p:panel id="id_infoPhotosAT" header="Photos /ou croquis" toggleable="true" 
-                                 toggleSpeed="500" closeSpeed="500"
-                                 widgetVar="id_infoPhotosAT" style="margin-bottom:20px"> 
-                             <h:panelGrid columns="2" cellpadding="10">
-                                <h:outputText value="Francis Ford Coppola's legendary continuation and sequel to his landmark 1972 film, The_Godfather, parallels the young Vito Corleone's rise with his son Michael's spiritual fall, deepening The_Godfather's depiction of the dark side of the American dream. 
-                                In the early 1900s, the child Vito flees his Sicilian village for America after the local Mafia kills his family. Vito struggles to make a living, legally or illegally, for his wife and growing brood in Little Italy, 
-                                killing the local Black Hand Fanucci after he demands his customary cut of the tyro's business. With Fanucci gone, Vito's communal stature grows." />
-                            </h:panelGrid>
-                        </p:panel>-->
+                        <div class="row">
+                            <div class="col-lg-1"></div>
+                            <c:if test="#{authentification.hasPermission(constanteMb.validerQhse)}">
+                                <div class="col-lg-2">
+                                        <p:commandButton id="btnValidQhse" value="Valider par QHSE"  class="btn active" 
+                                                     disabled="#{accidentTravailMb.valideQhse}" 
+                                                     action="#{accidentTravailMb.validQhse()}" 
+                                                     update=":forme:btnValidQhse"/>
+                                </div>
+                                <div class="col-lg-2">
+                                     <p:commandButton value="Enregistrer" action="#{accidentTravailMb.saveOrUpdateDetailAt()}" 
+                                                     class="btn active"
+                                                     disabled="#{accidentTravailMb.valideQhse}" 
+                                                     update=":forme:btnValidQhse"  />
+                                </div>
+                            </c:if>
+                            <c:if test="#{authentification.hasPermission(constanteMb.validerRh)}">
+                                <div class="col-lg-2">
+                                        <p:commandButton id="btnValidRh" value="Valider par RH"  class="btn active"
+                                                     disabled="#{accidentTravailMb.valideRH}" 
+                                                     action="#{accidentTravailMb.validRH()}" 
+                                                     update=":forme:btnValidRh"  />
+                                </div>
+                                <div class="col-lg-2">
+                                    <p:commandButton value="Enregistrer" action="#{accidentTravailMb.saveOrUpdateDetailAt()}" 
+                                             class="btn active"
+                                             disabled="#{accidentTravailMb.valideRH}" 
+                                             update=":forme:btnValidRh"  />
+                                </div> 
+                            </c:if>
+                            <div class="col-lg-2"></div> 
+                            <div class="col-lg-2">
+                                <p:commandButton value="Imprimer" action="#{accidentTravailMb.imprimer()}"  
+                                                 class="btn active"
+                                                 update=":forme:tbl_hImprim"/>
+                            </div>
+                            <div class="col-lg-1"></div>
+                        </div>
+                        <br />
                         <!-- Information Description AT -->
                         <p:panel id="id_edit" header="Photos /ou croquis" toggleable="true" 
                                  toggleSpeed="500" closeSpeed="500"
@@ -277,35 +318,7 @@ and open the template in the editor.
                                     </p:dataTable>
                              </h:panelGrid>
                         </p:panel>
-                        <div class="row">
-                            <div class="col-lg-1"></div>
-                            <div class="col-lg-2">
-                                <p:commandButton id="btnValidQhse" value="Valider par QHSE"  class="btn active" 
-                                                 disabled="#{((accidentTravailMb.isQhse)?accidentTravailMb.valideQhse:true)}" 
-                                                 action="#{accidentTravailMb.validQhse()}" 
-                                                 update=":forme:btnValidQhse"/>
-                            </div>
-                            <div class="col-lg-2">
-                                <p:commandButton id="btnValidRh" value="Valider par RH"  class="btn active"
-                                                 disabled="#{((accidentTravailMb.isRH)?accidentTravailMb.valideRH:true)}" 
-                                                 action="#{accidentTravailMb.validRH()}" 
-                                                 update=":forme:btnValidRh"  />
-                            </div>
-                            <div class="col-lg-2"></div>
-                            <div class="col-lg-2">
-                                <p:commandButton value="Enregistrer" action="#{accidentTravailMb.saveOrUpdateDetailAt()}" 
-                                                 class="btn active"
-                                                 disabled="#{(accidentTravailMb.isRH)?accidentTravailMb.valideRH:((accidentTravailMb.isQhse)?accidentTravailMb.valideQhse:false)}" 
-                                                 update=":forme:btnValidRh,:forme:btnValidRh"  />
-                            </div>
-                            <div class="col-lg-2">
-                                <p:commandButton value="Imprimer" action="#{accidentTravailMb.imprimer()}"  
-                                                 class="btn active"
-                                                 update=":forme:tbl_hImprim"/>
-                            </div>
-                            <div class="col-lg-1"></div>
-                        </div>
-                        <br /><br />
+                        <br />
                         <!-- Information Description AT -->
                         <p:panel id="id_hImprim" header="Historique d'impression" toggleable="true" 
                                  toggleSpeed="500" closeSpeed="500"

@@ -6,7 +6,7 @@
       xmlns:p="http://primefaces.org/ui">
 
     <h:head>
-        <title>TGCC-INTEGRATION</title>
+        <title>TGCC-Dossiers Médicaux</title>
         <meta charset="UTF-8"></meta>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" ></meta>
         <meta http-equiv="refresh" content="#{session.maxInactiveInterval};url=#{request.contextPath}/login.xhtml"/>
@@ -133,119 +133,6 @@
                             <div class="row nav-row">
                                 <ul class="nav nav-pills nav-tgcc" role="menu" aria-labelledby="dropdownMenu">
                                     <li class="nav-divider nav-divider-atl-header"></li>
-                                    <li class="nav-tgcc  vertical-center" role="maintenance">
-                                        <a class="trigger right-caret" tabindex="0" data-toggle="dropdown" aria-expanded="false">
-                                            <span class="menu-logo"><img src="../resources/img/Mensuels.png" /></span> 
-                                            <span class="text-menu visible-lg visible-md">Salaries</span> 
-                                            <span class="fa fa-caret-down fa-fw" ></span>
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li > <a href="salaries.xhtml" tabindex="0">Consultation</a></li>
-                                            <!--<li > <a href="pointageMensuelQuinzinier.xhtml" tabindex="0">Pointage Mensuel Type Quinzinier</a></li>-->
-                                            <li> <a href="nouveausalarie.xhtml" tabindex="0">Nouveau Salarie</a></li>
-                                            <li> <a href="affectSalarieSupp.xhtml" tabindex="0">Affecter Supérieur Hiérarchique</a></li>
-                                            <li> <a href="consultSalarieSupp.xhtml" tabindex="0">Consulter Supérieur Hiérarchique </a></li>
-                                        </ul>
-                                    </li>
-
-
-                                    <li class="nav-divider nav-divider-atl-header"></li>
-
-                                    <li class="nav-tgcc  vertical-center" role="maintenance">
-                                        <a class="trigger right-caret" tabindex="0" data-toggle="dropdown" aria-expanded="false">
-                                            <span class="menu-logo"><img src="../resources/img/pointage.png" /></span> 
-                                            <span class="text-menu visible-lg visible-md">Pointage</span> 
-                                            <span class="fa fa-caret-down fa-fw" ></span>
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li ><a href="pointageSalarie.xhtml" tabindex="0">Pointage Par Salarie</a></li>
-                                            <li> <a href="pointageEntre.xhtml" tabindex="0">Pointage d'entrée</a></li>
-                                            <li> <a href="pointageSortie.xhtml" tabindex="0">Pointage de Sortie</a></li>
-                                            <li> <a href="heuressupplementaires.xhtml" tabindex="0">Heures Supplementaires</a></li>  
-                                            <li class="dropdown-submenu">
-                                                <a class="trigger right-caret" data-hover="dropdown" data-delay="100" 
-                                                   data-close-others="true" tabindex="0" data-toggle="dropdown" aria-expanded="false">Présences</a>
-                                                <ul class="dropdown-menu sub-menu">
-                                                    <li>
-                                                        <a href="presenceSalarie.xhtml" tabindex="0">Présences</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="absences.xhtml" tabindex="1">Absences</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="importation.xhtml" tabindex="1">Importation</a>
-                                                    </li>
-
-                                                </ul>
-                                            </li>
-                                            <li class="dropdown-submenu">
-                                                <a class="trigger right-caret" data-hover="dropdown" data-delay="100" 
-                                                   data-close-others="true" tabindex="0" data-toggle="dropdown" aria-expanded="false">Pointage par Lot</a>
-                                                <ul class="dropdown-menu sub-menu">
-                                                    <li>
-                                                        <a href="pointageLot.xhtml" tabindex="0">Pointage</a>
-                                                    </li>
-                                                     <li>
-                                                        <a href="fichepointages.xhtml" tabindex="0">Consulter fiches</a>
-                                                    </li>
-                                                  
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li class="nav-divider nav-divider-atl-header"></li>
-
-
-
-
-                                    <li class="nav-tgcc vertical-center" role="parametre">
-
-                                        <a class="trigger right-caret" tabindex="0" data-toggle="dropdown" aria-expanded="false">
-                                            <span class="menu-logo"><img src="../resources/img/Administration.png" /></span>    
-                                            <span class="text-menu visible-lg visible-md">Parametrages</span>
-                                            <span class="fa fa-caret-down fa-fw" ></span>
-                                        </a>
-
-                                        <ul class="dropdown-menu">
-                                          
-                                            <li > <a href="hierarchieChantier.xhtml" >Organigramme</a></li>
-                                            <li > <a href="lots.xhtml" >Lot Fonction</a></li>
-                                            <li > <a href="salarieChefEquipe.xhtml" >Associer Zone Chef Equipe</a></li>
-                                            <!--<li > <a href="zonesChantier.xhtml" >Consulter Zone - Chef Equipe</a></li>-->
-                                        </ul>
-
-                                    </li>
-                                    
-                                    <li class="nav-divider nav-divider-atl-header"></li>
-
-                                    <li class="nav-tgcc  vertical-center" role="parametre">
-                                        <a class="trigger right-caret" tabindex="0"  aria-expanded="false" href="badges.xhtml">
-                                            <span class="menu-logo"><img src="../resources/img/icon-badge.png" /></span>    
-                                            <span class="text-menu visible-lg visible-md">Badges</span>
-                                        </a>
-                                    </li>
-
-                                  <li class="nav-divider nav-divider-atl-header"></li>
-                               
-                                <li class="dropdown nav-tgcc vertical-center" role="maintenance">
-                                      <a class="trigger right-caret" tabindex="0" data-toggle="dropdown" aria-expanded="false">
-                                          <span class="menu-logo"><img src="../resources/img/icon-maintenance.png" /></span>    
-                                          <span class="text-menu visible-lg visible-md">ADMINISTRATION</span>
-                                          <span class="fa fa-caret-down fa-fw" ></span>                                                
-                                      </a>
-                                      <ul class="dropdown-menu">
-                                          <li class="dropdown-submenu">
-                                              <a class="trigger right-caret dropdown-toggle" tabindex="0" data-hover="dropdown" data-delay="100" data-close-others="true" data-toggle="dropdown" aria-expanded="false">Loyer</a>
-                                              <ul class="dropdown-menu sub-menu">
-                                                  <li>
-                                                      <a href="affectLoyer.xhtml" tabindex="0">Affecter</a>
-                                                      <a href="consultLoyer.xhtml" tabindex="-1" >Consulter</a>
-                                                  </li>
-                                              </ul>
-                                          </li>
-                                           <li><a href="caisse.xhtml" tabindex="0">Caisse RH</a></li>
-                                      </ul>
-                                  </li>
 
                                 </ul>
                             </div>

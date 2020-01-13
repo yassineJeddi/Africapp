@@ -36,21 +36,22 @@ and open the template in the editor.
                                     <f:selectItems value="#{accidentTravailMb.chantiers}" var="C" itemLabel="#{C.code.trim()}" itemValue="#{C.id}" />
                                     <p:ajax listener="#{accidentTravailMb.listSalarieByChantier()}" update=":forme:salarieAt" />
                                 </p:selectOneMenu>
-                                <h:outputText value="Salarie :" />
+                                <h:outputText value="Victime :" />
                                 <p:selectOneMenu filter="true" filterMatchMode="contains" id="salarieAt"
                                                  value="#{accidentTravailMb.idSalarie}" required="true">
                                     <f:selectItem itemLabel=""  itemValue="-1" />
                                     <f:selectItems value="#{accidentTravailMb.salaries}" var="C" itemLabel="#{C.matricule.trim()} | #{C.cin.trim()} | #{C.nom.trim()} #{C.prenom.trim()}" itemValue="#{C.id}" />
-                                    <p:ajax listener="#{accidentTravailMb.selectSalarieByChantier()}" update=":forme:salarieFancAt" />
+                                    <p:ajax listener="#{accidentTravailMb.selectSalarieByChantier()}" update=":forme:salarieFancAt,:forme:salarieTelContactAt" />
                                 </p:selectOneMenu>
                                  <h:outputText value="Fonction : " /><h:outputLabel value="#{accidentTravailMb.salarie.fonction.fonction}" id="salarieFancAt"/>
                                  <h:outputText value="Date:" /> <p:calendar value="#{accidentTravailMb.accidentTravail.dateAccident}" pattern="MM/dd/yyyy HH:mm:ss" maxdate="#{accidentTravailMb.verifDateAt}" />
                                  <h:outputText value="Lieu :" /> <p:inputText value="#{accidentTravailMb.accidentTravail.lieu}" />
-                                 <h:outputText value="Description :" /> 
-                                 <p:inputTextarea id="descriptionSecourInterne" rows="2" cols="50" value="#{accidentTravailMb.accidentTravail.description}" />
-                                 <h:outputText value="Chef de Projet :" /> <p:inputText value="#{accidentTravailMb.accidentTravail.chefProjet}" /> 
+                                 <h:outputText value="Description(*) :" /> 
+                                 <p:inputTextarea id="descriptionAt" required="true" 
+                                                  rows="2" cols="100" value="#{accidentTravailMb.accidentTravail.description}" />
+                                 <h:outputText value="Directeur de Projet / Chef de Projet :" /> <p:inputText value="#{accidentTravailMb.accidentTravail.chefProjet}" /> 
                                  <h:outputText value="Chef de chantier :" /> <p:inputText value="#{accidentTravailMb.accidentTravail.chefChantier}" /> 
-                                 <h:outputText value="Tele Personne a contacter :" /> <p:inputText value="#{accidentTravailMb.accidentTravail.telContacter}" /> 
+                                 <h:outputText value="Tele Personne a contacter :" /> <p:inputText  id="salarieTelContactAt" value="#{accidentTravailMb.accidentTravail.telContacter}" /> 
                                  <p:selectBooleanCheckbox itemLabel="Accident Mortel" value="#{accidentTravailMb.accidentTravail.mortel}"/>
                             </h:panelGrid>
                             <h:panelGrid columns="1" columnClasses="ui-g-12 "

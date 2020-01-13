@@ -8,6 +8,7 @@ package ma.bservices.tgcc.dao.engin;
 import java.util.List;
 import ma.bservices.beans.Chantier;
 import ma.bservices.beans.Document;
+import ma.bservices.beans.Salarie;
 import ma.bservices.tgcc.Entity.Voiture;
 
 /**
@@ -24,6 +25,9 @@ public interface ChantierDAO {
 
     public Chantier findByName(String name);
 
+    public void affectSalarieChatierFinance(Salarie s, Chantier c);
+    public void deleteAffectSalarieToutChatierFinance(Salarie s) ;
+    
     /**
      * get chantier by affaire
      *

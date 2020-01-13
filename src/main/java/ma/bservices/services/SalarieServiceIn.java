@@ -35,6 +35,7 @@ public interface SalarieServiceIn {
     public List<Salarie> listSupp();
 
     public List<Salarie> listSalarieByChantierId(int idChantier);
+    public List<Salarie> listSalarieActifByChantierId(int idChantier);
     /**
      * recuperer la liste des chefs d'équipes Quinzainiers qu'ils ont en etat
      * Actif ou Actif Provisoir

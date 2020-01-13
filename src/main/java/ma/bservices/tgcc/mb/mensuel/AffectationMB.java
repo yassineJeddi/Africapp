@@ -42,6 +42,7 @@ public class AffectationMB implements Serializable {
 
     @ManagedProperty(value = "#{chantierService}")
     private ChantierService chantierService;
+     
 
     @ManagedProperty(value = "#{chantierServiceEvol}")
     private ma.bservices.services.ChantierService chantierServ;
@@ -237,10 +238,10 @@ public class AffectationMB implements Serializable {
                 this.affecServInter.add_sousAffectation(chantier_selected, this.pourcentage_affectation);
 
                 System.out.println("Sub affectation added");
+               
             }
 
         }
-
     }
 
     public void deleteAffectation_fromTheList(SousAffectation _sAff_toDelete) {
@@ -255,28 +256,24 @@ public class AffectationMB implements Serializable {
      * @param update si on ajoute une affectation ou on la modifie
      */
     public void validate(Boolean update) {
+        
+        Salarie s = this.active_mensuel;
 
         FacesContext context = FacesContext.getCurrentInstance();
-
         if (update.equals(Boolean.FALSE)) {
-
             if (this.affecServInter.getMinDateForAffectaion() != null) {
                 if ((!creation_date.after(this.affecServInter.getMinDateForAffectaion()))) {
                     context.addMessage(null, new FacesMessage("" + "Impossible d' affecter ce mensuel pour ce jour", ""));
                     return;
                 }
             }
-
             if (!creation_date.before(today_date)) {
                 context.addMessage(null, new FacesMessage("" + "Impossible d' affecter ce mensuel pour ce jour", ""));
                 return;
             }
         }
-
         List<SousAffectation> l_to_add = this.affecServInter.validate();
-
         if (l_to_add != null) {
-
             /*
              * pour la modification on doit envoyer l'affectaion à modifier en paramètre.
              * Pour l'ajout, c'est pas la peine.
@@ -286,8 +283,19 @@ public class AffectationMB implements Serializable {
             for (int i = 0; i < tab.length; i++) {
                 if (active_mensuel.getFonction().getTypeFonction() == tab[i]) {
                     chantierServ.desaffecterSalarieTousChantiers(active_mensuel.getId());
+                     try { 
+                        System.out.println(" AffectationMB ::::> affecter salarie au chantier  ");
+                        chantierService.deleteAffectSalarieToutChatierFinance(s);
+                    } catch (Exception e) {
+                        System.out.println(" AffectationMB ::::> Erreur d'affecter salarie au chantier car "+e.getMessage());
+                    }
                     for (SousAffectation sa : l_to_add) {
                         chantierServ.affecterSalarieChantier(active_mensuel, sa.getChantier());
+                        try {
+                                chantierService.affectSalarieChatierFinance(s,sa.getChantier());
+                        } catch (Exception e) {
+                            System.out.println(" AffectationMB ::::> Erreur d'affecter salarie au chantier car "+e.getMessage());
+                        }
                     }
                 }
             }

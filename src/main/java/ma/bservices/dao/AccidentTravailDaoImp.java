@@ -29,20 +29,23 @@ public class AccidentTravailDaoImp extends MbHibernateDaoSupport implements IAcc
 
 
     @Override
-    public void addAccidentTravail(AccidentTravail a) {
+    public Long addAccidentTravail(AccidentTravail a) {
         Transaction tx = null;
         Session session = getSessionFactory().openSession();
+        Long id ;
+        id = 0L;
         try {
             session.setFlushMode(FlushMode.AUTO);
             tx = session.beginTransaction();
-            session.save(a);
+            id= (Long) session.save(a);
             tx.commit();
             session.close();
         } catch (Exception exp) {
             System.out.println("exception : " + exp.getMessage());
             tx.rollback();
             session.close();            
-        }       
+        } 
+        return id;
     }
 
     @Override

@@ -54,6 +54,19 @@ public class LivraisonCiterneDAOImpl extends MbHibernateDaoSupport implements Li
     }
 
     @Override
+    public Bon_Livraison_Citerne findBonLivraisonCiterneById(Integer id) {
+        Bon_Livraison_Citerne b = new Bon_Livraison_Citerne();
+        try {
+            b =   this.getHibernateTemplate().get(Bon_Livraison_Citerne.class, id);
+            //l= this.getHibernateTemplate().loadAll(Bon_Livraison_Citerne.class);
+            
+        } catch (Exception e) {
+            System.out.println("Erreu de requperer Bon_Livraison_Citerne car "+e.getMessage());
+        }
+        return b;
+    }
+
+    @Override
     public void update(Bon_Livraison_Citerne bon_Livraison_Citerne) {
 
         Session session = getSessionFactory().openSession();

@@ -249,7 +249,7 @@ public class UtilisateurDAOImpl extends MbHibernateDaoSupport implements Utilisa
 
             listOfCh = query.list();
 
-            System.out.println("LIST OF CHANTIER GOT DAO ::: " + listOfCh);
+            //System.out.println("LIST OF CHANTIER GOT DAO ::: " + listOfCh);
 
             s.getTransaction().commit();
             s.close();

@@ -947,7 +947,7 @@ public class MensuelMb implements Serializable {
     public void callWSmensuel() {
         Mensuel m = new Mensuel();
         System.out.println("LAUCHING WS ...");
-        String jsonRes = MensuelWSCallManager.mensuelWS("11/12/2000");
+        String jsonRes = MensuelWSCallManager.mensuelWS("20/01/2020");
 
         JSONObject obj = new JSONObject(jsonRes);
         JSONArray arr = obj.getJSONArray("Mensuels");

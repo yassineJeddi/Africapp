@@ -31,17 +31,23 @@ import ma.bservices.tgcc.Entity.Bon_Livraison_Citerne;
 import ma.bservices.tgcc.Entity.Citerne;
 import ma.bservices.tgcc.Entity.Engin;
 import ma.bservices.tgcc.Entity.Mensuel;
+import ma.bservices.tgcc.Entity.TraceBonLivraisonCiterne;
 import ma.bservices.tgcc.Entity.TraceCiterne;
+import ma.bservices.tgcc.Entity.TraceUtilisateur;
 import ma.bservices.tgcc.Entity.Voiture;
 import ma.bservices.tgcc.service.Engin.Bean.CiterneServiceBean;
 import ma.bservices.tgcc.service.Engin.CiterneService;
 import ma.bservices.tgcc.service.Engin.EnginService;
+import ma.bservices.tgcc.service.Engin.ITraceUtilisateurService;
 import ma.bservices.tgcc.service.Engin.LivraisonCiterneService;
+import ma.bservices.tgcc.service.Engin.TraceUtilisateurServiceImp;
 import ma.bservices.tgcc.service.Engin.UtilisateurService;
 import ma.bservices.tgcc.service.Mensuel.MensuelService;
 import ma.bservices.tgcc.service.SendEmail;
 import ma.bservices.tgcc.utilitaire.Outils;
+import ma.bservices.tgcc.utilitaire.RemplireTrace;
 import org.apache.commons.io.FilenameUtils;
+import org.primefaces.context.RequestContext;
 import org.primefaces.model.UploadedFile;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -74,6 +80,9 @@ public class CiterneMb implements Serializable {
 
     @ManagedProperty(value = "#{mensuelService}")
     private MensuelService mensuelService;
+
+    @ManagedProperty(value = "#{traceUtilisateurService}")
+    private ITraceUtilisateurService traceUtilisateurService;
 
 
     private CiterneServiceBean citerneServiceBean;
@@ -129,6 +138,7 @@ public class CiterneMb implements Serializable {
     private Citerne citernDist;
     private Citerne citernSrc;
     private Integer idCiternTrans;
+    private String codeEnginMvmtEdit;
     
     private Float cptK;
     private Float cptH;
@@ -138,6 +148,7 @@ public class CiterneMb implements Serializable {
     private List<Voiture> voitureSalaries=new ArrayList<Voiture>();
     private List<Chantier> l_chantierSecBonGasoilEngin=new ArrayList<Chantier>();
     public  List<Engin> l_enginBonGasoilSecCopie=new ArrayList<Engin>();
+    public  List<Engin> allEngins=new ArrayList<Engin>();
     private List<Bon_Livraison_Citerne> l_Historiqes=new ArrayList<Bon_Livraison_Citerne>();
     private List<Bon_Livraison_Citerne> l_detail_citerne_historique=new ArrayList<Bon_Livraison_Citerne>();
     private List<Chantier> l_chantier_sec_bon_caisse=new ArrayList<Chantier>() ;
@@ -147,9 +158,7 @@ public class CiterneMb implements Serializable {
     private List<Citerne> l_citerneTransfaire;
     private List<TraceCiterne> traceCiternes = new ArrayList<TraceCiterne>();
 
-    
-    
-    
+
     /**
      * getters and setters
      *
@@ -157,6 +166,13 @@ public class CiterneMb implements Serializable {
      */
     
     
+    public Bon_Livraison_Citerne getBon_gasoil_To_Edit() {    
+        return bon_gasoil_To_Edit;
+    }
+    public void setBon_gasoil_To_Edit(Bon_Livraison_Citerne bon_gasoil_To_Edit) {
+        this.bon_gasoil_To_Edit = bon_gasoil_To_Edit;
+    }
+
     public Integer getIdCiternTrans() {
         return idCiternTrans;
     }
@@ -731,6 +747,32 @@ public class CiterneMb implements Serializable {
         this.cptH = cptH;
     }
 
+    public String getCodeEnginMvmtEdit() {
+        return codeEnginMvmtEdit;
+    }
+
+    public void setCodeEnginMvmtEdit(String codeEnginMvmtEdit) {
+        this.codeEnginMvmtEdit = codeEnginMvmtEdit;
+    }
+
+    public List<Engin> getAllEngins() {
+        return allEngins;
+    }
+
+    public void setAllEngins(List<Engin> allEngins) {
+        this.allEngins = allEngins;
+    }
+
+    public ITraceUtilisateurService getTraceUtilisateurService() {
+        return traceUtilisateurService;
+    }
+
+    public void setTraceUtilisateurService(ITraceUtilisateurService traceUtilisateurService) {
+        this.traceUtilisateurService = traceUtilisateurService;
+    }
+
+    
+
     
     
     
@@ -1232,7 +1274,7 @@ public class CiterneMb implements Serializable {
 
         historique_searchBonLivraison = selected;
 
-        System.out.println("historique_searchBonLivraison 1: " + historique_searchBonLivraison.getId());
+        //System.out.println("historique_searchBonLivraison 1: " + historique_searchBonLivraison.getId());
 
         if (l_detail_citerne_historique != null) {
             this.l_detail_citerne_historique.clear();
@@ -1240,6 +1282,30 @@ public class CiterneMb implements Serializable {
 
         this.l_detail_citerne_historique = this.livraisonCiterneService.get_listBy_id_bonLivraison(selected.getId());
 
+    }
+    public void prepMvmt( Bon_Livraison_Citerne b){
+        bon_gasoil_To_Edit = b;
+        allEngins= enginService.enginsActif();
+        RequestContext.getCurrentInstance().execute("PF('dlg_mvmtCiterne').show();");
+    }
+    public void changeEnginEditMvmt(){
+        if(codeEnginMvmtEdit.trim().length()>0){
+            Engin e = enginService.findOneByCode(codeEnginMvmtEdit);
+            if(e!=null){
+                bon_gasoil_To_Edit.setEngin(e);
+            }
+        }
+    }
+    public void enregistrerMvmt(){
+        RemplireTrace r = new RemplireTrace();
+        TraceBonLivraisonCiterne t = new TraceBonLivraisonCiterne();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication(); 
+        t = r.remplirTraceBonLivraisonCiterne(livraisonCiterneService.findBonLivraisonCiterneById(bon_gasoil_To_Edit.getId()), auth.getPrincipal().toString(), "Modification MVMT Citerne"); 
+        
+        traceUtilisateurService.addTraceBonLivraisonCiterne(t);
+        livraisonCiterneService.update(bon_gasoil_To_Edit);
+        bon_gasoil_To_Edit= new Bon_Livraison_Citerne();
+        codeEnginMvmtEdit="";
     }
 
     /**

@@ -109,6 +109,7 @@ public class ConstanteMb implements Serializable {
     private String affecterEngin="Affecter Engin";
     private String actionEngin="Action Engin";
     private String uploadDocEngin="Uploader document Engin";
+    private String editMvmt="Modifier mvmt citerne";
 
 //AccidentTravail
     
@@ -116,6 +117,7 @@ public class ConstanteMb implements Serializable {
     private String validerQhse ="valider at qhse";
     private String receptionCertif ="reception certif";
     private String gestionQuitance ="gestion quittance";
+    private String saveAtNotRhQhse ="save at not RH QHSE";
     
     
     
@@ -525,6 +527,22 @@ public class ConstanteMb implements Serializable {
 
     public void setGestionQuitance(String gestionQuitance) {
         this.gestionQuitance = gestionQuitance;
+    }
+
+    public String getSaveAtNotRhQhse() {
+        return saveAtNotRhQhse;
+    }
+
+    public void setSaveAtNotRhQhse(String saveAtNotRhQhse) {
+        this.saveAtNotRhQhse = saveAtNotRhQhse;
+    }
+
+    public String getEditMvmt() {
+        return editMvmt;
+    }
+
+    public void setEditMvmt(String editMvmt) {
+        this.editMvmt = editMvmt;
     }
     
     

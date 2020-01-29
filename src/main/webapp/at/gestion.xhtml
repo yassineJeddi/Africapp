@@ -55,7 +55,9 @@ and open the template in the editor.
                                         <h:outputText value="#{at.salarie.cin.trim()} | #{at.salarie.matricule.trim()} | #{at.salarie.nom.trim()} #{at.salarie.prenom.trim()} |  #{at.salarie.fonction.fonction.trim() }" />
                                     </p:column> 
                                     <p:column headerText="Date At" filterBy="#{at.dateAccident}"  filterMatchMode="contains" >
-                                           <h:outputText value="#{at.dateAccident}" />
+                                           <h:outputText value="#{at.dateAccident}" >
+                                                <f:convertDateTime type="date" pattern="dd-MM-yyyy hh:mm"/>
+                                            </h:outputText>
                                     </p:column> 
                                        <p:column headerText="Jours Arret" filterBy="#{at.nbjArret}"  filterMatchMode="contains" >
                                            <h:outputText value="#{at.nbjArret}" />
@@ -462,8 +464,8 @@ and open the template in the editor.
                           draggable="true"
                           maximizable="true"
                           id="dlg_DocumentAccident"
-                          widgetVar="dlg_DocumentAccident"  >
-                    <h:form id="form_DocumentAccident" >
+                          widgetVar="dlg_DocumentAccident" >
+                    <h:form id="form_DocumentAccident"  enctype="multipart/form-data">
                         <h:panelGrid styleClass="ui-panelgrid-blank ui-fluid"
                                      cellpadding="10">
                             <div class="row">

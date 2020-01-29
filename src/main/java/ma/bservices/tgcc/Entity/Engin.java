@@ -208,6 +208,67 @@ public class Engin implements Serializable {
     
     @Column(name = "NOM_LOCATAIRE")
     private String nomLocataire;
+    
+    
+    
+    
+    @Column(name = "numSerieMoteur")
+    private String numSerieMoteur;
+    
+    @Column(name = "numSerieboiteVitesse")
+    private String numSerieboiteVitesse;
+    
+    @Column(name = "numSeriePont")
+    private String numSeriePont;
+    
+    @Column(name = "marqueMoteur")
+    private String marqueMoteur;
+    
+    @Column(name = "marqueboiteVitesse")
+    private String marqueboiteVitesse;
+    
+    @Column(name = "marqueSeriePont")
+    private String marqueSeriePont;
+    
+    @Column(name = "typeMoteur")
+    private String typeMoteur;
+    
+    @Column(name = "typeboiteVitesse")
+    private String typeboiteVitesse;
+    
+    @Column(name = "typeSeriePont")
+    private String typeSeriePont;
+    
+    @Column(name = "qteReservoir")
+    private Integer qteReservoir;
+    
+    @Column(name = "consoMoyReel")
+    private String consoMoyReel;
+    
+    @Column(name = "consoMinConstructeur")
+    private String consoMinConstructeur;
+    
+    @Column(name = "consoMaxConstructeur")
+    private String consoMaxConstructeur;
+    
+    @Column(name = "numImmobilisationCompta")
+    private String numImmobilisationCompta;
+    
+    @Column(name = "numContratLising")
+    private String numContratLising;
+    
+    @Column(name = "coutLocation")
+    private String coutLocation;
+    
+    @Column(name = "uniteLocation")
+    private String uniteLocation;
+     
+    
+    
+    
+    
+    
+    
 
     @OneToOne
     private Panne hist_panne_id;
@@ -714,32 +775,152 @@ public class Engin implements Serializable {
     public void setNomLocataire(String nomLocataire) {
         this.nomLocataire = nomLocataire;
     }
-    
-    
 
-     @Override
-    public String toString() {
-        return "Engin{" + "iDEngin=" + iDEngin + ", typeCompteur=" + typeCompteur 
-                + ", comteurHoraire=" + comteurHoraire + ", compteurKilometrique=" 
-                + compteurKilometrique + ", nbrHeures=" + nbrHeures + ", nbrKilometrage=" 
-                + nbrKilometrage + ", numchassis=" + numchassis + ", numSerie=" 
-                + numSerie + ", codeDesignation=" + codeDesignation + ", num_immatriculation=" 
-                + num_immatriculation + ", anneeFabrication=" + anneeFabrication + ", fournisseur=" 
-                + fournisseur + ", chantierLib=" + chantierLib + ", dateAquisition=" 
-                + dateAquisition + ", dateMiseMarche=" + dateMiseMarche + ", prjapId=" 
-                + prjapId + ", dateAFFECTATION=" + dateAFFECTATION + ", dateCREATION=" 
-                + dateCREATION + ", dateDERVID=" + dateDERVID + ", dateDERVIS=" 
-                + dateDERVIS + ", dateMISESERVICE=" + dateMISESERVICE + ", dateMODIFICATION=" 
-                + dateMODIFICATION + ", actif=" + actif + ", anneeConst=" 
-                + anneeConst + ", lieuReparationType=" + lieuReparationType + ", lieuReparation_chantier_id=" 
-                + lieuReparation_chantier_id + ", anneeMes=" + anneeMes + ", code=" 
-                + code + ", compteur=" + compteur + ", creePar=" + creePar + ", designation=" 
-                + designation + ", etat=" + etat + ", etatTransfert=" + etatTransfert + ", marque=" 
-                + marque + ", modifierPar=" + modifierPar + ", refArticle=" + refArticle + ", reference=" 
-                + reference + ", comm=" + comm + ", typeEngin=" + typeEngin + ", familleEngin=" 
-                + familleEngin + ", dateDerniereVisiteSecurity=" + dateDerniereVisiteSecurity + ", archive=" 
-                + archive +", nature=" + nature+", nomSST=" + nomSST+", nomLocataire=" + nomLocataire +", reforme=" 
-                + reforme +", typePointageDept=" + typePointageDept +"'}'";
+    public String getNumSerieMoteur() {
+        return numSerieMoteur;
     }
+
+    public void setNumSerieMoteur(String numSerieMoteur) {
+        this.numSerieMoteur = numSerieMoteur;
+    }
+
+    public String getNumSerieboiteVitesse() {
+        return numSerieboiteVitesse;
+    }
+
+    public void setNumSerieboiteVitesse(String numSerieboiteVitesse) {
+        this.numSerieboiteVitesse = numSerieboiteVitesse;
+    }
+
+    public String getNumSeriePont() {
+        return numSeriePont;
+    }
+
+    public void setNumSeriePont(String numSeriePont) {
+        this.numSeriePont = numSeriePont;
+    }
+
+    public String getMarqueMoteur() {
+        return marqueMoteur;
+    }
+
+    public void setMarqueMoteur(String marqueMoteur) {
+        this.marqueMoteur = marqueMoteur;
+    }
+
+    public String getMarqueboiteVitesse() {
+        return marqueboiteVitesse;
+    }
+
+    public void setMarqueboiteVitesse(String marqueboiteVitesse) {
+        this.marqueboiteVitesse = marqueboiteVitesse;
+    }
+
+    public String getMarqueSeriePont() {
+        return marqueSeriePont;
+    }
+
+    public void setMarqueSeriePont(String marqueSeriePont) {
+        this.marqueSeriePont = marqueSeriePont;
+    }
+
+    public String getTypeMoteur() {
+        return typeMoteur;
+    }
+
+    public void setTypeMoteur(String typeMoteur) {
+        this.typeMoteur = typeMoteur;
+    }
+
+    public String getTypeboiteVitesse() {
+        return typeboiteVitesse;
+    }
+
+    public void setTypeboiteVitesse(String typeboiteVitesse) {
+        this.typeboiteVitesse = typeboiteVitesse;
+    }
+
+    public String getTypeSeriePont() {
+        return typeSeriePont;
+    }
+
+    public void setTypeSeriePont(String typeSeriePont) {
+        this.typeSeriePont = typeSeriePont;
+    }
+
+    public Integer getQteReservoir() {
+        return qteReservoir;
+    }
+
+    public void setQteReservoir(Integer qteReservoir) {
+        this.qteReservoir = qteReservoir;
+    }
+
+    public String getConsoMoyReel() {
+        return consoMoyReel;
+    }
+
+    public void setConsoMoyReel(String consoMoyReel) {
+        this.consoMoyReel = consoMoyReel;
+    }
+
+    public String getConsoMinConstructeur() {
+        return consoMinConstructeur;
+    }
+
+    public void setConsoMinConstructeur(String consoMinConstructeur) {
+        this.consoMinConstructeur = consoMinConstructeur;
+    }
+
+    public String getConsoMaxConstructeur() {
+        return consoMaxConstructeur;
+    }
+
+    public void setConsoMaxConstructeur(String consoMaxConstructeur) {
+        this.consoMaxConstructeur = consoMaxConstructeur;
+    }
+
+    public String getNumImmobilisationCompta() {
+        return numImmobilisationCompta;
+    }
+
+    public void setNumImmobilisationCompta(String numImmobilisationCompta) {
+        this.numImmobilisationCompta = numImmobilisationCompta;
+    }
+
+    public String getNumContratLising() {
+        return numContratLising;
+    }
+
+    public void setNumContratLising(String numContratLising) {
+        this.numContratLising = numContratLising;
+    }
+
+    public String getCoutLocation() {
+        return coutLocation;
+    }
+
+    public void setCoutLocation(String coutLocation) {
+        this.coutLocation = coutLocation;
+    }
+
+    public String getUniteLocation() {
+        return uniteLocation;
+    }
+
+    public void setUniteLocation(String uniteLocation) {
+        this.uniteLocation = uniteLocation;
+    }
+
+    @Override
+    public String toString() {
+        return "Engin{" + "iDEngin=" + iDEngin + ", typeCompteur=" + typeCompteur + ", comteurHoraire=" + comteurHoraire + ", compteurKilometrique=" + compteurKilometrique + ", nbrHeures=" + nbrHeures + ", nbrKilometrage=" + nbrKilometrage + ", nbrHeuresPointe=" + nbrHeuresPointe + ", nbrKilometragePointe=" + nbrKilometragePointe + ", numchassis=" + numchassis + ", numSerie=" + numSerie + ", codeDesignation=" + codeDesignation + ", num_immatriculation=" + num_immatriculation + ", anneeFabrication=" + anneeFabrication + ", fournisseur=" + fournisseur + ", chantierLib=" + chantierLib + ", typePointageDept=" + typePointageDept + ", dateAquisition=" + dateAquisition + ", dateMiseMarche=" + dateMiseMarche + ", dateLastPanne=" + dateLastPanne + ", dateAFFECTATION=" + dateAFFECTATION + ", dateCREATION=" + dateCREATION + ", dateDERVID=" + dateDERVID + ", dateDERVIS=" + dateDERVIS + ", dateMISESERVICE=" + dateMISESERVICE + ", dateMODIFICATION=" + dateMODIFICATION + ", actif=" + actif + ", anneeConst=" + anneeConst + ", lieuReparationType=" + lieuReparationType + ", lieuReparation_chantier_id=" + lieuReparation_chantier_id + ", anneeMes=" + anneeMes + ", code=" + code + ", compteur=" + compteur + ", creePar=" + creePar + ", designation=" + designation + ", etat=" + etat + ", etatTransfert=" + etatTransfert + ", marque=" + marque + ", modifierPar=" + modifierPar + ", refArticle=" + refArticle + ", reference=" + reference + ", comm=" + comm + ", typeEngin=" + typeEngin + ", familleEngin=" + familleEngin + ", dateDerniereVisiteSecurity=" + dateDerniereVisiteSecurity + ", archive=" + archive + ", reforme=" + reforme + ", nature=" + nature + ", nomSST=" + nomSST + ", nomLocataire=" + nomLocataire + ", numSerieMoteur=" + numSerieMoteur + ", numSerieboiteVitesse=" + numSerieboiteVitesse + ", numSeriePont=" + numSeriePont + ", marqueMoteur=" + marqueMoteur + ", marqueboiteVitesse=" + marqueboiteVitesse + ", marqueSeriePont=" + marqueSeriePont + ", typeMoteur=" + typeMoteur + ", typeboiteVitesse=" + typeboiteVitesse + ", typeSeriePont=" + typeSeriePont + ", qteReservoir=" + qteReservoir + ", consoMoyReel=" + consoMoyReel + ", consoMinConstructeur=" + consoMinConstructeur + ", consoMaxConstructeur=" + consoMaxConstructeur + ", numImmobilisationCompta=" + numImmobilisationCompta + ", numContratLising=" + numContratLising + ", coutLocation=" + coutLocation + ", uniteLocation=" + uniteLocation + ", hist_panne_id=" + hist_panne_id + '}';
+    }
+
+    
+   
+    
+     
+    
     
 }

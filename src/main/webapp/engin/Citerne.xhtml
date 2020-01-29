@@ -20,9 +20,6 @@
                 </h:form>
             </ui:define>
             <ui:define name="content">
-                <p:blockUI block="pannel" trigger=":formA:btn" >
-                    Chargement<br /> <h:graphicImage value="../resources/img/loading.gif"/>
-                </p:blockUI>
                 <p:panel id="pannel">
                     <br/>
                     <br/>
@@ -413,105 +410,99 @@
                         </h:form>
                     </p:dialog>
                     <!--*******************  dialog pour historique ****************************************-->
-                    <p:dialog header="Historique Citerne " 
-                              resizable="false" modal="true" height="600"
-                              width="80%" style="margin-right:80px;" 
-                              draggable="false"
-                              maximizable="true"
-                              widgetVar="dlg_historique_citerne"  >
+                    <p:dialog header="Historique Citerne "  resizable="true" modal="true" height="600" width="85%" style="margin-right:80px;" 
+                              draggable="true" maximizable="true"  widgetVar="dlg_historique_citerne"  >
                         <h:form id="form_historique"  enctype="multipart/form-data">
+                            <p:blockUI block="tbl" widgetVar="block"> Chargement <br /> <h:graphicImage value="../images/loading.gif"/>
+                            </p:blockUI>
                             <br />
                             <div class="row">
-                                <div class="col-lg-3">
+                                <div class="col-lg-8">
                                     <p:outputLabel  value="Nom de la citerne :" />
                                     <h:outputText  value="#{citerneMb.historique_searchBonLivraison.libelle_citerne}"/>
                                 </div>
-                                <div class="col-lg-3">
-                                    <p:outputLabel  value="Capacité  :" />
-                                    <h:outputText  value="#{citerneMb.historique_searchBonLivraison.capacite}"/>
+                                <div class="col-lg-4">
+                                    <p:outputLabel  value="Volume actuel  :" />
+                                    <h:outputText  value="#{citerneMb.historique_searchBonLivraison.volume_actuel_}"/>
                                 </div>
-                                <div class="col-lg-6">
-                                    <p:outputLabel  value="Chantier Principal  :" />
-                                    <h:outputText  value=" #{citerneMb.historique_searchBonLivraison.chantier_Principal.code} - #{citerneMb.historique_searchBonLivraison.chantier_Principal.codeNovapaie}"/>
-                                </div>
-                            </div>
+                            </div>  
                             <br/>
-                            <br/>
-                             <h:panelGrid columns="8" cellpadding="5">
-                                <p:outputLabel  value="Date  :" />
-                                <p:calendar pattern="dd/MM/yyyy" class="value_dis"  showOn="button" 
-                                            value="#{citerneMb.date_historique_search}" style="display:flex; width:200px; " />
-                                   <p:outputLabel  value="  Action:" />
-                                <p:selectOneMenu required="true" requiredMessage="L'action est obligatoire"
-                                                 id="id_action" value="#{citerneMb.action_search}" filter="true" filterMatchMode="contains">
-                                    <f:selectItem itemLabel="" itemValue="-1"/>
-                                    <f:selectItem itemLabel="LIVRAISON" itemValue="LIVRAISON"/>
-                                    <f:selectItem itemLabel="BON_GASOIL_ENGIN" itemValue="BON_GASOIL_ENGIN"/>
-                                    <f:selectItem itemLabel="BON_GASOIL_MENSUEL" itemValue="BON_GASOIL_MENSUEL"/>
-                                </p:selectOneMenu>
-                               <p:outputLabel  value="Num Commande  :" />
-                                <p:inputText  value="#{citerneMb.numCommande_search}" style="width: 80px"/>
-                                <p:outputLabel  value="Num Livraison  :" />
-                                <p:inputText  value="#{citerneMb.numLivraison_search}" style="width: 80px"/>
-                            </h:panelGrid>
-                            <br/>
-                            <p:commandButton value="Rechercher"  actionListener="#{citerneMb.rechercher_historique_citerne()}" update=":form_historique:tbl" />
-                            <p:commandButton value="Reinitialiser"  actionListener="#{citerneMb.reinitHistoCiterne()}" update=":form_historique:tbl" />
-                            <br/>
-                            <br/>
-                            <p:dataTable id="tbl" var="citerneIt" value="#{citerneMb.l_detail_citerne_historique}"   
-                                         rowKey="#{citerneIt.id}"
+                            <p:dataTable id="tbl" var="mvmtIt" value="#{citerneMb.l_detail_citerne_historique}"   
+                                         rowKey="#{mvmtIt.id}"
                                          rows="5"  paginator="true" paginatorTemplate="{CurrentPageReport} 
                                          {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
                                          {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
                                          >
-
-                                <p:column headerText="Engin"  filterBy="#{citerneIt.engin.designation}">
-                                    <h:outputText value="#{citerneIt.engin.designation} - #{citerneIt.engin.code}" />
+                                <p:column headerText="Engin"  filterBy="#{mvmtIt.engin.designation} - #{mvmtIt.engin.code}" filterMatchMode="contains" >
+                                    <h:outputText value="#{mvmtIt.engin.designation} - #{mvmtIt.engin.code}" />
                                 </p:column>
-
-                                <p:column headerText="Date"  sortBy="#{citerneIt.date}">
-                                    <h:outputText value="#{citerneMb.convertFormatDate(citerneIt.date)}" />
+                                <p:column headerText="Date"  filterBy="#{citerneMb.convertFormatDate(mvmtIt.date)}" filterMatchMode="contains" >
+                                    <h:outputText value="#{citerneMb.convertFormatDate(mvmtIt.date)}" />
                                 </p:column>
-                                <p:column headerText="Volume">
-                                    <h:outputText value="#{citerneIt.volume}" />
+                                <p:column headerText="Volume" filterBy="#{mvmtIt.volume}" filterMatchMode="contains">
+                                    <h:outputText value="#{mvmtIt.volume}" />
                                 </p:column>
-
-                                <p:column headerText="Volume actuel"  >
-                                    <h:outputText value="#{citerneIt.volume_actuel}" />
+                                <p:column headerText="Compteur Engin Kilometrage"  filterBy="#{mvmtIt.kilometrage}" filterMatchMode="contains" >
+                                    <h:outputText value="#{mvmtIt.kilometrage}" />
                                 </p:column>
-                                
-                                <p:column headerText="Compteur Engin Kilometrage"  >
-                                    <h:outputText value="#{citerneIt.kilometrage}" />
+                                 <p:column headerText="Compteur Engin Horaire"  filterBy="#{mvmtIt.heure}" filterMatchMode="contains" >
+                                     <h:outputText value="#{mvmtIt.heure}" />
                                 </p:column>
-                                
-                                 <p:column headerText="Compteur Engin Horaire"  >
-                                     <h:outputText value="#{citerneIt.heure}" />
+                                  <p:column headerText="Commentaire"  filterBy="#{mvmtIt.commentaire}" filterMatchMode="contains" >
+                                      <h:outputText value="#{mvmtIt.commentaire}" />
+                                </p:column>                  
+                                <p:column headerText="Numero BC" filterBy="#{mvmtIt.numero_commande}" filterMatchMode="contains">
+                                    <h:outputText value="#{mvmtIt.numero_commande}" />
                                 </p:column>
-                                
-                                  <p:column headerText="Commentaire"  >
-                                      <h:outputText value="#{citerneIt.commentaire}" />
+                                <p:column headerText="Numero BL" filterBy="#{mvmtIt.numero_Livraison}" filterMatchMode="contains">
+                                    <h:outputText value="#{mvmtIt.numero_Livraison}" />
                                 </p:column>
-                                                               
-                                <p:column headerText="Numero BC">
-                                    <h:outputText value="#{citerneIt.numero_commande}" />
+                                <p:column headerText="Opération" style="width: 200px;"  filterBy="#{mvmtIt.action}" filterMatchMode="contains">
+                                    <h:outputText value="#{mvmtIt.action}" />
                                 </p:column>
-
-                                <p:column headerText="Numero BL">
-                                    <h:outputText value="#{citerneIt.numero_Livraison}" />
-                                </p:column>
-
-                                <p:column headerText="Opération" style="width: 200px;">
-                                    <h:outputText value="#{citerneIt.action}" />
-                                </p:column>
-
-                                <p:column headerText="Editer le Bon">
-                                    <p:commandButton value="Editer le Bon "  
-                                                     actionListener="#{citerneMb.telecharger_bon_gasoil_historique(citerneIt)}"
+                                <p:column headerText=" " width="50px;">
+                                    <p:commandButton icon="ui-icon ui-icon-print"
+                                                     actionListener="#{citerneMb.telecharger_bon_gasoil_historique(mvmtIt)}"
                                                      ajax="false" />
-
                                 </p:column>
+                            <c:if test="#{authentification.hasPermission(constanteMb.editMvmt)}">
+                                <p:column headerText=" " width="50px;">
+                                    <p:commandButton  title="Modifier mouvement" onstart="PF('block').show()" oncomplete="PF('block').hide()" 
+                                                      actionListener="#{citerneMb.prepMvmt(mvmtIt)}" update=":form_mvmt,:form_mvmt:idMvmtEngin" immediate="true" icon="ui-icon ui-icon-pencil" />
+                                </p:column>
+                            </c:if>
                             </p:dataTable>
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog header="Modification du mouvement "  resizable="false" modal="true" style="margin-right:80px;" draggable="true" maximizable="true" widgetVar="dlg_mvmtCiterne"  >
+                        <h:form id="form_mvmt" >
+                           <h:panelGrid columns="2" cellpadding="5">
+                                <h:outputText value="Engin : " /> 
+                                <p:selectOneMenu required="true" requiredMessage="Le code engin est obligatoire" validatorMessage="Veuillez vérifier le code engin" id="idMvmtEngin"
+                                                 value="#{citerneMb.codeEnginMvmtEdit}" filter="true" filterMatchMode="contains">
+                                    <f:selectItem itemLabel="#{citerneMb.bon_gasoil_To_Edit.engin.code} - #{citerneMb.bon_gasoil_To_Edit.engin.designation}" itemValue="#{citerneMb.bon_gasoil_To_Edit.engin.code}" />
+                                    <f:selectItems value="#{citerneMb.allEngins}" var="ch" itemLabel="#{ch.code} - #{ch.designation}" itemValue="#{ch.code}" />
+                                    <p:ajax listener="#{citerneMb.changeEnginEditMvmt()}" />
+                                </p:selectOneMenu>
+                                <h:outputText value="Date : " /> 
+                                <p:calendar value="#{citerneMb.bon_gasoil_To_Edit.date}" /> 
+                                <h:outputText value="Volume : " /> 
+                                <h:inputText value="#{citerneMb.bon_gasoil_To_Edit.volume}"  /> 
+                                <h:outputText value="Compteur Km : " /> 
+                                <h:inputText value="#{citerneMb.bon_gasoil_To_Edit.kilometrage}" /> 
+                                <h:outputText value="Compteur H : " /> 
+                                <h:inputText value="#{citerneMb.bon_gasoil_To_Edit.heure}" /> 
+                                <h:outputText value="Commentaire : " /> 
+                                <h:inputText value="#{citerneMb.bon_gasoil_To_Edit.commentaire}" style="width: 100%" /> 
+                                <h:outputText value="Numero BC : " /> 
+                                <h:inputText value="#{citerneMb.bon_gasoil_To_Edit.numero_commande}" /> 
+                                <h:outputText value="Numero BL : " /> 
+                                <h:inputText value="#{citerneMb.bon_gasoil_To_Edit.numBon}" /> 
+                            </h:panelGrid>
+                            <p:commandButton class="btn btn-switch active" update=":form_historique,:form_historique:tbl" 
+                                             oncomplete="PF('dlg_mvmtCiterne').hide()" value="Enregistrer" 
+                                             actionListener="#{citerneMb.enregistrerMvmt()}"  />
                         </h:form>
                     </p:dialog>
 

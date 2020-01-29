@@ -291,6 +291,86 @@
                             </div>
                             <div class="row">
                                 <div class="col-lg-4">
+                                    <p:outputLabel value="N° immobilisation compta :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.numImmobilisationCompta}" />
+                                </div>
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="N° contrat leasing :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.numContratLising}"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Capacité reservoir(L) :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.qteReservoir}"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Consommation moyen réel :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.consoMoyReel}" />
+                                </div>
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Consommation minimum constructeur :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.consoMinConstructeur}"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Consommation maximum constructeur :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.consoMaxConstructeur}"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Coût de location :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.coutLocation}" />
+                                </div>
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Unité de location :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.uniteLocation}"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="N° série moteur :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.numSerieMoteur}"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Marque moteur :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.marqueMoteur}" />
+                                </div>
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Type moteur :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.typeMoteur}"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="N° serie boîte à vitesse :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.numSerieboiteVitesse}"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Marque boîte à vitesse :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.marqueboiteVitesse}" />
+                                </div>
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Type boîte à vitesse :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.typeboiteVitesse}"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="N° série pont :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.numSeriePont}"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Marque pont :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.marqueSeriePont}" />
+                                </div>
+                                <div class="col-lg-4">
+                                    <p:outputLabel value="Type pont :" styleClass="infoEngin" />        
+                                    <h:outputText value="#{parcEngins.infoEngin.typeSeriePont}"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4">
                                     <p:commandButton   icon="ui-icon-print"   title="Fiche Engin"  
                                                    value="Imprimer"  oncomplete="PF('pdfEngin').show();" update=":visuliser_id"
                                             actionListener="#{parcEngins.imprimerFicheEngin(parcEngins.infoEngin)}" /> 
@@ -644,7 +724,90 @@
                                                      update=":formLocEngin" />
                                     <p:message for="EditLocaInputEngin" id="EditLocaInputEnginMSG"/>
                                 </div> 
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="N° immobilisation compta" />
+                                    <p:inputText class="form-control" value="#{parcEngins.infoEngin.numImmobilisationCompta}"/>
+                                </div>
+                            </div>
+                            <div class="row"> 
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="N° contrat leasing" />
+                                    <p:inputText class="form-control" value="#{parcEngins.infoEngin.numContratLising}"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Capacité reservoir(L)" />
+                                    <p:inputText class="form-control" value="#{parcEngins.infoEngin.qteReservoir}">
+                                        <f:convertNumber integerOnly="true" type="number" />
+                                    </p:inputText>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Consommation moyen réel" />
+                                    <p:inputText class="form-control" value="#{parcEngins.infoEngin.consoMoyReel}"/>
+                                </div>
                             </div> 
+                            <div class="row"> 
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Consommation minimum constructeur" />
+                                    <p:inputText class="form-control" value="#{parcEngins.infoEngin.consoMinConstructeur}"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Consommation maximum constructeur" />
+                                    <p:inputText class="form-control" value="#{parcEngins.infoEngin.consoMaxConstructeur}"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Coût de location" />
+                                    <p:inputText class="form-control" value="#{parcEngins.infoEngin.coutLocation}"/>
+                                </div>
+                            </div> 
+                            <div class="row"> 
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Unité de location" />
+                                    <p:inputText class="form-control" value="#{parcEngins.infoEngin.uniteLocation}"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="N° série moteur" />
+                                    <p:inputText class="form-control" value="#{parcEngins.infoEngin.numSerieMoteur}"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Marque moteur" />
+                                    <p:inputText class="form-control" value="#{parcEngins.infoEngin.marqueMoteur}"/>
+                                </div>
+                            </div> 
+                            <div class="row"> 
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Type moteur" />
+                                    <p:inputText class="form-control" value="#{parcEngins.infoEngin.typeMoteur}"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="N° serie boîte à vitesse" />
+                                    <p:inputText class="form-control" value="#{parcEngins.infoEngin.numSerieboiteVitesse}"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Marque boîte à vitesse" />
+                                    <p:inputText class="form-control" value="#{parcEngins.infoEngin.marqueboiteVitesse}"/>
+                                </div>
+                            </div> 
+                            <div class="row"> 
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Type boîte à vitesse" />
+                                    <p:inputText class="form-control" value="#{parcEngins.infoEngin.typeboiteVitesse}"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="N° série pont" />
+                                    <p:inputText class="form-control" value="#{parcEngins.infoEngin.numSeriePont}"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Marque pont" />
+                                    <p:inputText class="form-control" value="#{parcEngins.infoEngin.marqueSeriePont}"/>
+                                </div>
+                            </div> 
+                            <div class="row"> 
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Type pont" />
+                                    <p:inputText class="form-control" value="#{parcEngins.infoEngin.typeSeriePont}"/>
+                                </div>
+                            </div> 
+                            
                             <p:commandButton class="btn btn-switch active"  value="Modifier" update=":tablePE:tbl,:form:msgsM" onclick="PF('updateE').hide();" action="#{parcEngins.updateEnginInfo()}"/> 
                         </h:form>
                     </p:dialog>
@@ -1169,7 +1332,90 @@
                                                      update=":formLocEngin" />
                                     <p:message for="locaInputEngin" id="locaInputEnginMSG"/>
                                 </div> 
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="N° immobilisation compta" />
+                                    <p:inputText class="form-control" value="#{parcEngins.enginsToAdd.numImmobilisationCompta}"/>
+                                </div>
+                            </div>
+                            <div class="row"> 
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="N° contrat leasing" />
+                                    <p:inputText class="form-control" value="#{parcEngins.enginsToAdd.numContratLising}"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Capacité reservoir(L)" />
+                                    <p:inputText class="form-control" value="#{parcEngins.enginsToAdd.qteReservoir}">
+                                        <f:convertNumber integerOnly="true" type="number" />
+                                    </p:inputText>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Consommation moyen réel" />
+                                    <p:inputText class="form-control" value="#{parcEngins.enginsToAdd.consoMoyReel}"/>
+                                </div>
                             </div> 
+                            <div class="row"> 
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Consommation minimum constructeur" />
+                                    <p:inputText class="form-control" value="#{parcEngins.enginsToAdd.consoMinConstructeur}"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Consommation maximum constructeur" />
+                                    <p:inputText class="form-control" value="#{parcEngins.enginsToAdd.consoMaxConstructeur}"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Coût de location" />
+                                    <p:inputText class="form-control" value="#{parcEngins.enginsToAdd.coutLocation}"/>
+                                </div>
+                            </div> 
+                            <div class="row"> 
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Unité de location" />
+                                    <p:inputText class="form-control" value="#{parcEngins.enginsToAdd.uniteLocation}"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="N° série moteur" />
+                                    <p:inputText class="form-control" value="#{parcEngins.enginsToAdd.numSerieMoteur}"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Marque moteur" />
+                                    <p:inputText class="form-control" value="#{parcEngins.enginsToAdd.marqueMoteur}"/>
+                                </div>
+                            </div> 
+                            <div class="row"> 
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Type moteur" />
+                                    <p:inputText class="form-control" value="#{parcEngins.enginsToAdd.typeMoteur}"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="N° serie boîte à vitesse" />
+                                    <p:inputText class="form-control" value="#{parcEngins.enginsToAdd.numSerieboiteVitesse}"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Marque boîte à vitesse" />
+                                    <p:inputText class="form-control" value="#{parcEngins.enginsToAdd.marqueboiteVitesse}"/>
+                                </div>
+                            </div> 
+                            <div class="row"> 
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Type boîte à vitesse" />
+                                    <p:inputText class="form-control" value="#{parcEngins.enginsToAdd.typeboiteVitesse}"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="N° série pont" />
+                                    <p:inputText class="form-control" value="#{parcEngins.enginsToAdd.numSeriePont}"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Marque pont" />
+                                    <p:inputText class="form-control" value="#{parcEngins.enginsToAdd.marqueSeriePont}"/>
+                                </div>
+                            </div> 
+                            <div class="row"> 
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Type pont" />
+                                    <p:inputText class="form-control" value="#{parcEngins.enginsToAdd.typeSeriePont}"/>
+                                </div>
+                            </div> 
+                            
                             <p:commandButton class="btn btn-switch active" 
                                              value="Ajouter" 
                                              update=":tablePE:tbl, :form_new, :tablePE:growlM" 

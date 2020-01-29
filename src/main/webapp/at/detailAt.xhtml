@@ -85,12 +85,116 @@ and open the template in the editor.
                         <p:panel id="id_infocausAt" header="Cause AT" toggleable="true" 
                                  toggleSpeed="500" closeSpeed="500"
                                  widgetVar="id_infocausAt" style="margin-bottom:20px"> 
+                            <p:commandButton value="Activer" action="#{accidentTravailMb.activeCause()}" update=":forme:id_infocausAt,:forme:idCauseChuteEnHaut,:forme:idCausechuteDObjet,:forme:idCausetrebuchement,:forme:idCauseglissade
+                                             ,:forme:idCausemanutentionManuelle,:forme:idCausemanutentionMecanique,:forme:idCauselevage,:forme:idCauseoutillageAmain,:forme:idCauseeboulement
+                                             ,:forme:idCauseeffondrement,:forme:idCauseelectrisation,:forme:idCausecirculationHorsSite,:forme:idCausecirculationDeplacementSurSite
+                                             ,:forme:idCauseincendie,:forme:idCauseutilisationProduitsChimiques" />
                              <h:panelGrid columns="5" cellpadding="10">
-                                 <p:selectBooleanCheckbox itemLabel="Chute en hauteur" value="#{accidentTravailMb.detailAT.chuteEnHaut}"/>
-                                 <p:selectBooleanCheckbox itemLabel="Chute d'objet" value="#{accidentTravailMb.detailAT.chuteDObjet}"/>
-                                 <p:selectBooleanCheckbox itemLabel="Trébuchement" value="#{accidentTravailMb.detailAT.trebuchement}"/>
-                                 <p:selectBooleanCheckbox itemLabel="Manutention manuelle" value="#{accidentTravailMb.detailAT.manutentionManuelle}"/>
-                                 <p:selectBooleanCheckbox itemLabel="Manutention mécanique" value="#{accidentTravailMb.detailAT.manutentionMecanique}"/>
+                                 <p:selectBooleanCheckbox id="idCauseChuteEnHaut" itemLabel="Chute en hauteur" value="#{accidentTravailMb.detailAT.chuteEnHaut}" disabled="#{accidentTravailMb.validCause}">
+                                     <p:ajax update=":forme:id_infocausAt,:forme:idCauseChuteEnHaut,:forme:idCausechuteDObjet,:forme:idCausetrebuchement,:forme:idCauseglissade
+                                             ,:forme:idCausemanutentionManuelle,:forme:idCausemanutentionMecanique,:forme:idCauselevage,:forme:idCauseoutillageAmain,:forme:idCauseeboulement
+                                             ,:forme:idCauseeffondrement,:forme:idCauseelectrisation,:forme:idCausecirculationHorsSite,:forme:idCausecirculationDeplacementSurSite
+                                             ,:forme:idCauseincendie,:forme:idCauseutilisationProduitsChimiques" 
+                                             listener="#{accidentTravailMb.changeCauseAt()}" />
+                                 </p:selectBooleanCheckbox>
+                                 <p:selectBooleanCheckbox id="idCausechuteDObjet" itemLabel="Chute d'objet" value="#{accidentTravailMb.detailAT.chuteDObjet}" disabled="#{accidentTravailMb.validCause}">
+                                     <p:ajax update=":forme:id_infocausAt,:forme:idCauseChuteEnHaut,:forme:idCausechuteDObjet,:forme:idCausetrebuchement,:forme:idCauseglissade
+                                             ,:forme:idCausemanutentionManuelle,:forme:idCausemanutentionMecanique,:forme:idCauselevage,:forme:idCauseoutillageAmain,:forme:idCauseeboulement
+                                             ,:forme:idCauseeffondrement,:forme:idCauseelectrisation,:forme:idCausecirculationHorsSite,:forme:idCausecirculationDeplacementSurSite
+                                             ,:forme:idCauseincendie,:forme:idCauseutilisationProduitsChimiques" 
+                                             listener="#{accidentTravailMb.changeCauseAt()}" />
+                                 </p:selectBooleanCheckbox>
+                                 <p:selectBooleanCheckbox id="idCausetrebuchement" itemLabel="Trébuchement" value="#{accidentTravailMb.detailAT.trebuchement}" disabled="#{accidentTravailMb.validCause}">
+                                     <p:ajax update=":forme:id_infocausAt,:forme:idCauseChuteEnHaut,:forme:idCausechuteDObjet,:forme:idCausetrebuchement,:forme:idCauseglissade
+                                             ,:forme:idCausemanutentionManuelle,:forme:idCausemanutentionMecanique,:forme:idCauselevage,:forme:idCauseoutillageAmain,:forme:idCauseeboulement
+                                             ,:forme:idCauseeffondrement,:forme:idCauseelectrisation,:forme:idCausecirculationHorsSite,:forme:idCausecirculationDeplacementSurSite
+                                             ,:forme:idCauseincendie,:forme:idCauseutilisationProduitsChimiques" 
+                                             listener="#{accidentTravailMb.changeCauseAt()}" />
+                                 </p:selectBooleanCheckbox>
+                                 <p:selectBooleanCheckbox id="idCauseglissade" itemLabel="Glissade" value="#{accidentTravailMb.detailAT.glissade}" disabled="#{accidentTravailMb.validCause}">
+                                     <p:ajax update=":forme:id_infocausAt,:forme:idCauseChuteEnHaut,:forme:idCausechuteDObjet,:forme:idCausetrebuchement,:forme:idCauseglissade
+                                             ,:forme:idCausemanutentionManuelle,:forme:idCausemanutentionMecanique,:forme:idCauselevage,:forme:idCauseoutillageAmain,:forme:idCauseeboulement
+                                             ,:forme:idCauseeffondrement,:forme:idCauseelectrisation,:forme:idCausecirculationHorsSite,:forme:idCausecirculationDeplacementSurSite
+                                             ,:forme:idCauseincendie,:forme:idCauseutilisationProduitsChimiques" 
+                                             listener="#{accidentTravailMb.changeCauseAt()}" />
+                                 </p:selectBooleanCheckbox>
+                                 <p:selectBooleanCheckbox id="idCausemanutentionManuelle" itemLabel="Manutention manuelle" value="#{accidentTravailMb.detailAT.manutentionManuelle}" disabled="#{accidentTravailMb.validCause}">
+                                     <p:ajax update=":forme:id_infocausAt,:forme:idCauseChuteEnHaut,:forme:idCausechuteDObjet,:forme:idCausetrebuchement,:forme:idCauseglissade
+                                             ,:forme:idCausemanutentionManuelle,:forme:idCausemanutentionMecanique,:forme:idCauselevage,:forme:idCauseoutillageAmain,:forme:idCauseeboulement
+                                             ,:forme:idCauseeffondrement,:forme:idCauseelectrisation,:forme:idCausecirculationHorsSite,:forme:idCausecirculationDeplacementSurSite
+                                             ,:forme:idCauseincendie,:forme:idCauseutilisationProduitsChimiques" 
+                                             listener="#{accidentTravailMb.changeCauseAt()}" />
+                                 </p:selectBooleanCheckbox>
+                                 <p:selectBooleanCheckbox id="idCausemanutentionMecanique" itemLabel="Manutention mécanique" value="#{accidentTravailMb.detailAT.manutentionMecanique}" disabled="#{accidentTravailMb.validCause}">
+                                     <p:ajax update=":forme:id_infocausAt,:forme:idCauseChuteEnHaut,:forme:idCausechuteDObjet,:forme:idCausetrebuchement,:forme:idCauseglissade
+                                             ,:forme:idCausemanutentionManuelle,:forme:idCausemanutentionMecanique,:forme:idCauselevage,:forme:idCauseoutillageAmain,:forme:idCauseeboulement
+                                             ,:forme:idCauseeffondrement,:forme:idCauseelectrisation,:forme:idCausecirculationHorsSite,:forme:idCausecirculationDeplacementSurSite
+                                             ,:forme:idCauseincendie,:forme:idCauseutilisationProduitsChimiques" 
+                                             listener="#{accidentTravailMb.changeCauseAt()}" />
+                                 </p:selectBooleanCheckbox>
+                                 <p:selectBooleanCheckbox id="idCauselevage" itemLabel="Levage" value="#{accidentTravailMb.detailAT.levage}" disabled="#{accidentTravailMb.validCause}">
+                                     <p:ajax update=":forme:id_infocausAt,:forme:idCauseChuteEnHaut,:forme:idCausechuteDObjet,:forme:idCausetrebuchement,:forme:idCauseglissade
+                                             ,:forme:idCausemanutentionManuelle,:forme:idCausemanutentionMecanique,:forme:idCauselevage,:forme:idCauseoutillageAmain,:forme:idCauseeboulement
+                                             ,:forme:idCauseeffondrement,:forme:idCauseelectrisation,:forme:idCausecirculationHorsSite,:forme:idCausecirculationDeplacementSurSite
+                                             ,:forme:idCauseincendie,:forme:idCauseutilisationProduitsChimiques" 
+                                             listener="#{accidentTravailMb.changeCauseAt()}" />
+                                 </p:selectBooleanCheckbox>
+                                 <p:selectBooleanCheckbox id="idCauseoutillageAmain" itemLabel="Outillage à main" value="#{accidentTravailMb.detailAT.outillageAmain}" disabled="#{accidentTravailMb.validCause}">
+                                     <p:ajax update=":forme:id_infocausAt,:forme:idCauseChuteEnHaut,:forme:idCausechuteDObjet,:forme:idCausetrebuchement,:forme:idCauseglissade
+                                             ,:forme:idCausemanutentionManuelle,:forme:idCausemanutentionMecanique,:forme:idCauselevage,:forme:idCauseoutillageAmain,:forme:idCauseeboulement
+                                             ,:forme:idCauseeffondrement,:forme:idCauseelectrisation,:forme:idCausecirculationHorsSite,:forme:idCausecirculationDeplacementSurSite
+                                             ,:forme:idCauseincendie,:forme:idCauseutilisationProduitsChimiques" 
+                                             listener="#{accidentTravailMb.changeCauseAt()}" />
+                                 </p:selectBooleanCheckbox>
+                                 <p:selectBooleanCheckbox id="idCauseeboulement" itemLabel="Éboulement " value="#{accidentTravailMb.detailAT.eboulement}" disabled="#{accidentTravailMb.validCause}">
+                                     <p:ajax update=":forme:id_infocausAt,:forme:idCauseChuteEnHaut,:forme:idCausechuteDObjet,:forme:idCausetrebuchement,:forme:idCauseglissade
+                                             ,:forme:idCausemanutentionManuelle,:forme:idCausemanutentionMecanique,:forme:idCauselevage,:forme:idCauseoutillageAmain,:forme:idCauseeboulement
+                                             ,:forme:idCauseeffondrement,:forme:idCauseelectrisation,:forme:idCausecirculationHorsSite,:forme:idCausecirculationDeplacementSurSite
+                                             ,:forme:idCauseincendie,:forme:idCauseutilisationProduitsChimiques" 
+                                             listener="#{accidentTravailMb.changeCauseAt()}" />
+                                 </p:selectBooleanCheckbox>
+                                 <p:selectBooleanCheckbox id="idCauseeffondrement" itemLabel="Effondrement" value="#{accidentTravailMb.detailAT.effondrement}" disabled="#{accidentTravailMb.validCause}">
+                                     <p:ajax update=":forme:id_infocausAt,:forme:idCauseChuteEnHaut,:forme:idCausechuteDObjet,:forme:idCausetrebuchement,:forme:idCauseglissade
+                                             ,:forme:idCausemanutentionManuelle,:forme:idCausemanutentionMecanique,:forme:idCauselevage,:forme:idCauseoutillageAmain,:forme:idCauseeboulement
+                                             ,:forme:idCauseeffondrement,:forme:idCauseelectrisation,:forme:idCausecirculationHorsSite,:forme:idCausecirculationDeplacementSurSite
+                                             ,:forme:idCauseincendie,:forme:idCauseutilisationProduitsChimiques" 
+                                             listener="#{accidentTravailMb.changeCauseAt()}" />
+                                 </p:selectBooleanCheckbox>
+                                 <p:selectBooleanCheckbox id="idCauseelectrisation" itemLabel="Électrisation" value="#{accidentTravailMb.detailAT.electrisation}" disabled="#{accidentTravailMb.validCause}">
+                                     <p:ajax update=":forme:id_infocausAt,:forme:idCauseChuteEnHaut,:forme:idCausechuteDObjet,:forme:idCausetrebuchement,:forme:idCauseglissade
+                                             ,:forme:idCausemanutentionManuelle,:forme:idCausemanutentionMecanique,:forme:idCauselevage,:forme:idCauseoutillageAmain,:forme:idCauseeboulement
+                                             ,:forme:idCauseeffondrement,:forme:idCauseelectrisation,:forme:idCausecirculationHorsSite,:forme:idCausecirculationDeplacementSurSite
+                                             ,:forme:idCauseincendie,:forme:idCauseutilisationProduitsChimiques" 
+                                             listener="#{accidentTravailMb.changeCauseAt()}" />
+                                 </p:selectBooleanCheckbox>
+                                 <p:selectBooleanCheckbox id="idCausecirculationHorsSite" itemLabel="Circulation hors site" value="#{accidentTravailMb.detailAT.circulationHorsSite}" disabled="#{accidentTravailMb.validCause}">
+                                     <p:ajax update=":forme:id_infocausAt,:forme:idCauseChuteEnHaut,:forme:idCausechuteDObjet,:forme:idCausetrebuchement,:forme:idCauseglissade
+                                             ,:forme:idCausemanutentionManuelle,:forme:idCausemanutentionMecanique,:forme:idCauselevage,:forme:idCauseoutillageAmain,:forme:idCauseeboulement
+                                             ,:forme:idCauseeffondrement,:forme:idCauseelectrisation,:forme:idCausecirculationHorsSite,:forme:idCausecirculationDeplacementSurSite
+                                             ,:forme:idCauseincendie,:forme:idCauseutilisationProduitsChimiques" 
+                                             listener="#{accidentTravailMb.changeCauseAt()}" />
+                                 </p:selectBooleanCheckbox>
+                                 <p:selectBooleanCheckbox id="idCausecirculationDeplacementSurSite" itemLabel="Circulation et déplacement sur site" value="#{accidentTravailMb.detailAT.circulationDeplacementSurSite}" disabled="#{accidentTravailMb.validCause}">
+                                     <p:ajax update=":forme:id_infocausAt,:forme:idCauseChuteEnHaut,:forme:idCausechuteDObjet,:forme:idCausetrebuchement,:forme:idCauseglissade
+                                             ,:forme:idCausemanutentionManuelle,:forme:idCausemanutentionMecanique,:forme:idCauselevage,:forme:idCauseoutillageAmain,:forme:idCauseeboulement
+                                             ,:forme:idCauseeffondrement,:forme:idCauseelectrisation,:forme:idCausecirculationHorsSite,:forme:idCausecirculationDeplacementSurSite
+                                             ,:forme:idCauseincendie,:forme:idCauseutilisationProduitsChimiques" 
+                                             listener="#{accidentTravailMb.changeCauseAt()}" />
+                                 </p:selectBooleanCheckbox>
+                                 <p:selectBooleanCheckbox id="idCauseincendie" itemLabel="Incendie " value="#{accidentTravailMb.detailAT.incendie}" disabled="#{accidentTravailMb.validCause}">
+                                     <p:ajax update=":forme:id_infocausAt,:forme:idCauseChuteEnHaut,:forme:idCausechuteDObjet,:forme:idCausetrebuchement,:forme:idCauseglissade
+                                             ,:forme:idCausemanutentionManuelle,:forme:idCausemanutentionMecanique,:forme:idCauselevage,:forme:idCauseoutillageAmain,:forme:idCauseeboulement
+                                             ,:forme:idCauseeffondrement,:forme:idCauseelectrisation,:forme:idCausecirculationHorsSite,:forme:idCausecirculationDeplacementSurSite
+                                             ,:forme:idCauseincendie,:forme:idCauseutilisationProduitsChimiques" 
+                                             listener="#{accidentTravailMb.changeCauseAt()}" />
+                                 </p:selectBooleanCheckbox>
+                                 <p:selectBooleanCheckbox id="idCauseutilisationProduitsChimiques" itemLabel="Utilisation des produits chimiques" value="#{accidentTravailMb.detailAT.utilisationProduitsChimiques}" disabled="#{accidentTravailMb.validCause}">
+                                     <p:ajax update=":forme:id_infocausAt,:forme:idCauseChuteEnHaut,:forme:idCausechuteDObjet,:forme:idCausetrebuchement,:forme:idCauseglissade
+                                             ,:forme:idCausemanutentionManuelle,:forme:idCausemanutentionMecanique,:forme:idCauselevage,:forme:idCauseoutillageAmain,:forme:idCauseeboulement
+                                             ,:forme:idCauseeffondrement,:forme:idCauseelectrisation,:forme:idCausecirculationHorsSite,:forme:idCausecirculationDeplacementSurSite
+                                             ,:forme:idCauseincendie,:forme:idCauseutilisationProduitsChimiques" 
+                                             listener="#{accidentTravailMb.changeCauseAt()}" />
+                                 </p:selectBooleanCheckbox>
                              </h:panelGrid>
                              <h:panelGrid columns="2" cellpadding="10">
                                  <h:outputText value="Cause probable :" />
@@ -220,24 +324,24 @@ and open the template in the editor.
                         </p:panel>
                         <div class="row">
                             <div class="col-lg-1"></div>
-                            <c:if test="#{authentification.hasPermission(constanteMb.validerQhse)}">
+                            <c:if test="#{authentification.hasPermission(constanteMb.validerQhse) and !accidentTravailMb.isAdmin}">
                                 <div class="col-lg-2">
                                         <p:commandButton id="btnValidQhse" value="Valider par QHSE"  class="btn active" 
                                                      disabled="#{accidentTravailMb.valideQhse}" 
                                                      action="#{accidentTravailMb.validQhse()}" 
-                                                     update=":forme:btnValidQhse"/>
+                                                     update=":forme:btnValidQhse,:forme:btnEnregistrerQhse"/>
                                 </div>
                                 <div class="col-lg-2">
-                                     <p:commandButton value="Enregistrer" action="#{accidentTravailMb.saveOrUpdateDetailAt()}" 
+                                    <p:commandButton id="btnEnregistrerQhse" value="Enregistrer" action="#{accidentTravailMb.saveOrUpdateDetailAt()}" 
                                                      class="btn active"
                                                      disabled="#{accidentTravailMb.valideQhse}" 
                                                      update=":forme:btnValidQhse"  />
                                 </div>
                             </c:if>
-                            <c:if test="#{authentification.hasPermission(constanteMb.validerRh)}">
+                            <c:if test="#{authentification.hasPermission(constanteMb.validerRh) and !accidentTravailMb.isAdmin}">
                                 <div class="col-lg-2">
                                         <p:commandButton id="btnValidRh" value="Valider par RH"  class="btn active"
-                                                     disabled="#{accidentTravailMb.valideRH}" 
+                                                     disabled="#{accidentTravailMb.valideRH or !accidentTravailMb.valideQhse}" 
                                                      action="#{accidentTravailMb.validRH()}" 
                                                      update=":forme:btnValidRh"  />
                                 </div>
@@ -246,6 +350,15 @@ and open the template in the editor.
                                              class="btn active"
                                              disabled="#{accidentTravailMb.valideRH}" 
                                              update=":forme:btnValidRh"  />
+                                </div> 
+                            </c:if>
+                            <c:if test="#{authentification.hasPermission(constanteMb.saveAtNotRhQhse) or accidentTravailMb.isAdmin}">
+                                
+                                <div class="col-lg-2">
+                                    <p:commandButton value="Enregistrer" 
+                                                    action="#{accidentTravailMb.saveOrUpdateDetailAt()}" 
+                                                    class="btn active"
+                                                    disabled="#{accidentTravailMb.valideRH or accidentTravailMb.valideQhse}"   />
                                 </div> 
                             </c:if>
                             <div class="col-lg-2"></div> 

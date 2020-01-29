@@ -59,7 +59,7 @@ public class PointageSalarieMb implements Serializable {
 
     private ChantierService chantierService;
     private Salarie findSalarie = new Salarie();
-    private Integer IdChantier;
+    private Integer idChantier;
     private String e_S, btnPoint, heure, min;
     private Date datePointage = new Date();
     private boolean tach;
@@ -120,11 +120,11 @@ public class PointageSalarieMb implements Serializable {
     }
 
     public Integer getIdChantier() {
-        return IdChantier;
+        return idChantier;
     }
 
     public void setIdChantier(Integer IdChantier) {
-        this.IdChantier = IdChantier;
+        this.idChantier = IdChantier;
     }
 
     public String getE_S() {
@@ -226,9 +226,13 @@ public class PointageSalarieMb implements Serializable {
     }
 
     public void updateHeurMin() {
-        System.out.println("update " + IdChantier);
-        Chantier c = chantierService.getChantier(IdChantier);
-        System.out.println("update heur" + IdChantier);
+        System.out.println("update " + idChantier);
+        Chantier c = chantierService.getChantier(idChantier);
+        try {
+            System.out.println("update heur" + c.getHeureEntree());
+        } catch (Exception e) {
+            System.out.println("Erreur d'afficher le message");
+        }
         e_S = (e_S == null) ? "E" : e_S;
         if (c != null) {
             System.out.println("update not null ");
@@ -263,7 +267,7 @@ public class PointageSalarieMb implements Serializable {
         if (min.length() == 1) {
             min = "0" + min;
         }
-        Chantier c1 = chantierService.getChantier(IdChantier); // recupere le chantier
+        Chantier c1 = chantierService.getChantier(idChantier); // recupere le chantier
         Integer hsc = Integer.parseInt(c1.getHeureSortie().substring(0, 2)); //recupere l'heure de sortie du chantier
         Integer msc = Integer.parseInt(c1.getHeureSortie().substring(3, 5));//recupere les minutes de sortie du chantier
 
@@ -325,8 +329,8 @@ public class PointageSalarieMb implements Serializable {
             if (ls != null && !ls.isEmpty()) {
                 for (SousAffectation sa : ls) {
                     System.out.println("AFFECTATIONS :  # " + sa.getChantier().getId());
-                    System.out.println("ID CHANTIER : " + IdChantier);
-                    if (Objects.equals(sa.getChantier().getId(), IdChantier)) {
+                    System.out.println("ID CHANTIER : " + idChantier);
+                    if (Objects.equals(sa.getChantier().getId(), idChantier)) {
                         System.out.println("FOUND!");
                         affectMensuel = true;
                     }
@@ -349,7 +353,7 @@ public class PointageSalarieMb implements Serializable {
 
             }
         }
-        boolean resultat = chantierService.verifierAffectationSalarieChantier(IdChantier, salarie.getId());
+        boolean resultat = chantierService.verifierAffectationSalarieChantier(idChantier, salarie.getId());
         if (resultat == false) {
 //            if (salarie instanceof Mensuel) {
 //                //List<Affectation>affectationService.getAffectation((Mensuel) salarie);
@@ -393,7 +397,7 @@ public class PointageSalarieMb implements Serializable {
                 clear();
                 return;
             }
-            p = presenceService.getPresence(IdChantier, datePointage, salarie.getId(), "PS");
+            p = presenceService.getPresence(idChantier, datePointage, salarie.getId(), "PS");
             if (p == null) {
                 validiteHeureMinuteAbsence = presenceService.verifierValiditeDateHeureMinutePointageSalarieAbsence(salarie.getId(), null, longDateTimePointage, "PS");
             } else {
@@ -408,7 +412,7 @@ public class PointageSalarieMb implements Serializable {
                     Mensuel m = (Mensuel) salarie;
                     if (m.getTypeAffectation()) {
                         System.out.println(" @@ mensuel multi");
-                        Presence pre = presenceService.getPresence(IdChantier, m.getId());
+                        Presence pre = presenceService.getPresence(idChantier, m.getId());
                         if (pre != null) {
                             System.out.println(" @@ déjà pointé présence ");
                             Chantier c = pre.getChantier();
@@ -437,7 +441,7 @@ public class PointageSalarieMb implements Serializable {
                     return;
                 }
             }
-            p = presenceService.getPresence(IdChantier, datePointage, salarie.getId(), "Evol");
+            p = presenceService.getPresence(idChantier, datePointage, salarie.getId(), "Evol");
             if (p == null) {
                 validiteHeureMinuteAbsence = presenceService.verifierValiditeDateHeureMinutePointageSalarieAbsence(salarie.getId(), longDateTimePointage, null, "PE");
             } else {
@@ -478,7 +482,7 @@ public class PointageSalarieMb implements Serializable {
                 return;
             } else {
                 // ----- Transformation de présences hors heures normales en Heures Supplémentaires -----
-                Chantier ch = chantierService.getChantierPresences(IdChantier);
+                Chantier ch = chantierService.getChantierPresences(idChantier);
                 Salarie s = salarieService.getSalarie(salarie.getId());
                 Long longDateTimeSortieChantier = null;
                 if (!date.equals("")) {
@@ -542,7 +546,7 @@ public class PointageSalarieMb implements Serializable {
                 }// ------ fin transformation de présences hors heures normales en Heures Supplémentaires -----
             }
         } else {
-            Chantier chantier = chantierService.getChantierPresences(IdChantier);
+            Chantier chantier = chantierService.getChantierPresences(idChantier);
             if (p == null) {
                 if (presenceService.dejaPointeSortie(salarie.getId(), longDateTimePointage, datePointage, "E") && presenceService.dejaPointeSortie(salarie.getId(), longDateTimePointage, datePointage, "S")) {
                     if (salarie instanceof Mensuel) {

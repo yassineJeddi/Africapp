@@ -471,4 +471,11 @@ public class Chantier implements Serializable {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "Chantier{" + "id=" + id + ", codeNovapaie=" + codeNovapaie + ", code=" + code + ", region=" + region + ", dos=" + dos + ", heureEntree=" + heureEntree + ", heureSortie=" + heureSortie + ", nombreHeures=" + nombreHeures + ", nombreMinutes=" + nombreMinutes + ", adresse=" + adresse + ", email=" + email + ", display=" + display + ", display_chantier_Principal=" + display_chantier_Principal + '}';
+    }
+    
+    
+
 }

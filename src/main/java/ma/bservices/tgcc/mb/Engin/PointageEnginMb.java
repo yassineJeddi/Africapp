@@ -786,7 +786,7 @@ public class PointageEnginMb implements Serializable {
                 //System.out.println("messageErrorPointage :"+messageErrorPointage);
                 return true;
             }
-            System.out.println("=======> p.getiDEngin().getTypeCompteur() : "+p.getiDEngin().getTypeCompteur());
+            //System.out.println("=======> p.getiDEngin().getTypeCompteur() : "+p.getiDEngin().getTypeCompteur());
 
             if (p.getiDEngin().getTypeCompteur().equals("kilométrique_horaire")) {
 
@@ -794,37 +794,31 @@ public class PointageEnginMb implements Serializable {
                     messageErrorPointage += "L'engin " + p.getiDEngin().getCode() + " est 'EN_MARCHE' alors que le compteur saisi est inférieur ou égal au compteur de la veille (KM).";
                     //System.out.println("messageErrorPointage :"+messageErrorPointage);
                     verif = true;
-                    verif =false; // a supprimer
                 }
                 if (p.getIDEngin().getEtat().equals("EN_MARCHE") && p.getNbrHeures() <= p.getIDEngin().getComteurHoraire()) {
                     messageErrorPointage += "L'engin " + p.getiDEngin().getCode() + " est 'EN_MARCHE' alors que le compteur saisi est inférieur ou égal au compteur de la veille (H).";
                     //System.out.println("messageErrorPointage :"+messageErrorPointage);
                     verif = true;
-                    verif =false; // a supprimer
                 }
                 if ((p.getIDEngin().getEtat().equals("EN_PANNE") || p.getIDEngin().getEtat().equals("NON_RECEPTIONNE")) && p.getNbrKm() < p.getIDEngin().getCompteurKilometrique()) {
                     messageErrorPointage += "Le compteur kilométrique saisie supérieur ou éguale au celle de l'engin " + p.getiDEngin().getCode() + " qui'est EN_PANNE ou NON_RECEPTIONNE.";
                     //System.out.println("messageErrorPointage :"+messageErrorPointage);
                     verif = true;
-                    verif =false; // a supprimer
                 }
                 if ((p.getIDEngin().getEtat().equals("EN_PANNE") || p.getIDEngin().getEtat().equals("NON_RECEPTIONNE")) && p.getNbrHeures() < p.getIDEngin().getComteurHoraire()) {
                     messageErrorPointage += "Le compteur horaire saisie supérieur ou éguale au celle de l'engin " + p.getiDEngin().getCode() + " qui'est EN_PANNE ou NON_RECEPTIONNE.";
                     //System.out.println("messageErrorPointage :"+messageErrorPointage);
                     verif = true;
-                    verif =false; // a supprimer
                 }
                 if (p.getIDEngin().getEtat().equals("INACTIF") && p.getIDEngin().getCompteurKilometrique() != p.getNbrKm()) {
                     messageErrorPointage += "L'engin  " + p.getiDEngin().getCode() + " est 'INACTIF' alors que le compteur saisi est différent du compteur de la veille (KM).";
                     //System.out.println("messageErrorPointage :"+messageErrorPointage);
                     verif = true;
-                    verif =false; // a supprimer
                 }
                 if (p.getIDEngin().getEtat().equals("INACTIF") && p.getIDEngin().getComteurHoraire() != p.getNbrHeures()) {
                     messageErrorPointage += "L'engin  " + p.getiDEngin().getCode() + " est 'INACTIF' alors que le compteur saisi est différent du compteur de la veille (H).";
                     //System.out.println("messageErrorPointage :"+messageErrorPointage);
                     verif = true;
-                    verif =false; // a supprimer
                 }
                 if ((p.getNbrKm() - p.getIDEngin().getCompteurKilometrique()) >= 1000) {
                     messageErrorPointage += "Le compteur saisi pour l'engin " + p.getiDEngin().getCode()+" est supérieur de 1000 Km par rapport à celui de la veille.";
@@ -842,19 +836,16 @@ public class PointageEnginMb implements Serializable {
                     messageErrorPointage += "L'engin " + p.getiDEngin().getCode() + " est 'EN_MARCHE' alors que le compteur saisi est inférieur ou égal au compteur de la veille (KM).";
                     //System.out.println("messageErrorPointage :"+messageErrorPointage);
                     verif = true;
-                    verif =false; // a supprimer
                 }
                 if ((p.getIDEngin().getEtat().equals("EN_PANNE") || p.getIDEngin().getEtat().equals("NON_RECEPTIONNE")) && p.getNbrKm() < p.getIDEngin().getCompteurKilometrique()) {
                     messageErrorPointage += "Le compteur kilométrique saisie supérieur ou éguale au celle de l'engin " + p.getiDEngin().getCode() + " qui'est EN_PANNE ou NON_RECEPTIONNE.";
                     //System.out.println("messageErrorPointage :"+messageErrorPointage);
                     verif = true;
-                    verif =false; // a supprimer
                 }
                 if (p.getIDEngin().getEtat().equals("INACTIF") && p.getIDEngin().getCompteurKilometrique().intValue() != p.getNbrKm()) {
                     messageErrorPointage += "L'engin  " + p.getiDEngin().getCode() + " est 'INACTIF' alors que le compteur saisi est différent du compteur de la veille (KM).";
                     //System.out.println("messageErrorPointage :"+messageErrorPointage);
                     verif = true;
-                    verif =false; // a supprimer
                 }
                 if ((p.getNbrKm() - p.getIDEngin().getCompteurKilometrique()) >= 1000) {
                     messageErrorPointage += "Le compteur saisi pour l'engin " + p.getiDEngin().getCode()+" est supérieur de 1000 Km par rapport à celui de la veille.";
@@ -866,19 +857,16 @@ public class PointageEnginMb implements Serializable {
                     messageErrorPointage += "L'engin " + p.getiDEngin().getCode() + " est 'EN_MARCHE' alors que le compteur saisi est inférieur ou égal au compteur de la veille (H).";
                     //System.out.println("messageErrorPointage :"+messageErrorPointage);
                     verif = true;
-                    verif =false; // a supprimer
                 }
                 if ((p.getIDEngin().getEtat().equals("EN_PANNE") || p.getIDEngin().getEtat().equals("NON_RECEPTIONNE")) && p.getNbrHeures() < p.getIDEngin().getComteurHoraire()) {
                     messageErrorPointage += "Le compteur horaire saisie supérieur ou éguale au celle de l'engin " + p.getiDEngin().getCode() + " qui'est EN_PANNE ou NON_RECEPTIONNE.";
                     //System.out.println("messageErrorPointage :"+messageErrorPointage);
                     verif = true;
-                    verif =false; // a supprimer
                 }
                 if (p.getIDEngin().getEtat().equals("INACTIF") && p.getIDEngin().getComteurHoraire().intValue() != p.getNbrHeures()) {
                     messageErrorPointage += "L'engin  " + p.getiDEngin().getCode() + " est 'INACTIF' alors que le compteur saisi est différent du compteur de la veille (H).";
                     //System.out.println("messageErrorPointage :"+messageErrorPointage);
                     verif = true;
-                    verif =false; // a supprimer
                 }
                 if ((p.getNbrHeures() - p.getIDEngin().getComteurHoraire()) > 24) {
                     messageErrorPointage += "Le compteur saisi pour l'engin "+ p.getiDEngin().getCode()+" est supérieur de 24H par rapport à celui de la veille." ;

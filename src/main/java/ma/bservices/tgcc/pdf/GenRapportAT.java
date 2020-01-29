@@ -1165,7 +1165,7 @@ public class GenRapportAT {
                         fonct = (detailAT.getAccidentTravail().getCreePar().getMensuel().getFonction()!= null)?detailAT.getAccidentTravail().getCreePar().getMensuel().getFonction().getFonction().trim().toUpperCase():"";
                         dateAccidentEmail ="";
                         try {
-                             dateAccidentEmail = new SimpleDateFormat("yyyy-MM-dd").format(detailAT.getAccidentTravail().getDateCreation());
+                             dateAccidentEmail = new SimpleDateFormat("dd-MM-yyyy").format(detailAT.getAccidentTravail().getDateCreation());
                         } catch (Exception e) {
                             System.out.println("Erreur de récuperation date creation d'AT car "+e.getMessage());
                         }
@@ -1251,53 +1251,55 @@ public class GenRapportAT {
                         } catch (Exception e) {
                             System.out.println("Erreur d'ajouter au rapport car 25 "+e.getMessage());
                         }
-                        try{
-                        nom="";fonct="";
-                        nom = (detailAT.getUserValidRH().getMensuel().getNom()!= null)?detailAT.getUserValidRH().getMensuel().getNom():"";
-                        nom = nom +" "+((detailAT.getUserValidRH().getMensuel().getPrenom()!= null)?detailAT.getUserValidRH().getMensuel().getPrenom():"");
-                        fonct = (detailAT.getUserValidRH().getMensuel().getFonction()!= null)?detailAT.getUserValidRH().getMensuel().getFonction().getFonction().trim().toUpperCase():"";
-                        dateAccidentEmail ="";
-                        try {
-                             dateAccidentEmail = new SimpleDateFormat("yyyy-MM-dd").format(detailAT.getDateValidRh());
-                        } catch (Exception e) {
-                            System.out.println("Erreur de récuperation date creation d'AT car "+e.getMessage());
-                        }
-                        
-                        c1 = new PdfPCell(new Paragraph("Vérifié par(RH)  \n ",fontTitreTab));
-                        c2 = new PdfPCell(new Paragraph(nom+"\n ",fontTitreTab));
-                        c3 = new PdfPCell(new Paragraph(fonct+"\n ",fontTitreTab));
-                        c4 = new PdfPCell(new Paragraph(dateAccidentEmail+"\n ",fontTitreTab));
-                        c5 = new PdfPCell(new Paragraph("\n ",fontTitreTab));
-                        
-                        c1.setPadding(1); 
-                        c1.setPaddingBottom(1);
-                        c1.setHorizontalAlignment(1);
-                        
-                        c2.setPadding(1); 
-                        c2.setPaddingBottom(1);
-                        c2.setHorizontalAlignment(1);
-                        
-                        c3.setPadding(1); 
-                        c3.setPaddingBottom(1);
-                        c3.setHorizontalAlignment(1);
-                        
-                        c4.setPadding(1); 
-                        c4.setPaddingBottom(1);
-                        c4.setHorizontalAlignment(1);
-                        
-                        c5.setPadding(1); 
-                        c5.setPaddingBottom(1);
-                        c5.setHorizontalAlignment(1);
-                                             
-			table.addCell(c1);
-			table.addCell(c2);
-			table.addCell(c3);
-			table.addCell(c4);
-			table.addCell(c5); 
-                        
-                        } catch (Exception e) {
-                            System.out.println("Erreur d'ajouter au rapport car 26 "+e.getMessage());
-                        }
+                        /*
+                            try{
+                            nom="";fonct="";
+                            nom = (detailAT.getUserValidRH().getMensuel().getNom()!= null)?detailAT.getUserValidRH().getMensuel().getNom():"";
+                            nom = nom +" "+((detailAT.getUserValidRH().getMensuel().getPrenom()!= null)?detailAT.getUserValidRH().getMensuel().getPrenom():"");
+                            fonct = (detailAT.getUserValidRH().getMensuel().getFonction()!= null)?detailAT.getUserValidRH().getMensuel().getFonction().getFonction().trim().toUpperCase():"";
+                            dateAccidentEmail ="";
+                            try {
+                                 dateAccidentEmail = new SimpleDateFormat("yyyy-MM-dd").format(detailAT.getDateValidRh());
+                            } catch (Exception e) {
+                                System.out.println("Erreur de récuperation date creation d'AT car "+e.getMessage());
+                            }
+
+                            c1 = new PdfPCell(new Paragraph("Vérifié par(RH)  \n ",fontTitreTab));
+                            c2 = new PdfPCell(new Paragraph(nom+"\n ",fontTitreTab));
+                            c3 = new PdfPCell(new Paragraph(fonct+"\n ",fontTitreTab));
+                            c4 = new PdfPCell(new Paragraph(dateAccidentEmail+"\n ",fontTitreTab));
+                            c5 = new PdfPCell(new Paragraph("\n ",fontTitreTab));
+
+                            c1.setPadding(1); 
+                            c1.setPaddingBottom(1);
+                            c1.setHorizontalAlignment(1);
+
+                            c2.setPadding(1); 
+                            c2.setPaddingBottom(1);
+                            c2.setHorizontalAlignment(1);
+
+                            c3.setPadding(1); 
+                            c3.setPaddingBottom(1);
+                            c3.setHorizontalAlignment(1);
+
+                            c4.setPadding(1); 
+                            c4.setPaddingBottom(1);
+                            c4.setHorizontalAlignment(1);
+
+                            c5.setPadding(1); 
+                            c5.setPaddingBottom(1);
+                            c5.setHorizontalAlignment(1);
+
+                            table.addCell(c1);
+                            table.addCell(c2);
+                            table.addCell(c3);
+                            table.addCell(c4);
+                            table.addCell(c5); 
+
+                            } catch (Exception e) {
+                                System.out.println("Erreur d'ajouter au rapport car 26 "+e.getMessage());
+                            }
+                        */
 			document.add(vide);
                         
 			document.add(table);

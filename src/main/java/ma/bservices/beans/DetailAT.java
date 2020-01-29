@@ -38,8 +38,18 @@ public class DetailAT implements Serializable {
     private Boolean chuteEnHaut =Boolean.FALSE ;
     private Boolean chuteDObjet =Boolean.FALSE ;
     private Boolean trebuchement =Boolean.FALSE ;
+    private Boolean glissade =Boolean.FALSE ;
     private Boolean manutentionManuelle =Boolean.FALSE ;
     private Boolean manutentionMecanique =Boolean.FALSE ;
+    private Boolean levage =Boolean.FALSE ;
+    private Boolean outillageAmain =Boolean.FALSE ;
+    private Boolean eboulement  =Boolean.FALSE ;
+    private Boolean effondrement =Boolean.FALSE ;
+    private Boolean electrisation =Boolean.FALSE ;
+    private Boolean circulationHorsSite =Boolean.FALSE ;
+    private Boolean CirculationDeplacementSurSite =Boolean.FALSE ;
+    private Boolean incendie  =Boolean.FALSE ;
+    private Boolean utilisationProduitsChimiques =Boolean.FALSE ;
     private String  causeProbable = "";
     
     /** Lieu AT**/
@@ -581,6 +591,86 @@ public class DetailAT implements Serializable {
 
     public void setDateValidQhse(Date dateValidQhse) {
         this.dateValidQhse = dateValidQhse;
+    }
+
+    public Boolean getLevage() {
+        return levage;
+    }
+
+    public void setLevage(Boolean levage) {
+        this.levage = levage;
+    }
+
+    public Boolean getOutillageAmain() {
+        return outillageAmain;
+    }
+
+    public void setOutillageAmain(Boolean outillageAmain) {
+        this.outillageAmain = outillageAmain;
+    }
+
+    public Boolean getEboulement() {
+        return eboulement;
+    }
+
+    public void setEboulement(Boolean eboulement) {
+        this.eboulement = eboulement;
+    }
+
+    public Boolean getEffondrement() {
+        return effondrement;
+    }
+
+    public void setEffondrement(Boolean effondrement) {
+        this.effondrement = effondrement;
+    }
+
+    public Boolean getElectrisation() {
+        return electrisation;
+    }
+
+    public void setElectrisation(Boolean electrisation) {
+        this.electrisation = electrisation;
+    }
+
+    public Boolean getCirculationHorsSite() {
+        return circulationHorsSite;
+    }
+
+    public void setCirculationHorsSite(Boolean circulationHorsSite) {
+        this.circulationHorsSite = circulationHorsSite;
+    }
+
+    public Boolean getCirculationDeplacementSurSite() {
+        return CirculationDeplacementSurSite;
+    }
+
+    public void setCirculationDeplacementSurSite(Boolean CirculationDeplacementSurSite) {
+        this.CirculationDeplacementSurSite = CirculationDeplacementSurSite;
+    }
+
+    public Boolean getIncendie() {
+        return incendie;
+    }
+
+    public void setIncendie(Boolean incendie) {
+        this.incendie = incendie;
+    }
+
+    public Boolean getUtilisationProduitsChimiques() {
+        return utilisationProduitsChimiques;
+    }
+
+    public void setUtilisationProduitsChimiques(Boolean utilisationProduitsChimiques) {
+        this.utilisationProduitsChimiques = utilisationProduitsChimiques;
+    }
+
+    public Boolean getGlissade() {
+        return glissade;
+    }
+
+    public void setGlissade(Boolean glissade) {
+        this.glissade = glissade;
     }
     
 

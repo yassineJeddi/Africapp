@@ -6,6 +6,7 @@
 package ma.bservices.tgcc.dao.engin;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 import ma.bservice.tgcc.Constante.Constante;
@@ -21,9 +22,7 @@ import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +40,14 @@ public class ChantierDAOImpl extends MbHibernateDaoSupport implements ChantierDA
 
     @Override
     public List<Chantier> findAll() {
-        return this.getHibernateTemplate().loadAll(Chantier.class);
+        List<Chantier> l = new ArrayList<Chantier>();
+        try {
+               l= this.getHibernateTemplate().loadAll(Chantier.class);
+               //System.out.println(":::::::::::> List<Chantier>  "+l);
+        } catch (Exception e) {
+            System.out.println("Erreur de chargement liste des chantier car "+e.getMessage());
+        }
+        return l;
     }
 
     @Override
@@ -124,14 +130,14 @@ public class ChantierDAOImpl extends MbHibernateDaoSupport implements ChantierDA
 //        System.out.println("chantier Updated successfully.....!!");
 //        session.close();
 //        return true;
-        Transaction tx = null;
+//        Transaction tx = null;
 //        Session session = getSessionFactory().getCurrentSession();
-        Session session = getSessionFactory().openSession();
+ /*       Session session = getSessionFactory().openSession();
         try {
             session.setFlushMode(FlushMode.AUTO);
             tx = session.beginTransaction();
             // System.out.println("les nombre de chantier" + chantier.getAffiniteChantier().size());
-            session.update(chantier);
+            session.merge(chantier);
             //System.out.println("UPDATED");
             tx.commit();
         } catch (Exception exp) {
@@ -140,6 +146,21 @@ public class ChantierDAOImpl extends MbHibernateDaoSupport implements ChantierDA
             session.close();
         }
         return true;
+*/
+    try { 
+            System.out.println(":::::> chantier : "+chantier.toString());
+            chantier.setDos(700);
+           Session session = getSessionFactory().openSession();
+           session.setFlushMode(FlushMode.AUTO);
+           session.beginTransaction();
+           session.update(chantier);
+           session.getTransaction().commit(); 
+           session.close();
+           return true;
+        } catch (Exception e) { 
+            System.out.println("DAO:::> Erreur de modification du chantier car "+e.getMessage());
+            return false;
+        }
 
     }
 

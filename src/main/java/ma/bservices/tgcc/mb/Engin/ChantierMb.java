@@ -12,8 +12,8 @@ import javax.annotation.PostConstruct;
 import javax.el.ELContext;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ManagedProperty; 
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import ma.bservice.tgcc.Constante.Message;
 import ma.bservices.beans.Chantier;
@@ -36,7 +36,7 @@ import org.springframework.web.jsf.FacesContextUtils;
  */
 @Component("ChantierMb")
 @ManagedBean(name = "chantier")
-@SessionScoped
+@ViewScoped
 public class ChantierMb implements Serializable {
 
     @ManagedProperty(value = "#{chantierService}")
@@ -58,14 +58,14 @@ public class ChantierMb implements Serializable {
     private List<Chantier> chantiersDiff;
 
     private Chantier chantierP = new Chantier();
+    private Chantier chantierToEdit = new Chantier();
     private Chantier chantierAdd = new Chantier();
     private Chantier chantierToUse = new Chantier();
-    String chantierAffinit;
+    private String chantierAffinit;
     private int sizeCus = 0;
     private int chad;
 
     private String chantierSearch;
-
     private Chantier chanAffinite = new Chantier();
 
     private Chantier chanSelected = new Chantier();
@@ -73,6 +73,8 @@ public class ChantierMb implements Serializable {
     private ChantierAffinite chantierAffinite = new ChantierAffinite();
 
     
+    boolean isAdmin = false;
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////Geters Seters ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -203,6 +205,22 @@ public class ChantierMb implements Serializable {
     public void setChantierSearch(String chantierSearch) {
         this.chantierSearch = chantierSearch;
     }
+
+    public Chantier getChantierToEdit() {
+        return chantierToEdit;
+    }
+
+    public void setChantierToEdit(Chantier chantierToEdit) {
+        this.chantierToEdit = chantierToEdit;
+    }
+
+    public Chantier getChantierToUse() {
+        return chantierToUse;
+    }
+
+    public void setChantierToUse(Chantier chantierToUse) {
+        this.chantierToUse = chantierToUse;
+    }
     
     
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -211,7 +229,6 @@ public class ChantierMb implements Serializable {
 
     @PostConstruct
     public void init() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         System.out.println("________ User Connected ________" + auth.getPrincipal().toString());
         WebApplicationContext ctx = FacesContextUtils.getWebApplicationContext(FacesContext.getCurrentInstance());
         chantierService = ctx.getBean(ChantierService.class);
@@ -219,11 +236,11 @@ public class ChantierMb implements Serializable {
         chantierAffiniteService = ctx.getBean(ChantierAffiniteService.class);
         ELContext elContext = FacesContext.getCurrentInstance().getELContext();
         Evol_ChantierMb evol_ChantierMb = (Evol_ChantierMb) FacesContext.getCurrentInstance().getApplication().getELResolver().getValue(elContext, null, "evol_chantierMb");
-        boolean isAdmin = false;
+        
         boolean isRh = false;
         for (GrantedAuthority grantedAuthority : auth.getAuthorities()) {
             if (grantedAuthority.getAuthority().equals("admin")) { //a verifier ? 
-                chantiers = evol_ChantierMb.getChantiers();
+                chantiers = chantierService.findAll();
                 isAdmin = true;
                 break;
             }
@@ -295,32 +312,25 @@ public class ChantierMb implements Serializable {
      * modifier chantier
      */
     public void onRowEdit(RowEditEvent event) {
-
+ 
         FacesContext context = FacesContext.getCurrentInstance();
         String messageTrue = Message.ONROWEDIT_CHANTIER_SUCCESS + ((Chantier) event.getObject()).getCode();
         String messagefalse = Message.ONROWEDIT_CHANTIER_FALSE + ((Chantier) event.getObject()).getCode();
+        
         int heureEntree = Integer.parseInt(((Chantier) event.getObject()).getHeureEntree().substring(0, 2));
-        int heureSortie = Integer.parseInt(((Chantier) event.getObject()).getHeureSortie().substring(0, 2));
-
-        System.out.println("heure entree" + ((Chantier) event.getObject()).getHeureEntree().substring(0, 2));
-        System.out.println("heure sortie" + ((Chantier) event.getObject()).getHeureSortie().substring(0, 2));
-
-        System.out.println("heure entree int :" + heureEntree);
-        System.out.println("heure sortie int : " + heureSortie);
+        int heureSortie = Integer.parseInt(((Chantier) event.getObject()).getHeureSortie().substring(0, 2)); 
         Integer nbHeures = heureSortie - heureEntree;
-
-        System.out.println("nombre Heures : " + (heureSortie - heureEntree));
 
         ((Chantier) event.getObject()).setNombreHeures(nbHeures);
 
         chanSelected = (Chantier) event.getObject();
-        // addAffinite();
+        
         Boolean b = chantierService.updateChantier((Chantier) event.getObject());
         if (b == true) {
             context.addMessage(null, new FacesMessage("" + messageTrue, ""));
         } else {
             context.addMessage(null, new FacesMessage("" + messagefalse, ""));
-        }
+        } 
 
     }
 
@@ -405,6 +415,29 @@ public class ChantierMb implements Serializable {
             i++;
         }
         return -1;
+    }
+    
+    public void peprChantier(Chantier c){
+        chantierToEdit=chantierService.findById(c.getId());
+        System.out.println("MB:::::::::::::::> chantierToEdit "+chantierToEdit.toString());
+        chantierToEdit.setCode(chantierToEdit.getCode().trim());
+    }
+    
+    public void saveChantier(){ 
+        FacesContext context = FacesContext.getCurrentInstance();
+        Boolean b = chantierService.updateChantier(chantierToEdit);
+       
+        if (b.equals(Boolean.TRUE)) {
+            context.addMessage(null, new FacesMessage("La modification de chantier a été effectué" , ""));
+        }else if (b.equals(Boolean.FALSE)){
+            context.addMessage(null, new FacesMessage("Erreur de modification de chantier, merci de réessayer ou contactez votre administrateur" , ""));
+        }
+         if (!isAdmin) {
+            chantiers = chantierService.searchByUser(auth.getPrincipal().toString());
+        }else{
+            chantiers = chantierService.findAll();
+         }
+        chantierToEdit=new Chantier();
     }
 
 }

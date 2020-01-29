@@ -24,6 +24,7 @@ public interface LivraisonCiterneDAO {
      * @return
      */
     public List<Bon_Livraison_Citerne> l_historiques();
+    public Bon_Livraison_Citerne findBonLivraisonCiterneById(Integer id);
 
     public void update(Bon_Livraison_Citerne bon_Livraison_Citerne);
 

@@ -116,7 +116,7 @@ public class AccidentTravailMb {
     private ContratService contratService;
     
     boolean isAdmin = false, valideRH = false, valideQhse = false, isRH = false, isQhse = false 
-            ,selectGuerison = false,selectConsolidation = false ,selectReprise = false  ;
+            ,selectGuerison = false,selectConsolidation = false ,selectReprise = false ,validCause = false  ;
     private Module module = new Module();
     private Integer idChantier;
     private Integer idSalarie;
@@ -548,6 +548,14 @@ public class AccidentTravailMb {
         this.selectReprise = selectReprise;
     }
 
+    public boolean isValidCause() {
+        return validCause;
+    }
+
+    public void setValidCause(boolean validCause) {
+        this.validCause = validCause;
+    }
+
     
     
     
@@ -654,7 +662,7 @@ public class AccidentTravailMb {
             }
             
         }
-        
+        changeCauseAt();
     }
     
     public void listSalarieByChantier(){
@@ -690,17 +698,19 @@ public class AccidentTravailMb {
             String corpMail="Bonjour,\nNous vous informons là survenu d'accident de travail à M."+ salarie.getNom().trim()+" "+salarie.getPrenom().trim()
                     +" |CIN: "+salarie.getCin().trim()+" |MATRICULE: "+salarie.getMatricule().trim()
                     +" / "+salarie.getFonction().getFonction().trim() +" au niveau chantier "+chantier.getCode().trim().toUpperCase()
+                    +"(Chef de Projet : "+accidentTravail.getChefProjet()+"  Chef de chantier : "+accidentTravail.getChefChantier()+") "
                     +" le "+dateAccidentEmail+".\n"
                     +"Circonstances : "+accidentTravail.getDescription().trim()
                     +"\nCordialement,";
             List<String> listDestinatairesMail = new ArrayList<String>();
-            //listDestinatairesMail.add("at_notification@tgcc.ma");
+            listDestinatairesMail.add("at_notification@tgcc.ma");
             if(chantier.getEmail() != null){
                 listDestinatairesMail.add(chantier.getEmail().trim());
             }
-            listDestinatairesMail.add("yassine.jeddi@tgcc.ma");
-            //listDestinatairesMail.add("hanane.noam@tgcc.ma");
-            
+           /* listDestinatairesMail.add("yassine.jeddi@tgcc.ma");
+            listDestinatairesMail.add("hanane.noam@tgcc.ma");
+            listDestinatairesMail.add("khadija.majid@tgcc.ma");
+            */
             
             if (listDestinatairesMail != null && !listDestinatairesMail.isEmpty()) {
                 for (String m : listDestinatairesMail) {
@@ -1223,6 +1233,7 @@ public class AccidentTravailMb {
                 Path file = Files.createTempFile(folder, filename, "." + extension);
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
                 try (InputStream input = uploadedFileAt.getInputstream()) {
+                Files.copy(input, file, StandardCopyOption.REPLACE_EXISTING);
                 documentAt.setCreePar(auth.getPrincipal().toString());
                 documentAt.setDateCreation(new Date());
                 documentAt.setChemin(chemin + "/" +file.getFileName());
@@ -1323,6 +1334,85 @@ public class AccidentTravailMb {
             selectGuerison = false;
             selectConsolidation = false;
             selectReprise=false;
+        }
+    }
+    
+    public void activeCause(){
+        validCause=false;
+    }
+    public void changeCauseAt(){
+        Boolean nbrCause = false;
+        nbrCause = nbrCauseAt();
+        if(nbrCause){
+            validCause=true;
+        }
+    }
+    
+        
+    public Boolean nbrCauseAt(){
+        int nbr=0;
+        if(detailAT.getChuteEnHaut()){
+            nbr++;
+            if(nbr==2){return true;}
+        };
+        if(detailAT.getChuteDObjet()){
+            nbr++;
+            if(nbr==2){return true;}
+        };
+        if(detailAT.getTrebuchement()){
+            nbr++;
+            if(nbr==2){return true;}
+        };
+        if(detailAT.getGlissade()){
+            nbr++;
+            if(nbr==2){return true;}
+        };
+        if(detailAT.getManutentionManuelle()){
+            nbr++;
+            if(nbr==2){return true;}
+        };
+        if(detailAT.getManutentionMecanique()){
+            nbr++;
+            if(nbr==2){return true;}
+        };
+        if(detailAT.getLevage()){
+            nbr++;
+            if(nbr==2){return true;}
+        };
+        if(detailAT.getOutillageAmain()){
+            nbr++;
+            if(nbr==2){return true;}
+        };
+        if(detailAT.getEboulement()){
+            nbr++;
+            if(nbr==2){return true;}
+        };
+        if(detailAT.getEffondrement()){
+            nbr++;
+            if(nbr==2){return true;}
+        };
+        if(detailAT.getElectrisation()){
+            nbr++;
+            if(nbr==2){return true;}
+        };
+        if(detailAT.getCirculationHorsSite()){
+            nbr++;
+            if(nbr==2){return true;}
+        };
+        if(detailAT.getCirculationDeplacementSurSite()){
+            nbr++;
+            if(nbr==2){return true;}
+        };
+        if(detailAT.getIncendie() ){
+            nbr++;
+            if(nbr==2){return true;}
+        };
+        if(detailAT.getUtilisationProduitsChimiques()){
+            nbr++;
+            if(nbr==2){return true;}
+        };
+        if(nbr==2){return true;}else{
+            return false;
         }
     }
 }

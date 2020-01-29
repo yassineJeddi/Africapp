@@ -46,6 +46,13 @@ public class LivraisonCiterneServiceImpl implements LivraisonCiterneService, Ser
         this.livraison_CiterneDAO.save(bon_liv_citerne);
 
     }
+    
+    @Override
+    public Bon_Livraison_Citerne findBonLivraisonCiterneById(Integer id) {
+
+      return  this.livraison_CiterneDAO.findBonLivraisonCiterneById(id);
+
+    }
 
     @Override
     public List<Bon_Livraison_Citerne> l_historiques() {

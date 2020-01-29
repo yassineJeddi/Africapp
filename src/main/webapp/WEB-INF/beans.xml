@@ -13,6 +13,16 @@
         <property name="sessionFactory" ref="sessionFactory" />    
     </bean>
     
+    <!-- Trace Utilisateur -->
+    
+    <bean id="traceUtilisateurService" class="ma.bservices.tgcc.service.Engin.TraceUtilisateurServiceImp">
+        <property name="traceUtilisateurDao" ref="traceUtilisateurDao" /> 
+    </bean>
+  
+    <bean id="traceUtilisateurDao" class="ma.bservices.tgcc.dao.engin.TraceUtilisateurDaoImp">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
     <!-- Organigrame -->
     
     <bean id="organigrameService" class="ma.bservices.services.OrganigrameServiceImpl">

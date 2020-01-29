@@ -24,7 +24,6 @@
                         <br /><br />
                         <div class="row">
                             <div class="col-lg-offset-1 col-lg-4">
-
                                 <div>
                                     <p:commandButton style="width: 100%" update=":formA, :formA:typeInput, :formA:grid1" 
                                                      class="btn btn-switch active" value="Ajouter Citerne" 
@@ -46,17 +45,12 @@
                             <p:column headerText="Type Citerne" filterBy="#{citerneIt.type_citerne}" filterFunction="#{filterMb.filterByX}">
                                 <p:outputLabel value="#{citerneIt.type_citerne}" />
                             </p:column>
-
                             <p:column headerText="Capacite" sortBy="#{citerneIt.capacite/1000}">
                                 <p:outputLabel value="#{citerneIt.capacite/1000}" />m³
                             </p:column>
-
-
                             <p:column headerText="Chantier Principal" filterBy="#{citerneIt.chantier_Principal.code}" filterFunction="#{filterMb.filterByX}">
                                 <p:outputLabel value="#{citerneIt.chantier_Principal.code}" />
                             </p:column>
-
-
                             <p:column headerText="Volume Actuel" filterBy="#{citerneIt.volume_actuel}" filterFunction="#{filterMb.filterByX}">
                                 <p:outputLabel value="#{citerneIt.volume_actuel_}" /> Litre
                             </p:column>

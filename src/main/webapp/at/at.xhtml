@@ -22,6 +22,10 @@ and open the template in the editor.
             </ui:define>
             <ui:define name="content">
                 <h:form id="forme">
+                        <p:blockUI  animate="true" block=" :forme" trigger=":forme:bntEnvoiAt" >
+                            Envoi en cours ... <br />
+                            <p:graphicImage url="https://upload.wikimedia.org/wikipedia/commons/5/53/Loading_bar.gif"/>
+                        </p:blockUI>
                     <div class="ui-fluid">
                         <p:growl id="msgs" showDetail="true" />
                         <p:messages id="msgsP" showDetail="true" autoUpdate="true" closable="true" />
@@ -56,7 +60,7 @@ and open the template in the editor.
                             </h:panelGrid>
                             <h:panelGrid columns="1" columnClasses="ui-g-12 "
                                          styleClass="ui-panelgrid-blank ui-fluid" >
-                                <p:commandButton value="Valider" action="#{accidentTravailMb.addAT()}" class="btn" update=" :forme"/>
+                                <p:commandButton id="bntEnvoiAt" value="Valider"  onstart="PF('block').show()" oncomplete="PF('block').hide()"  action="#{accidentTravailMb.addAT()}" class="btn" update=" :forme"/>
                             </h:panelGrid>
                         </p:panel>
                     </div>

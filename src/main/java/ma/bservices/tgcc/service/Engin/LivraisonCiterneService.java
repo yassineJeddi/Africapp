@@ -16,6 +16,7 @@ import ma.bservices.tgcc.Entity.Bon_Livraison_Citerne;
 public interface LivraisonCiterneService {
 
     public void save(Bon_Livraison_Citerne bon_liv_citerne);
+    public Bon_Livraison_Citerne findBonLivraisonCiterneById(Integer id);
 
     /**
      * methode qui permet de recuper list des bon_livraison (Historique)

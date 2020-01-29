@@ -450,6 +450,7 @@ public class SalarieDaoImpl extends MbHibernateDaoSupport implements SalarieDao 
     @Override
     public List<Salarie> listSalarieActifByChantierId(int idChantier) {
         List<Salarie> l = new ArrayList<Salarie>(); 
+        List<Salarie> lm = new ArrayList<Salarie>(); 
         
         if(idChantier>0 ){ 
             try {   
@@ -459,6 +460,16 @@ public class SalarieDaoImpl extends MbHibernateDaoSupport implements SalarieDao 
             } catch (Exception e) {
                 logger.error("Erreur de récupération des salarier par chantier "+e.getMessage());
             }  
+            try { 
+                String req=" FROM Mensuel m where m.id in (SELECT SALARIE_ID FROM CHANTIER_SALARIE WHERE CHANTIER_ID ="+idChantier+")  ";
+                lm = (List<Salarie>) this.getHibernateTemplate().find(req);
+                if(lm.size()>0){
+                    l.addAll(lm);
+                }
+                
+            } catch (Exception e) {
+                logger.error("Erreur de récupération des mensuel par chantier "+e.getMessage());
+            }
         }
         return l;
     }

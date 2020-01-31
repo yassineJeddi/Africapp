@@ -398,40 +398,30 @@ public class UtilisateurMb implements Serializable {
     public void modifyUserPermissions() {
         try {
             
-                System.out.println(" ***************** PERMISSION 1 ****************");
         selectedPermissionsIds.clear();
         for (TreeNode node : selectedUserNodes) {
-                System.out.println(" ***************** PERMISSION 2 ****************");
             try {
-                System.out.println(" ***************** PERMISSION 3 ****************");
                 Permission p = adminService.getPermissionByName(node.getData().toString());
                 selectedPermissionsIds.add(p.getPermission());
             } catch (Exception e) {
-                System.out.println(" ***************** PERMISSION 4 ****************");
-                System.out.println(" ***************** PERMISSION NOT FOUUUND ****************");
             }
         }
-                System.out.println(" ***************** PERMISSION 5 ****************");
 
         List<Permission> listOfPermissions = new LinkedList<>();
         Permission p = null;
         Utilisateur u = adminService.getUtilisateur(utilisateurToAdd.getId());
             System.out.println("u "+u.toString());
         for (String i : selectedPermissionsIds) {
-                System.out.println(" ***************** PERMISSION 6 ****************");
             p = adminService.getPermissionByName(i);
             listOfPermissions.add(p);
         }
-                System.out.println(" ***************** PERMISSION 7 ****************");
                 System.out.println("Utilisateur !!!!!!!!!!!! : "+u.toString());
                 System.out.println("listOfPermissions !!!!!!!!!!!! : "+listOfPermissions.toString());
         utilisateurService.addPermissionsToUser(u, listOfPermissions);
 
-                System.out.println(" ***************** PERMISSION 8 ****************");
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "les permissions de l'utilisateur ont été modifiées avec succès."));
 
         } catch (Exception e) {
-                System.out.println(" ***************** PERMISSION 9 ****************");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "", "Erreur de modification les permissions de l'utilisateur."));
             System.out.println("Erreur de modification les permissions de l'utilisateur car "+e.getMessage());
         }
@@ -477,7 +467,7 @@ public class UtilisateurMb implements Serializable {
 
         for (Chantier ch : allChantiers) {
             if (!lch.contains(ch)) {
-                System.out.println("adding : " + ch.getCode());
+                //System.out.println("adding : " + ch.getCode());
                 allChantiers2.add(ch);
             }
         }

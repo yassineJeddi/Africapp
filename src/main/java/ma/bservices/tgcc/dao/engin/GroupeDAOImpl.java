@@ -178,8 +178,6 @@ public class GroupeDAOImpl extends HibernateDaoSupport implements GroupeDAO {
 
             listOfCh = query.list();
 
-            System.out.println("LIST OF PERMISSIONS GOT DAO ::: " + listOfCh);
-
             s.getTransaction().commit();
             s.close();
         } catch (Exception e) {

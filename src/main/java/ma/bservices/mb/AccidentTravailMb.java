@@ -115,7 +115,7 @@ public class AccidentTravailMb {
     @ManagedProperty(value = "#{contratService}")
     private ContratService contratService;
     
-    boolean isAdmin = false, valideRH = false, valideQhse = false, isRH = false, isQhse = false 
+    Boolean isAdmin = Boolean.FALSE, valideRH = false, valideQhse = false, isRH = false, isQhse = false 
             ,selectGuerison = false,selectConsolidation = false ,selectReprise = false ,validCause = false  ;
     private Module module = new Module();
     private Integer idChantier;
@@ -585,6 +585,7 @@ public class AccidentTravailMb {
         ELContext elContext = FacesContext.getCurrentInstance().getELContext();
         Evol_ChantierMb evol_ChantierMb = (Evol_ChantierMb) FacesContext.getCurrentInstance().getApplication().getELResolver().getValue(elContext, null, "evol_chantierMb");
         
+        isAdmin = false;
         viderVar();
         
         utilisateur = utilisateurService.getUsersByLogin(auth.getPrincipal().toString().trim());
@@ -592,7 +593,7 @@ public class AccidentTravailMb {
         for (GrantedAuthority grantedAuthority : auth.getAuthorities()) {
             if ("admin".equals(grantedAuthority.getAuthority())) { 
                 chantiers = evol_ChantierMb.getChantiers();
-                isAdmin = true;
+                isAdmin = Boolean.TRUE;
                 break;
             }
         }
@@ -1341,10 +1342,14 @@ public class AccidentTravailMb {
         validCause=false;
     }
     public void changeCauseAt(){
-        Boolean nbrCause = false;
-        nbrCause = nbrCauseAt();
-        if(nbrCause){
-            validCause=true;
+        try {
+            Boolean nbrCause = false;
+            nbrCause = nbrCauseAt();
+            if(nbrCause){
+                validCause=true;
+            }
+        } catch (Exception e) {
+            System.out.println("Erreur au moment de changement de la cause");
         }
     }
     

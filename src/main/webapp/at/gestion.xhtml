@@ -28,6 +28,7 @@ and open the template in the editor.
                     <div class="ui-fluid">
                         <p:growl id="msgs" showDetail="true" />
                         <p:spacer />
+                            <h:outputLabel value="#{!accidentTravailMb.isAdmin}" />
                             <h:commandButton value="Charger " action="#{accidentTravailMb.chargerAccident()}"  />
                             <h:panelGrid  
                                          styleClass="ui-panelgrid-blank ui-fluid"

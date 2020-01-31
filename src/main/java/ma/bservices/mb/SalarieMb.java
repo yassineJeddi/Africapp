@@ -690,7 +690,7 @@ public class SalarieMb implements Serializable {
             next = false;
             prev = true;
         }
-        System.out.println("nombre salarie :  " + i);
+        //System.out.println("nombre salarie :  " + i);
         salaries = salarieService.listeSalaries(0, 10, findSalarie.getMatricule(), statut, fonction, etat, findSalarie.getCin(), findSalarie.getNom(), findSalarie.getPrenom(), findSalarie.getCnss(), chantier, findSalarie.getMatriculeDivalto());
         findSalarie = new Salarie();
 //        etat = null;

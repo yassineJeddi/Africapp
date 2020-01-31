@@ -276,7 +276,6 @@ public class UtilisateurDAOImpl extends MbHibernateDaoSupport implements Utilisa
 
             listOfCh = query.list();
 
-            System.out.println("LIST OF PERMISSIONS GOT DAO ::: " + listOfCh);
 
             s.getTransaction().commit();
             s.close();
@@ -302,8 +301,6 @@ public class UtilisateurDAOImpl extends MbHibernateDaoSupport implements Utilisa
             Query query = s.createQuery(hql);
 
             listOfGrp = query.list();
-
-            System.out.println("LIST OF PERMISSIONS GOT DAO ::: " + listOfGrp);
 
             s.getTransaction().commit();
             s.close();

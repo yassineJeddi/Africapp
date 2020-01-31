@@ -42,7 +42,7 @@ public class ImageBean implements Serializable {
     public StreamedContent getContrat() {
         try {
             if (FacesContext.getCurrentInstance().getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
-                System.out.println("phase is render response");
+                //System.out.println("phase is render response");
                 contrat = new DefaultStreamedContent();
             }
             
@@ -69,7 +69,7 @@ public class ImageBean implements Serializable {
     public StreamedContent getDocument() {
         try {
             if (FacesContext.getCurrentInstance().getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
-                System.out.println("phase is render response");
+                //System.out.println("phase is render response");
                 document = new DefaultStreamedContent();
             }
             ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
@@ -102,7 +102,7 @@ public class ImageBean implements Serializable {
      
      try {
             if (FacesContext.getCurrentInstance().getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
-                System.out.println("phase is render response");
+                //System.out.println("phase is render response");
                 return new DefaultStreamedContent();
             }
             ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
@@ -125,7 +125,7 @@ public class ImageBean implements Serializable {
      
      try {
             if (FacesContext.getCurrentInstance().getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
-                System.out.println("phase is render response");
+                //System.out.println("phase is render response");
                 return new DefaultStreamedContent();
             }
             ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
@@ -147,7 +147,7 @@ public class ImageBean implements Serializable {
     public StreamedContent getImage() {
         try {
             if (FacesContext.getCurrentInstance().getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
-                System.out.println("phase is render response");
+                //System.out.println("phase is render response");
                 return new DefaultStreamedContent();
             }
             ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
@@ -183,7 +183,7 @@ else {
      public StreamedContent getFile(String fichier,String titre) throws AbortProcessingException {
         try {
             if (FacesContext.getCurrentInstance().getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
-                System.out.println("phase is render response");
+                //System.out.println("phase is render response");
                 return new DefaultStreamedContent();
             }
             //ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
@@ -283,7 +283,7 @@ else {
         System.out.println("path in  " + path);
         try {
             if (FacesContext.getCurrentInstance().getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
-                System.out.println("phase is render response");
+                //System.out.println("phase is render response");
                 return new DefaultStreamedContent();
             }
             //String chemin= context.getRealPath("/");

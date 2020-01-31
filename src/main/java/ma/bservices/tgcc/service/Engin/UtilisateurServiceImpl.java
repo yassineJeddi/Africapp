@@ -88,7 +88,7 @@ public class UtilisateurServiceImpl implements UtilisateurService, Serializable 
             System.out.println("list of chantiers : " + c.getCode());
         }
         Set<Chantier> setOfChantiers = new HashSet(ch);
-        System.out.println("set of chantiers " + setOfChantiers);
+        //System.out.println("set of chantiers " + setOfChantiers);
         user.setChantiers(setOfChantiers);
         utilisateurDAO.addGroupeToUser(user);
     }

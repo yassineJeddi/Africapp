@@ -117,7 +117,7 @@ public class Contrat implements Serializable {
      * @return the dateEmbauche
      */
     public Date getDateEmbauche() {
-        System.out.println("la data d'embauche = " + dateEmbauche);
+        //System.out.println("la data d'embauche = " + dateEmbauche);
         
         return dateEmbauche;
     }

@@ -62,7 +62,7 @@ public class Evol_FonctionMb implements Serializable {
         parametrageService = Module.ctx.getBean(ParametrageService.class);
         //fonctions = parametrageService.listeFonctions(0, Integer.parseInt(parametrageService.nombreFonctions("").toString()), "");
         fonctions= parametrageService.listeAllFonctions();
-        System.out.println("====================9999999> fonctions : "+fonctions);
+        //System.out.println("====================9999999> fonctions : "+fonctions);
     }
 
     public void foncByStatut() {

@@ -654,7 +654,7 @@ public class DossierMedicalMB implements Serializable{
     public StreamedContent chargerPdf(DossierMedical dos){
         try {
             if(dos==null){
-                System.out.println("phase is render response");
+               // System.out.println("phase is render response");
                 return new DefaultStreamedContent();
             }
             else {

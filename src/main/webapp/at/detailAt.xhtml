@@ -338,7 +338,7 @@ and open the template in the editor.
                                                      update=":forme:btnValidQhse"  />
                                 </div>
                             </c:if>
-                            <c:if test="#{authentification.hasPermission(constanteMb.validerRh) and !accidentTravailMb.isAdmin}">
+                            <c:if test="#{authentification.hasPermission(constanteMb.validerRh)  and !accidentTravailMb.isAdmin}">
                                 <div class="col-lg-2">
                                         <p:commandButton id="btnValidRh" value="Valider par RH"  class="btn active"
                                                      disabled="#{accidentTravailMb.valideRH or !accidentTravailMb.valideQhse}" 
@@ -352,7 +352,7 @@ and open the template in the editor.
                                              update=":forme:btnValidRh"  />
                                 </div> 
                             </c:if>
-                            <c:if test="#{authentification.hasPermission(constanteMb.saveAtNotRhQhse) or accidentTravailMb.isAdmin}">
+                            <c:if test="#{authentification.hasPermission(constanteMb.saveAtNotRhQhse)  and !accidentTravailMb.isAdmin}">
                                 
                                 <div class="col-lg-2">
                                     <p:commandButton value="Enregistrer" 

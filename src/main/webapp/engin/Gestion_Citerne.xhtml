@@ -54,7 +54,6 @@
                             <p:column headerText="Volume Actuel" filterBy="#{citerneIt.volume_actuel}" filterFunction="#{filterMb.filterByX}">
                                 <p:outputLabel value="#{citerneIt.volume_actuel_}" /> Litre
                             </p:column>
-
                             <p:column style="text-align: center" headerText="Actions &amp; Info." >
                                 <p:commandButton  title="Détails chantiers secondaires" oncomplete="PF('affectation_info').show()" icon="ui-icon-document-b" update=":form_info" actionListener="#{Gestion_CiterneMb.redirect_Togle_Affectation(citerneIt)}" />
                                 <p:commandButton  title="Modifier Citerne" icon="ui-icon-pencil" oncomplete="PF('dlg_modfication').show()"   update=":form_modification" actionListener="#{Gestion_CiterneMb.redirect_modification_citerne(citerneIt)}" />
@@ -78,8 +77,6 @@
                         <h:form id="formA">
                             <p:defaultCommand target="btn" />
                             <p:messages id="msgsCiterne" autoUpdate="false" showDetail="true" closable="true"/>
-
-
                             <p:remoteCommand  name="executeOnOnhide"
                                               update=":formA" process="@this formA:chantier_id_sec"
                                               action="#{Gestion_CiterneMb.afficher_chantier_selectionne()}"/>  
@@ -93,20 +90,15 @@
                                              requiredMessage="le nom est obligatoire"
                                              value="#{Gestion_CiterneMb.citerneToAdd.libelle_citerne}"/>
                                 <p:spacer />
-
                                 <p:outputLabel value="Type Citerne (*):" />
                                 <p:spacer width="10" height="1" />
-
                                 <p:selectOneMenu disabled="#{Gestion_CiterneMb.isCiterneAdded}"      
                                                  id="id_type_citerne" value="#{Gestion_CiterneMb.citerneToAdd.type_citerne}"
                                                  style="width:125px"
                                                  >
-
-
                                     <f:selectItem itemLabel="" itemValue="" />  
                                     <f:selectItem itemLabel="Diesel" itemValue="Diesel" />
                                     <f:selectItem itemLabel="Essence" itemValue="Essence" />
-
                                     <p:ajax update=":formA:typeInput, formA:btn, formA:litre_id"
                                             listener="#{Gestion_CiterneMb.afficherType(Gestion_CiterneMb.citerneToAdd.type_citerne)}" />
                                 </p:selectOneMenu>

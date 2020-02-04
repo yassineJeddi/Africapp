@@ -1959,7 +1959,7 @@ public class PresenceService extends MbHibernateDaoSupport {
          * ********** Condition de la soustraction d'heure de déjeuner
          * ************************
          */
-        if (hmE <= 830 && hmS > 1300) {
+        if (hmE <= 1200 && hmS > 1400) {
             heures -= 1;
         }
 

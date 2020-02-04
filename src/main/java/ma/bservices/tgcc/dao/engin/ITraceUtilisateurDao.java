@@ -7,6 +7,7 @@ package ma.bservices.tgcc.dao.engin;
 
 import java.util.List;
 import ma.bservices.tgcc.Entity.TraceBonLivraisonCiterne;
+import ma.bservices.tgcc.Entity.TraceGestionCiterne;
 import ma.bservices.tgcc.Entity.TraceUtilisateur;
 
 /**
@@ -16,6 +17,7 @@ import ma.bservices.tgcc.Entity.TraceUtilisateur;
 public interface ITraceUtilisateurDao {
     public void addTraceUtilisateur(TraceUtilisateur t);
     public void addTraceBonLivraisonCiterne(TraceBonLivraisonCiterne t);
+    public void addTraceGestionCiterne(TraceGestionCiterne t);
     public List<TraceUtilisateur> allTraceUtilisateur();
     
 }

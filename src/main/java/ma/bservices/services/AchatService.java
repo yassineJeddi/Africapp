@@ -1243,8 +1243,7 @@ public class AchatService {
      * @return référence de la demande d'approvisionnement créée sur Divalto
      * avec le nombre des artciles demandés
      */
-    public Map<String, String> commandeInterne_trsDepot(String listeArticleQuantite,
-            String dateLivraisonSouhaitee, String codeChantier, String demandeur, String commentaire) {
+    public Map<String, String> commandeInterne_trsDepot(String listeArticleQuantite,String dateLivraisonSouhaitee, String codeChantier, String demandeur, String commentaire) {
 
         Map<String, String> mapCmdInterne = new HashMap<String, String>();
         String referenceDADiva = "";
@@ -1256,10 +1255,10 @@ public class AchatService {
             System.out.println("try");
             Holder<Integer> hI = new Holder<>();
             Holder<String> hS = new Holder<>();
-            System.out.println("requete DA WS avant exec: <Task>commandeInterne_trsDepot<ref_qte>" + StringEscapeUtils.unescapeHtml(listeArticleQuantite) + "<dateS>" + dateLivraisonSouhaitee + "<chantier>" + codeChantier + "<demandeur>" + demandeur + "<commentaire>" + StringEscapeUtils.unescapeHtml(commentaire));
+            System.out.println("requete DA WS avant exec: <Task>commandeInterne_trsDepot_v2<ref_qte>" + StringEscapeUtils.unescapeHtml(listeArticleQuantite) + "<dateS>" + dateLivraisonSouhaitee + "<chantier>" + codeChantier + "<demandeur>" + demandeur + "<commentaire>" + StringEscapeUtils.unescapeHtml(commentaire));
 
-            divaltoServiceSoap.webServiceDiva("<ACTION>WSTGCC", "<Task>commandeInterne_trsDepot<ref_qte>" + StringEscapeUtils.unescapeHtml(listeArticleQuantite) + "<dateS>" + dateLivraisonSouhaitee + "<chantier>" + codeChantier + "<demandeur>" + demandeur + "<commentaire>" + StringEscapeUtils.unescapeHtml(commentaire), hI, hS);
-
+//            divaltoServiceSoap.webServiceDiva("<ACTION>WSTGCC", "<Task>commandeInterne_trsDepot<ref_qte>" + StringEscapeUtils.unescapeHtml(listeArticleQuantite) + "<dateS>" + dateLivraisonSouhaitee + "<chantier>" + codeChantier + "<demandeur>" + demandeur + "<commentaire>" + StringEscapeUtils.unescapeHtml(commentaire), hI, hS);
+            divaltoServiceSoap.webServiceDiva("<ACTION>WSTGCC", "<Task>commandeInterne_trsDepot_v2<ref_qte>" + StringEscapeUtils.unescapeHtml(listeArticleQuantite) + "<dateS>" + dateLivraisonSouhaitee + "<chantier>" + codeChantier + "<demandeur>" + demandeur + "<commentaire>" + StringEscapeUtils.unescapeHtml(commentaire), hI, hS);
             String chaine = StringEscapeUtils.unescapeHtml(hS.value);
 
 //			if(hI.value==8212 && nbRepDemandeApproWS<=Constantes.getInstance().nbreRepWS){
@@ -1267,7 +1266,7 @@ public class AchatService {
 //				nbRepDemandeApproWS++;
 //				commandeInterne_trsDepot(listeArticleQuantite, dateLivraisonSouhaitee,  codeChantier, demandeur);
 //			}
-            System.out.println("requete cmd interne WS: <Task>commandeInterne_trsDepot<ref_qte>" + StringEscapeUtils.unescapeHtml(listeArticleQuantite) + "<dateS>" + dateLivraisonSouhaitee + "<chantier>" + codeChantier + "<demandeur>" + demandeur + "<commentaire>" + StringEscapeUtils.unescapeHtml(commentaire));
+            System.out.println("requete cmd interne WS: <Task>commandeInterne_trsDepot_v2<ref_qte>" + StringEscapeUtils.unescapeHtml(listeArticleQuantite) + "<dateS>" + dateLivraisonSouhaitee + "<chantier>" + codeChantier + "<demandeur>" + demandeur + "<commentaire>" + StringEscapeUtils.unescapeHtml(commentaire));
             System.out.println("reponse cmd interne WS: " + chaine);
 
             // {"referenceDADivalto":"0", "nombreArticlesDADivalto":"0"}

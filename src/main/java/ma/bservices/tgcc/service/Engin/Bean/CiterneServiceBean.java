@@ -43,7 +43,6 @@ import ma.bservices.tgcc.Entity.Engin;
 import static org.apache.catalina.connector.InputBuffer.DEFAULT_BUFFER_SIZE;
 import org.apache.commons.io.FilenameUtils;
 import org.primefaces.model.UploadedFile;
-import org.w3c.dom.css.Rect;
 
 /**
  *
@@ -452,7 +451,7 @@ public class CiterneServiceBean implements Serializable {
             context.responseComplete();
 
             bon_Livraison_Citerne.setChemin_fichier(chemin + nomFichier);
-            System.out.println("CHEMIN BG ENGIN SET TO : " + bon_Livraison_Citerne);
+           // System.out.println("CHEMIN BG ENGIN SET TO : " + bon_Livraison_Citerne);
 
             return chemin + nomFichier;
         }
@@ -654,12 +653,12 @@ public class CiterneServiceBean implements Serializable {
 
                     l_chantier2.get(i).setDisplay_chantier_Principal(Boolean.FALSE);
 
-                    System.out.println("entre 3 : " + l_chantier2.get(i).getDisplay_chantier_Principal());
+                    //System.out.println("entre 3 : " + l_chantier2.get(i).getDisplay_chantier_Principal());
 
                 } else {
 
                     l_chantier2.get(i).setDisplay_chantier_Principal(Boolean.TRUE);
-                    System.out.println("entre 4 : " + l_chantier2.get(i).getDisplay_chantier_Principal());
+                    //System.out.println("entre 4 : " + l_chantier2.get(i).getDisplay_chantier_Principal());
                 }
             }
             return l_chantier2;

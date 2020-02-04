@@ -8,6 +8,7 @@ package ma.bservices.tgcc.service.Engin;
 import java.io.Serializable;
 import java.util.List;
 import ma.bservices.tgcc.Entity.TraceBonLivraisonCiterne;
+import ma.bservices.tgcc.Entity.TraceGestionCiterne;
 import ma.bservices.tgcc.Entity.TraceUtilisateur;
 import ma.bservices.tgcc.dao.engin.ITraceUtilisateurDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,11 @@ public class TraceUtilisateurServiceImp  implements ITraceUtilisateurService, Se
     @Override
     public void addTraceBonLivraisonCiterne(TraceBonLivraisonCiterne t) {
         traceUtilisateurDao.addTraceBonLivraisonCiterne(t);
+    }
+
+    @Override
+    public void addTraceGestionCiterne(TraceGestionCiterne t) {
+        traceUtilisateurDao.addTraceGestionCiterne(t);
     }
     
     @Override

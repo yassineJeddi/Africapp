@@ -7,7 +7,9 @@ package ma.bservices.tgcc.utilitaire;
 
 import java.util.Date;
 import ma.bservices.tgcc.Entity.Bon_Livraison_Citerne;
+import ma.bservices.tgcc.Entity.Citerne;
 import ma.bservices.tgcc.Entity.TraceBonLivraisonCiterne;
+import ma.bservices.tgcc.Entity.TraceGestionCiterne;
 
 /**
  *
@@ -41,6 +43,32 @@ public class RemplireTrace {
                 t.setUtilisateur(utilisateur);
                 t.setModule(module);
                 
+            }
+            
+        } catch (Exception e) {
+            System.out.println("ERREUR DE REMPLIRE TRACE BON LIVRAISON CAR "+e.getMessage());
+        }
+        
+        return t;
+        
+    }
+    
+    public TraceGestionCiterne remplirTraceGestionCiterne(Citerne c,String utilisateur,String action){
+        
+        TraceGestionCiterne t = new TraceGestionCiterne();
+        try {
+            if(!c.equals(null)){
+                t.setAction(action);
+                t.setDateOperation(new Date());
+                t.setUtilisateur(utilisateur);
+                t.setIdCiterne(c.getId().toString());
+                t.setLibelle_citerne(c.getLibelle_citerne());
+                t.setType_citerne(c.getType_citerne());
+                t.setCapacite(c.getCapacite());
+                t.setLocalite(c.getLocalite());
+                t.setVolume_actuel(c.getVolume_actuel());
+                t.setVolume_actuel_(c.getVolume_actuel_());
+                t.setArchiver(c.getArchiver());                
             }
             
         } catch (Exception e) {

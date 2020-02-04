@@ -20,11 +20,16 @@ import javax.faces.context.FacesContext;
 import ma.bservice.tgcc.Constante.Message;
 import ma.bservices.beans.Chantier;
 import ma.bservices.tgcc.Entity.Citerne;
+import ma.bservices.tgcc.Entity.TraceGestionCiterne;
 import ma.bservices.tgcc.mb.services.ChantierMb;
 import ma.bservices.tgcc.service.Engin.Bean.CiterneServiceBean;
 import ma.bservices.tgcc.service.Engin.ChantierService;
 import ma.bservices.tgcc.service.Engin.CiterneService;
+import ma.bservices.tgcc.service.Engin.ITraceUtilisateurService;
+import ma.bservices.tgcc.utilitaire.RemplireTrace;
 import org.primefaces.event.RowEditEvent;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.jsf.FacesContextUtils;
@@ -43,6 +48,9 @@ public class Gestion_CiterneMb implements Serializable {
 
     @ManagedProperty(value = "#{chantierService}")
     private ChantierService chantierService;
+    
+    @ManagedProperty(value = "#{traceUtilisateurService}")
+    private ITraceUtilisateurService traceUtilisateurService;
 
     private List<Citerne> l_citernes;
 
@@ -327,6 +335,16 @@ public class Gestion_CiterneMb implements Serializable {
         this.capaciteMetreCube = capaciteMetreCube;
     }
 
+    public ITraceUtilisateurService getTraceUtilisateurService() {
+        return traceUtilisateurService;
+    }
+
+    public void setTraceUtilisateurService(ITraceUtilisateurService traceUtilisateurService) {
+        this.traceUtilisateurService = traceUtilisateurService;
+    }
+    
+    
+
     /**
      * end getters and setters
      */
@@ -334,8 +352,8 @@ public class Gestion_CiterneMb implements Serializable {
     public void init() {
         WebApplicationContext ctx = FacesContextUtils.getWebApplicationContext(FacesContext.getCurrentInstance());
         citerneService = ctx.getBean(CiterneService.class);
-        chantierService = ctx.getBean(ChantierService.class);
-
+        chantierService = ctx.getBean(ChantierService.class); 
+        
         citerneToAdd = new Citerne();
 
         citerneServInter = new CiterneServiceBean();
@@ -629,23 +647,25 @@ public class Gestion_CiterneMb implements Serializable {
          * ( message d 'erreur )
          */
         if (citern_to_update.getVolume_actuel_() <= 0) {
-            System.out.println("=============> 1 ");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, Message.VOLUMEMOIN0_ERREUR, Message.VOLUMEMOIN0_ERREUR));
 
         } else if (capacite_toUpdate < citern_to_update.getVolume_actuel_() / 1000) {
-            System.out.println("=============> 2 ");
 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, Message.CAPACITE_INFERIURE_VOLUME_ACTUEL, Message.CAPACITE_INFERIURE_VOLUME_ACTUEL));
 
         } else {
-            System.out.println("=============> 1 ");
 
+            RemplireTrace r = new RemplireTrace();
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication(); 
+            TraceGestionCiterne t = new TraceGestionCiterne();
             Chantier c_ = this.chantierService.findById_String(code_chantier_toUpdate);
 
             citern_to_update.setChantier_Principal(c_);
 
             citern_to_update.setCapacite(capacite_toUpdate * 1000);
 
+            t = r.remplirTraceGestionCiterne(citern_to_update, auth.getPrincipal().toString(), "Modification Citerne, Module: gestion des citernes"); 
+            traceUtilisateurService.addTraceGestionCiterne(t);
             this.citerneService.update_citerne(citern_to_update);
 
 //        ELContext elContext = FacesContext.getCurrentInstance().getELContext();

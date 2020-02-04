@@ -80,6 +80,7 @@ public class NouveauDaMb implements Serializable {
     private String demand;
     private Integer idDA;
     private Float quantite;
+    private String commentaireArticle="";
     private boolean btnEtat;
     //private List<EtatDA> etatDA = new ArrayList<>();
     private DemandeApprovisionnement demandeApp = new DemandeApprovisionnement();
@@ -90,6 +91,14 @@ public class NouveauDaMb implements Serializable {
     //private Date dateAjout;
     private Date dateLS;
     private boolean buttonDis = true;
+
+    public String getCommentaireArticle() {
+        return commentaireArticle;
+    }
+
+    public void setCommentaireArticle(String commentaireArticle) {
+        this.commentaireArticle = commentaireArticle;
+    }
 
     public boolean isBtnEtat() {
         return btnEtat;
@@ -306,6 +315,14 @@ public class NouveauDaMb implements Serializable {
             ELContext elContext = FacesContext.getCurrentInstance().getELContext();
             Authentification authentification = (Authentification) FacesContext.getCurrentInstance().getApplication().getELResolver().getValue(elContext, null, "authentification");
             demand = authentification.get_connected_user().getLogin();
+            try {
+                if(authentification.get_connected_user().getMobile()!=null){
+                    demand = demand+" - "+authentification.get_connected_user().getMobile();
+                }
+            } catch (Exception e) {
+                System.out.println("Erreur de récuperation mobile car "+e.getMessage());
+            }
+            
             EtatDAMb etatDAMb = (EtatDAMb) FacesContext.getCurrentInstance().getApplication().getELResolver().getValue(elContext, null, "etatDAMb");
             fam1 = etatDAMb.getFam1();
             fam2 = etatDAMb.getFam2();
@@ -370,20 +387,22 @@ public class NouveauDaMb implements Serializable {
             articleDA.setArticle(arti);
             articleDA.setRefArticle(arti.getCodeArticle());
             articleDA.setDemandeApprovisionnement(demandeApp);
-            articleDA.setQuantiteArticle(quantite);
+            articleDA.setQuantiteArticle(quantite); 
+            articleDA.setCommentaire(commentaireArticle);
             Integer idADA = achatService.ajouterArticleDA(articleDA);
             listArticle.add(achatService.getArticleDA(idADA));
             btnEtat = listArticle.isEmpty();
             Module.message(0, "Article Ajoutée", "");
             arti = new Article();
             quantite = null;
+            commentaireArticle="";
         } else {
             Module.message(2, "veuillez saisir la date laivraison souhaitée", "");
         }
     }
 
     public void fam2ByFam1() {
-        System.out.println("<<<<<<<<<<<<<<<< ENTREE >>>>>>>>>>>>>>>>>>" + valueFam1);
+        //System.out.println("<<<<<<<<<<<<<<<< ENTREE >>>>>>>>>>>>>>>>>>" + valueFam1);
         if ("".equals(valueFam1) || valueFam1 == null) {
             if (fam3 != null) {
                 fam3.clear();
@@ -409,12 +428,12 @@ public class NouveauDaMb implements Serializable {
       valueFam3 = "";
       des ="";
       
-   System.out.println("********* REFERENCE: " + reference);
-      System.out.println("********* FAM1 " + valueFam1);
-      System.out.println("********* FAM2 " + valueFam2);
-      System.out.println("********* FAM3 " + valueFam3);
-      System.out.println("********* reqdos " + reqDos);
-      System.out.println("********* des " + des);
+      //System.out.println("********* REFERENCE: " + reference);
+      //System.out.println("********* FAM1 " + valueFam1);
+      //System.out.println("********* FAM2 " + valueFam2);
+      //System.out.println("********* FAM3 " + valueFam3);
+      //System.out.println("********* reqdos " + reqDos);
+      //System.out.println("********* des " + des);
       
      articleByFam();
       
@@ -441,15 +460,15 @@ public class NouveauDaMb implements Serializable {
             System.out.println("!!!!!!!!!!!!!!!!! ENTREE ??????????????????? ");
             String reqDos = " dos=700  ";
               System.out.println("********* REFERENCE: " + reference);
-      System.out.println("********* FAM1 " + valueFam1);
-      System.out.println("********* FAM2 " + valueFam2);
-      System.out.println("********* FAM3 " + valueFam3);
-      System.out.println("********* reqdos " + reqDos);
-      System.out.println("********* des " + des);
+      //System.out.println("********* FAM1 " + valueFam1);
+      //System.out.println("********* FAM2 " + valueFam2);
+      //System.out.println("********* FAM3 " + valueFam3);
+      //System.out.println("********* reqdos " + reqDos);
+      //System.out.println("********* des " + des);
             
             int limit = Integer.parseInt(achatService.nombreRechercheArticle("", valueFam1, valueFam2, valueFam3 != null ? valueFam3.trim() : null, reqDos, des).toString());
             listeArticle = achatService.listeRechercheArticle(0, limit, reference, valueFam1, valueFam2, valueFam3 != null ? valueFam3.trim() : null, reqDos, des);
-            System.out.println("************** SIZE ARTICLE ************ " + listeArticle.size() + " @@@@@@@@@@@ " + limit + " FAM1 " + valueFam1.trim() + " FAM2 " + valueFam2.trim() + " FAM3 " + valueFam3.trim());
+            //System.out.println("************** SIZE ARTICLE ************ " + listeArticle.size() + " @@@@@@@@@@@ " + limit + " FAM1 " + valueFam1.trim() + " FAM2 " + valueFam2.trim() + " FAM3 " + valueFam3.trim());
         } else {
             Module.message(2, "Attention l'un des Champs (Chantier ou Date de livraison souhaitée) est vide", "Attention l'un des Champs est vide");
         }
@@ -492,10 +511,10 @@ public class NouveauDaMb implements Serializable {
 
                 List<ArticleDA> listeArticles = achatService.articlesDemandeApprovisionnement(idDA);
                 System.out.println("Article size DA" + listeArticles.size());
-                String listeArticleQuantite = listeArticles.get(0).getArticle().getCodeArticle().trim() + ";" + listeArticles.get(0).getQuantiteArticle().toString().replace(".", ",");
+                String listeArticleQuantite = listeArticles.get(0).getArticle().getCodeArticle().trim() + ";" + listeArticles.get(0).getQuantiteArticle().toString()+ ";" + listeArticles.get(0).getCommentaire().replace(".", ",");
                 System.out.println("liste Article Quantite before " + listeArticleQuantite);
                 for (int i = 1; i < listeArticles.size(); i++) {
-                    listeArticleQuantite += "|" + listeArticles.get(i).getArticle().getCodeArticle().trim() + ";" + listeArticles.get(i).getQuantiteArticle().toString().replace(".", ",");
+                    listeArticleQuantite += "|" + listeArticles.get(i).getArticle().getCodeArticle().trim() + ";" + listeArticles.get(i).getQuantiteArticle().toString()+ ";" + listeArticles.get(i).getCommentaire().replace(".", ",");
                 }
                 System.out.println("liste Article Quantite after " + listeArticleQuantite);
                 String codeChantier = objetChantier.getCodeNovapaie();
@@ -529,7 +548,7 @@ public class NouveauDaMb implements Serializable {
                         System.out.println("redirecton erreur " + ex.getMessage());
                     }
                 } else {
-                    System.out.println("else if echec");
+                    //System.out.println("else if echec");
                     Module.message(3, "Code 2202 : Echec d'envoi de la demande d'approvisionement", "");
                 }
             } else {
@@ -554,7 +573,7 @@ public class NouveauDaMb implements Serializable {
 
     public void btnAjoutArticleDisable() {
         if (demandeApp.getDateLivraisonSouhaitee() != null && !Module.checkDate(new Date(), null, demandeApp.getDateLivraisonSouhaitee())) {
-            System.out.println("date livr < = today");
+            //System.out.println("date livr < = today");
             Module.message(2, "date livraison doit être supérieur a la date d'aujourd'hui", "");
             return;
         }

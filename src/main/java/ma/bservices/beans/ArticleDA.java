@@ -55,8 +55,8 @@ public class ArticleDA implements Serializable {
 //	@Temporal(TemporalType.DATE)
 //	private Date dateLivraisonSouhaitee;
 //	
-//	@Column(name = "COMMENTAIRE")
-//	private String commentaire;
+	@Column(name = "COMMENTAIRE")
+	private String commentaire;
     /**
      * @return the id
      */
@@ -142,17 +142,17 @@ public class ArticleDA implements Serializable {
 //		this.dateLivraisonSouhaitee = dateLivraisonSouhaitee;
 //	}
 //
-//	/**
-//	 * @return the commentaire
-//	 */
-//	public String getCommentaire() {
-//		return commentaire;
-//	}
-//
-//	/**
-//	 * @param commentaire the commentaire to set
-//	 */
-//	public void setCommentaire(String commentaire) {
-//		this.commentaire = commentaire;
-//	}
+	/**
+	 * @return the commentaire
+	 */
+	public String getCommentaire() {
+		return commentaire;
+	}
+
+	/**
+	 * @param commentaire the commentaire to set
+	 */
+	public void setCommentaire(String commentaire) {
+		this.commentaire = commentaire;
+	}
 }

@@ -979,7 +979,7 @@ public class MensuelMb implements Serializable {
                 typeC = "";
             }
 //String uniMulti = arr.getJSONObject(i).getString("Nature"); //uni multi chantier
-
+/*
             System.out.println(id);
             System.out.println("date creation" + datec);
             System.out.println("date debut" + dated);
@@ -993,13 +993,14 @@ public class MensuelMb implements Serializable {
             System.out.println(uniMulti);
             System.out.println("type contrat " + typeC);
             System.out.println("end of one");
+            */
             try {
                 matricule = Integer.parseInt(matricule.substring(0, matricule.length() - 1)) + "";
             } catch (Exception e) {
                 System.out.println("EXCEPTION");
             }
 
-            System.out.println(" ==== = === = === matricule " + matricule);
+           // System.out.println(" ==== = === = === matricule " + matricule);
             Mensuel testExist = mensuelService.getByMatricule(matricule);
 
            

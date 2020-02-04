@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List; 
 import ma.bservices.tgcc.Entity.TraceBonLivraisonCiterne;
+import ma.bservices.tgcc.Entity.TraceGestionCiterne;
 import ma.bservices.tgcc.Entity.TraceUtilisateur;
 import ma.bservices.tgcc.utilitaire.MbHibernateDaoSupport;
 import org.hibernate.FlushMode;
@@ -51,6 +52,24 @@ public class TraceUtilisateurDaoImp   extends MbHibernateDaoSupport  implements 
 
     @Override
     public void addTraceBonLivraisonCiterne(TraceBonLivraisonCiterne t) {
+        try { 
+                Session session = getSessionFactory().openSession();
+                session.setFlushMode(FlushMode.AUTO);
+
+                session.beginTransaction();
+                session.save(t);
+
+                session.getTransaction().commit();
+
+                session.close();
+        
+        } catch (Exception e) {
+            System.out.println("Erreur d'enregistrement TraceUtilisateur car "+e.getMessage());
+        }
+    }
+
+    @Override
+    public void addTraceGestionCiterne(TraceGestionCiterne t) {
         try { 
                 Session session = getSessionFactory().openSession();
                 session.setFlushMode(FlushMode.AUTO);

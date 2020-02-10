@@ -260,7 +260,7 @@ public class SalarieDaoImpl extends MbHibernateDaoSupport implements SalarieDao 
     public List<Salarie> listSalarieBySupp() {
         List l = this.getHibernateTemplate().find("SELECT s FROM Salarie s where Dtype='Salarie' AND s.salarieSupp.id !=0");
         if (l.size() > 0) {
-            System.out.println(" xxxxxxxxxxxxxxxx SALARIE CHANTIER xxxxxxxxxxx " + l.size());
+            //System.out.println(" xxxxxxxxxxxxxxxx SALARIE CHANTIER xxxxxxxxxxx " + l.size());
             return l;
         }
 

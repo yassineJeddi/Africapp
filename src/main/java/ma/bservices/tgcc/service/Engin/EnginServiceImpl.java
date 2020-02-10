@@ -124,6 +124,11 @@ public class EnginServiceImpl implements EnginService, Serializable {
 
     }
 
+
+    @Override
+    public List<Engin> findAllEnginByChantierId(Integer chantier_id){
+        return enginDAO.findAllEnginByChantierId(chantier_id);
+    }
     /**
      * affectation d'un engin à un chantier
      *
@@ -147,7 +152,7 @@ public class EnginServiceImpl implements EnginService, Serializable {
     }
 
     @Override
-    public List<Engin> findAllInChantier(int chantier_id) {
+    public List<Engin> findAllInChantier(Integer chantier_id) {
         return enginDAO.findAllInChantier(chantier_id);
 
     }

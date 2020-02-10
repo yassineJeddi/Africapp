@@ -2194,8 +2194,8 @@ public class PresenceService extends MbHibernateDaoSupport {
 
         Long nombre = (Long) query.uniqueResult();
         int n = (int) (long) nombre;
-        System.out.println("LondDateTimePointage :" + longDateTimePointage);
-        System.out.println("controle contrat: " + n);
+        //System.out.println("LondDateTimePointage :" + longDateTimePointage);
+        //System.out.println("controle contrat: " + n);
 
         if (n != 0) {
             return true;

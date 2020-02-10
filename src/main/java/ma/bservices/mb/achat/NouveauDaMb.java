@@ -476,17 +476,17 @@ public class NouveauDaMb implements Serializable {
 
     public void envoyerArticleDA() {
         if (!Module.checkDate(new Date(), null, demandeApp.getDateLivraisonSouhaitee())) {
-            System.out.println("date livr < = today");
+            //System.out.println("date livr < = today");
             Module.message(2, "date livraison doit être supérieur a la date d'aujourd'hui", "");
             return;
         }
-        System.out.println("<<<<<<<<<<< Test ENVOI DIVALTO >>>>>>>>>>>>>> ");
+        //System.out.println("<<<<<<<<<<< Test ENVOI DIVALTO >>>>>>>>>>>>>> ");
         //for (ArticleDA listArticle1 : listArticle) {
         achatService.modifierDemandeAppro(demandeApp);
         idDA = demandeApp.getId();
         DemandeApprovisionnement newDa = achatService.getDemandeAppro(idDA);
         if (idDA != 0) {
-            System.out.println("<<<<<<<< ID OF DA >>>>>>>>>>>>> " + idDA);
+            //System.out.println("<<<<<<<< ID OF DA >>>>>>>>>>>>> " + idDA);
 
             Chantier objetChantier = chantierService.getChantier(idChantier);
 
@@ -510,28 +510,28 @@ public class NouveauDaMb implements Serializable {
             if ((Long) achatService.nombreArticlesDemandeApprovisionnement(idDA) > 0) {
 
                 List<ArticleDA> listeArticles = achatService.articlesDemandeApprovisionnement(idDA);
-                System.out.println("Article size DA" + listeArticles.size());
+                //System.out.println("Article size DA" + listeArticles.size());
                 String listeArticleQuantite = listeArticles.get(0).getArticle().getCodeArticle().trim() + ";" + listeArticles.get(0).getQuantiteArticle().toString()+ ";" + listeArticles.get(0).getCommentaire().replace(".", ",");
-                System.out.println("liste Article Quantite before " + listeArticleQuantite);
+                //System.out.println("liste Article Quantite before " + listeArticleQuantite);
                 for (int i = 1; i < listeArticles.size(); i++) {
                     listeArticleQuantite += "|" + listeArticles.get(i).getArticle().getCodeArticle().trim() + ";" + listeArticles.get(i).getQuantiteArticle().toString()+ ";" + listeArticles.get(i).getCommentaire().replace(".", ",");
                 }
-                System.out.println("liste Article Quantite after " + listeArticleQuantite);
+                //System.out.println("liste Article Quantite after " + listeArticleQuantite);
                 String codeChantier = objetChantier.getCodeNovapaie();
                 String demandeur = demandeApp.getDemandeur().getLogin();
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
                 String dateLivraisonSouhaitee = sdf.format(demandeApp.getDateLivraisonSouhaitee()).replaceAll("/", "");
 
                 //20130420
-                System.out.println("date livraison DA: " + dateLivraisonSouhaitee);
+                //System.out.println("date livraison DA: " + dateLivraisonSouhaitee);
                 /**
                  * ********* Web service d'envoi de la demande
                  * d'approvisionnement ********
                  */
                 Map<String, String> cmdInterneMap = achatService.commandeInterne_trsDepot(listeArticleQuantite, dateLivraisonSouhaitee, codeChantier, demandeur, demandeApp.getCommentaire());
-                System.out.println("test1");
+                //System.out.println("test1");
                 if (!cmdInterneMap.get("referenceDADiva").equals("0") && !cmdInterneMap.get("referenceDADiva").equals("-1")) {
-                    System.out.println("IN if3");
+                    //System.out.println("IN if3");
 
                     EtatDA objetEtatDA = new EtatDA();
                     objetEtatDA.setId(2);

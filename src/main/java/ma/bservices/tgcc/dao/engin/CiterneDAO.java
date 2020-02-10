@@ -25,6 +25,7 @@ public interface CiterneDAO {
     public void save_bon_caisse_citerne(Bon_Livraison_Citerne bon_Livraison_Citerne);
     public void delete(Citerne citerne);
     public List<Engin> getEnginByChantierId(int id);
+     public Bon_Livraison_Citerne lastAlimentationEngin(Engin e);
 
     /**
      * methode c pour add chantier sec a citerne

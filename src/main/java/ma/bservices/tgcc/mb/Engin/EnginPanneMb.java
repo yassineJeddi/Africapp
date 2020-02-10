@@ -493,12 +493,12 @@ public class EnginPanneMb implements Serializable {
     public void dernierChan_Avant_Depot() {
         List<PointageEngin> listChan = new ArrayList<>();
         engin_mem=lastPanne.getEngin();
-        System.out.println("=============> engin_mem : "+engin_mem.toString());
+        //System.out.println("=============> engin_mem : "+engin_mem.toString());
         listChan = pointageEnginSerive.getPointageEnginByDate_Diff_Depo(engin_mem.getIDEngin());
 
-        System.out.println("=============> listChan : "+listChan);
+        //System.out.println("=============> listChan : "+listChan);
         if (listChan != null && listChan.size() > 0) {
-            System.out.println("chantier d'afectation ::::> "+engin_mem.getPrjapId().getCode());
+            //System.out.println("chantier d'afectation ::::> "+engin_mem.getPrjapId().getCode());
             if("DEPARTEMENT LOGISTIQUE".equals(engin_mem.getPrjapId().getCode().trim())){
                 chantier=158;
             }else{

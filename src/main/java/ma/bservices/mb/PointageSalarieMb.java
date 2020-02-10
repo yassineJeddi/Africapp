@@ -205,34 +205,41 @@ public class PointageSalarieMb implements Serializable {
     }
 
     public void find() {
-        String matricule = findSalarie.getMatricule();
-        findSalarie = salarieService.getSalarieByMatricule(findSalarie.getMatricule());
-        if (findSalarie == null) {
-            Module.message(1, "Code 1601 : salarié avec le matricule : " + matricule + " n'éxiste pas", "");
-            clear();
-            updateHeurMin();
-        } else {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-            String dateChaine = sdf.format(datePointage);
-            Date date = new Date(dateChaine);
-            String codeChantier = presenceService.recupererCodeChantierPointageParSalarie(findSalarie.getMatricule(), date);
-            if ("".equals(codeChantier)) {
-                e_S = "E";
+        try {
+            
+            String matricule = findSalarie.getMatricule();
+            findSalarie = salarieService.getSalarieByMatricule(findSalarie.getMatricule());
+            if (findSalarie == null) {
+                Module.message(1, "Code 1601 : salarié avec le matricule : " + matricule + " n'éxiste pas", "");
+                clear();
+                updateHeurMin();
             } else {
-                e_S = "S";
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+                String dateChaine = sdf.format(datePointage);
+                Date date = new Date(dateChaine);
+                String codeChantier = presenceService.recupererCodeChantierPointageParSalarie(findSalarie.getMatricule(), date);
+                if ("".equals(codeChantier)) {
+                    e_S = "E";
+                } else {
+                    e_S = "S";
+                }
+                updateHeurMin();
             }
-            updateHeurMin();
+        } catch (Exception e) {
+                Module.message(1, "Code 1601 : Erreur! Merci de contacter votre administrateur ", "");
+                System.out.println("Erreur de fin car "+e.getMessage());
+             
         }
     }
 
     public void updateHeurMin() {
         System.out.println("update " + idChantier);
         Chantier c = chantierService.getChantier(idChantier);
-        try {
+        /*try {
             System.out.println("update heur" + c.getHeureEntree());
         } catch (Exception e) {
             System.out.println("Erreur d'afficher le message");
-        }
+        }*/
         e_S = (e_S == null) ? "E" : e_S;
         if (c != null) {
             System.out.println("update not null ");
@@ -306,7 +313,7 @@ public class PointageSalarieMb implements Serializable {
         if (!isMensuel) {
             boolean resultatVerifierContrat = contratService.verifierContratLegalise(salarie.getId(), datePointage);
             boolean salarieActif = salarieService.isActif(salarie.getMatricule());
-            System.out.println("resultatVerifierContrat: " + resultatVerifierContrat);
+            //System.out.println("resultatVerifierContrat: " + resultatVerifierContrat);
 
             if (resultatVerifierContrat == false && salarie instanceof Salarie) {
                 //drap = true;
@@ -322,14 +329,14 @@ public class PointageSalarieMb implements Serializable {
             }
         }
         if (isMensuel) {
-            System.out.println("MENSUEL");
+           // System.out.println("MENSUEL");
             boolean affectMensuel = false;
             List<SousAffectation> ls = new LinkedList<>();
             ls = affectationService.getAffectation((Mensuel) salarie);
             if (ls != null && !ls.isEmpty()) {
                 for (SousAffectation sa : ls) {
-                    System.out.println("AFFECTATIONS :  # " + sa.getChantier().getId());
-                    System.out.println("ID CHANTIER : " + idChantier);
+                    //System.out.println("AFFECTATIONS :  # " + sa.getChantier().getId());
+                    //System.out.println("ID CHANTIER : " + idChantier);
                     if (Objects.equals(sa.getChantier().getId(), idChantier)) {
                         System.out.println("FOUND!");
                         affectMensuel = true;
@@ -338,7 +345,7 @@ public class PointageSalarieMb implements Serializable {
             }
 
             if (((Mensuel) salarie).getTypeFonction().compareToIgnoreCase("Mensuel Type Quinzainier") == 0) {
-                System.out.println("TYPE QUINZINIER");
+               // System.out.println("TYPE QUINZINIER");
                 if (affectMensuel) {
                     System.out.println("POINTE");
                 } else {
@@ -404,17 +411,17 @@ public class PointageSalarieMb implements Serializable {
                 validiteHeureMinuteAbsence = presenceService.verifierValiditeDateHeureMinutePointageSalarieAbsence(salarie.getId(), p.getLongDateTimeEntree(), longDateTimePointage, "PS");
             }
         } else {
-            System.out.println("@@@@@pointage Entrer vérif");
+            //System.out.println("@@@@@pointage Entrer vérif");
             if (presenceService.dejaPointeSortie(salarie.getId(), longDateTimePointage, datePointage, "E") && presenceService.dejaPointeSortie(salarie.getId(), longDateTimePointage, datePointage, "S")) {
-                System.out.println("dejà pointé");
+                //System.out.println("dejà pointé");
                 if (salarie instanceof Mensuel) {
-                    System.out.println(" @ dejà pointé mensuel");
+                    //System.out.println(" @ dejà pointé mensuel");
                     Mensuel m = (Mensuel) salarie;
                     if (m.getTypeAffectation()) {
-                        System.out.println(" @@ mensuel multi");
+                        //System.out.println(" @@ mensuel multi");
                         Presence pre = presenceService.getPresence(idChantier, m.getId());
                         if (pre != null) {
-                            System.out.println(" @@ déjà pointé présence ");
+                            //System.out.println(" @@ déjà pointé présence ");
                             Chantier c = pre.getChantier();
                             pre.setDateSaisieHeureSortie(new Date());
                             pre.setCreePar(demand);
@@ -550,7 +557,7 @@ public class PointageSalarieMb implements Serializable {
             if (p == null) {
                 if (presenceService.dejaPointeSortie(salarie.getId(), longDateTimePointage, datePointage, "E") && presenceService.dejaPointeSortie(salarie.getId(), longDateTimePointage, datePointage, "S")) {
                     if (salarie instanceof Mensuel) {
-                        System.out.println(" @ dejà pointé mensuel");
+                        //System.out.println(" @ dejà pointé mensuel");
                         Mensuel m = (Mensuel) salarie;
                         if (!m.getTypeAffectation()) {
                             Module.message(2, "Code 1607 : Le Mensuel Matricule " + salarie.getId() + " est déjà pointé en cette période", "");

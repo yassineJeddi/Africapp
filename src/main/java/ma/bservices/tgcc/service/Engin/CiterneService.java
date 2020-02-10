@@ -29,6 +29,7 @@ public interface CiterneService {
     public void delete(Citerne c);
     public void delete_chantierSec_citerne(Citerne citerne, Chantier chantier);
     public void add_chantierSec_citerne(Citerne citerne, String[] str);
+    public Bon_Livraison_Citerne lastAlimentationEngin(Engin e);
     public List<Chantier> getListeChantierByCiterne(Integer idCiterne);
     public List<Engin> getEnginByChantierId(int id);
     public List<Chantier> getChantierSecandaireByIdCiterne(int id);

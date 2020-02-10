@@ -202,6 +202,11 @@ public class CiterneServiceImpl implements CiterneService, Serializable {
     }
 
     @Override
+     public Bon_Livraison_Citerne lastAlimentationEngin(Engin e) {
+        return citerneDAO.lastAlimentationEngin(e);
+    }
+
+    @Override
     public void add_chantierSec_citerne(Citerne citerne, String[] str) {
 
         List<Chantier> l_chan_s = this.getListeChantierByCiterne(citerne.getId());

@@ -991,13 +991,38 @@ public class CiterneMb implements Serializable {
           date_bon_caisse = new Date();
           bon_gasoil.setDate(date_bon_caisse);
     }
+    public void chargerBonGasoil(Citerne selected){
+        chargerBonG();
+        cptHr=0;cptKl=0;
+        bon_gasoil.setCiterne(selected);
+        Kilométrage_bon_caisse = null;
+        heure_engin = null;
+        Tonnes_bonCaisse = null;
+        l_engin_to_bonCaisse = null;
+        isButtonVisible = true;
+        citerne_bon_caisse = selected;
+        this.l_engin_chantier_bon_caisse = l_enginBonGasoilSecCopie;
+        bon_gasoil= new Bon_Livraison_Citerne();
+        try {
+             listEnginCiterne = enginService.findAllEnginByChantierId(selected.getChantier_Principal().getId());
+        } catch (Exception e) {
+            System.out.println(" :::::::> Erreur de chargement les engin car "+e.getMessage());
+        }
+    }
     public void redirect_bon_caisse(Citerne selected) {
       chargerBonG();
       cptHr=0;cptKl=0;
+        //System.out.println(" :::::::> 1");
       bon_gasoil.setCiterne(selected);
-      listEnginCiterne = enginService.findAllInChantier(selected.getChantier_Principal().getId());
-        System.out.println("listEnginCiterne :::::::> "+listEnginCiterne);
-        System.out.println("bon_gasoil :::::::> "+bon_gasoil.toString());
+       
+        //System.out.println(" :::::::> 2");
+        try {
+             listEnginCiterne = enginService.findAllEnginByChantierId(selected.getChantier_Principal().getId());
+        } catch (Exception e) {
+            System.out.println(" :::::::> 22 "+e.getMessage());
+        }
+        //System.out.println("listEnginCiterne :::::::> "+listEnginCiterne);
+        //System.out.println("bon_gasoil :::::::> "+bon_gasoil.toString());
         Kilométrage_bon_caisse = null;
         heure_engin = null;
         Tonnes_bonCaisse = null;
@@ -1005,6 +1030,7 @@ public class CiterneMb implements Serializable {
 
         isButtonVisible = true;
 
+        //System.out.println(" :::::::> 3");
         citerne_bon_caisse = selected;
 
         List<Engin> l_engins_sec = new ArrayList<>();
@@ -1013,8 +1039,9 @@ public class CiterneMb implements Serializable {
 
         l_chantier_sec_bon_caisse = this.citerneService.getListeChantierByCiterne(citerne_bon_caisse.getId());
 
-        System.out.println("entre engin 1 :  " + l_chantier_sec_bon_caisse.size());
+        //System.out.println("entre engin 1 :  " + l_chantier_sec_bon_caisse.size());
 
+        //System.out.println(" :::::::> 4");
         if (l_chantier_sec_bon_caisse != null) {
             for (Chantier ch_ : l_chantier_sec_bon_caisse) {
                 for (Engin en_ : ch_.getEnginList()) {
@@ -1025,7 +1052,7 @@ public class CiterneMb implements Serializable {
 
         l_chantierSecBonGasoilEngin = this.citerneService.getListeChantierByCiterne(selected.getId());
 
-        System.out.println("entre engin 2 :  " + l_engins_sec.size());
+        //System.out.println("entre engin 2 :  " + l_engins_sec.size());
 
         ELContext elContext = FacesContext.getCurrentInstance().getELContext();
 
@@ -1050,7 +1077,7 @@ public class CiterneMb implements Serializable {
             }
         }
 
-        System.out.println("entre engin 3 :  " + l_engins_prin.size());
+        //System.out.println("entre engin 3 :  " + l_engins_prin.size());
 
 //        for (Engin en_ : citerne_bon_caisse.getChantier_Principal().getEnginList()) {
 //            
@@ -1152,6 +1179,17 @@ public class CiterneMb implements Serializable {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, Message.VOLUME_CAPACITE_CITERNE_INF, Message.VOLUME_CAPACITE_CITERNE_INF));
 
             } else {
+                Bon_Livraison_Citerne lastb = new Bon_Livraison_Citerne();
+                try {
+                        lastb = citerneService.lastAlimentationEngin(enginService.findOneById(bon_gasoil.getEngin().getIDEngin()));
+                        if(lastb != null){
+                            bon_gasoil.setLastKilometrage(lastb.getKilometrage());
+                            bon_gasoil.setLastHeure(lastb.getHeure());
+                        }
+                } catch (Exception e) {
+                    System.out.println("Erreur de recuperation last alimentation car "+e.getMessage());
+                }
+                
                 bon_gasoil.setAction("BON_GASOIL_ENGIN");
                 bon_gasoil.setCiterne(citerne_bon_caisse);
                 bon_gasoil.setDate(new Date());
@@ -1221,7 +1259,7 @@ public class CiterneMb implements Serializable {
         String s = this.citerneServiceBean.telecharger_bon_gasoil_engin(bon_temp);
 
         bon_temp.setChemin_fichier(s);
-        System.out.println("CHEMIN FICHIER SET TO : " + bon_temp.getChemin_fichier());
+        //System.out.println("CHEMIN FICHIER SET TO : " + bon_temp.getChemin_fichier());
         this.livraisonCiterneService.update(bon_temp);
 
     }
@@ -1249,7 +1287,7 @@ public class CiterneMb implements Serializable {
      */
     public void telecharger_bon_gasoil_historique(Bon_Livraison_Citerne livraison_Citerne) throws IOException {
 
-        System.out.println("entre : " + livraison_Citerne.getChemin_fichier());
+        //System.out.println("entre : " + livraison_Citerne.getChemin_fichier());
 
         if (livraison_Citerne.getChemin_fichier() != null) {
 
@@ -1285,6 +1323,7 @@ public class CiterneMb implements Serializable {
     }
     public void prepMvmt( Bon_Livraison_Citerne b){
         bon_gasoil_To_Edit = b;
+        System.out.println("ma.bservices.tgcc.mb.Engin.CiterneMb.prepMvmt():::::::> bon_gasoil_To_Edit : "+bon_gasoil_To_Edit.toString());
         allEngins= enginService.enginsActif();
         RequestContext.getCurrentInstance().execute("PF('dlg_mvmtCiterne').show();");
     }
@@ -1297,11 +1336,13 @@ public class CiterneMb implements Serializable {
         }
     }
     public void enregistrerMvmt(){
+        //System.out.println("bon_gasoil_To_Edit :::::::::> 0) ");
         RemplireTrace r = new RemplireTrace();
         TraceBonLivraisonCiterne t = new TraceBonLivraisonCiterne();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication(); 
+        //System.out.println("bon_gasoil_To_Edit :::::::::> 1) ");
         t = r.remplirTraceBonLivraisonCiterne(livraisonCiterneService.findBonLivraisonCiterneById(bon_gasoil_To_Edit.getId()), auth.getPrincipal().toString(), "Modification MVMT Citerne"); 
-        
+        //System.out.println("bon_gasoil_To_Edit :::::::::> 2) "+bon_gasoil_To_Edit.toString());
         traceUtilisateurService.addTraceBonLivraisonCiterne(t);
         livraisonCiterneService.update(bon_gasoil_To_Edit);
         bon_gasoil_To_Edit= new Bon_Livraison_Citerne();
@@ -1346,11 +1387,11 @@ public class CiterneMb implements Serializable {
             } else {
 
                 bon_gasoil_mensuel_to_add.setAction("BON_GASOIL_MENSUEL");
-                System.out.println("NOMBRE LITRES : " + nombre_litre_bon_gasoil_mensuel);
+                //System.out.println("NOMBRE LITRES : " + nombre_litre_bon_gasoil_mensuel);
                 bon_gasoil_mensuel_to_add.setCiterne(this.citerne_bon_gasoil_mensuel);
                 bon_gasoil_mensuel_to_add.setDate(date_bon_gasoil_mensuel);
                 Double volume_actuel_somme = this.citerneServiceBean.getSoustraction_volume_actuel(this.citerne_bon_gasoil_mensuel.getVolume_actuel_(), nombre_litre_bon_gasoil_mensuel);
-                System.out.println("VOLUME ACTUEL AFTER SOMME : " + volume_actuel_somme);
+                //System.out.println("VOLUME ACTUEL AFTER SOMME : " + volume_actuel_somme);
 
                 bon_gasoil_mensuel_to_add.setVolume_actuel(volume_actuel_somme);
 
@@ -1392,11 +1433,11 @@ public class CiterneMb implements Serializable {
      */
     public void rechercher_historique_citerne() {
 
-        System.out.println("entre :" + date_historique_search);
+        //System.out.println("entre :" + date_historique_search);
 
         if (date_historique_search == null && action_search.equals("-1") && numCommande_search.equals("") && numLivraison_search.equals("")) {
 
-            System.out.println("historique_searchBonLivraison 2: " + historique_searchBonLivraison.getId());
+            //System.out.println("historique_searchBonLivraison 2: " + historique_searchBonLivraison.getId());
 
             l_detail_citerne_historique = this.livraisonCiterneService.get_listBy_id_bonLivraison(historique_searchBonLivraison.getId());
 
@@ -1426,7 +1467,7 @@ public class CiterneMb implements Serializable {
     public void display_engin_kiometrique(String code) {
         chargerBonG();
         Tonnes_bonCaisse = 0.0;
-        System.out.println("entre :" + code);
+        //System.out.println("entre :" + code);
         Engin en_ = this.enginService.findOneByCode(code);
         engin=new Engin();
         setEngin(en_);
@@ -1441,7 +1482,7 @@ public class CiterneMb implements Serializable {
         if (en_.getComteurHoraire() != null) {
             heure_display = true;
         }
-        System.out.println("::::> bon_gasoil "+bon_gasoil.getEngin().toString());
+        //System.out.println("::::> bon_gasoil "+bon_gasoil.getEngin().toString());
     }
 
     public String convertToDoubleDecimals(Double d) {
@@ -1481,9 +1522,9 @@ public class CiterneMb implements Serializable {
     public void rechercher_mensuel_By() {
 
         mensuels = this.mensuelService.search(mensuel_to_search.getMatricule(), mensuel_to_search.getNom(), mensuel_to_search.getPrenom(), "", "");
-        for (Mensuel m : mensuels) {
+        /*for (Mensuel m : mensuels) {
             System.out.println("MENSUEL : " + m.getNom());
-        }
+        }*/
     }
 
     /**
@@ -1517,7 +1558,7 @@ public class CiterneMb implements Serializable {
             }
         }
         volume_actuel = tons_dispo;
-        System.out.println("volume " + volume_actuel);
+        //System.out.println("volume " + volume_actuel);
     }
 
     public void tonToLitre() {
@@ -1628,15 +1669,15 @@ public class CiterneMb implements Serializable {
         } catch (Exception e) {
             System.out.println(" ::::> Erreur de chargement la liste transfaire citernSrc  car : "+e.getMessage());
         }
-        System.out.println(" ::::> chargement liste de transfaire citernSrc : "+traceCiternes.size());
+        //System.out.println(" ::::> chargement liste de transfaire citernSrc : "+traceCiternes.size());
     }
     
     public void chageCiternEv(){
-        System.out.println("id ::::::::::> "+idCiternTrans);
+        //System.out.println("id ::::::::::> "+idCiternTrans);
         if(idCiternTrans>0){
             citernDist=citerneService.findCiternById(idCiternTrans);
         }
-        System.out.println("=======> citernDist change : "+citernDist.toString());
+        //System.out.println("=======> citernDist change : "+citernDist.toString());
     }
     
     public void chargerListTransfaire(){
@@ -1671,9 +1712,9 @@ public class CiterneMb implements Serializable {
             
             try { 
                     citerneService.editTraceCiterne(t); 
-                    System.out.println("t.getLitreReceptione() : "+t.getLitreReceptione());
-                    System.out.println("t.getLitreTransf() : "+t.getLitreTransf());
-                    System.out.println("t.getLitreReceptione()!= t.getLitreTransf() : "+(t.getLitreReceptione()!= t.getLitreTransf()));
+                    //System.out.println("t.getLitreReceptione() : "+t.getLitreReceptione());
+                    //System.out.println("t.getLitreTransf() : "+t.getLitreTransf());
+                    //System.out.println("t.getLitreReceptione()!= t.getLitreTransf() : "+(t.getLitreReceptione()!= t.getLitreTransf()));
                     if((t.getLitreReceptione()-t.getLitreTransf())!=0){
                         String msgEmail;
                         try {

@@ -315,7 +315,7 @@ public class ContratService {
         logger.debug("Modifier un contrat");
 
         Session session = sessionFactory.getCurrentSession();
-        System.out.println("================> contrat MODIF : "+contrat);
+        //System.out.println("================> contrat MODIF : "+contrat);
         session.update(contrat);
     }
 

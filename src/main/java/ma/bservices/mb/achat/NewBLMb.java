@@ -382,12 +382,12 @@ public class NewBLMb implements Serializable {
                         articlesQuantites = articlesQuantites.substring(0, articlesQuantites.length() - 1);
                     }
 
-                    System.out.println("listeArticlesBL: " + listeArticlesBL);
-                    System.out.println("numeroBonCommande: " + bl.getNumeroBC());
-                    System.out.println("numeroBonLivraison: " + bl.getNumeroBL());
-                    System.out.println("dateLiv: " + dateLiv);
-                    System.out.println("commentaire: " + bl.getCommentaire());
-                    System.out.println("articlesQuantites: " + articlesQuantites);
+                    //System.out.println("listeArticlesBL: " + listeArticlesBL);
+                    //System.out.println("numeroBonCommande: " + bl.getNumeroBC());
+                    //System.out.println("numeroBonLivraison: " + bl.getNumeroBL());
+                    //System.out.println("dateLiv: " + dateLiv);
+                    //System.out.println("commentaire: " + bl.getCommentaire());
+                    //System.out.println("articlesQuantites: " + articlesQuantites);
 
                     mapValidationBLWS = achatService.validationBLWS(bl.getNumeroBC(),
                             bl.getNumeroBL(), dateLiv,
@@ -395,7 +395,7 @@ public class NewBLMb implements Serializable {
 
                     String referenceBLDiva = mapValidationBLWS.get("referenceBLDiva");
                     String nombreArticleBLDiva = mapValidationBLWS.get("nombreArticleBLDiva");
-                    System.out.println("nombre article BL diva" + nombreArticleBLDiva);
+                    //System.out.println("nombre article BL diva" + nombreArticleBLDiva);
 
                     switch (referenceBLDiva) {
                         case "0":
@@ -436,7 +436,7 @@ public class NewBLMb implements Serializable {
                                 Article article;
                                 articleBL.setBonLivraison(bl);
                                 articleBL.setNumeroDivalto(validationBLDiva[1].trim());
-                                System.out.println(articleBL.getNumeroDivalto());
+                                //System.out.println(articleBL.getNumeroDivalto());
                                 articleBL.setRefArticle(validationBLDiva[2].trim());
 
                                 article = achatService.getArticleByRef(validationBLDiva[2], Integer.parseInt(dos));
@@ -524,15 +524,15 @@ public class NewBLMb implements Serializable {
          * Partie CIN /resources/document
          */
         if (idbl != null) {
-            System.out.println("___________ Test 1 __________ ");
+           // System.out.println("___________ Test 1 __________ ");
 //        document = new Document();
             chemin = TgccFileManager.getArboFichier("BL");
-            System.out.println("chemin 1st " + chemin);
+            //System.out.println("chemin 1st " + chemin);
             Path folder = Paths.get(chemin);
             Files.createDirectories(folder);
             String filename = FilenameUtils.getBaseName(event.getFile().getFileName());
             String extension = FilenameUtils.getExtension(event.getFile().getFileName());
-            System.out.println("extension " + extension + " upper " + extension.toUpperCase());
+            //System.out.println("extension " + extension + " upper " + extension.toUpperCase());
             if ("".equals(extension) || !"PDF".equals(extension.toUpperCase())) {
                 Module.message(3, "type fichier doit être un pdf", "");
                 return;
@@ -541,9 +541,9 @@ public class NewBLMb implements Serializable {
             try (InputStream input = event.getFile().getInputstream()) {
                 Files.copy(input, file, StandardCopyOption.REPLACE_EXISTING);
                 chemin = chemin.substring(chemin.indexOf("files"), chemin.length());
-                System.out.println("chemin 2nd " + chemin);
+                //System.out.println("chemin 2nd " + chemin);
                 chemin += "/" + file.getFileName();
-                System.out.println("chemin 3rd " + chemin);
+                //System.out.println("chemin 3rd " + chemin);
                 newbl.setNodeRefDocument(chemin);
                 achatService.modifierBonLivraison(newbl);
                 Module.message(0, "Bon livraison chargé avec succès", "");
@@ -558,42 +558,42 @@ public class NewBLMb implements Serializable {
      * @param event
      */
     public void onRowEdit(RowEditEvent event) {
-        System.out.println("in Edit");
+        //System.out.println("in Edit");
         ArticleBL abl = (ArticleBL) event.getObject(); //object en cours d'edition
         if ("".equals(newbl.getFournisseur()) || "".equals(newbl.getNumeroBC()) || newbl.getDateLivraison() == null) {
-            System.out.println("La validation a échouée, veuillez vérifier les champs obligatoires");
+            //System.out.println("La validation a échouée, veuillez vérifier les champs obligatoires");
             Module.message(2, "code 2110 : La validation a échouée, veuillez vérifier les champs obligatoires", "");
         } else if (!(abl.getReste() > 0)) {
-            System.out.println("il reste " + abl.getReste());
+            //System.out.println("il reste " + abl.getReste());
             Module.message(2, "Code 2109 : La validation a échoué, la quantité commandée de cet article a été totalement livrée", "");
-            System.out.println("La validation a échoué, la quantité commandée de cet article a été totalement livrée");
+            //System.out.println("La validation a échoué, la quantité commandée de cet article a été totalement livrée");
         } else {
-            System.out.println("without Erreur");
+            //System.out.println("without Erreur");
             if (abl.getQuantiteLivree() > abl.getReste()) {
                 Module.message(1, " Code 2108 : La quantité saisie est supérieure à la quantité commandée restante, "
                         + "\n\nVeuillez procéder à une demande d'approvisionnement de régularisation"
                         + " \nauprès du sevice d'achat", "");
-                System.out.println("Qte Saisie Supérieur a Qte Reste");
+                //System.out.println("Qte Saisie Supérieur a Qte Reste");
 
                 abl.setQuantiteLivree(abl.getReste());
             }
             if (articlesQuantites.contains(abl.getNumeroDivalto())) {
-                System.out.println(" @@@@@@@ articles Qte " + articlesQuantites);
+                //System.out.println(" @@@@@@@ articles Qte " + articlesQuantites);
                 articlesQuantites = articlesQuantites.replace("|", "&");
-                System.out.println("#####articles Qte after replace" + articlesQuantites);
+                //System.out.println("#####articles Qte after replace" + articlesQuantites);
                 String[] rows;
                 /**
                  * modifier la quantité existant dans articlesQuantites
                  */
                 rows = articlesQuantites.split("&");
-                System.out.println("rows " + Arrays.toString(rows));
+                //System.out.println("rows " + Arrays.toString(rows));
                 List<String> artBL = new LinkedList<>();
                 for (String row : rows) {
                     if (!row.equals("")) {
-                        System.out.println("row " + row);
+                        //System.out.println("row " + row);
                         String[] cols = row.split(";");
                         if (cols[0].equals(abl.getNumeroDivalto())) {
-                            System.out.println("old qte" + cols[1]);
+                            //System.out.println("old qte" + cols[1]);
                             cols[1] = abl.getQuantiteLivree() + "";
                         }
                         artBL.add(cols[0] + ";" + cols[1]);
@@ -603,22 +603,22 @@ public class NewBLMb implements Serializable {
                 for (String s : artBL) {
                     articlesQuantites += s + "|";
                 }
-                System.out.println("result article qte existe" + articlesQuantites);
+                //System.out.println("result article qte existe" + articlesQuantites);
                 /**
                  * modifier la quantité exist dans list Article BL
                  */
-                System.out.println(" @@@@@ List articles BL " + listeArticlesBL);
+                //System.out.println(" @@@@@ List articles BL " + listeArticlesBL);
                 listeArticlesBL = listeArticlesBL.replace("-", "&");
-                System.out.println(" @@@@@ List articles BL after replace  " + listeArticlesBL);
+                //System.out.println(" @@@@@ List articles BL after replace  " + listeArticlesBL);
                 rows = listeArticlesBL.split("&");
-                System.out.println("@@@@@@@@@ rows List " + Arrays.toString(rows));
+                //System.out.println("@@@@@@@@@ rows List " + Arrays.toString(rows));
                 List<String> listArtBL = new LinkedList<>();
                 for (String row : rows) {
                     if (!row.equals("")) {
-                        System.out.println("row " + row);
+                        //System.out.println("row " + row);
                         String[] cols = row.split(";");
                         if (cols[1].equals(abl.getNumeroDivalto())) {
-                            System.out.println("old qte" + cols[1]);
+                            //System.out.println("old qte" + cols[1]);
                             cols[7] = abl.getQuantiteLivree() + "";
                         }
                         listArtBL.add(cols[0] + ";" + cols[1] + ";" + cols[2]
@@ -641,17 +641,16 @@ public class NewBLMb implements Serializable {
                 articlesQuantites += abl.getNumeroDivalto() + ";" + abl.getQuantiteLivree() + "|";
             }
 
-            System.out.println("listeArticlesBL : " + listeArticlesBL);
-            System.out.println("articlesQuantites : " + articlesQuantites);
+            //System.out.println("listeArticlesBL : " + listeArticlesBL);
+            //System.out.println("articlesQuantites : " + articlesQuantites);
         }
         setValiderdisabled(false);
     }
 
     public void onRowCancel(RowEditEvent event) {
-        System.out.println("EVENT : " + ((ArticleBL) event.getObject()).getQuantiteLivree());
+        //System.out.println("EVENT : " + ((ArticleBL) event.getObject()).getQuantiteLivree());
         ((ArticleBL) event.getObject()).setQuantiteLivree(null);
          setValiderdisabled(true);
-        
         Module.message(1, "Modification Annulée", "");
     }
 }

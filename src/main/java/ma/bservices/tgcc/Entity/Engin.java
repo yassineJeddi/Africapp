@@ -914,7 +914,31 @@ public class Engin implements Serializable {
 
     @Override
     public String toString() {
-        return "Engin{" + "iDEngin=" + iDEngin + ", typeCompteur=" + typeCompteur + ", comteurHoraire=" + comteurHoraire + ", compteurKilometrique=" + compteurKilometrique + ", nbrHeures=" + nbrHeures + ", nbrKilometrage=" + nbrKilometrage + ", nbrHeuresPointe=" + nbrHeuresPointe + ", nbrKilometragePointe=" + nbrKilometragePointe + ", numchassis=" + numchassis + ", numSerie=" + numSerie + ", codeDesignation=" + codeDesignation + ", num_immatriculation=" + num_immatriculation + ", anneeFabrication=" + anneeFabrication + ", fournisseur=" + fournisseur + ", chantierLib=" + chantierLib + ", typePointageDept=" + typePointageDept + ", dateAquisition=" + dateAquisition + ", dateMiseMarche=" + dateMiseMarche + ", dateLastPanne=" + dateLastPanne + ", dateAFFECTATION=" + dateAFFECTATION + ", dateCREATION=" + dateCREATION + ", dateDERVID=" + dateDERVID + ", dateDERVIS=" + dateDERVIS + ", dateMISESERVICE=" + dateMISESERVICE + ", dateMODIFICATION=" + dateMODIFICATION + ", actif=" + actif + ", anneeConst=" + anneeConst + ", lieuReparationType=" + lieuReparationType + ", lieuReparation_chantier_id=" + lieuReparation_chantier_id + ", anneeMes=" + anneeMes + ", code=" + code + ", compteur=" + compteur + ", creePar=" + creePar + ", designation=" + designation + ", etat=" + etat + ", etatTransfert=" + etatTransfert + ", marque=" + marque + ", modifierPar=" + modifierPar + ", refArticle=" + refArticle + ", reference=" + reference + ", comm=" + comm + ", typeEngin=" + typeEngin + ", familleEngin=" + familleEngin + ", dateDerniereVisiteSecurity=" + dateDerniereVisiteSecurity + ", archive=" + archive + ", reforme=" + reforme + ", nature=" + nature + ", nomSST=" + nomSST + ", nomLocataire=" + nomLocataire + ", numSerieMoteur=" + numSerieMoteur + ", numSerieboiteVitesse=" + numSerieboiteVitesse + ", numSeriePont=" + numSeriePont + ", marqueMoteur=" + marqueMoteur + ", marqueboiteVitesse=" + marqueboiteVitesse + ", marqueSeriePont=" + marqueSeriePont + ", typeMoteur=" + typeMoteur + ", typeboiteVitesse=" + typeboiteVitesse + ", typeSeriePont=" + typeSeriePont + ", qteReservoir=" + qteReservoir + ", consoMoyReel=" + consoMoyReel + ", consoMinConstructeur=" + consoMinConstructeur + ", consoMaxConstructeur=" + consoMaxConstructeur + ", numImmobilisationCompta=" + numImmobilisationCompta + ", numContratLising=" + numContratLising + ", coutLocation=" + coutLocation + ", uniteLocation=" + uniteLocation + ", hist_panne_id=" + hist_panne_id + '}';
+        return "Engin{" + "iDEngin=" + iDEngin +/* ", typeCompteur=" + typeCompteur + ", comteurHoraire=" + comteurHoraire 
+                + ", compteurKilometrique=" + compteurKilometrique + ", nbrHeures=" + nbrHeures + ", nbrKilometrage=" + nbrKilometrage 
+                + ", nbrHeuresPointe=" + nbrHeuresPointe + ", nbrKilometragePointe=" + nbrKilometragePointe 
+                + ", numchassis=" + numchassis + ", numSerie=" + numSerie + ", codeDesignation=" + codeDesignation 
+                + ", num_immatriculation=" + num_immatriculation + ", anneeFabrication=" + anneeFabrication 
+                + ", fournisseur=" + fournisseur + ", chantierLib=" + chantierLib + ", typePointageDept=" + typePointageDept 
+                + ", dateAquisition=" + dateAquisition + ", dateMiseMarche=" + dateMiseMarche 
+                + ", dateLastPanne=" + dateLastPanne + ", dateAFFECTATION=" + dateAFFECTATION 
+                + ", dateCREATION=" + dateCREATION + ", dateDERVID=" + dateDERVID + ", dateDERVIS=" + dateDERVIS 
+                + ", dateMISESERVICE=" + dateMISESERVICE + ", dateMODIFICATION=" + dateMODIFICATION 
+                + ", actif=" + actif + ", anneeConst=" + anneeConst + ", lieuReparationType=" + lieuReparationType 
+                + ", lieuReparation_chantier_id=" + lieuReparation_chantier_id + ", anneeMes=" + anneeMes 
+                + ", code=" + code + ", compteur=" + compteur + ", creePar=" + creePar + ", designation=" + designation 
+                + ", etat=" + etat + ", etatTransfert=" + etatTransfert + ", marque=" + marque 
+                + ", modifierPar=" + modifierPar + ", refArticle=" + refArticle + ", reference=" + reference 
+                + ", comm=" + comm + ", typeEngin=" + typeEngin + ", familleEngin=" + familleEngin 
+                + ", dateDerniereVisiteSecurity=" + dateDerniereVisiteSecurity + ", archive=" + archive 
+                + ", reforme=" + reforme + ", nature=" + nature + ", nomSST=" + nomSST + ", nomLocataire=" + nomLocataire 
+                + ", numSerieMoteur=" + numSerieMoteur + ", numSerieboiteVitesse=" + numSerieboiteVitesse 
+                + ", numSeriePont=" + numSeriePont + ", marqueMoteur=" + marqueMoteur + ", marqueboiteVitesse=" + marqueboiteVitesse 
+                + ", marqueSeriePont=" + marqueSeriePont + ", typeMoteur=" + typeMoteur + ", typeboiteVitesse=" + typeboiteVitesse 
+                + ", typeSeriePont=" + typeSeriePont + ", qteReservoir=" + qteReservoir + ", consoMoyReel=" + consoMoyReel 
+                + ", consoMinConstructeur=" + consoMinConstructeur + ", consoMaxConstructeur=" + consoMaxConstructeur 
+                + ", numImmobilisationCompta=" + numImmobilisationCompta + ", numContratLising=" + numContratLising 
+                + ", coutLocation=" + coutLocation + ", uniteLocation=" + uniteLocation + ", hist_panne_id=" + hist_panne_id + */"}";
     }
 
     

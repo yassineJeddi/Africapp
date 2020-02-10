@@ -2045,7 +2045,7 @@ public class DetailSalarieMb implements Serializable {
     }
 
     public void updateAffectation() {
-        System.out.println("update chantier affectée : nbr chantier" + chantiers.size());
+        //System.out.println("update chantier affectée : nbr chantier" + chantiers.size());
         boolean isAdmin = false;
         if ("admin".equals(Constantes.getRoleAuth()) || "EMAIL_CONTRIBUTORS".equals(Constantes.getRoleAuth())) {
             isAdmin = true;
@@ -2054,7 +2054,7 @@ public class DetailSalarieMb implements Serializable {
         Authentification authentification = (Authentification) FacesContext.getCurrentInstance().getApplication().getELResolver().getValue(elContext, null, "authentification");
         Integer idUser = authentification.get_connected_user().getId();
         chantiers = chantierService.listeChantiersAffectes(salarie.getId(), 1, 0, Integer.parseInt(chantierService.nombreChantiers("", "", Module.dos).toString()), "", "", Module.dos, isAdmin, idUser);
-        System.out.println("after update: nbr chantier" + chantiers.size());
+        //System.out.println("after update: nbr chantier" + chantiers.size());
     }
 
     public void checkCNSS(String cnss, String salarie) {

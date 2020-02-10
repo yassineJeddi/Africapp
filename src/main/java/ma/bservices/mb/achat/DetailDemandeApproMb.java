@@ -400,7 +400,7 @@ public class DetailDemandeApproMb implements Serializable {
     }
 
     public void fam2ByFam1() {
-        System.out.println("<<<<<<<<<<<<<<<< ENTREE >>>>>>>>>>>>>>>>>>" + valueFam1);
+       // System.out.println("<<<<<<<<<<<<<<<< ENTREE >>>>>>>>>>>>>>>>>>" + valueFam1);
         if ("".equals(valueFam1) || valueFam1 == null) {
             if (fam3 != null) {
                 fam3.clear();
@@ -418,8 +418,8 @@ public class DetailDemandeApproMb implements Serializable {
         fam2 = (List<FamilleArticle>) parametrageService.listeFamilles(0, 10, 1, 5, valueFam1, reqDos);
         fam3 = (List<FamilleArticle>) parametrageService.listeFamilles(0, 10, 1, 8, valueFam1, reqDos);
 
-        System.out.println("********* Size Fam 2 " + fam2.size());
-        System.out.println("********* Size Fam 3 " + fam3.size());
+        //System.out.println("********* Size Fam 2 " + fam2.size());
+        //System.out.println("********* Size Fam 3 " + fam3.size());
     }
 
     public void fam3ByFam2() {
@@ -430,11 +430,11 @@ public class DetailDemandeApproMb implements Serializable {
 
     public void articleByFam() {
         if (DA.getChantier().getId() != 0 || DA.getDateLivraisonSouhaitee() != null) {
-            System.out.println("!!!!!!!!!!!!!!!!! ENTREE ??????????????????? ");
+            //System.out.println("!!!!!!!!!!!!!!!!! ENTREE ??????????????????? ");
             String reqDos = " dos=700  ";
             int limit = Integer.parseInt(achatService.nombreRechercheArticle("", valueFam1, valueFam2, valueFam3.trim(), reqDos, des).toString());
             listeArticle = achatService.listeRechercheArticle(0, limit, reference, valueFam1, valueFam2, valueFam3.trim(), reqDos, des);
-            System.out.println("************** SIZE ARTICLE ************ " + listeArticle.size() + " @@@@@@@@@@@ " + limit + " FAM1 " + valueFam1.trim() + " FAM2 " + valueFam2.trim() + " FAM3 " + valueFam3.trim());
+            //System.out.println("************** SIZE ARTICLE ************ " + listeArticle.size() + " @@@@@@@@@@@ " + limit + " FAM1 " + valueFam1.trim() + " FAM2 " + valueFam2.trim() + " FAM3 " + valueFam3.trim());
         } else {
             Module.message(2, "Attention l'un des Champs (Chantier ou Date de livraison souhaitée) est vide", "Attention l'un des Champs est vide");
         }

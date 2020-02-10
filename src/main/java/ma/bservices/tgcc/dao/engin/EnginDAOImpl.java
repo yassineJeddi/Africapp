@@ -289,12 +289,26 @@ public class EnginDAOImpl extends MbHibernateDaoSupport implements EnginDAO, Ser
     }
 
     @Override
-    public List<Engin> findAllInChantier(int chantier_id) {
+    public List<Engin> findAllInChantier(Integer chantier_id) {
         List l = this.getHibernateTemplate().find("SELECT p FROM Engin p WHERE p.prjapId = '" + chantier_id + "'");
         if (l.size() > 0) {
             return l;
         }
         return null;
+    }
+
+    @Override
+    public List<Engin> findAllEnginByChantierId(Integer chantier_id) {
+        List<Engin> l = new ArrayList<Engin>();
+        try {
+              List ll =  this.getHibernateTemplate().find("SELECT e FROM Engin e WHERE (e.archive = 'false' or e.archive is null)  "
+                      + "AND (e.reforme =  'false' or e.reforme is null) "
+                      + "AND e.prjapId = '" + chantier_id + "'");
+                    l = (List<Engin>)ll;
+        } catch (Exception e) {
+            looger.warning("Erreur de récuperation des engins par chantier car : "+e.getMessage());
+        }
+        return l;
     }
 
     @Override

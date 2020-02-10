@@ -64,6 +64,12 @@ public class Bon_Livraison_Citerne implements Serializable {
     @Column(name = "HEURE_ENGIN")
     private String heure;
 
+    @Column(name = "LAST_KILOMETRAGE")
+    private String lastKilometrage;
+
+    @Column(name = "LAST_HEURE_ENGIN")
+    private String lastHeure;
+
     @Column(name = "ACTION")
     private String action;
 
@@ -222,6 +228,24 @@ public class Bon_Livraison_Citerne implements Serializable {
     public void setDateOperation(Date dateOperation) {
         this.dateOperation = dateOperation;
     }
+
+    public String getLastKilometrage() {
+        return lastKilometrage;
+    }
+
+    public void setLastKilometrage(String lastKilometrage) {
+        this.lastKilometrage = lastKilometrage;
+    }
+
+    public String getLastHeure() {
+        return lastHeure;
+    }
+
+    public void setLastHeure(String lastHeure) {
+        this.lastHeure = lastHeure;
+    }
+    
+    
 
     /**
      * end getters and setters

@@ -23,6 +23,12 @@ public class RemplireTrace {
         try {
             if(!b.equals(null)){
                
+                try {
+                        t.setEngin((b.getEngin().getCode()==null)?"":b.getEngin().getCode());
+                } catch (Exception e) {
+                    System.out.println("Erreur d'alimentation du traceciterne pour l'engin car "+e.getMessage());
+                }
+                
                 t.setIdBonLivraisonCiterne(((b.getId().toString())==null)?"":b.getId().toString());
                 t.setDate(b.getDate());
                 t.setDateOperation(b.getDateOperation());
@@ -30,7 +36,6 @@ public class RemplireTrace {
                 t.setVolume_actuel((b.getVolume_actuel()==null)?0:b.getVolume_actuel());
                 t.setVolume((b.getVolume()==null)?0:b.getVolume());
                 t.setCiterne((b.getCiterne().getLibelle_citerne()==null)?"":b.getCiterne().getLibelle_citerne());
-                t.setEngin((b.getEngin().getCode()==null)?"":b.getEngin().getCode());
                 t.setMensuel((b.getMensuel()==null)?"":(b.getMensuel().getNom()+" "+b.getMensuel().getPrenom()));
                 t.setKilometrage((b.getKilometrage() == null)?"":b.getKilometrage());
                 t.setHeure((b.getHeure()==null)?"":b.getHeure());

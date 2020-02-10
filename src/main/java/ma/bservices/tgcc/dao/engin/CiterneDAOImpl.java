@@ -130,6 +130,21 @@ public class CiterneDAOImpl extends MbHibernateDaoSupport implements CiterneDAO,
 
         return l;
     }
+    
+    @Override
+     public Bon_Livraison_Citerne lastAlimentationEngin(Engin e)  {
+
+         Bon_Livraison_Citerne b = new Bon_Livraison_Citerne();
+         try {
+             List l = this.getHibernateTemplate().find(" From Bon_Livraison_Citerne b WHERE b.id =( SELECT MAX(e.id)  From Bon_Livraison_Citerne e WHERE e.engin.iDEngin = " + e.getIDEngin()+")") ;
+             if(l.size()>0){
+                 b=(Bon_Livraison_Citerne) l.get(0);
+             }
+        } catch (Exception exp) {
+             System.out.println("Erreur de recuperation last alientation engin car "+exp.getMessage());
+        }
+         return b;
+    }
 
     /************ GESION TraceCiterne *********************/
     

@@ -40,7 +40,7 @@ public interface EnginService {
 
     public void affecterEngin(Engin engin, int chantierID);
 
-    public List<Engin> findAllInChantier(int chantier_id);
+    public List<Engin> findAllInChantier(Integer chantier_id);
 
     public Engin findEnginByCodeFromEnginsInChantier(List<Engin> enginsInChanier, String Code);
 
@@ -72,5 +72,6 @@ public interface EnginService {
     
     public List<Engin> findAllEnginPointageAutoDept(int chantier_id);
     public List<Engin> findAllEnginPointageManuelDept(int chantier_id);
+    public List<Engin> findAllEnginByChantierId(Integer chantier_id);
     
 }

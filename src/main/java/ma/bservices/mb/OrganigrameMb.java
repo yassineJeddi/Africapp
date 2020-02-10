@@ -303,12 +303,12 @@ public class OrganigrameMb implements Serializable {
                 for (Integer org : listOfSalaries) {
                     Salarie s = salarieService.getSalarie(org);
                     salariesNoms.add(s.getNom() + " " + s.getPrenom().substring(0, 1) + ". (" + s.getFonction().getFonction() + ")");
-                    System.out.println("SALARIE : " + org);
+                   // System.out.println("SALARIE : " + org);
                 }
             }
-            for (String s : salariesNoms) {
+            /*for (String s : salariesNoms) {
                 System.out.println("SALARIE : " + s);
-            }
+            }*/
 
             addDivision(rootNode, nf.getNiveau(), salariesNoms);
 
@@ -318,8 +318,8 @@ public class OrganigrameMb implements Serializable {
 
     public boolean checkNodeChef(String s) {
 
-        System.out.println("SELECTION : " + selection);
-        System.out.println("STRING : " + s);
+        //System.out.println("SELECTION : " + selection);
+        //System.out.println("STRING : " + s);
 
         Chantier chantier = chantierService.findById(idChantier);
         NiveauFonction nf = niveauFonctionService.getByString(s);
@@ -336,7 +336,7 @@ public class OrganigrameMb implements Serializable {
     }
 
     public void onChantierChange() {
-        System.out.println("ChantierChanged :: " + idChantier);
+        //System.out.println("ChantierChanged :: " + idChantier);
 
         Chantier chantier = chantierService.findById(idChantier);
         selectedSalaries.clear();
@@ -348,7 +348,7 @@ public class OrganigrameMb implements Serializable {
     }
 
     public void onNiveauChange() {
-        System.out.println("NiveauChanged :: " + idNiveau);
+        //System.out.println("NiveauChanged :: " + idNiveau);
         selectedSalaries.clear();
         NiveauFonction niveau = niveauFonctionService.getById(idNiveau);
         Chantier chantier = chantierService.findById(idChantier);
@@ -356,7 +356,7 @@ public class OrganigrameMb implements Serializable {
     }
 
     public void onChantierChangeConsult() {
-        System.out.println("ChantierChanged :: " + idChantierConsult);
+        //System.out.println("ChantierChanged :: " + idChantierConsult);
     }
 
     public void onNiveauChangeConsult() {
@@ -393,8 +393,8 @@ public class OrganigrameMb implements Serializable {
 
     //init la liste des chefs par salarie
     public void listeChefSalarie() {
-        System.out.println("LISTING .... ");
-        System.out.println("SELECTION : " + selection.getData().toString());
+        //System.out.println("LISTING .... ");
+        //System.out.println("SELECTION : " + selection.getData().toString());
 
         Chantier chantier = chantierService.findById(idChantier);
         NiveauFonction nf = niveauFonctionService.getByString(selection.getParent().getData().toString());
@@ -409,7 +409,7 @@ public class OrganigrameMb implements Serializable {
                     salarie = s;
                     Organigrame org = organigrameService.findByChantierNiveauSalarie(chantier, nf, salarie);
                     if(org.getSuperieur() != null){
-                    System.out.println("CHEF DE CE SALARIE : " + org.getSuperieur());
+                    //System.out.println("CHEF DE CE SALARIE : " + org.getSuperieur());
                     supChef = salarieService.getSalarie(Integer.parseInt(org.getSuperieur()));
                     }
                 }
@@ -420,11 +420,12 @@ public class OrganigrameMb implements Serializable {
 
     // ajouter chef a un salarie
     public void addChefSalarie() {
+        /*
         System.out.println("ADDING CHEF ...");
         System.out.println("SELECTED CHEF : " + selectedChefSalarie.getNom()) ;
         System.out.println("SELECTION : " + selection.getData().toString());
         System.out.println("NIVEAU : " + selection.getParent().getData().toString());
-
+        */
         Chantier chantier = chantierService.findById(idChantier);
         NiveauFonction nf = niveauFonctionService.getByString(selection.getParent().getData().toString());
         Salarie salarie = null;
@@ -438,7 +439,7 @@ public class OrganigrameMb implements Serializable {
                     Organigrame org = organigrameService.findByChantierNiveauSalarie(chantier, nf, salarie);
                     org.setSuperieur(selectedChefSalarie.getId().toString());
                     organigrameService.update(org);
-                    System.out.println("LIST OF SUP : " + org.getSuperieur());
+                    //System.out.println("LIST OF SUP : " + org.getSuperieur());
                     break;
                 }
             }
@@ -454,8 +455,8 @@ public class OrganigrameMb implements Serializable {
     public void choisirChefSalarie() {
 
         listeChefsParSalarie.clear();
-        System.out.println("SELECTION : " + selection.getData().toString());
-        System.out.println("NIVEAU : " + selection.getParent().getData().toString());
+        //System.out.println("SELECTION : " + selection.getData().toString());
+        //System.out.println("NIVEAU : " + selection.getParent().getData().toString());
 
         Chantier chantier = chantierService.findById(idChantier);
         NiveauFonction nf = niveauFonctionService.getByString(selection.getParent().getData().toString());
@@ -483,7 +484,7 @@ public class OrganigrameMb implements Serializable {
 
     // ajout salarie a un niveau 
     public void initAddSalarie() {
-        System.out.println("SELECTION : " + selection.getData().toString());
+        //System.out.println("SELECTION : " + selection.getData().toString());
         selectedSalaries.clear();
 
         Chantier chantier = chantierService.findById(idChantier);
@@ -500,7 +501,7 @@ public class OrganigrameMb implements Serializable {
             }
         }
 
-        System.out.println("INIT");
+        //System.out.println("INIT");
     }
 
     public void construireOrganigrameChantier() {
@@ -531,7 +532,7 @@ public class OrganigrameMb implements Serializable {
 
         if (salaries != null) {
             for (String salarie : salaries) {
-                System.out.println("NOT NULL");
+                //System.out.println("NOT NULL");
                 OrganigramNode employeeNode = new DefaultOrganigramNode("employee", salarie, divisionNode);
                 employeeNode.setDraggable(true);
                 employeeNode.setSelectable(true);
@@ -607,11 +608,11 @@ public class OrganigrameMb implements Serializable {
         }
 
         List<Organigrame> orgsC = organigrameService.findByChantierChef(chantier);
-
+/*
         for (Organigrame org : orgsC) {
             System.out.println("CHEF : " + org.getSalarie().getNom());
         }
-
+*/
         FacesMessage message = new FacesMessage();
         message.setSummary("Vous avez défini ce niveau comme chef d'équipe");
         message.setSeverity(FacesMessage.SEVERITY_INFO);
@@ -649,14 +650,14 @@ public class OrganigrameMb implements Serializable {
         for (Integer i : ls) {
             Salarie s = salarieService.getSalarie(i);
             String ss = selection.getData().toString();
-            System.out.println("NOM FROM FONCTION : " + ss.substring(0, ss.indexOf(' ')));
+            //System.out.println("NOM FROM FONCTION : " + ss.substring(0, ss.indexOf(' ')));
 
             if (s.getNom().equals(ss.substring(0, ss.indexOf(' ')))) {
                 sa = s;
             }
         }
         // OrganigramNode currentSelection = OrganigramHelper.findTreeNode(rootNode, selection);
-        System.out.println("SELECTION : " + selection.getData().toString());
+        //System.out.println("SELECTION : " + selection.getData().toString());
         //Salarie salarie = salarieService.getSalarie("", "", "", selection.getData().toString(), "");
         if (sa != null) {
             Organigrame org = organigrameService.findByChantierNiveauSalarie(chantier, nf, sa);

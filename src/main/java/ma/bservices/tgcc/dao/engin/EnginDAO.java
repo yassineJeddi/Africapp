@@ -46,7 +46,7 @@ public interface EnginDAO {
     
     public Engin findOneByCode(String code);
     public List<String> findAllMarque();
-    public List<Engin> findAllInChantier(int chantier_id);
+    public List<Engin> findAllInChantier(Integer chantier_id);
     public List<Engin> findAllInChantierArchive(int chantier_id);
     public List<Engin> findAllChantierArchivePanne(int chantier_id);
     public List<Engin> findAllEnginPointageAutoParChantier(int chantier_id);
@@ -62,4 +62,5 @@ public interface EnginDAO {
     public Boolean delete(Engin e);
     public List<Engin> findOneByArchive();
     public List<Engin> rechercherEnginByFa(String code, String designation, String marque, String etat, int chantier_id, String typeE, String familleE);
+    public List<Engin> findAllEnginByChantierId(Integer chantier_id);
 }

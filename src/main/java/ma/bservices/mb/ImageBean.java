@@ -170,13 +170,13 @@ public class ImageBean implements Serializable {
    
     File f = new File(chemin + "/" + fichier);
 if(f.exists() && !f.isDirectory()) { 
-    System.out.println("fichier :" +chemin + "/" + fichier + " Existe");
+   // System.out.println("fichier :" +chemin + "/" + fichier + " Existe");
         return Boolean.TRUE;
         
     
     }
 else {
-    System.out.println("fichier :" +chemin + "/" + fichier + "n'existe pas");
+    //System.out.println("fichier :" +chemin + "/" + fichier + "n'existe pas");
     return Boolean.FALSE;
 
 }}
@@ -216,7 +216,7 @@ else {
              tabFile= filename[filename.length-1].split(".");
                 if (tabFile.length>0)
                     ext = tabFile[tabFile.length-1];     
-            System.out.println(ext + " ext " + "filename " + " " +filename[filename.length-1]);
+            //System.out.println(ext + " ext " + "filename " + " " +filename[filename.length-1]);
             
             }
             
@@ -280,7 +280,7 @@ else {
      * @return output stream
      */
     public StreamedContent displayFile(String path) {
-        System.out.println("path in  " + path);
+        //System.out.println("path in  " + path);
         try {
             if (FacesContext.getCurrentInstance().getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
                 //System.out.println("phase is render response");

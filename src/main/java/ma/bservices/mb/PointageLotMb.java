@@ -1268,7 +1268,7 @@ public class PointageLotMb implements Serializable {
             tL.setWidthPercentage(100);
             for (Lot lImg : l) {
 
-                System.out.println("xxxxxxxxxxxxxxx TEST IMG BD Xxxxxxxxxxx" + l.size());
+                //System.out.println("xxxxxxxxxxxxxxx TEST IMG BD Xxxxxxxxxxx" + l.size());
                 try {
                     String chemin_im = FacesContext.getCurrentInstance().getExternalContext().getRealPath(lImg.getCheminIcon());
                     Image im = Image.getInstance(chemin_im);

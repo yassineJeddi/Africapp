@@ -164,14 +164,17 @@ public class Citerne implements Serializable {
         this.l_chantiers = l_chantiers;
     }
 
-
     /**
      * end getters and setters
      */
+   
     @Override
     public String toString() {
         return "Citerne{" + "id=" + id + ", libelle_citerne=" + libelle_citerne + ", type_citerne=" + type_citerne + ", capacite=" + capacite + ", localite=" + localite + ", volume_actuel=" + volume_actuel + ", volume_actuel_=" + volume_actuel_ + ", archiver=" + archiver + '}';
     }
+
+
+    
 
     
     

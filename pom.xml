@@ -98,10 +98,10 @@
         </dependency>
         
         <dependency>
-  <groupId>org.javafunk</groupId>
-  <artifactId>excel-parser</artifactId>
-  <version>1.0</version>
-</dependency>
+            <groupId>org.javafunk</groupId>
+            <artifactId>excel-parser</artifactId>
+            <version>1.0</version>
+        </dependency>
         
         <dependency>
             <groupId>com.google.code.gson</groupId>

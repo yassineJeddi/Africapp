@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets" >
+    <h:head>
+        <title>Nouvelle Demande D'appro</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="Template.xhtml">
+            <ui:define name="arborescence">
+                <h:outputText value="Achat > Nouvelle demande d'appro" style="color:#000066; margin-left: -920px; font-size: 14px;  font-family: Times New Roman, Georgia, Serif;"/>
+            </ui:define>
+            <ui:define name="content">
+                <h:form id="form">
+                    <p:blockUI block="form" widgetVar="block">
+                        Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                    </p:blockUI>
+                    <div class="row">
+                        <div class="col-lg-10 col-lg-offset-1">
+                            <p:messages id="msgsMR" autoUpdate="true" closable="true"/>
+                        </div>
+                    </div>
+ 
+                    <div class="col-lg-2 col-lg-offset-4">
+                        <p:commandButton id="btnDA"  
+                                         onstart="PF('block').show()" oncomplete="PF('block').hide()"
+                                         value="Envoyer" class="btn btn-switch active" 
+                                         action="#{nouveauDaMb.testTrace()}" update=":form"/>
+                    </div>
+                </h:form>
+                
+                <script type="text/javascript">
+                    $('.ui-inputfield').addClass('form-control');
+                </script>
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+

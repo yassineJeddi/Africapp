@@ -2560,7 +2560,7 @@ public class PresenceService extends MbHibernateDaoSupport {
                     if (row.getCell(0) != null) {
                         if (row.getRowNum() != 0 && row.getCell(0).getCellType() == Cell.CELL_TYPE_STRING && !StringUtils.isNumeric(row.getCell(0).getStringCellValue())) {
                             //matriculesProb.add(row.getCell(0).getStringCellValue());
-                            System.out.println("row index:" + row.getRowNum());
+                           // System.out.println("row index:" + row.getRowNum());
                             String[] dataProb = new String[]{row.getCell(0).getStringCellValue(), "Matricule inexistant", ""};
                             key++;
                             data.put(String.valueOf(key), dataProb);
@@ -2579,7 +2579,7 @@ public class PresenceService extends MbHibernateDaoSupport {
 
                             if (row.getCell(0).getCellType() == Cell.CELL_TYPE_NUMERIC) {
                                 //salariesIDs.add((int)row.getCell(0).getNumericCellValue()); 
-                                System.out.println("matricule: " + (int) row.getCell(0).getNumericCellValue());
+                                //System.out.println("matricule: " + (int) row.getCell(0).getNumericCellValue());
                                 if (desaffectationChantiers) {
                                     chantierService.desaffecterSalarieTousChantiers((int) row.getCell(0).getNumericCellValue());
                                     Chantier chantier = new Chantier();
@@ -2603,7 +2603,7 @@ public class PresenceService extends MbHibernateDaoSupport {
                                  */
                             } else if (row.getCell(0).getCellType() == Cell.CELL_TYPE_STRING) {
                                 //salariesIDs.add(Integer.valueOf(row.getCell(0).getStringCellValue())); 
-                                System.out.println("matricule: " + row.getCell(0).getStringCellValue());
+                                //System.out.println("matricule: " + row.getCell(0).getStringCellValue());
                                 if (desaffectationChantiers) {
                                     chantierService.desaffecterSalarieTousChantiers(Integer.valueOf(row.getCell(0).getStringCellValue()));
                                     Chantier chantier = new Chantier();
@@ -2654,24 +2654,24 @@ public class PresenceService extends MbHibernateDaoSupport {
                                                 contratService.reglerContrat(contrat.getId(), dateFin, idMotif);
                                                 salarieService.changerEtatSalarie(Integer.valueOf((row.getCell(0).getStringCellValue())), 3);
                                             } else {
-                                                System.out.println("Problème de réglage sur Divalto");
+                                                //System.out.println("Problème de réglage sur Divalto");
                                                 String[] dataProb = new String[]{String.valueOf(row.getCell(0).getStringCellValue()), "Non réglé: Problème de réglage sur Divalto", ""};
                                                 key++;
                                                 data.put(String.valueOf(key), dataProb);
                                             }
                                         } else {
-                                            System.out.println("Problème de réglage: date Fin inferieure a date Embauche");
+                                            //System.out.println("Problème de réglage: date Fin inferieure a date Embauche");
                                             String[] dataProb = new String[]{String.valueOf((int) row.getCell(0).getNumericCellValue()), "Non réglé: Date Fin infénieure à Date Embauche", ""};
                                             key++;
                                             data.put(String.valueOf(key), dataProb);
                                         }
                                     } else if (contratService.nombreContratParEtat(Integer.valueOf(row.getCell(0).getStringCellValue()), 2) == 0) {
-                                        System.out.println("matricule n\'a pas de contrat");
+                                        //System.out.println("matricule n\'a pas de contrat");
                                         String[] dataProb = new String[]{String.valueOf(row.getCell(0).getStringCellValue()), "Non réglé: matricule n\'a pas de contrat", ""};
                                         key++;
                                         data.put(String.valueOf(key), dataProb);
                                     } else if (contratService.nombreContratParEtat(Integer.valueOf(row.getCell(0).getStringCellValue()), 2) > 1) {
-                                        System.out.println("matricule a plusieurs contrats légalisés");
+                                        //System.out.println("matricule a plusieurs contrats légalisés");
                                         String[] dataProb = new String[]{String.valueOf(row.getCell(0).getStringCellValue()), "Non réglé: matricule a plusieurs contrats légalisés", ""};
                                         key++;
                                         data.put(String.valueOf(key), dataProb);
@@ -2683,7 +2683,7 @@ public class PresenceService extends MbHibernateDaoSupport {
                             while (cellIterator.hasNext()) {
                                 Cell cell = cellIterator.next();
                                 if (row.getCell(0).getCellType() == Cell.CELL_TYPE_STRING && row.getCell(0).getStringCellValue().equals("MATRICULE")) {
-                                    System.out.println("colone: " + row.getCell(0).getStringCellValue());
+                                    //System.out.println("colone: " + row.getCell(0).getStringCellValue());
                                 } else if (cell.getColumnIndex() >= 5 && cell.getColumnIndex() <= 35) {
 
                                     if (cell != null) {
@@ -2720,11 +2720,11 @@ public class PresenceService extends MbHibernateDaoSupport {
                                                         chantier.setId(idChantier);
                                                         presence.setChantier(chantier);
                                                     } else {
-                                                        System.out.println("problème de chantier");
+                                                        //System.out.println("problème de chantier");
                                                         return null;
                                                     }
                                                 } else {
-                                                    System.out.println("problème de chantier");
+                                                    //System.out.println("problème de chantier");
                                                     return null;
                                                 }
                                             }
@@ -2868,7 +2868,7 @@ public class PresenceService extends MbHibernateDaoSupport {
                                             presence.setDate(new Date(annee + "/" + mois + "/" + (cell.getColumnIndex() - 4)));
                                             presence.setFlag(false);
                                             presence.setNombreMinutes(0);
-                                            System.out.println("problème conversion de \"" + cell.getStringCellValue() + "\"");
+                                            //System.out.println("problème conversion de \"" + cell.getStringCellValue() + "\"");
                                             //								    	  	listePresencesProb.add(presence);
                                             key++;
                                             String[] dataProb = new String[]{presence.getSalarie().getId().toString(), "Probleme de conversion", presence.getDate().toString()};
@@ -2883,10 +2883,10 @@ public class PresenceService extends MbHibernateDaoSupport {
                                 Date dtSortie = null;
                                 if (row.getCell(4).getCellType() == Cell.CELL_TYPE_NUMERIC && DateUtil.isCellDateFormatted(row.getCell(4))) {
                                     dtSortie = row.getCell(4).getDateCellValue();
-                                    System.out.println("Date sortie:" + dtSortie);
+                                    //System.out.println("Date sortie:" + dtSortie);
                                 } else if (row.getCell(4).getCellType() == Cell.CELL_TYPE_STRING) {
                                     dtSortie = new Date(row.getCell(4).getStringCellValue().substring(6, 10) + "/" + row.getCell(4).getStringCellValue().substring(3, 5) + "/" + row.getCell(4).getStringCellValue().substring(0, 2));
-                                    System.out.println("Date sortie:" + dtSortie);
+                                    //System.out.println("Date sortie:" + dtSortie);
                                 }
 
                                 if (contratService.nombreContratParEtat((int) row.getCell(0).getNumericCellValue(), 2) == 1) {
@@ -2913,24 +2913,24 @@ public class PresenceService extends MbHibernateDaoSupport {
                                             contratService.reglerContrat(contrat.getId(), dateFin, idMotif);
                                             salarieService.changerEtatSalarie((int) (row.getCell(0).getNumericCellValue()), 3);
                                         } else {
-                                            System.out.println("Problème de réglage sur Divalto");
+                                            //System.out.println("Problème de réglage sur Divalto");
                                             String[] dataProb = new String[]{String.valueOf((int) row.getCell(0).getNumericCellValue()), "Non réglé: Problème de réglage sur Divalto", ""};
                                             key++;
                                             data.put(String.valueOf(key), dataProb);
                                         }
                                     } else {
-                                        System.out.println("Problème de réglage: date Fin inferieure a date Embauche");
+                                        //System.out.println("Problème de réglage: date Fin inferieure a date Embauche");
                                         String[] dataProb = new String[]{String.valueOf((int) row.getCell(0).getNumericCellValue()), "Non réglé: Date Fin infénieure à Date Embauche", ""};
                                         key++;
                                         data.put(String.valueOf(key), dataProb);
                                     }
                                 } else if (contratService.nombreContratParEtat((int) row.getCell(0).getNumericCellValue(), 2) == 0) {
-                                    System.out.println("matricule n\'a pas de contrat");
+                                    //System.out.println("matricule n\'a pas de contrat");
                                     String[] dataProb = new String[]{String.valueOf((int) row.getCell(0).getNumericCellValue()), "Non réglé: matricule n\'a pas de contrat", ""};
                                     key++;
                                     data.put(String.valueOf(key), dataProb);
                                 } else if (contratService.nombreContratParEtat((int) row.getCell(0).getNumericCellValue(), 2) > 1) {
-                                    System.out.println("matricule a plusieurs contrats légalisés");
+                                    //System.out.println("matricule a plusieurs contrats légalisés");
                                     String[] dataProb = new String[]{String.valueOf((int) row.getCell(0).getNumericCellValue()), "Non réglé: matricule a plusieurs contrats légalisés", ""};
                                     key++;
                                     data.put(String.valueOf(key), dataProb);
@@ -2959,7 +2959,7 @@ public class PresenceService extends MbHibernateDaoSupport {
                     if (row.getCell(0) != null) {
                         if (row.getRowNum() != 0 && row.getCell(0).getCellType() == Cell.CELL_TYPE_STRING && !StringUtils.isNumeric(row.getCell(0).getStringCellValue())) {
                             //matriculesProb.add(row.getCell(0).getStringCellValue());
-                            System.out.println("row index:" + row.getRowNum());
+                            //System.out.println("row index:" + row.getRowNum());
                             String[] dataProb = new String[]{row.getCell(0).getStringCellValue(), "Matricule inexistant", ""};
                             key++;
                             data.put(String.valueOf(key), dataProb);
@@ -2978,7 +2978,7 @@ public class PresenceService extends MbHibernateDaoSupport {
 
                             if (row.getCell(0).getCellType() == Cell.CELL_TYPE_NUMERIC) {
                                 //salariesIDs.add((int)row.getCell(0).getNumericCellValue()); 
-                                System.out.println("matricule: " + (int) row.getCell(0).getNumericCellValue());
+                                //System.out.println("matricule: " + (int) row.getCell(0).getNumericCellValue());
                                 if (desaffectationChantiers) {
                                     chantierService.desaffecterSalarieTousChantiers((int) row.getCell(0).getNumericCellValue());
                                     Chantier chantier = new Chantier();
@@ -3002,7 +3002,7 @@ public class PresenceService extends MbHibernateDaoSupport {
                                  */
                             } else if (row.getCell(0).getCellType() == Cell.CELL_TYPE_STRING) {
                                 //salariesIDs.add(Integer.valueOf(row.getCell(0).getStringCellValue())); 
-                                System.out.println("matricule: " + row.getCell(0).getStringCellValue());
+                                //System.out.println("matricule: " + row.getCell(0).getStringCellValue());
                                 if (desaffectationChantiers) {
                                     chantierService.desaffecterSalarieTousChantiers(Integer.valueOf(row.getCell(0).getStringCellValue()));
                                     Chantier chantier = new Chantier();
@@ -3038,7 +3038,7 @@ public class PresenceService extends MbHibernateDaoSupport {
                                             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                                             String dateFinContrat = dateFormat.format(dateFin).replaceAll("-", "");
                                             //String dateFinContrat=dateFin.toString().substring(0,10).replaceAll("-", "");
-                                            System.out.println("Date de sortie: " + dateFinContrat);
+                                            //System.out.println("Date de sortie: " + dateFinContrat);
                                             String motif = "";
                                             Integer idMotif = null;
                                             if ((row.getCell(36, Row.RETURN_NULL_AND_BLANK) != null) && (row.getCell(36, Row.RETURN_BLANK_AS_NULL) != null)) {
@@ -3053,24 +3053,24 @@ public class PresenceService extends MbHibernateDaoSupport {
                                                 contratService.reglerContrat(contrat.getId(), dateFin, idMotif);
                                                 salarieService.changerEtatSalarie(Integer.valueOf((row.getCell(0).getStringCellValue())), 3);
                                             } else {
-                                                System.out.println("Problème de réglage sur Divalto");
+                                                //System.out.println("Problème de réglage sur Divalto");
                                                 String[] dataProb = new String[]{String.valueOf(row.getCell(0).getStringCellValue()), "Non réglé: Problème de réglage sur Divalto", ""};
                                                 key++;
                                                 data.put(String.valueOf(key), dataProb);
                                             }
                                         } else {
-                                            System.out.println("Problème de réglage: date Fin inferieure a date Embauche");
+                                            //System.out.println("Problème de réglage: date Fin inferieure a date Embauche");
                                             String[] dataProb = new String[]{String.valueOf((int) row.getCell(0).getNumericCellValue()), "Non réglé: Date Fin infénieure à Date Embauche", ""};
                                             key++;
                                             data.put(String.valueOf(key), dataProb);
                                         }
                                     } else if (contratService.nombreContratParEtat(Integer.valueOf(row.getCell(0).getStringCellValue()), 2) == 0) {
-                                        System.out.println("matricule n\'a pas de contrat");
+                                        //System.out.println("matricule n\'a pas de contrat");
                                         String[] dataProb = new String[]{String.valueOf(row.getCell(0).getStringCellValue()), "Non réglé: matricule n\'a pas de contrat", ""};
                                         key++;
                                         data.put(String.valueOf(key), dataProb);
                                     } else if (contratService.nombreContratParEtat(Integer.valueOf(row.getCell(0).getStringCellValue()), 2) > 1) {
-                                        System.out.println("matricule a plusieurs contrats légalisés");
+                                        //System.out.println("matricule a plusieurs contrats légalisés");
                                         String[] dataProb = new String[]{String.valueOf(row.getCell(0).getStringCellValue()), "Non réglé: matricule a plusieurs contrats légalisés", ""};
                                         key++;
                                         data.put(String.valueOf(key), dataProb);
@@ -3119,11 +3119,11 @@ public class PresenceService extends MbHibernateDaoSupport {
                                                         chantier.setId(idChantier);
                                                         presence.setChantier(chantier);
                                                     } else {
-                                                        System.out.println("problème de chantier");
+                                                        //System.out.println("problème de chantier");
                                                         return null;
                                                     }
                                                 } else {
-                                                    System.out.println("problème de chantier");
+                                                    //System.out.println("problème de chantier");
                                                     return null;
                                                 }
                                             }
@@ -3267,7 +3267,7 @@ public class PresenceService extends MbHibernateDaoSupport {
                                             presence.setDate(new Date(annee + "/" + mois + "/" + (cell.getColumnIndex() - 4)));
                                             presence.setFlag(false);
                                             presence.setNombreMinutes(0);
-                                            System.out.println("problème conversion de \"" + cell.getStringCellValue() + "\"");
+                                           // System.out.println("problème conversion de \"" + cell.getStringCellValue() + "\"");
                                             //								    	  	listePresencesProb.add(presence);
                                             key++;
                                             String[] dataProb = new String[]{presence.getSalarie().getId().toString(), "Probleme de conversion", presence.getDate().toString()};
@@ -3282,10 +3282,10 @@ public class PresenceService extends MbHibernateDaoSupport {
                                 Date dtSortie = null;
                                 if (row.getCell(4).getCellType() == Cell.CELL_TYPE_NUMERIC && DateUtil.isCellDateFormatted(row.getCell(4))) {
                                     dtSortie = row.getCell(4).getDateCellValue();
-                                    System.out.println("Date sortie:" + dtSortie);
+                                    //System.out.println("Date sortie:" + dtSortie);
                                 } else if (row.getCell(4).getCellType() == Cell.CELL_TYPE_STRING) {
                                     dtSortie = new Date(row.getCell(4).getStringCellValue().substring(6, 10) + "/" + row.getCell(4).getStringCellValue().substring(3, 5) + "/" + row.getCell(4).getStringCellValue().substring(0, 2));
-                                    System.out.println("Date sortie:" + dtSortie);
+                                    //System.out.println("Date sortie:" + dtSortie);
                                 }
 
                                 if (contratService.nombreContratParEtat((int) row.getCell(0).getNumericCellValue(), 2) == 1) {
@@ -3312,24 +3312,24 @@ public class PresenceService extends MbHibernateDaoSupport {
                                             contratService.reglerContrat(contrat.getId(), dateFin, idMotif);
                                             salarieService.changerEtatSalarie((int) (row.getCell(0).getNumericCellValue()), 3);
                                         } else {
-                                            System.out.println("Problème de réglage sur Divalto");
+                                            //System.out.println("Problème de réglage sur Divalto");
                                             String[] dataProb = new String[]{String.valueOf((int) row.getCell(0).getNumericCellValue()), "Non réglé: Problème de réglage sur Divalto", ""};
                                             key++;
                                             data.put(String.valueOf(key), dataProb);
                                         }
                                     } else {
-                                        System.out.println("Problème de réglage: date Fin inferieure a date Embauche");
+                                        //System.out.println("Problème de réglage: date Fin inferieure a date Embauche");
                                         String[] dataProb = new String[]{String.valueOf((int) row.getCell(0).getNumericCellValue()), "Non réglé: Date Fin infénieure à Date Embauche", ""};
                                         key++;
                                         data.put(String.valueOf(key), dataProb);
                                     }
                                 } else if (contratService.nombreContratParEtat((int) row.getCell(0).getNumericCellValue(), 2) == 0) {
-                                    System.out.println("matricule n\'a pas de contrat");
+                                    //System.out.println("matricule n\'a pas de contrat");
                                     String[] dataProb = new String[]{String.valueOf((int) row.getCell(0).getNumericCellValue()), "Non réglé: matricule n\'a pas de contrat", ""};
                                     key++;
                                     data.put(String.valueOf(key), dataProb);
                                 } else if (contratService.nombreContratParEtat((int) row.getCell(0).getNumericCellValue(), 2) > 1) {
-                                    System.out.println("matricule a plusieurs contrats légalisés");
+                                    //System.out.println("matricule a plusieurs contrats légalisés");
                                     String[] dataProb = new String[]{String.valueOf((int) row.getCell(0).getNumericCellValue()), "Non réglé: matricule a plusieurs contrats légalisés", ""};
                                     key++;
                                     data.put(String.valueOf(key), dataProb);

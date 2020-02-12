@@ -26,6 +26,7 @@ import ma.bservices.beans.ArticleDA;
 import ma.bservices.beans.Chantier;
 import ma.bservices.beans.DemandeApprovisionnement;
 import ma.bservices.beans.EtatDA;
+import ma.bservices.beans.TraceAchat;
 import ma.bservices.constantes.Constantes;
 import ma.bservices.mb.services.EtatDAMb;
 import ma.bservices.mb.services.Module;
@@ -33,6 +34,7 @@ import ma.bservices.services.AchatService;
 import ma.bservices.services.AdministrationService;
 import ma.bservices.services.ChantierService;
 import ma.bservices.services.FamilleArticle;
+import ma.bservices.services.ITraceAchatService;
 import ma.bservices.services.ParametrageService;
 import ma.bservices.tgcc.authentification.Authentification;
 import org.springframework.beans.BeansException;
@@ -52,6 +54,9 @@ public class NouveauDaMb implements Serializable {
     
     @ManagedProperty(value = "#{parametrageService}")
     private ParametrageService parametrageService;
+    
+    @ManagedProperty(value = "#{traceAchatService}")
+    private ITraceAchatService traceAchatService;
 
     @ManagedProperty(value = "#{chantierServiceEvol}")
     private ChantierService chantierService;
@@ -300,6 +305,20 @@ public class NouveauDaMb implements Serializable {
         this.buttonDis = buttonDis;
     }
 
+    public ITraceAchatService getTraceAchatService() {
+        return traceAchatService;
+    }
+
+    public void setTraceAchatService(ITraceAchatService traceAchatService) {
+        this.traceAchatService = traceAchatService;
+    }
+
+    
+
+    
+    
+    
+
 //    private void checkDA() throws IOException {
 //        if (DA == null) {
 //            ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
@@ -309,9 +328,10 @@ public class NouveauDaMb implements Serializable {
     @PostConstruct
     public void init() {
         try {
-            System.out.println("HELLO FROM ACHAT");
+            //System.out.println("HELLO FROM ACHAT");
             achatService = Module.ctx.getBean(AchatService.class);
             parametrageService = Module.ctx.getBean(ParametrageService.class);
+            traceAchatService = Module.ctx.getBean(ITraceAchatService.class);
             ELContext elContext = FacesContext.getCurrentInstance().getELContext();
             Authentification authentification = (Authentification) FacesContext.getCurrentInstance().getApplication().getELResolver().getValue(elContext, null, "authentification");
             demand = authentification.get_connected_user().getLogin();
@@ -345,7 +365,7 @@ public class NouveauDaMb implements Serializable {
     }
 
     public boolean qteValide() {
-        System.out.println("test qte");
+        //System.out.println("test qte");
         return !(quantite != null && quantite > 0.0);
     }
 
@@ -382,7 +402,7 @@ public class NouveauDaMb implements Serializable {
                 return;
             }
             ArticleDA articleDA = new ArticleDA();
-            System.out.println("id article: " + arti.getId());
+            //System.out.println("id article: " + arti.getId());
 
             articleDA.setArticle(arti);
             articleDA.setRefArticle(arti.getCodeArticle());
@@ -441,8 +461,8 @@ public class NouveauDaMb implements Serializable {
       //      listeArticle = achatService.listeRechercheArticle(0, 10, reference, valueFam1, valueFam2, valueFam3 != null ? valueFam3.trim() : null, reqDos, des);
 
               
-        System.out.println("********* Size Fam 2 " + fam2.size());
-        System.out.println("********* Size Fam 3 " + fam3.size());
+        //System.out.println("********* Size Fam 2 " + fam2.size());
+        //System.out.println("********* Size Fam 3 " + fam3.size());
     }
 
     public void fam3ByFam2() {
@@ -457,9 +477,9 @@ public class NouveauDaMb implements Serializable {
 
     public void articleByFam() {
         if (idChantier != null && idChantier != 0 || demandeApp.getDateLivraisonSouhaitee() != null) {
-            System.out.println("!!!!!!!!!!!!!!!!! ENTREE ??????????????????? ");
+            //System.out.println("!!!!!!!!!!!!!!!!! ENTREE ??????????????????? ");
             String reqDos = " dos=700  ";
-              System.out.println("********* REFERENCE: " + reference);
+              //System.out.println("********* REFERENCE: " + reference);
       //System.out.println("********* FAM1 " + valueFam1);
       //System.out.println("********* FAM2 " + valueFam2);
       //System.out.println("********* FAM3 " + valueFam3);
@@ -528,8 +548,22 @@ public class NouveauDaMb implements Serializable {
                  * ********* Web service d'envoi de la demande
                  * d'approvisionnement ********
                  */
+                /*
+                TraceAchat t = new TraceAchat();
+                t.setAction("SEND DA");
+                t.setDateOperation(new Date());
+                t.setUtilisateur(authentification.get_connected_user().toString());
+                t.setWs("listeArticleQuantite : "+listeArticleQuantite+" dateLivraisonSouhaitee: "+dateLivraisonSouhaitee+" codeChantier:"+codeChantier+" demandeur : "+demandeur+" demandeApp.getCommentaire(): "+demandeApp.getCommentaire());
+                traceAchatService.addTraceAchat(t);*/
                 Map<String, String> cmdInterneMap = achatService.commandeInterne_trsDepot(listeArticleQuantite, dateLivraisonSouhaitee, codeChantier, demandeur, demandeApp.getCommentaire());
-                //System.out.println("test1");
+                /*t = new TraceAchat();
+                t.setAction("RECIVE DA");
+                t.setDateOperation(new Date());
+                t.setUtilisateur(authentification.get_connected_user().toString());
+                t.setWs("cmdInterneMap :"+cmdInterneMap);
+                traceAchatService.addTraceAchat(t);   
+                */
+//System.out.println("test1");
                 if (!cmdInterneMap.get("referenceDADiva").equals("0") && !cmdInterneMap.get("referenceDADiva").equals("-1")) {
                     //System.out.println("IN if3");
 
@@ -578,5 +612,17 @@ public class NouveauDaMb implements Serializable {
             return;
         }
         buttonDis = !(idChantier != null || idChantier != 0 || demandeApp.getDateLivraisonSouhaitee() != null);
+    }
+    
+    public void testTrace(){
+        
+            ELContext elContext = FacesContext.getCurrentInstance().getELContext();
+            Authentification authentification = (Authentification) FacesContext.getCurrentInstance().getApplication().getELResolver().getValue(elContext, null, "authentification");
+            TraceAchat t = new TraceAchat();
+            t.setAction("SEND DA");
+            t.setDateOperation(new Date());
+            t.setUtilisateur(authentification.get_connected_user().toString());
+            t.setWs("listeArticleQuantite : ");
+            traceAchatService.addTraceAchat(t);
     }
 }

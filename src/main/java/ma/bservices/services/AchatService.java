@@ -36,12 +36,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.gson.Gson;
+import javax.el.ELContext;
 //import com.rivetlogic.core.cma.repo.Ticket;
 
 import ma.bservices.tgcc.webService.DivaltoService;
 import ma.bservices.tgcc.webService.DivaltoServiceSoap;
 import javax.faces.bean.ManagedProperty;
+import javax.faces.context.FacesContext;
 import ma.bservices.beans.Permission;
+import ma.bservices.beans.TraceAchat;
+import ma.bservices.mb.services.Module;
+import ma.bservices.tgcc.authentification.Authentification;
 import ma.bservices.tgcc.service.Engin.UtilisateurService;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,12 +69,26 @@ public class AchatService {
     private int nbRepValidationBLWS = 0;
     private int nbRepDemandeApproWS = 0;
 
+                @ManagedProperty(value = "#{traceAchatService}")
+                private ITraceAchatService traceAchatService;
+                
     @Resource(name = "administrationService")
     private AdministrationService administrationService;
     
     @Autowired
     private UtilisateurService utilisateurService;
 
+    public ITraceAchatService getTraceAchatService() {
+        return traceAchatService;
+    }
+
+    public void setTraceAchatService(ITraceAchatService traceAchatService) {
+        this.traceAchatService = traceAchatService;
+    }
+
+    
+    
+    
     public SessionFactory getSessionFactory() {
         return sessionFactory;
     }
@@ -1243,6 +1262,8 @@ public class AchatService {
      * @return référence de la demande d'approvisionnement créée sur Divalto
      * avec le nombre des artciles demandés
      */
+    
+    
     public Map<String, String> commandeInterne_trsDepot(String listeArticleQuantite,String dateLivraisonSouhaitee, String codeChantier, String demandeur, String commentaire) {
 
         Map<String, String> mapCmdInterne = new HashMap<String, String>();
@@ -1255,8 +1276,28 @@ public class AchatService {
             System.out.println("try");
             Holder<Integer> hI = new Holder<>();
             Holder<String> hS = new Holder<>();
-            System.out.println("requete DA WS avant exec: <Task>commandeInterne_trsDepot_v2<ref_qte>" + StringEscapeUtils.unescapeHtml(listeArticleQuantite) + "<dateS>" + dateLivraisonSouhaitee + "<chantier>" + codeChantier + "<demandeur>" + demandeur + "<commentaire>" + StringEscapeUtils.unescapeHtml(commentaire));
-
+            
+            traceAchatService = Module.ctx.getBean(ITraceAchatService.class);
+            
+            /*** trace ws*/
+            
+                TraceAchatServiceImp tr = new TraceAchatServiceImp();
+                ELContext elContext = FacesContext.getCurrentInstance().getELContext();
+                Authentification authentification = (Authentification) FacesContext.getCurrentInstance().getApplication().getELResolver().getValue(elContext, null, "authentification");
+                
+                try {
+                    TraceAchat t = new TraceAchat();
+                    t.setAction("SEND DA");
+                    t.setDateOperation(new Date());
+                    t.setUtilisateur(authentification.get_connected_user().getLogin());
+                    t.setWs("requete DA WS avant exec: <Task>commandeInterne_trsDepot_v2<ref_qte>" + StringEscapeUtils.unescapeHtml(listeArticleQuantite) + "<dateS>" + dateLivraisonSouhaitee + "<chantier>" + codeChantier + "<demandeur>" + demandeur + "<commentaire>" + StringEscapeUtils.unescapeHtml(commentaire));
+                    //System.out.println("TraceAchat :::::> 1)  "+t.toString());
+                    traceAchatService.addTraceAchat(t);
+                } catch (Exception e) {
+                    System.out.println("Erreur envoi de trace DA car "+e.getMessage());
+                }
+            /*** fin trace ws*/
+            
 //            divaltoServiceSoap.webServiceDiva("<ACTION>WSTGCC", "<Task>commandeInterne_trsDepot<ref_qte>" + StringEscapeUtils.unescapeHtml(listeArticleQuantite) + "<dateS>" + dateLivraisonSouhaitee + "<chantier>" + codeChantier + "<demandeur>" + demandeur + "<commentaire>" + StringEscapeUtils.unescapeHtml(commentaire), hI, hS);
             divaltoServiceSoap.webServiceDiva("<ACTION>WSTGCC", "<Task>commandeInterne_trsDepot_v2<ref_qte>" + StringEscapeUtils.unescapeHtml(listeArticleQuantite) + "<dateS>" + dateLivraisonSouhaitee + "<chantier>" + codeChantier + "<demandeur>" + demandeur + "<commentaire>" + StringEscapeUtils.unescapeHtml(commentaire), hI, hS);
             String chaine = StringEscapeUtils.unescapeHtml(hS.value);
@@ -1266,8 +1307,23 @@ public class AchatService {
 //				nbRepDemandeApproWS++;
 //				commandeInterne_trsDepot(listeArticleQuantite, dateLivraisonSouhaitee,  codeChantier, demandeur);
 //			}
-            System.out.println("requete cmd interne WS: <Task>commandeInterne_trsDepot_v2<ref_qte>" + StringEscapeUtils.unescapeHtml(listeArticleQuantite) + "<dateS>" + dateLivraisonSouhaitee + "<chantier>" + codeChantier + "<demandeur>" + demandeur + "<commentaire>" + StringEscapeUtils.unescapeHtml(commentaire));
-            System.out.println("reponse cmd interne WS: " + chaine);
+
+            /*** trace ws*/
+                try {
+                    TraceAchat t = new TraceAchat();
+                    t.setAction("RECEIV DA");
+                    t.setDateOperation(new Date());
+                    t.setUtilisateur(authentification.get_connected_user().getLogin());
+                    t.setWs(chaine);
+                    //System.out.println("TraceAchat :::::> 2)  "+t.toString());
+                    traceAchatService.addTraceAchat(t);
+                } catch (Exception e) {
+                    System.out.println("Erreur receptoin de trace DA car "+e.getMessage());
+                }
+            /*** fin trace ws*/
+            
+            //System.out.println("requete cmd interne WS: <Task>commandeInterne_trsDepot_v2<ref_qte>" + StringEscapeUtils.unescapeHtml(listeArticleQuantite) + "<dateS>" + dateLivraisonSouhaitee + "<chantier>" + codeChantier + "<demandeur>" + demandeur + "<commentaire>" + StringEscapeUtils.unescapeHtml(commentaire));
+            //System.out.println("reponse cmd interne WS: " + chaine);
 
             // {"referenceDADivalto":"0", "nombreArticlesDADivalto":"0"}
             if (chaine.trim().startsWith("{") && chaine.trim().endsWith("}")) {

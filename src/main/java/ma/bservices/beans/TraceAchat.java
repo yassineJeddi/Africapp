@@ -31,7 +31,7 @@ public class TraceAchat implements Serializable {
     private String action;
     @Column(name = "DATEOPERATION")
     private Date dateOperation;
-    @Column(name = "WS")
+    @Column(name = "WS", columnDefinition = "VARCHAR(1000)")
     private String ws;
 
     public Long getId() {
@@ -98,7 +98,9 @@ public class TraceAchat implements Serializable {
 
     @Override
     public String toString() {
-        return "ma.bservices.beans.TraceAchat[ id=" + id + " ]";
+        return "TraceAchat{" + "id=" + id + ", utilisateur=" + utilisateur + ", action=" + action + ", dateOperation=" + dateOperation + ", ws=" + ws + '}';
     }
+
+    
     
 }

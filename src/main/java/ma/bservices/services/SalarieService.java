@@ -717,9 +717,9 @@ public class SalarieService   {
         Salarie s_toReturn = salaries.get(0);
         if (salaries.size() > 1) {
             for (Salarie s : salaries) {
-                System.out.println("SALARIE : " + s.getNom());
+                //System.out.println("SALARIE : " + s.getNom());
                 if (s instanceof Mensuel) {
-                    System.out.println("MENSUEL");
+                    //System.out.println("MENSUEL");
                     if (((Mensuel) s).getStatut().compareTo("1") == 0) {
                         s_toReturn = s;
                     }

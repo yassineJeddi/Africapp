@@ -13,6 +13,15 @@
         <property name="sessionFactory" ref="sessionFactory" />    
     </bean>
     
+    <!-- Trace Achat -->
+    
+    <bean id="traceAchatService" class="ma.bservices.services.TraceAchatServiceImp">
+        <property name="traceAchatDao" ref="traceAchatDao" /> 
+    </bean>
+  
+    <bean id="traceAchatDao" class="ma.bservices.dao.TraceAchatDaoImp">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
     <!-- Trace Utilisateur -->
     
     <bean id="traceUtilisateurService" class="ma.bservices.tgcc.service.Engin.TraceUtilisateurServiceImp">
@@ -656,8 +665,11 @@
                 <!--<prop key="hibernate.dialect">org.hibernate.dialect.SQLServer2008Dialect</prop>--> 
                 <prop key="hibernate.show_sql">false</prop>  
                 <!--<prop key="hibernate.format_sql">true</prop>--> 
+                
+                
             </props>
         </property>
+        
         
         <property name="annotatedClasses">
             <list>

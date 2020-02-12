@@ -538,7 +538,7 @@ public class PointageEnginMb implements Serializable {
     }
 
     public void setEtatTransfer(PointageEngin i) {
-        System.out.println("ETAT TRANSFER : " + i.getIDEngin().getEtatTransfert());
+        //System.out.println("ETAT TRANSFER : " + i.getIDEngin().getEtatTransfert());
         isTranfer = i.getIDEngin().getEtatTransfert();
 
     }
@@ -561,7 +561,7 @@ public class PointageEnginMb implements Serializable {
      * Enregistre les pointage dans la BD
      */
     public void validate() {
-        System.out.println("ma.bservices.tgcc.mb.Engin.PointageEnginMb.validate()");
+        //System.out.println("ma.bservices.tgcc.mb.Engin.PointageEnginMb.validate()");
         Boolean havePointed = pointageEnginSerive.havePointed(chantierSelect, date);
         
         if (havePointed == true) {
@@ -659,7 +659,7 @@ public class PointageEnginMb implements Serializable {
                     getPointageEnginByEngin(Boolean.TRUE);
                     filter();
                     }else {
-                    System.out.println("messageErrorPointage : " + messageErrorPointage);
+                    //System.out.println("messageErrorPointage : " + messageErrorPointage);
                     //FacesContext context = FacesContext.getCurrentInstance();
                     messageErrorPointage=messageErrorPointage.substring(0, messageErrorPointage.indexOf("."));
                     String message = Message.ERROR_DONNEE_PE + date_format + " " + messageErrorPointage;

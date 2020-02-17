@@ -667,6 +667,11 @@
                 <!--<prop key="hibernate.format_sql">true</prop>--> 
                 
                 
+                <prop key="hibernate.c3p0.min_size">5</prop>
+                <prop key="hibernate.c3p0.max_size">50</prop>
+                <prop key="hibernate.c3p0.timeout">300</prop>
+                <prop key="hibernate.c3p0.max_statements">50</prop>
+                <prop key="hibernate.c3p0.idle_test_period">3000</prop>
             </props>
         </property>
         
@@ -676,6 +681,7 @@
                 <value>ma.bservices.tgcc.Entity.Engin</value>
             </list>
         </property>
+        
     </bean>  
           
     <bean id="dataSource" 

@@ -73,6 +73,12 @@
             <version>4.3.8.Final</version>
             <type>jar</type>
         </dependency>
+        <!-- Hibernate c3p0 connection pool -->
+        <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-c3p0</artifactId>
+                <version>3.6.3.Final</version>
+        </dependency>
 <!--        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>

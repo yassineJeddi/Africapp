@@ -325,8 +325,8 @@ public class DossierMedicalDaoImpl extends MbHibernateDaoSupport implements Doss
     @Override
     public Long addAntecedent(Antecedent antecedent) {
         Transaction tx = null;
-        Session session = getSessionFactory().openSession();
         try {
+            Session session = getSessionFactory().openSession();
             session.setFlushMode(FlushMode.AUTO);
             tx = session.beginTransaction();
             session.persist(antecedent);
@@ -335,7 +335,6 @@ public class DossierMedicalDaoImpl extends MbHibernateDaoSupport implements Doss
         } catch (DataAccessException exp) {
             System.err.print("Exception " + exp.getMessage());
             tx.rollback();
-            session.close();
             return null;
         }
         return antecedent.getId();

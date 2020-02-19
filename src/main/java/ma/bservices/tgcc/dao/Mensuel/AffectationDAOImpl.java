@@ -8,6 +8,7 @@ package ma.bservices.tgcc.dao.Mensuel;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import ma.bservices.tgcc.Entity.Affectation;
@@ -29,42 +30,52 @@ public class AffectationDAOImpl extends MbHibernateDaoSupport implements Affecta
 
     @Override
     public void saveAffectation(List<Affectation> affect) {
-
-        Session session = getSessionFactory().openSession();
-        session.setFlushMode(FlushMode.AUTO);
-
-        session.beginTransaction();
-        for (Affectation f : affect) {
-            session.save(f);
+        try {
+                Session session = getSessionFactory().openSession();
+                session.setFlushMode(FlushMode.AUTO);
+                session.beginTransaction();
+                for (Affectation f : affect) {
+                    session.save(f);
+                }
+                session.getTransaction().commit();
+                session.close();
+        } catch (Exception e) {
+            System.out.println("Errer d'AffectationDAOImpl car "+e.getMessage());
         }
-        session.getTransaction().commit();
-        session.close();
     }
 
     @Override
     public List<Date> getDatesOfAffectation(Mensuel _m) {
-
-        List l = this.getHibernateTemplate().find("select distinct a.dateeffect "
+         List<Date> l = new ArrayList<Date>();
+        try {
+            
+        l = (List<Date>) this.getHibernateTemplate().find("select distinct a.dateeffect "
                 + "FROM Affectation a "
                 + "where a.mensuel.id = " + _m.getId()
                 + " and a.archived = " + Boolean.FALSE
                 + "order by a.dateeffect desc ");
-        return l;
 
+        } catch (Exception e) {
+            System.out.println("Errer d'AffectationDAOImpl car "+e.getMessage());
+        }
+        return l;
     }
 
     @Override
     public List<Affectation> getAffectationOfMensuel(Mensuel _m, Date date) {
-
-        if (date == null) {
-            return null;
-        }
-
-        List l_aff = this.getHibernateTemplate().find("FROM Affectation a "
+        List<Affectation> l = new ArrayList<Affectation>();
+        try {
+           if (date != null) { 
+               l = (List<Affectation>) this.getHibernateTemplate().find("FROM Affectation a "
                 + "where a.mensuel.id = " + _m.getId()
                 + " and a.dateeffect = '" + date.toString() + "'"
                 + " and a.archived = " + Boolean.FALSE);
-        return l_aff;
+                }
+
+        } catch (Exception e) {
+            System.out.println("Errer getAffectationOfMensuel car "+e.getMessage());
+        }
+        return l;
 
     }
 
@@ -73,15 +84,16 @@ public class AffectationDAOImpl extends MbHibernateDaoSupport implements Affecta
      */
     @Override
     public List<Affectation> Find_All() {
-
-        List l = this.getHibernateTemplate().find("SELECT c FROM Affectation c "
+        List<Affectation>  l = new ArrayList<Affectation>();
+        try {
+         l = (List<Affectation>) this.getHibernateTemplate().find("SELECT c FROM Affectation c "
                 + "WHERE c.archived = " + Boolean.FALSE);
-        if (l.size() > 0) {
-
-            return l;
+            
+        } catch (Exception e) {
+            System.out.println("Errer Find_All car "+e.getMessage());
         }
 
-        return null;
+        return l;
     }
 
     /*
@@ -90,18 +102,22 @@ public class AffectationDAOImpl extends MbHibernateDaoSupport implements Affecta
     @Override
     public void deleteAffectation(List<Affectation> affect) {
 
-        Session session = getSessionFactory().openSession();
-        session.setFlushMode(FlushMode.AUTO);
+        try {
+                Session session = getSessionFactory().openSession();
+                session.setFlushMode(FlushMode.AUTO);
 
-        session.beginTransaction();
-        for (Affectation f : affect) {
-            f.setArchived(Boolean.TRUE);
-            f.setDateArchivage(new Date());
+                session.beginTransaction();
+                for (Affectation f : affect) {
+                    f.setArchived(Boolean.TRUE);
+                    f.setDateArchivage(new Date());
 
-            session.update(f);
+                    session.update(f);
+                }
+                session.getTransaction().commit();
+                session.close();
+        } catch (Exception e) {
+            System.out.println("Errer deleteAffectation car "+e.getMessage());
         }
-        session.getTransaction().commit();
-        session.close();
     }
 
     @Override

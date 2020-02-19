@@ -489,6 +489,10 @@ public class EnginPanneMb implements Serializable {
         }
 
     }
+    public void prepPanne(Panne p){
+        lastPanne = p;
+        dernierChan_Avant_Depot();
+    }
 
     public void dernierChan_Avant_Depot() {
         List<PointageEngin> listChan = new ArrayList<>();

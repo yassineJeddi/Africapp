@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.Entity;
+import ma.bservices.beans.Chantier;
 
 /**
  *
@@ -209,6 +210,9 @@ public class Visite implements Serializable{
     
     @ManyToOne
     private DossierMedical dossierMedical; 
+    
+    @ManyToOne
+    private Chantier chantier; 
     
     @Column(name = "PROCH_VIS")
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -744,6 +748,14 @@ public class Visite implements Serializable{
 
     public void setDureeOptique(String dureeOptique) {
         this.dureeOptique = dureeOptique;
+    }
+
+    public Chantier getChantier() {
+        return chantier;
+    }
+
+    public void setChantier(Chantier chantier) {
+        this.chantier = chantier;
     }
 
      

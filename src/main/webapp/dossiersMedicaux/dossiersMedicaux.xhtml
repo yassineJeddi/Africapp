@@ -4,7 +4,8 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:ui="http://java.sun.com/jsf/facelets"  
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
        >
      
     <h:head>
@@ -20,32 +21,34 @@
                     Chargement<br /> <h:graphicImage value="../images/loading.gif" />
                 </p:blockUI>
                 <p:panel id="pannel"> 
-                <h:form id="tableDM">    
+                <h:form id="tableDM" onkeypress="return event.keyCode != 13">    
                     <p:growl showDetail="true" autoUpdate="true" id="msgs"  />
+                    <p:blockUI widgetVar="block" block="tableDM" >
+                        Chargement<br /> <h:graphicImage value="../images/loading.gif" />
+                    </p:blockUI>
                     <h:panelGrid columns="4" style="width:98%" cellpadding="5">
-                        <p:selectOneMenu id="listChantierId" value="#{dossMb.idChantier}" panelStyle="width:180px" style="width:100%" filter="true" filterMatchMode="contains" >
+                        <p:selectOneMenu id="listChantierId" value="#{dossMb.idChantier}" panelStyle="width:180px" style="width:100%" filter="true" filterMatchMode="contains" 
+                                         >
                             <f:selectItem itemLabel="--- Selectionner Chantier ---" itemValue="0" />
                             <f:selectItems value="#{dossMb.chantiers}" var="c" itemLabel="#{c.code}" itemValue="#{c.id}" />
-                            <p:ajax event="change" listener="#{dossMb.listeDossiers()}" update=":tableDM" />
-                            <p:ajax event="select" listener="#{dossMb.listeDossiers()}" update=":tableDM" />
+                            <p:ajax event="select" listener="#{dossMb.listeDossiers()}" update=":tableDM" onstart="PF('vtWidget').clearFilters()"  />
+                            <p:ajax event="change" listener="#{dossMb.listeDossiers()}" update=":tableDM" onstart="PF('vtWidget').clearFilters()" />
                         </p:selectOneMenu> 
                          
                         <p:selectOneRadio id="actifId" value="#{dossMb.idStatut}"  style="float:right" > 
                             <f:selectItem itemLabel="Actifs"   itemValue="1" />
                             <f:selectItem itemLabel="Archivés" itemValue="0" />
-                            <p:ajax event="change" listener="#{dossMb.listeDossiersStatut()}" update=":tableDM" />
-                            <p:ajax event="select" listener="#{dossMb.listeDossiersStatut()}" update=":tableDM" />
+                            <p:ajax event="select" listener="#{dossMb.listeDossiersStatut()}" update=":tableDM" onstart="PF('vtWidget').clearFilters()"  />
+                            <p:ajax event="change" listener="#{dossMb.listeDossiersStatut()}" update=":tableDM" onstart="PF('vtWidget').clearFilters()"  />
                         </p:selectOneRadio> 
                          
-                        <p:commandButton id="btnCharger" 
-                                         onstart="PF('block').show()" 
-                                         oncomplete="PF('block').hide()"  
+                        <p:commandButton id="btnCharger" onclick="PF('vtWidget').clearFilters()"
+                                         onstart="PF('block').show()"  oncomplete="PF('block').hide()"  
                                          class="btn btn-switch active"  value="Charger" icon="fa fa-spinner " 
                                          update=":tableDM" style="float:right" 
                                          action="#{dossMb.chargerDonnees()}"   />
-                        
-                        <p:commandButton id="btnAjouter" onstart="PF('block').show()" oncomplete="PF('block').hide()"  
-                                         rendered="#{dossMb.idStatut eq 0}"
+                        <p:commandButton id="btnAjouter"  onstart="PF('block').show()" oncomplete="PF('block').hide()"  
+                                         rendered="false"  
                                          class="btn btn-switch active"  value="Ajouter" action="#{dossMb.listenerDlgAdd()}"
                                          icon="fa fa-plus" update=":formdlgId" style="float:right" />
                         
@@ -58,7 +61,7 @@
                                  paginatorPosition="bottom" paginator="true" 
                                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                  rowsPerPageTemplate="5,10,15" widgetVar="vtWidget"
-                                 id="dossierTable" 
+                                 id="dossierTable"  
                                  
                                  >
                          
@@ -89,32 +92,25 @@
                     </p:column> 
                     <p:column headerText="Docteur" filterBy="#{dos.docteur}" filterMatchMode="contains" >
                         <h:outputText value="#{dos.docteur}" />
-                    </p:column> 
-                        <p:column rendered="false" headerText="Infos AT" filterBy="#{dos.docteur}" filterMatchMode="contains" >
-                        <h:outputText value="#{dos.titularisation}" />
-                    </p:column>   
-                    <p:column headerText="Dernière Visite" filterBy="" filterMatchMode="contains" >
+                    </p:column>    
+                    <p:column headerText="Dernière Visite" filterBy="#{dos.lastVisite}" filterMatchMode="contains" >
                         <h:outputText value="#{dos.lastVisite}" />
                     </p:column>   
-                    <p:column headerText="Prochaine visite" filterBy="" filterMatchMode="contains" >
+                    <p:column headerText="Prochaine visite" filterBy="#{dos.prochaineVisite}" filterMatchMode="contains" >
                         <h:outputText value="#{dos.prochaineVisite}" />
                     </p:column> 
                     <p:column headerText="Actions" >
-                        <p:commandButton rendered="false" style="float:left" icon="fa fa-plus"   title="Créer dossier"
-                                         onstart="PF('block').show()" oncomplete="PF('block').hide()"
-                                         action="#{dossMb.creeDossier(dos.salarie)}" 
-                                         update=":formdlgId" >
-                        </p:commandButton>  
+                         
                         <p:commandButton icon="fa fa-list" title="Détail" style="background-color:#712D35;float:left"
                                          onstart="PF('block').show()" oncomplete="PF('block').hide()"
-                                         action="#{dossMb.afficherDossier(dos)}" 
+                                         action="#{dossMb.afficherDossier(dos)}"  
                                          update=":shomFormId," >
                         </p:commandButton> 
-                        
                          
-                        <p:commandButton icon="fa fa-file-pdf-o" style="background-color:#712D35" action="#{dossMb.chargerFichier(dos)}" 
+                        <p:commandButton icon="fa fa-file-pdf-o" style="background-color:#712D35"  
+                                         action="#{dossMb.chargerFichier(dos)}" 
                                          oncomplete="PF('tableDoc').show()" update=":formTableDoc"/>
-                    
+                       
                     </p:column>  
                         
                     </p:dataTable>
@@ -122,12 +118,14 @@
                     
                     
                 <p:dialog header="Documents" width="80%" height="500" resizable="false" modal="true" widgetVar="tableDoc" closable="true">
-                     <h:form id="formTableDoc"> 
+                     <h:form id="formTableDoc" onkeypress="return event.keyCode != 13"> 
                         <p:tabView id="tabview_1">
                             <p:tab title="Document">
-                                <p:commandButton value="Ajouter document pdf" icon="fa fa-upload" oncomplete="PF('telechargerVar').show()" update=":form_uploader" /> 
+                                <p:commandButton value="Ajouter document pdf" icon="fa fa-upload"  
+                                                 oncomplete="PF('telechargerVar').show()" update=":form_uploader" /> 
+                               
                                 <br /><br />
-                                <h:form id="form11">
+                                <h:form id="form11" onkeypress="return event.keyCode != 13">
                                     <p:dataTable id="tbl" var="documentIt" value="#{dossMb.listaFichiers}" 
                                                  rows="10"  paginator="true" editable="true" paginatorTemplate="{CurrentPageReport} 
                                                  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
@@ -148,9 +146,10 @@
                                         </p:column>
                                         <p:column headerText="Opérations" style="width:150px">
                                             <p:commandButton icon="ui-icon-document"
-                                                             title ="Consulter Document" 
+                                                             title ="Consulter Document"  
                                                              action="#{dossMb.visualiser(documentIt.chemin)}" 
                                                              oncomplete="PF('consulterDoc').show()" update=":visuliser_id"/> 
+                                           
                                         </p:column> 
                                     </p:dataTable>
                                 </h:form>
@@ -159,7 +158,7 @@
                     </h:form>
                 </p:dialog>
                     <p:dialog header="Ajouter un nouvel type à " width="300" resizable="false" height="150" modal="true" widgetVar="addAntecedent">
-                    <h:form id="addAntecedent">    
+                    <h:form id="addAntecedent" onkeypress="return event.keyCode != 13">    
                         <p:panelGrid columns="1"  styleClass="ui-noborder" style="width:100%" >
                             
                                 <p:inputText value="#{dossMb.antecedentToAdd.libelle}"  style="width:100%" ></p:inputText>
@@ -180,7 +179,7 @@
                     </h:form>
                 </p:dialog>
                 <p:dialog header="PDF" width="80%" resizable="false" height="500" modal="true" widgetVar="consulterDoc">
-                    <h:form id="visuliser_id">    
+                    <h:form id="visuliser_id" onkeypress="return event.keyCode != 13">    
                         <p:media value="#{imageBean.bon}" width="100%" height="500" player="pdf"> 
                             <f:param name="path" value="#{dossMb.selectedDoc}" />
                         </p:media>
@@ -188,7 +187,7 @@
                 </p:dialog>
                 <!--                Dialogs                 -->
                 <p:dialog header="AUTRES VISITES" widgetVar="dlg500"  modal="true" width="80%"   height="350">
-                    <h:form id="visiteShowFormIdAutre">  
+                    <h:form id="visiteShowFormIdAutre" onkeypress="return event.keyCode != 13">  
                          <p:panelGrid  styleClass="ui-noborder" style="width:100%" > 
                             <p:row>   
                                 <p:column><p:outputLabel value="Date:"></p:outputLabel> </p:column> 
@@ -331,17 +330,23 @@
                            </p:panel>
                         
                         <br></br>
-                        <p:commandButton icon="ui-icon-circle-check" value="Générer Fiche"  actionListener="#{dossMb.addFichier(dossMb.visiteToShow)}" update=":visuliser_id"
-                                                      oncomplete="PF('consulterDoc').show()"  ></p:commandButton>
+                        <p:commandButton icon="ui-icon-circle-check" value="Générer Fiche"   
+                                         actionListener="#{dossMb.addFichier(dossMb.visiteToShow)}" update=":visuliser_id"
+                                         oncomplete="PF('consulterDoc').show()"  ></p:commandButton>
+                        
+                        
                         <p:commandButton style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()" onclick="PF('vtWidget').clearFilters()" 
-                                         action="#{dossMb.updateVisite()}"  update=":shomFormId, :tableDM" value="Modifier"  ></p:commandButton>  
+                                         action="#{dossMb.updateVisite()}"   
+                                         update=":shomFormId, :tableDM" value="Modifier"  
+                                         ></p:commandButton>  
+                       
                         <p:commandButton style="float:right" value="Annuler"  onclick="PF('dlg500').hide()"  ></p:commandButton>  
                     </h:form>
                 </p:dialog> 
                 
                 
                 <p:dialog header="AJOUT VISITE AT" widgetVar="dlg40"  modal="true" width="80%" height="280">
-                    <h:form id="visiteAddFormIdAt"> 
+                    <h:form id="visiteAddFormIdAt" onkeypress="return event.keyCode != 13"> 
                         <p:panelGrid  styleClass="ui-noborder" >
                             <p:row>
                                 <p:column> 
@@ -408,8 +413,8 @@
                                 </p:column>
                                 <p:column colspan="2">
                                    <p:selectOneRadio value="#{dossMb.visiteToAdd.reamenagement}"  > 
-                                        <f:selectItem itemLabel="OUI"         itemValue="oui" />
-                                        <f:selectItem itemLabel="NON"       itemValue="non" />   
+                                        <f:selectItem itemLabel="OUI"         itemValue="OUI" />
+                                        <f:selectItem itemLabel="NON"       itemValue="NON" />   
                                     </p:selectOneRadio> 
                                 </p:column>  
                                 <p:column> 
@@ -425,13 +430,16 @@
                         
                         <br></br> 
                         <p:commandButton style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()" onclick="PF('vtWidget').clearFilters()"
-                                         action="#{dossMb.enregistrerVisite()}"  update=":shomFormId, :tableDM" value="Enregistrer"   ></p:commandButton>  
+                                         action="#{dossMb.enregistrerVisite()}"  
+                                         update=":shomFormId, :tableDM" value="Enregistrer"    
+                                         ></p:commandButton> 
+                       
                         <p:commandButton style="float:right" value="Annuler"  onclick="PF('dlg40').hide()"  ></p:commandButton>  
                     </h:form>
                 </p:dialog> 
                 
                 <p:dialog header="Uploader" widgetVar="telechargerVar" width="40%" minHeight="50" >
-                        <h:form id="form_uploader" enctype="multipart/form-data">  
+                        <h:form id="form_uploader" enctype="multipart/form-data" onkeypress="return event.keyCode != 13">  
                             <div class="row">
                                 <div class="col-lg-6 form-group">
                                     <p:outputLabel value="Type (*):" /> 
@@ -450,7 +458,7 @@
                     </p:dialog>
                 
 		<p:dialog header="AJOUT AUTRES VISITES" widgetVar="dlg400"  modal="true" width="80%" height="400">
-                    <h:form id="visiteAddFormIdAu"> 
+                    <h:form id="visiteAddFormIdAu" onkeypress="return event.keyCode != 13"> 
                         <p:panelGrid  styleClass="ui-noborder" style="width:100%" > 
                             <p:row>   
                                 <p:column><p:outputLabel value="Date:"></p:outputLabel> </p:column> 
@@ -593,13 +601,16 @@
                            </p:panel>
                         <br></br>
                         <br></br>
-                        <p:commandButton style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()" onclick="PF('vtWidget').clearFilters()"
-                                         action="#{dossMb.enregistrerVisite()}"  update=":shomFormId, :tableDM" value="Enregistrer"   ></p:commandButton>  
+                        <p:commandButton style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()" 
+                                         onclick="PF('vtWidget').clearFilters()"
+                                         action="#{dossMb.enregistrerVisite()}"   
+                                         update=":shomFormId, :tableDM" value="Enregistrer"   ></p:commandButton>  
+                       
                         <p:commandButton style="float:right" value="Annuler"  onclick="PF('dlg400').hide()"  ></p:commandButton>  
                     </h:form>
                 </p:dialog>
                 <p:dialog header="VISITE AT" widgetVar="dlg50"  modal="true" width="80%"   height="250">
-                    <h:form id="visiteShowFormIAT">  
+                    <h:form id="visiteShowFormIAT" onkeypress="return event.keyCode != 13">  
                         
                         <p:panelGrid  styleClass="ui-noborder" >
                             <p:row>
@@ -687,13 +698,15 @@
                         <br></br>
                         <p:commandButton icon="ui-icon-circle-check" value="Générer Fiche"  actionListener="#{dossMb.addFichier(dossMb.visiteToShow)}" update=":visuliser_id"
                                                       oncomplete="PF('consulterDoc').show()"  ></p:commandButton>
-                        <p:commandButton style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()" onclick="PF('vtWidget').clearFilters()"
+                       
+                        <p:commandButton style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()" onclick="PF('vtWidget').clearFilters()" 
                                          action="#{dossMb.updateVisite()}"  update=":shomFormId, :tableDM" value="Modifier"  ></p:commandButton>  
+                        
                         <p:commandButton style="float:right" value="Annuler"  onclick="PF('dlg50').hide()"  ></p:commandButton>  
                     </h:form>
                 </p:dialog> 
                 <p:dialog header="VISITE EMBAUCHE" widgetVar="dlg5"  modal="true" width="80%"   height="500">
-                    <h:form id="visiteShowFormId">  
+                    <h:form id="visiteShowFormId" onkeypress="return event.keyCode != 13">  
                         <p:panelGrid columns="6" styleClass="ui-noborder" >
                             <p:outputLabel for="textB1" value="Docteur" />
                             <p:inputText disabled="true" id="textB1" value="#{dossMb.visiteToShow.docteur}" />
@@ -771,22 +784,31 @@
                                         <p:inputText value="#{dossMb.visiteToShow.locoMoteur}"></p:inputText>
                                     </p:column>
                                 </p:row>
-                                <p:row>
-                                    <p:column rendered="false" >     
-                                        <p:outputLabel value="Dynamomètre:"></p:outputLabel>
-                                    </p:column> 
-                                    <p:column rendered="false" >    
-                                        <p:inputText value="#{dossMb.visiteToShow.dynamometre}" ></p:inputText>
-                                    </p:column> 
+                                 
+                            </p:panelGrid>  
+                        </p:panel>
+                        
+                        <p:panel style="width:100%" header="APPAREIL PULMONAIRE" >
+                            <p:panelGrid columns="6" styleClass="ui-noborder" style="width:100%" > 
+                                <p:row> 
                                     <p:column>    
                                         <p:outputLabel value="EXAMEN RADIOLOGIQUE:"></p:outputLabel>
                                     </p:column> 
+                                    <p:column colspan="4">    
+                                        <p:inputText value="#{dossMb.visiteToShow.examenRadio}" style="width:100%"  ></p:inputText>
+                                    </p:column>  
+                                </p:row>  
+                                <p:row>
                                     <p:column>    
-                                        <p:inputText value="#{dossMb.visiteToShow.examenRadio}" ></p:inputText>
-                                    </p:column>
+                                        <p:outputLabel value="EXAMEN CLINIQUE:"></p:outputLabel>
+                                    </p:column> 
+                                    <p:column colspan="4">     
+                                       <p:inputText value="#{dossMb.visiteToShow.dynamometre}" style="width:100%" ></p:inputText>
+                                   </p:column>   
                                 </p:row>
                             </p:panelGrid>  
                         </p:panel>
+                        
                             
                         
                         <p:panel header="APPAREIL CIRCULATOIRE" >
@@ -1025,17 +1047,18 @@
                                </p:panelGrid> 
                            </p:panel>
                         <br></br>
-                        <p:commandButton icon="ui-icon-circle-check" value="Générer Fiche"  actionListener="#{dossMb.addFichier(dossMb.visiteToShow)}" update=":visuliser_id"
-                                                      oncomplete="PF('consulterDoc').show()"  ></p:commandButton>
-                        <p:commandButton style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()" onclick="PF('vtWidget').clearFilters()"
+                        <p:commandButton icon="ui-icon-circle-check" value="Générer Fiche"  actionListener="#{dossMb.addFichier(dossMb.visiteToShow)}" update=":visuliser_id"           
+                                         oncomplete="PF('consulterDoc').show()"  ></p:commandButton>
+                        <p:commandButton style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()" onclick="PF('vtWidget').clearFilters()"     
                                          action="#{dossMb.updateVisite()}"  update=":shomFormId" value="Enregistrer"  ></p:commandButton>  
+                        
                         <p:commandButton style="float:right" value="Annuler"  onclick="PF('dlg5').hide()"  ></p:commandButton>  
                     </h:form>
                 </p:dialog> 
                         
                             
                 <p:dialog header="AJOUT VISITE EMBAUCHE" widgetVar="dlg4"  modal="true" width="80%" height="500">
-                    <h:form id="visiteAddFormIdEm"> 
+                    <h:form id="visiteAddFormIdEm" onkeypress="return event.keyCode != 13"> 
                         <p:panelGrid columns="6" styleClass="ui-noborder" >
                             <p:outputLabel for="textB1" value="Docteur" />
                             <p:inputText disabled="true" id="textB1" value="#{dossMb.visiteToAdd.docteur}" />
@@ -1112,23 +1135,32 @@
                                     <p:column>    
                                         <p:inputText value="#{dossMb.visiteToAdd.locoMoteur}"></p:inputText>
                                     </p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column rendered="false" >     
-                                        <p:outputLabel value="Dynamomètre:"></p:outputLabel>
-                                    </p:column> 
-                                    <p:column rendered="false" >    
-                                        <p:inputText value="#{dossMb.visiteToAdd.dynamometre}" ></p:inputText>
-                                    </p:column> 
+                                </p:row> 
+                        </p:panelGrid>
+                        </p:panel>
+                        
+                        <p:panel style="width:100%" header="APPAREIL PULMONAIRE" >
+                            <p:panelGrid columns="6" styleClass="ui-noborder" style="width:100%" > 
+                                <p:row> 
                                     <p:column>    
                                         <p:outputLabel value="EXAMEN RADIOLOGIQUE:"></p:outputLabel>
                                     </p:column> 
+                                    <p:column colspan="4">    
+                                        <p:inputText value="#{dossMb.visiteToAdd.examenRadio}" style="width:100%"  ></p:inputText>
+                                    </p:column>  
+                                </p:row>  
+                                <p:row>
                                     <p:column>    
-                                        <p:inputText value="#{dossMb.visiteToAdd.examenRadio}" ></p:inputText>
-                                    </p:column>
+                                        <p:outputLabel value="EXAMEN CLINIQUE:"></p:outputLabel>
+                                    </p:column> 
+                                    <p:column colspan="4">     
+                                       <p:inputText value="#{dossMb.visiteToAdd.dynamometre}" style="width:100%" ></p:inputText>
+                                   </p:column>   
                                 </p:row>
-                        </p:panelGrid>
+                            </p:panelGrid>  
                         </p:panel>
+                        
+                        
                         <p:panel id="panelId1" header="APPAREIL CIRCULATOIRE" >
                             <p:panelGrid styleClass="ui-noborder" style="width:100%" > 
                                 <p:row>
@@ -1369,13 +1401,15 @@
                            </p:panel>
                         <br></br>
                         <br></br>
-                        <p:commandButton style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()" onclick="PF('vtWidget').clearFilters()"
+                        <p:commandButton style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()" 
+                                         onclick="PF('vtWidget').clearFilters()"
                                          action="#{dossMb.enregistrerVisite()}"  update=":shomFormId, :tableDM" value="Enregistrer"   ></p:commandButton>  
+                        
                         <p:commandButton style="float:right" value="Annuler"  onclick="PF('dlg4').hide()"  ></p:commandButton>  
                     </h:form>
                 </p:dialog>  
                 <p:dialog header="Détail Dossier médical" widgetVar="dlg1"  modal="true" width="80%" height="500">
-                    <h:form id="shomFormId"> 
+                    <h:form id="shomFormId" onkeypress="return event.keyCode != 13"> 
                             <p:panel id="salarieId" header="INFOS SALARIE">
                                 <p:panelGrid id="panelSalId" styleClass="ui-noborder" style="width:100%"> 
                                     <p:row>
@@ -1421,7 +1455,7 @@
                                 <p:panelGrid styleClass="ui-noborder" style="width:100%">  
                                     <p:row>
                                         <p:column>    <p:outputLabel value="Depuis le:"></p:outputLabel></p:column>
-                                        <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToshow.salarie.contrat.dateEmbauche}"  style="width:100%"></p:inputText></p:column>
+                                        <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToshow.dateEmbauche}"  style="width:100%"></p:inputText></p:column>
                                         <p:column>    <p:outputLabel value="Service:"></p:outputLabel></p:column>
                                         <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToshow.salarie.fonction.fonction}" style="width:100%"></p:inputText></p:column> 
                                     </p:row>
@@ -1482,8 +1516,10 @@
 
                                        </p:selectCheckboxMenu>
                                     </p:column>
-                                    <p:column>
-                                        <p:commandButton title="Ajouter" icon="fa fa-plus" onclick="PF('addAntecedent').show()" update=":addAntecedent"></p:commandButton> 
+                                    <p:column> 
+                                            <p:commandButton title="Ajouter" icon="fa fa-plus" onclick="PF('addAntecedent').show()" update=":addAntecedent">
+                                            </p:commandButton> 
+                                       
                                     </p:column> 
                                     <p:column>    
                                         <p:outputLabel value="Intoxications:"></p:outputLabel></p:column>
@@ -1500,8 +1536,9 @@
 
                                        </p:selectCheckboxMenu>
                                     </p:column>
-                                    <p:column>
+                                    <p:column> 
                                         <p:commandButton title="Ajouter" icon="fa fa-plus" onclick="PF('addAntecedent').show()" update=":addAntecedent"></p:commandButton> 
+                                         
                                     </p:column> 
                                     <p:column>    <p:outputLabel value="Maladies  professionnelles:"></p:outputLabel></p:column>
                                     <p:column>    <p:inputText value="#{dossMb.dosMedToshow.maladiePersonnelle}" style="width:100%;"></p:inputText></p:column> 
@@ -1526,9 +1563,10 @@
                                 rowsPerPageTemplate="5,10,15" sortBy="#{anteced.id}" sortOrder="DESCENDING" 
                                 id="antTable"  editable="true">
                                     <f:facet name="header">
-                                        CURRICULUM LABORIS
+                                        CURRICULUM LABORIS 
                                         <p:commandButton id="toggler"  title="Ajouter un nouveau enregistrement" 
                                                          action="#{dossMb.addAntecedent}" style="margin-top: -4px; float:right" value="Ajouter" icon="fa fa-plus" update="antTable" />
+                                        
                                     </f:facet>
                                 <p:ajax event="rowEdit" listener="#{dossMb.onRowEdit}" update="antTable" />
                                 <p:ajax event="rowEditCancel" listener="#{dossMb.onRowCancel}"  />
@@ -1561,10 +1599,10 @@
                                         <f:facet name="output"><h:outputText value="#{anteced.commentaire}" /></f:facet>
                                         <f:facet name="input"><p:inputText  value="#{anteced.commentaire}" style="width:100%"/></f:facet>
                                     </p:cellEditor>
-                                </p:column>
-                                <p:column style="width:35px">
-                                    <p:rowEditor />
-                                </p:column>
+                                </p:column> 
+                                    <p:column style="width:35px">
+                                        <p:rowEditor />
+                                    </p:column> 
                             </p:dataTable>
                         </p:panel>
                                      
@@ -1680,23 +1718,22 @@
                                          rowsPerPageTemplate="5,10,15" sortBy="#{vis.id}" sortOrder="DESCENDING" 
                                          id="visiteTable" >
                                 <f:facet name="header">
-                                        Visites
+                                        Visites 
                                         <p:commandButton style="margin-top: -4px;float:right" value="Visite embauche" icon="fa fa-plus" title="Ajouter Visite"
-                                                        onstart="PF('block').show()" oncomplete="PF('block').hide()"
+                                                        onstart="PF('block').show()" oncomplete="PF('block').hide()" 
                                                         action="#{dossMb.listenerAjoutVisite('EM')}"
                                                         update=":visiteAddFormIdEm" > 
                                         </p:commandButton> 
                                         <p:commandButton style="margin-top: -4px;float:right" value="Visite AT" icon="fa fa-plus" title="Ajouter Visite"
-                                                        onstart="PF('block').show()" oncomplete="PF('block').hide()"
+                                                        onstart="PF('block').show()" oncomplete="PF('block').hide()" 
                                                         action="#{dossMb.listenerAjoutVisite('AT')}"
                                                         update=":visiteAddFormIdAt" > 
                                         </p:commandButton> 
                                         <p:commandButton style="margin-top: -4px;float:right" value="Autres visites" icon="fa fa-plus" title="Ajouter Visite"
-                                                        onstart="PF('block').show()" oncomplete="PF('block').hide()"
+                                                        onstart="PF('block').show()" oncomplete="PF('block').hide()" 
                                                         action="#{dossMb.listenerAjoutVisite('AU')}"
                                                         update=":visiteAddFormIdAu" > 
-                                        </p:commandButton> 
-                                        
+                                        </p:commandButton>  
                                 </f:facet>
                                 <p:column headerText="TYPE" filterBy="#{vis.type}" filterMatchMode="contains" > 
                                     <p:selectOneMenu value="#{vis.type}" panelStyle="width:180px" style="width:100%" filter="true" filterMatchMode="startsWith" disabled="true" > 
@@ -1724,30 +1761,30 @@
                                          <f:convertDateTime pattern="yyyy-MM-dd" > </f:convertDateTime>
                                      </h:outputText>
                                 </p:column> 
-                                <p:column headerText="ACTIONS" >
-
+                                <p:column headerText="ACTIONS" > 
                                      <p:commandButton icon="fa fa-align-justify"  title="Afficher détail"  style="background-color:#712D35" 
                                                       action="#{dossMb.listenerShowVisite(vis)}" update=":visiteShowFormIAT,:visiteShowFormId,:visiteShowFormIdAutre"
                                                       onstart="PF('block').show()" oncomplete="PF('block').hide()" 
                                                       >
-                                     </p:commandButton>   
-                                     <p:commandButton icon="fa fa-file-pdf-o" title="Générer fiche"  style="background-color:#712D35" 
+                                     </p:commandButton>    
+                                    <p:commandButton icon="fa fa-file-pdf-o" title="Générer fiche"  style="background-color:#712D35" 
                                                       action="#{dossMb.addFichier(vis)}"  update=":visuliser_id"
                                                       oncomplete="PF('consulterDoc').show()" 
                                                       >
-                                     </p:commandButton> 
+                                     </p:commandButton>  
                                  </p:column> 
 
                             </p:dataTable>
                         </p:panel> 
-                        <br></br>
-                   <p:commandButton value="Enregistrer" style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()" onclick="PF('vtWidget').clearFilters()"
-                                    action="#{dossMb.modifierDossier()}" update=":shomFormId, :tableDM" ></p:commandButton>
+                        <br></br> 
+                        <p:commandButton value="Enregistrer" style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()" onclick="PF('vtWidget').clearFilters()" 
+                                         action="#{dossMb.modifierDossier()}" update=":shomFormId, :tableDM" ></p:commandButton>
+                         
 
                     </h:form>
                 </p:dialog>
                 <p:dialog header="Création Dossier médical" widgetVar="dlg2"  modal="true" width="80%" height="500">
-                    <h:form id="formdlgId">  
+                    <h:form id="formdlgId" onkeypress="return event.keyCode != 13">  
                         <p:panel id="salarieId" header="INFOS SALARIE">
                         <p:panelGrid id="panelSalId" styleClass="ui-noborder" style="width:100%"> 
                             <p:row>
@@ -1793,7 +1830,7 @@
                         <p:panelGrid styleClass="ui-noborder" style="width:100%">  
                             <p:row>
                                 <p:column>    <p:outputLabel value="Depuis le:"></p:outputLabel></p:column>
-                                <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToAdd.salarie.contrat.dateEmbauche}"  style="width:100%"></p:inputText></p:column>
+                                <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToAdd.dateEmbauche}"  style="width:100%"></p:inputText></p:column>
                                 <p:column>    <p:outputLabel value="Service:"></p:outputLabel></p:column>
                                 <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToAdd.salarie.fonction.fonction}" style="width:100%"></p:inputText></p:column> 
                             </p:row>
@@ -1980,7 +2017,9 @@
                         <br></br>
                         <p:commandButton value="Enregistrer" style="float:right" 
                                          onstart="PF('block').show()" oncomplete="PF('block').hide()" onclick="PF('vtWidget').clearFilters()"
-                                         action="#{dossMb.enregistrerDossier()}" update=":formdlgId, :tableDM" ></p:commandButton>
+                                         action="#{dossMb.enregistrerDossier()}" update=":formdlgId, :tableDM" >
+                        </p:commandButton>
+                       
                     </h:form>
                 </p:dialog>
                  

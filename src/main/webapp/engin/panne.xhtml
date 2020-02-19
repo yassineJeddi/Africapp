@@ -59,8 +59,7 @@
                             <p:column headerText="Mise en Marche">
                                 <p:commandButton id="id_mise_marche" value="MEM" update=":mem:Mise" 
                                                  oncomplete="PF('dlg2').show()"
-                                                 action="#{enginPanne.dernierChan_Avant_Depot()}">
-                                    <f:setPropertyActionListener value="#{enginPanneIt}"  target="#{enginPanne.lastPanne}" />
+                                                 action="#{enginPanne.prepPanne(enginPanneIt)}"> 
                                 </p:commandButton>   
                             </p:column>
                         </p:dataTable>

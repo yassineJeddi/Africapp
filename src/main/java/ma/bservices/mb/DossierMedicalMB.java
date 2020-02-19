@@ -377,7 +377,7 @@ public class DossierMedicalMB implements Serializable{
     @PostConstruct
     public void init() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("________ User Connected ________" + auth.getPrincipal().toString());
+        //System.out.println("________ User Connected ________" + auth.getPrincipal().toString());
         WebApplicationContext ctx = FacesContextUtils.getWebApplicationContext(FacesContext.getCurrentInstance());
         chantierService = ctx.getBean(ChantierService.class);
         salarieService = Module.ctx.getBean(SalarieServiceIn.class);
@@ -445,7 +445,7 @@ public class DossierMedicalMB implements Serializable{
 //            long id = dossierMedicalService.addAntecedent(antecedentToAdd);
             
             if(dossierMedicalService.addAntecedent(antecedentToAdd) != null) {
-                System.out.println("ID: " +antecedentToAdd.getId());
+                //System.out.println("ID: " +antecedentToAdd.getId());
                 if(antecedentToAdd.getType().equals("RISQUE")){
                     antecedentRisque.add(antecedentToAdd);
                 }else if(antecedentToAdd.getType().equals("ATCD MD")){
@@ -462,11 +462,9 @@ public class DossierMedicalMB implements Serializable{
                 FacesContext context = FacesContext.getCurrentInstance(); 
                 context.addMessage(null, new FacesMessage("Infos:",   message) );
                 antecedentToAdd = new Antecedent();
-            }else{
-                System.out.println("FAILED");
             }
         } catch (Exception e) {
-            System.out.println("ID: " +e.getMessage());
+            System.out.println("Erreur MB dossier Medical saveAntecedent car : " +e.getMessage());
         }
     } 
     public void onRowCancel(RowEditEvent  event) {
@@ -475,13 +473,13 @@ public class DossierMedicalMB implements Serializable{
             FacesContext context = FacesContext.getCurrentInstance(); 
             context.addMessage(null, new FacesMessage("Infos:",   message) );
         } catch (Exception e) {
-            ExceptionText("onRowCancel", e);
+            System.out.println("Erreur MB dossier Medical onRowCancel car : " +e.getMessage());
         }
     }
     
     public void afficherVisite(Visite vis){
         try {
-            System.out.println("===============> afficherVisite IN  >> " +visiteToShow.getType());
+            //System.out.println("===============> afficherVisite IN  >> " +visiteToShow.getType());
             visiteToShow = new Visite();
             visiteToShow = vis;
             if(visiteToShow.getType()!=null){
@@ -496,7 +494,7 @@ public class DossierMedicalMB implements Serializable{
                 } 
             }
         } catch (Exception e) {
-            ExceptionText("afficherVisite", e);
+            System.out.println("Erreur MB dossier Medical afficherVisite car : " +e.getMessage());
         }
     }
     public String userConnected(){
@@ -508,7 +506,7 @@ public class DossierMedicalMB implements Serializable{
     
     public void calculateDateProcVisite1(){
         try { 
-            System.out.println("visiteToAdd.getSurviller() " + visiteToAdd.getSurviller());
+            //System.out.println("visiteToAdd.getSurviller() " + visiteToAdd.getSurviller());
             if(visiteToAdd.getSurviller()!=0){
                 Calendar cal = Calendar.getInstance(); 
                 if (visiteToAdd.getDateVisite()!= null){
@@ -521,10 +519,10 @@ public class DossierMedicalMB implements Serializable{
                 if(0!= visiteToAdd.getSurviller())cal.add(Calendar.MONTH, visiteToAdd.getSurviller());
                 else cal.add(Calendar.MONTH, 1); 
                 visiteToAdd.setProchaineVisite(cal.getTime());
-                System.out.println("visiteToAdd.getProchaineVisite() " + visiteToAdd.getProchaineVisite());  
+                //System.out.println("visiteToAdd.getProchaineVisite() " + visiteToAdd.getProchaineVisite());  
             } 
         } catch (NumberFormatException e) {
-            ExceptionText("calculateDateProcVisite", e);
+            System.out.println("Erreur MB dossier Medical calculateDateProcVisite1 car : " +e.getMessage());
         }
     }
     public void calculateDateProcVisite(){
@@ -541,7 +539,7 @@ public class DossierMedicalMB implements Serializable{
     
     public void listenerAjoutVisite(String type){
         try {
-            System.out.println("IN listenerAjoutVisite");
+            //System.out.println("IN listenerAjoutVisite");
             visiteToAdd = new Visite(); 
             visiteToAdd.setDateVisite(new Date());
             visiteToAdd.setCreePar(userConnected());
@@ -551,24 +549,60 @@ public class DossierMedicalMB implements Serializable{
             switch (type) {
                 case "EM":
                     visiteToAdd.setType("V.E.");
+                    visiteToAdd.setEtat("B");
+                    visiteToAdd.setAuditionOD("RAS");
+                    visiteToAdd.setAuditionOG("RAS");
+                    visiteToAdd.setPeauPhanere("COLORATION NORMALE");
+                    visiteToAdd.setExamenRadio("RAS");
+                    visiteToAdd.setEcg("NF");
+                    visiteToAdd.setVaisseaux("PERCUS");
+                    visiteToAdd.setVarices("ABSENCE");
+                    visiteToAdd.setGanglions("N");
+                    visiteToAdd.setAbdomen("SOUPLE");
+                    visiteToAdd.setFoie("N");
+                    visiteToAdd.setRate("N");
+                    visiteToAdd.setHernies("RAS");
+                    visiteToAdd.setAmygdales("RAS");
+                    visiteToAdd.setSucre("-");
+                    visiteToAdd.setUrine("-");
+                    visiteToAdd.setSang("-");
+                    visiteToAdd.setEndocrinien("Pas de signes d'appel");
+                    visiteToAdd.setNervotisme("NON");
+                    visiteToAdd.setTramblement("NON");
+                    visiteToAdd.setEquilibre("NON");
+                    visiteToAdd.setEeg("NF");
+                    visiteToAdd.setRemberg("Négatif");
+                    visiteToAdd.setReflexeOc("OUI");
+                    visiteToAdd.setReflexeTend("OUI");
+                    visiteToAdd.setApte("Apte");
+                    visiteToAdd.setLocoMoteur("Bon Tonus");
                     RequestContext.getCurrentInstance().execute("PF('dlg4').show();");
                     break;
                 case "AT":
                     visiteToAdd.setType("V.A.T.");
+                    visiteToAdd.setReamenagement("NON");
+                    visiteToAdd.setDate_AT(new Date());
+                    visiteToAdd.setApte("Inapte");
                     RequestContext.getCurrentInstance().execute("PF('dlg40').show();");
                     break;
                 default:
+                    visiteToAdd.setApte("Apte");
+                    visiteToAdd.setRxPulmonaire("RAS"); 
+                    visiteToAdd.setSucre("-");
+                    visiteToAdd.setUrine("-");
+                    visiteToAdd.setSang("-");
+                    visiteToAdd.setCommentaire("Examen normal.");
                     RequestContext.getCurrentInstance().execute("PF('dlg400').show();");
                     break;
             }
             
         } catch (Exception e) {
-            ExceptionText("listenerAjoutVisite", e);
+            System.out.println("Erreur MB dossier Medical listenerAjoutVisite car : " +e.getMessage());
         }
     }
     public void listenerShowVisite(Visite vis){
         try {
-            System.out.println("IN SHOWING"); 
+            //System.out.println("IN SHOWING"); 
             visiteToShow =vis;
             if(vis.getType().equals("V.E.")){ 
                 RequestContext.getCurrentInstance().execute("PF('dlg5').show();");
@@ -579,15 +613,15 @@ public class DossierMedicalMB implements Serializable{
             else RequestContext.getCurrentInstance().execute("PF('dlg500').show();");
             
         } catch (Exception e) {
-            ExceptionText("SHOWING", e);
+            System.out.println("Erreur MB dossier Medical listenerShowVisite car : " +e.getMessage());
         }
     }
-//    private String selectedDoc="/opt/files/docDossierMedicaux/test.txt";
-    private String selectedDoc="";
+    private String selectedDoc="/files/docDossierMedicaux/test.txt";
+//    private String selectedDoc="";
     public void visualiser(String chemin) {
-        System.out.println("chemin1 : " + chemin);
-        System.out.println("chemin2 : " + chemin.indexOf("files"));
-        System.out.println("chemin3 : " + chemin.substring(chemin.indexOf("files")));
+        //System.out.println("chemin1 : " + chemin);
+        //System.out.println("chemin2 : " + chemin.indexOf("files"));
+        //System.out.println("chemin3 : " + chemin.substring(chemin.indexOf("files")));
         selectedDoc = chemin.substring(chemin.indexOf("files")); 
     }
      
@@ -629,11 +663,14 @@ public class DossierMedicalMB implements Serializable{
                     titre=null;
                     listaFichiers.add(document);
                     RequestContext.getCurrentInstance().execute("PF('tableDoc').show();");
-                    System.out.println(id);
+                    //System.out.println(id);
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, Message.STRING_CHARGE_DOCUMENT_DONE, Message.STRING_CHARGE_DOCUMENT_DONE));
 
 //                    ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 //                    ec.redirect(ec.getRequestContextPath() + "/evol/dossiersMedicaux.xhtml");
+                }
+                catch (Exception e) {
+                    System.out.println("Erreur MB dossier Medical uploader car : " +e.getMessage());
                 }
 
             }
@@ -654,7 +691,7 @@ public class DossierMedicalMB implements Serializable{
     public StreamedContent chargerPdf(DossierMedical dos){
         try {
             if(dos==null){
-               // System.out.println("phase is render response");
+                //System.out.println("phase is render response");
                 return new DefaultStreamedContent();
             }
             else {
@@ -662,7 +699,7 @@ public class DossierMedicalMB implements Serializable{
                 return new DefaultStreamedContent(stream, URLConnection.guessContentTypeFromName(selectedDoc));
             }
         } catch (FileNotFoundException e) {
-            System.out.print(e.getMessage() );
+                    System.out.println("Erreur MB dossier Medical chargerPdf car : " +e.getMessage());
             return new DefaultStreamedContent();
         }
         
@@ -676,7 +713,7 @@ public class DossierMedicalMB implements Serializable{
         document.setCreePar(userConnected());
         document.setDossierMedical(visiteToShow.getDossierMedical());
         Integer id = dossierMedicalService.insertDocument(document);
-        System.out.println("Doc add id: "+id+ " chemin:" + chemin); 
+        //System.out.println("Doc add id: "+id+ " chemin:" + chemin); 
         
 //        return chemin; 
     }
@@ -689,78 +726,80 @@ public class DossierMedicalMB implements Serializable{
 //            Files.createDirectories(folder);
 //            Path file = Files.createTempFile(folder, dosMedToshow.getSalarie().getCin(),".pdf");
             String path =  editeFichier();
-            System.out.println("path: " + path);
+            //System.out.println("path: " + path);
 //            ObservatajouterDocument(path);
             visualiser(path);
              
         } catch (IOException e) {
-            System.out.println("Erreur "+e.getMessage());
+            System.out.println("Erreur MB dossier Medical addFichier car : " +e.getMessage());
         }
     }
     public void creeFichier(String chemin,Visite visite, String type) throws DocumentException, IOException {
     try {
             String fileName =chemin;
-            System.out.println("chemin : "+fileName);
+            //System.out.println("chemin : "+fileName);
             //instance de document
             Document document = new Document();
             PdfWriter.getInstance(document, new FileOutputStream(fileName)); 
 	    document.open();
             document.add(new Paragraph("BARAKA"));
             document.close();
-            System.out.println("Fin d'éditions !");
+            //System.out.println("Fin d'éditions !");
         } catch (DocumentException | FileNotFoundException e) {
-            System.out.println("chemin : "+e.getMessage());
+            System.out.println("Erreur MB dossier Medical creeFichier car : " +e.getMessage());
         }
 		
     } 
      
     public void miseAjourTable(int id){
         try {
-            System.out.println("IN miseAjourTable " + id);
+            //System.out.println("IN miseAjourTable " + id);
             dossierMedicalService.miseAjourSalarie(id);
             chargerDonnees();
         } catch (Exception e) {
-            ExceptionText("miseAjourTable", e);
+            System.out.println("Erreur MB dossier Medical miseAjourTable car : " +e.getMessage());
         }
     }     
     public void enregistrerVisite(){
-        System.out.println("IN EnregistrerVisite");
+        //System.out.println("IN EnregistrerVisite");
         try {
             visiteToAdd.setDossierMedical(dosMedToshow);
+            Chantier c= new Chantier();
+            c.setId(idChantier);
+            visiteToAdd.setChantier(c);
             Long  id = visiteService.addVisite(visiteToAdd);
-            System.out.println("Id insert:" + id);
+            //System.out.println("Id insert:" + id);
             if(id!=null){  
                 listaVisite.add(visiteToAdd);
                 RequestContext.getCurrentInstance().execute("PF('dlg4').hide();");
                 RequestContext.getCurrentInstance().execute("PF('dlg40').hide();");
                 RequestContext.getCurrentInstance().execute("PF('dlg400').hide();");
-                System.out.println("GOOD");  
-                System.out.println("IdosMedToshow.getSalarie().getId():" + dosMedToshow.getSalarie().getId());                
+                //System.out.println("GOOD");  
+                //System.out.println("IdosMedToshow.getSalarie().getId():" + dosMedToshow.getSalarie().getId());                
                 miseAjourTable(dosMedToshow.getSalarie().getId()); 
-            }else{
-                System.out.println("FAILED"); 
             }
         } catch (Exception e) {
-            ExceptionText("UpdateVisite", e);
+            System.out.println("Erreur MB dossier Medical enregistrerVisite car : " +e.getMessage());
         }
     }
     public void updateVisite(){
-        System.out.println("IN UpdateVisite");
+        //System.out.println("IN UpdateVisite");
         try { 
             visiteToShow.setDossierMedical(dosMedToshow);
+            Chantier c= new Chantier();
+            c.setId(idChantier);
+            visiteToShow.setChantier(c);
             Long  id = visiteService.updateVisite(visiteToShow);
             miseAjourTable(dosMedToshow.getSalarie().getId());
-            System.out.println("Id update:" + id);
+            //System.out.println("Id update:" + id);
             if(id!=null){ 
                 RequestContext.getCurrentInstance().execute("PF('dlg5').hide();");
                 RequestContext.getCurrentInstance().execute("PF('dlg50').hide();");
                 RequestContext.getCurrentInstance().execute("PF('dlg500').hide();");
-                System.out.println("GOOD"); 
-            }else{
-                System.out.println("FAILED"); 
+                //System.out.println("GOOD"); 
             }  
         } catch (Exception e) {
-            ExceptionText("UpdateVisite", e);
+            System.out.println("Erreur MB dossier Medical updateVisite car : " +e.getMessage());
         }
     }
     public void listenerDlgAdd(){
@@ -777,7 +816,7 @@ public class DossierMedicalMB implements Serializable{
             ATCDMD = new ArrayList<>(); 
             ATCDCH = new ArrayList<>(); 
 
-            System.out.println("IN listenerDlgAdd");
+            //System.out.println("IN listenerDlgAdd");
             dosMedToAdd  = new DossierMedical();
             dosMedToshow = new DossierMedical();
             salarieToAdd = new Salarie();
@@ -785,22 +824,22 @@ public class DossierMedicalMB implements Serializable{
             RequestContext.getCurrentInstance().execute("PF('dlg2').show();");
              
         } catch (Exception e) {
-            ExceptionText("listenerDlgAdd", e);
+            System.out.println("Erreur MB dossier Medical listenerDlgAdd car : " +e.getMessage());
         }
     }
     public void ListVisitesByDossier(DossierMedical dos){
         try {
-            System.out.println("IN ListVisitesByDossier");
+            //System.out.println("IN ListVisitesByDossier");
             listaVisite = null;
             listaVisite = visiteService.findVisitesByDossierMedical(dos); 
 //            RequestContext.getCurrentInstance().execute("PF('dlg3').show();");
         } catch (Exception e) {
-            ExceptionText("afficherDossier", e);
+            System.out.println("Erreur MB dossier Medical ListVisitesByDossier car : " +e.getMessage());
         }
     } 
     public void afficherDossier(DossierMedical dos){
         try { 
-            System.out.println("Affichage Dossier IN");  
+            //System.out.println("Affichage Dossier IN");  
             RISQUE = new ArrayList<>();
             PERE = new ArrayList<>();
             MERE = new ArrayList<>();
@@ -871,7 +910,7 @@ public class DossierMedicalMB implements Serializable{
             ListVisitesByDossier(dosMedToshow);
             RequestContext.getCurrentInstance().execute("PF('dlg1').show();");
         } catch (Exception e) {
-            ExceptionText("afficherDossier", e);
+            System.out.println("Erreur MB dossier Medical afficherDossier car : " +e.getMessage());
         }
     }
     public void creeDossier(Salarie s){
@@ -890,7 +929,7 @@ public class DossierMedicalMB implements Serializable{
             ATCDCH = new ArrayList<>();
             
             
-            System.out.println("IN listenerDlgAdd");
+            //System.out.println("IN listenerDlgAdd");
             dosMedToAdd  = new DossierMedical();
             dosMedToshow = new DossierMedical();
             salarieToAdd = s;
@@ -899,13 +938,13 @@ public class DossierMedicalMB implements Serializable{
             RequestContext.getCurrentInstance().execute("PF('dlg2').show();");
               
         } catch (Exception e) {
-            ExceptionText("listenerDlgAdd", e);
+            System.out.println("Erreur MB dossier Medical creeDossier car : " +e.getMessage());
         }
     }
     public void enregistrerDossier(){
         try {
             if(dosMedToAdd.getSalarie().getId()!=null){
-            System.out.println("Creation Dossier IN" + dosMedToAdd.getSalarie().getId()); 
+            //System.out.println("Creation Dossier IN" + dosMedToAdd.getSalarie().getId()); 
              
             if(!RISQUE.isEmpty())dosMedToAdd.setRisque(RISQUE.toString()); 
             else dosMedToAdd.setRisque(null);
@@ -930,7 +969,7 @@ public class DossierMedicalMB implements Serializable{
             Long id = dossierMedicalService.addDossierMedical(dosMedToAdd);
             miseAjourTable(dosMedToAdd.getSalarie().getId());
             if(id!=null){
-                System.out.println("Good");
+                //System.out.println("Good");
                 dossiersMedicaux.add(dosMedToAdd);
                 salarieToAdd =new Salarie();
                 dosMedToAdd = new DossierMedical();
@@ -949,24 +988,24 @@ public class DossierMedicalMB implements Serializable{
                 context.addMessage(null, new FacesMessage("Infos:",   message) ); 
                 
             }else{
-                System.out.println("Failed");
+                //System.out.println("Failed");
                 String message ="Erreur de création.";
                 FacesContext context = FacesContext.getCurrentInstance(); 
                 context.addMessage(null, new FacesMessage("Attention:",   message) );
             }
             }else{
-                System.out.println("Failed");
+                //System.out.println("Failed");
                 String message ="Erreur de récupération du salarie merci de réessayer.";
                 FacesContext context = FacesContext.getCurrentInstance(); 
                 context.addMessage(null, new FacesMessage("Attention:",   message) );
             }
         } catch (Exception e) {
-            ExceptionText("enregistrerDossier", e);
+            System.out.println("Erreur MB dossier Medical enregistrerDossier car : " +e.getMessage());
         }
     }
     public void modifierDossier(){
         try {
-            System.out.println("IN modifierDossier"); 
+            //System.out.println("IN modifierDossier"); 
 //            dosMedToshow.setSalarie(salarieToAdd); 
             
             if(!RISQUE.isEmpty())dosMedToshow.setRisque(RISQUE.toString()); 
@@ -992,7 +1031,7 @@ public class DossierMedicalMB implements Serializable{
             Long id = dossierMedicalService.updateDossierMedical(dosMedToshow); 
             miseAjourTable(dosMedToshow.getSalarie().getId()); 
             if(id!=null){
-                System.out.println("Good"); 
+                //System.out.println("Good"); 
                 salarieToAdd =new Salarie();
                 dosMedToshow = new DossierMedical();
                 RequestContext.getCurrentInstance().execute("PF('dlg1').hide();"); 
@@ -1000,13 +1039,13 @@ public class DossierMedicalMB implements Serializable{
                 FacesContext context = FacesContext.getCurrentInstance(); 
                 context.addMessage(null, new FacesMessage("Infos:",   message) );
             }else{
-                System.out.println("Failed");
+                //System.out.println("Failed");
                 String message ="Erreur de modification.";
                 FacesContext context = FacesContext.getCurrentInstance(); 
                 context.addMessage(null, new FacesMessage("Attention:",   message) );
             }
         } catch (Exception e) {
-            ExceptionText("ModifierDossier", e);
+            System.out.println("Erreur MB dossier Medical modifierDossier car : " +e.getMessage());
         }
     }
     public void listenrSalarieShow(){
@@ -1021,31 +1060,31 @@ public class DossierMedicalMB implements Serializable{
                 dosMedToshow.setSalarie(salarieToAdd);
             }
         } catch (Exception e) {
-            System.out.println(e.getCause());
+            System.out.println("Erreur MB dossier Medical listenrSalarieShow car : " +e.getMessage());
         }
     }
     public void listenrSalarieAdd(){
         try {
-            System.out.println("idSalarie " + idSalarie);
+            //System.out.println("idSalarie " + idSalarie);
             if(idSalarie!=0){
                 salarieToAdd =new Salarie();
                 salarieToAdd = salarieService.getSalarieByID(idSalarie);
                 if(salarieToAdd.getEtat().getId()==2 || salarieToAdd.getEtat().getId()==3){
-                    System.out.println("ARCHIVE");
+                    //System.out.println("ARCHIVE");
                     dosMedToAdd.setActif(false);
                 }else{
-                    System.out.println("ACTIFS");
+                    //System.out.println("ACTIFS");
                     dosMedToAdd.setActif(true);
                 }
                 dosMedToAdd.setSalarie(salarieToAdd);
-                System.out.println("salarieToAdd " +  dosMedToAdd.getSalarie().getId());
+                //System.out.println("salarieToAdd " +  dosMedToAdd.getSalarie().getId());
             }
             else{
                 salarieToAdd =new Salarie();
                 dosMedToAdd.setSalarie(salarieToAdd);
             }
         } catch (Exception e) {
-            System.out.println(e.getCause());
+            System.out.println("Erreur MB dossier Medical listenrSalarieAdd car : " +e.getMessage());
         }
     }
     public String ExceptionText(String methode, Exception e){ 
@@ -1056,27 +1095,27 @@ public class DossierMedicalMB implements Serializable{
             dossiersMedicaux = null; 
             if(isAdmin){
                 if(idChantier == 0){
-                    System.out.println("===ADMIN ==> :"+ isAdmin + "=== AUCUN CHANTIER SELECTIONNER ==> :"+ idChantier + "=== Actif ==> :"+ actif);
+                    //System.out.println("===ADMIN ==> :"+ isAdmin + "=== AUCUN CHANTIER SELECTIONNER ==> :"+ idChantier + "=== Actif ==> :"+ actif);
                     if(actif==null)dossiersMedicaux = dossierMedicalService.findAllDossierMedical();
                     else dossiersMedicaux = dossierMedicalService.findAllDossierMedicalByStatut(actif);
                 }else{
-                    System.out.println("===ADMIN ==> :"+ isAdmin + "=== CHANTIER SELECTIONNE ==> :"+ idChantier + "=== Actif ==> :"+ actif);
+                    //System.out.println("===ADMIN ==> :"+ isAdmin + "=== CHANTIER SELECTIONNE ==> :"+ idChantier + "=== Actif ==> :"+ actif);
                     if(actif==null)dossiersMedicaux = dossierMedicalService.findDossierMedicalByChantier(idChantier);
                     else dossiersMedicaux = dossierMedicalService.findDossierMedicalByChantierAndStatut(idChantier,actif);
                 }
             }else{
                if(idChantier == 0){
-                    System.out.println("===USER ==> :"+ isAdmin + "=== AUCUN CHANTIER SELECTIONNE ==> :"+ idChantier + "=== Actif ==> :"+ actif);
+                    //System.out.println("===USER ==> :"+ isAdmin + "=== AUCUN CHANTIER SELECTIONNE ==> :"+ idChantier + "=== Actif ==> :"+ actif);
                     if(actif==null) dossiersMedicaux = dossierMedicalService.findDossierMedicalChantiers(codeIds);
                     else dossiersMedicaux = dossierMedicalService.findDossierMedicalChantiersAndStatut(codeIds,actif);
                 }else{ 
-                    System.out.println("===USER ==> :"+ isAdmin + "=== CHANTIER SELECTIONNE ==> :"+ idChantier + "=== Actif ==> :"+ actif);
+                    //System.out.println("===USER ==> :"+ isAdmin + "=== CHANTIER SELECTIONNE ==> :"+ idChantier + "=== Actif ==> :"+ actif);
                     if(actif==null)dossiersMedicaux = dossierMedicalService.findDossierMedicalByChantier(idChantier);
                     else dossiersMedicaux = dossierMedicalService.findDossierMedicalByChantierAndStatut(idChantier,actif);
                 }
             }  
         } catch (Exception e) {
-            ExceptionText("listenerFilter", e);
+            System.out.println("Erreur MB dossier Medical listenerFilter car : " +e.getMessage());
         }
     }
     public void chargerDonnees(){
@@ -1122,24 +1161,25 @@ public class DossierMedicalMB implements Serializable{
  
                   
         } catch (Exception e) {
-            ExceptionText("CHARGEMENT ", e);
+            System.out.println("Erreur MB dossier Medical chargerDonnees car : " +e.getMessage());
         }
     }
     public void changeChantier(){
-        System.out.println("===============> idChantier:"+idChantier);
+        //System.out.println("===============> idChantier:"+idChantier);
         dossiersMedicaux   = new ArrayList<>();   
          
     }
     public void afficherVisites(DossierMedical dos){ 
         try { 
-            System.out.println("===============> afficherVisites IN  >> ");
+            //System.out.println("===============> afficherVisites IN  >> ");
             dosMedToshow = new DossierMedical();
             dosMedToshow = dos;
             
         } catch (Exception e) {
-            ExceptionText("changeStatus", e);
+            System.out.println("Erreur MB dossier Medical afficherVisites car : " +e.getMessage());
         }
     }
+    /*
     public void changeStatus(){ 
         try {  
             System.out.println("===============> changeStatus IN  >> "); 
@@ -1147,6 +1187,7 @@ public class DossierMedicalMB implements Serializable{
             ExceptionText("changeStatus", e);
         }
     }
+*/
     public void listeDossiersStatut(){
         try { 
             int id = idChantier;
@@ -1492,7 +1533,7 @@ public class DossierMedicalMB implements Serializable{
                                     break;
                             }
                     }
-                    System.out.println("---------visiteToShow.getDocteur()----- "+visiteToShow.getDocteur()+ " ------> signature :" + signature);
+                    //System.out.println("---------visiteToShow.getDocteur()----- "+visiteToShow.getDocteur()+ " ------> signature :" + signature);
                     String imageFile = "/opt/files/docDossierMedicaux/signature/"+signature;
                     String imageBas  = "/opt/files/docDossierMedicaux/signature/bas.png";
                     Image img = Image.getInstance(imageFile);  
@@ -1519,13 +1560,13 @@ public class DossierMedicalMB implements Serializable{
 
 
                     document.close();
-                    System.out.println("Fin d'éditions !"); 
+                    //System.out.println("Fin d'éditions !"); 
                     cheminDoc=chemin + "/" + nomFichier;
 //                        selectedDoc = cheminContrat.substring(cheminContrat.indexOf("files"));
 
 
             } catch (Exception ex) {
-                    System.out.println("Erreur d'édition l'affiche engin car "+ex.getCause());
+                    System.out.println("Erreur MB dossier Medical editeFichier car : " +ex.getMessage());
                     document.close();
             } 
         return cheminDoc;

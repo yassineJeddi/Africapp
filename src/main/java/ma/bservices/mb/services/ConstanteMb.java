@@ -16,7 +16,6 @@ import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import javax.annotation.PostConstruct;
@@ -25,7 +24,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.springframework.stereotype.Component;
@@ -120,7 +118,19 @@ public class ConstanteMb implements Serializable {
     private String saveAtNotRhQhse ="save at not RH QHSE";
     
     
-    
+    // DOSSIERS MEDICAUX
+    private String ajouterNvDossier    ="créer un nouveau dossier";
+    private String detailDossier       ="détail dossier";
+    private String enregistrerDossier  ="Modifier infos dossier";
+    private String ajouterNvVisite     ="créer une nouvelle visite";
+    private String enregistrerVisite   ="Modifier infos visite";
+    private String detailVisite        ="détail visite";
+    private String genererFiche        ="générer fiche aptitude visite";
+    private String documentDossier     ="documents dossier médical";
+    private String ajouterDocument     ="Ajouter pièce jointe";
+    private String visualiserDocument  ="Visualiser document";
+    private String ajouterAntecedent   ="Ajouter antécedent";
+    private String ajouterCurriculum   ="Ajouter curriculum laboris";
     
 
     /**
@@ -544,6 +554,107 @@ public class ConstanteMb implements Serializable {
     public void setEditMvmt(String editMvmt) {
         this.editMvmt = editMvmt;
     }
+
+    public String getAjouterNvDossier() {
+        return ajouterNvDossier;
+    }
+
+    public void setAjouterNvDossier(String ajouterNvDossier) {
+        this.ajouterNvDossier = ajouterNvDossier;
+    }
+
+    public String getDetailDossier() {
+        return detailDossier;
+    }
+
+    public void setDetailDossier(String detailDossier) {
+        this.detailDossier = detailDossier;
+    }
+
+    public String getEnregistrerDossier() {
+        return enregistrerDossier;
+    }
+
+    public void setEnregistrerDossier(String enregistrerDossier) {
+        this.enregistrerDossier = enregistrerDossier;
+    }
+
+    public String getAjouterNvVisite() {
+        return ajouterNvVisite;
+    }
+
+    public void setAjouterNvVisite(String ajouterNvVisite) {
+        this.ajouterNvVisite = ajouterNvVisite;
+    }
+
+    public String getEnregistrerVisite() {
+        return enregistrerVisite;
+    }
+
+    public void setEnregistrerVisite(String enregistrerVisite) {
+        this.enregistrerVisite = enregistrerVisite;
+    }
+
+    public String getDetailVisite() {
+        return detailVisite;
+    }
+
+    public void setDetailVisite(String detailVisite) {
+        this.detailVisite = detailVisite;
+    }
+
+    public String getGenererFiche() {
+        return genererFiche;
+    }
+
+    public void setGenererFiche(String genererFiche) {
+        this.genererFiche = genererFiche;
+    }
+
+    public String getDocumentDossier() {
+        return documentDossier;
+    }
+
+    public void setDocumentDossier(String documentDossier) {
+        this.documentDossier = documentDossier;
+    }
+
+    public String getAjouterDocument() {
+        return ajouterDocument;
+    }
+
+    public void setAjouterDocument(String ajouterDocument) {
+        this.ajouterDocument = ajouterDocument;
+    }
+
+    public String getVisualiserDocument() {
+        return visualiserDocument;
+    }
+
+    public void setVisualiserDocument(String visualiserDocument) {
+        this.visualiserDocument = visualiserDocument;
+    }
+
+    public String getAjouterAntecedent() {
+        return ajouterAntecedent;
+    }
+
+    public void setAjouterAntecedent(String ajouterAntecedent) {
+        this.ajouterAntecedent = ajouterAntecedent;
+    }
+
+    public String getAjouterCurriculum() {
+        return ajouterCurriculum;
+    }
+
+    public void setAjouterCurriculum(String ajouterCurriculum) {
+        this.ajouterCurriculum = ajouterCurriculum;
+    }
+    
+    
+    
+    
+    
     
     
 

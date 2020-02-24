@@ -1119,8 +1119,7 @@ public class SalarieService   {
     public Fonction getFonctionSalarie(Salarie salarie) {
 
         Session session = sessionFactory.getCurrentSession();
-
-        System.out.println("SALARIE ID : " + salarie.getId());
+ 
 
         Query query = session.createQuery("SELECT s.fonction FROM Salarie as s WHERE  s.id=:idSalarie");
         query.setParameter("idSalarie", salarie.getId());

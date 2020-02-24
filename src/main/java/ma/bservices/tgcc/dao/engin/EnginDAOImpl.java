@@ -16,6 +16,7 @@ import ma.bservices.tgcc.Entity.ECHEANCIER_VIDANGE;
 import ma.bservices.tgcc.Entity.Engin; 
 import ma.bservices.tgcc.Entity.InterventionMaintenance;
 import ma.bservices.tgcc.Entity.Panne;
+import ma.bservices.tgcc.Entity.ReferentielEngin;
 import ma.bservices.tgcc.utilitaire.MbHibernateDaoSupport;
 import ma.bservices.tgcc.utilitaire.SearchU;
 import org.hibernate.FlushMode;
@@ -199,16 +200,19 @@ public class EnginDAOImpl extends MbHibernateDaoSupport implements EnginDAO, Ser
     @Override
     @Transactional
     public void ajouterEngin(Engin engin) {
+        try {
+            Session session = getSessionFactory().openSession();
+            session.setFlushMode(FlushMode.AUTO);
 
-        Session session = getSessionFactory().openSession();
-        session.setFlushMode(FlushMode.AUTO);
+            session.beginTransaction();
+            session.saveOrUpdate(engin);
 
-        session.beginTransaction();
-        session.saveOrUpdate(engin);
+            session.getTransaction().commit();
 
-        session.getTransaction().commit();
-
-        session.close();
+            session.close();
+        } catch (Exception e) {
+            System.out.println("Erreur d'enregistrement Engin car "+e.getMessage());
+        }
 
 //        try {
 //            this.getHibernateTemplate().save(engin);
@@ -325,13 +329,19 @@ public class EnginDAOImpl extends MbHibernateDaoSupport implements EnginDAO, Ser
      */
     @Override
     public Boolean delete(Engin e) {
-        Session session = getSessionFactory().openSession();
-        session.setFlushMode(FlushMode.AUTO);
-        session.beginTransaction();
-        session.delete(e);
-        session.getTransaction().commit();
-        session.close();
-        return true;
+        try {
+
+            Session session = getSessionFactory().openSession();
+            session.setFlushMode(FlushMode.AUTO);
+            session.beginTransaction();
+            session.delete(e);
+            session.getTransaction().commit();
+            session.close();
+            return true;
+        } catch (Exception exp) {
+            System.out.println("Erreur de suppression Engin car "+exp.getMessage());
+            return false;
+        }
     }
 
     @Override
@@ -578,6 +588,60 @@ public class EnginDAOImpl extends MbHibernateDaoSupport implements EnginDAO, Ser
             System.out.println("Erreur de recuperation de last panne car "+e.getMessage());
         }
         return panne;
+    }
+
+    @Override
+    public void addReferentielEngin(ReferentielEngin r) {
+         try {
+            Session session = getSessionFactory().openSession();
+            session.setFlushMode(FlushMode.AUTO);
+            session.beginTransaction();
+            session.save(r);
+            session.getTransaction().commit();
+            session.close();
+        } catch (Exception e) {
+            System.out.println("Erreur d'enregistrement ReferentielEngin car "+e.getMessage());
+        }
+    }
+
+    @Override
+    public void editReferentielEngin(ReferentielEngin r) {
+         try {
+            Session session = getSessionFactory().openSession();
+            session.setFlushMode(FlushMode.AUTO);
+            session.beginTransaction();
+            session.update(r);
+            session.getTransaction().commit();
+            session.close();
+        } catch (Exception e) {
+            System.out.println("Erreur de modifier ReferentielEngin car "+e.getMessage());
+        }
+    }
+
+    @Override
+    public void remouvReferentielEngin(ReferentielEngin r) {
+         try {
+            Session session = getSessionFactory().openSession();
+            session.setFlushMode(FlushMode.AUTO);
+            session.beginTransaction();
+            session.delete(r);
+            session.getTransaction().commit();
+            session.close();
+        } catch (Exception e) {
+            System.out.println("Erreur de suppression ReferentielEngin car "+e.getMessage());
+        }
+    }
+
+    @Override
+    public List<ReferentielEngin> allReferentielEnginByEngin(Engin e) {
+         List<ReferentielEngin> l = new ArrayList<ReferentielEngin>();
+       try {
+             l  =  (List<ReferentielEngin>) this.getHibernateTemplate().find("FROM ReferentielEngin r where  r.engin.iDEngin ="+e.getiDEngin());
+          
+        } catch (Exception exp) {
+            System.out.println("Erreur de recuperation de last panne car "+exp.getMessage());
+        }
+       return l;
     }
     
     

@@ -49,7 +49,6 @@ public class CiviliteMb implements Serializable {
 
     @PostConstruct
     public void init() {
-        System.out.println("eeeeee");
         parametrageService = Module.ctx.getBean(ParametrageService.class);
         civilites = parametrageService.listeCivilites(0, Integer.parseInt(parametrageService.nombreCivilites("").toString()), "");
         

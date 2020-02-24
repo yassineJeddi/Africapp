@@ -618,7 +618,7 @@ public class SalarieMb implements Serializable {
         /**
          * var le nombre de page ; i nombre de salarie , page => current page
          */
-        page = 1;
+      /*   page = 1;
         i = Integer.parseInt(salarieService.nombreSalaries("", null, null, null, "", "", "", "", "", "") + "");
         var = (i % 10 == 0) ? i / 10 : i / 10 + 1;
         if (Objects.equals(page, var)) {
@@ -630,13 +630,13 @@ public class SalarieMb implements Serializable {
         } else {
             onFirst();
         }
-        
+      
         try {
              salaries = SalariePagination.first(findSalarie.getMatricule(), statut, fonction, etat, findSalarie.getCin(), findSalarie.getNom(), findSalarie.getPrenom(), findSalarie.getCnss(), chantier, findSalarie.getMatriculeDivalto());
        
         } catch (Exception e) {
             System.out.println("Erreur de chargement la liste Salarier car "+e.getMessage());
-        }
+        }*/
         try {
             fonctionMb = (Evol_FonctionMb) FacesContext.getCurrentInstance().getApplication().getELResolver().getValue(elContext, null, "evol_fonctionMb");
         
@@ -697,7 +697,7 @@ public class SalarieMb implements Serializable {
 //        statut = null;
 //        fonction = null;
 //        chantier = null;
-        System.out.println("liste salarie recherche:  " + salaries.size());
+        //System.out.println("liste salarie recherche:  " + salaries.size());
     }
 
     public void fonctionByStatut() {

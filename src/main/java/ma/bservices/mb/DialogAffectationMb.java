@@ -281,7 +281,6 @@ public class DialogAffectationMb implements Serializable {
 
     @PostConstruct
     public void init() {
-        System.out.println("Init Dialog");
         affectationSSuppService = Module.ctx.getBean(AffectationSSuppService.class);
         salarieService = Module.ctx.getBean(SalarieService.class);
         chantieService = Module.ctx.getBean(ChantierService.class);

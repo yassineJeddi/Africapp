@@ -16,8 +16,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.el.ELContext;
 import javax.faces.application.FacesMessage;
@@ -71,8 +69,6 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
-import net.sf.jasperreports.engine.util.JRLoader;
-import net.sf.jasperreports.engine.xml.JRXmlWriter;
 import org.apache.commons.io.FilenameUtils;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.RowEditEvent;
@@ -92,8 +88,10 @@ public class DetailSalarieMb implements Serializable {
     @ManagedProperty(value = "#{parametrageService}")
     private ParametrageService parametrageService;
     @ManagedProperty(value = "#{salarieService}")
+     
     private SalarieService salarieService;
     private Salarie salarie;
+    private Integer idUser;
     private UploadedFile userPhotoUploaded;
     private Document document;
     private static String chemin;
@@ -158,6 +156,7 @@ public class DetailSalarieMb implements Serializable {
     private TauxHoraireService tauxHoraireService;
     private Fonction fonctionTauxHoraire;
     private boolean addContratBtnActive = true, activeChampContrat = false;
+    private Integer fonctionId;
 
     /**
      * variable modification des contrat
@@ -177,8 +176,25 @@ public class DetailSalarieMb implements Serializable {
 //    ContratManager contratManager = new ContratManagerImpl();
     Constantes constantes = Constantes.getInstance();
     private Integer id_Etat, id_ModeP, id_Situation, id_Civilite, id_Casque, id_Gilet, id_Pointure, id_Taille, id_Nationalite;
-
+    
     //Getter & Setter
+
+    public Integer getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(Integer idUser) {
+        this.idUser = idUser;
+    }    
+
+    public Integer getFonctionId() {
+        return fonctionId;
+    }
+
+    public void setFonctionId(Integer fonctionId) {
+        this.fonctionId = fonctionId;
+    }
+
     public String getContratStatutCode() {
         return contratStatutCode;
     }
@@ -902,7 +918,7 @@ public class DetailSalarieMb implements Serializable {
 //Methode
     @PostConstruct
     public void init() {
-
+        
         enfantService = Module.ctx.getBean(EnfantService.class);
         salarieService = Module.ctx.getBean(SalarieService.class);
         documentService = Module.ctx.getBean(DocumentService.class);
@@ -912,69 +928,103 @@ public class DetailSalarieMb implements Serializable {
         absenceService = Module.ctx.getBean(AbsenceService.class);
         outilService = Module.ctx.getBean(OutilTravailService.class);
         affectSupService = Module.ctx.getBean(AffectationSSuppService.class);
-        minFin = 0;
-        minDebut = 0;
-        heureDebut = 8;
-        heureFin = 18;
+        
+        //minFin = 0;
+        //minDebut = 0;
+        //heureDebut = 8;
+        //heureFin = 18;
+        int id=0;
+
         ELContext elContext = FacesContext.getCurrentInstance().getELContext();
         fonctionMb = (Evol_FonctionMb) FacesContext.getCurrentInstance().getApplication().getELResolver().getValue(elContext, null, "evol_fonctionMb");
-
+        
         fonctionParCategorie = fonctionMb.getFonctions();
         fonctions = fonctionMb.getFonctions();
         invalideCNSS = false;
         existCin = false;
         invalideRib = false;
+        //nombreDocumentsNonAjoutes = 0;
 
-        int id = -1;
         FacesContext facesContext = FacesContext.getCurrentInstance();
         ExternalContext externalContext = facesContext.getExternalContext();
         Map<String, String> requestParameters = externalContext.getRequestParameterMap();
-        System.out.println(requestParameters.containsKey("salarieId"));
+        //System.out.println(requestParameters.containsKey("salarieId"));
+        try {
+             id = Integer.valueOf(requestParameters.get("salarieId"));
+        } catch (Exception e) {
+            System.out.println("Erreur de recuperation id car "+e.getMessage());
+        }
+        /*
+        if(id>0){
+            idSalarie=id;
+        }
         if (requestParameters.containsKey("salarieId")) {
             id = Integer.valueOf(requestParameters.get("salarieId"));
-            System.out.println(id);
+            //System.out.println(id);
 
         } else {
             System.out.println("Erreur d'afectation d'id");
 //            throw new WebServiceException("No item id in request parameters");
         }
-
+*/
         salarie = salarieService.getSalarie(id);
 //        System.out.println(salarie.toString());
-        docs = documentService.listeDocumentsSalarie(id, 0, Integer.parseInt(documentService.nombreDocumentsSalarie(id).toString()));
-        contrats = contratService.listeContratsSalarie(0, Integer.parseInt(contratService.nombreContratsSalarie(id).toString()), id);
-        enfants = enfantService.listeEnfantsSalarie(id, 0, Integer.parseInt(enfantService.nombreEnfantsSalarie(id).toString()));
+        
+        
+        
         boolean isAdmin = false;
         if ("admin".equals(Constantes.getRoleAuth()) || "EMAIL_CONTRIBUTORS".equals(Constantes.getRoleAuth())) {
             isAdmin = true;
         }
         Authentification authentification = (Authentification) FacesContext.getCurrentInstance().getApplication().getELResolver().getValue(elContext, null, "authentification");
-        Integer idUser = authentification.get_connected_user().getId();
+        idUser = authentification.get_connected_user().getId();
         //chantiers = chantierService.listeChantiersAffectes(id, 1, 0, Integer.parseInt(chantierService.nombreChantiers("", "", Module.dos).toString()), "", "", Module.dos, isAdmin, idUser);
 
         if (salarie != null) {
-            chantiers = chantierService.listeChantiersAffectes(id, 1, 0, Integer.parseInt(chantierService.nombreChantiers("", "", Module.dos).toString()), "", "", Module.dos, true, idUser);
-            presences = presenceService.listePresencesSalarie(0, 10, salarieService.getSalarie(id).getMatricule(), null, null, null);
-            absences = absenceService.listeAbsences(0, 10, salarie.getMatricule(), salarie.getCin(), salarie.getCnss(), null);
-            outils = outilService.listeOutilsTravail(id, 0, Integer.parseInt(outilService.nombreOutilsTravail(id).toString()));
-            sum = presenceService.nombreHeuresMinutesPresencesSalarie(salarie.getMatricule(), salarie.getCin(), salarie.getCnss(), null, null, null);
-            typeID = (salarie.getType() != null) ? salarie.getType().getId() : null;
-            id_Casque = (salarie.getCouleurCasque() != null) ? salarie.getCouleurCasque().getId() : null;
-            id_Gilet = (salarie.getCouleurGilet() != null) ? salarie.getCouleurGilet().getId() : null;
-            id_Civilite = (salarie.getCivilite() != null) ? salarie.getCivilite().getId() : null;
-            id_Taille = (salarie.getTailleHabillement() != null) ? salarie.getTailleHabillement().getId() : null;
-            id_Situation = (salarie.getSituationFamiliale() != null) ? salarie.getSituationFamiliale().getId() : null;
-            id_Pointure = (salarie.getPointure() != null) ? salarie.getPointure().getId() : null;
-            id_Etat = (salarie.getEtat() != null) ? salarie.getEtat().getId() : null;
-            id_Nationalite = (salarie.getNationalite() != null) ? salarie.getNationalite().getId() : null;
-            id_ModeP = (salarie.getModePaiement() != null) ? salarie.getModePaiement().getId() : null;
-            id_Pays = (salarie.getPays() != null) ? salarie.getPays().getId() : null;
-            idStatut = parametrageService.getStatut(salarie.getFonction().getCodeDiva().substring(0, 1)).getCodeDiva();
-            nombreDocumentsNonAjoutes = salarieService.listeDocumentNonAjoutes(salarie).size();
+            try {
+                //sum = presenceService.nombreHeuresMinutesPresencesSalarie(salarie.getMatricule(), salarie.getCin(), salarie.getCnss(), null, null, null);
+                typeID = (salarie.getType() != null) ? salarie.getType().getId() : null;
+                id_Casque = (salarie.getCouleurCasque() != null) ? salarie.getCouleurCasque().getId() : null;
+                id_Gilet = (salarie.getCouleurGilet() != null) ? salarie.getCouleurGilet().getId() : null;
+                id_Civilite = (salarie.getCivilite() != null) ? salarie.getCivilite().getId() : null;
+                id_Taille = (salarie.getTailleHabillement() != null) ? salarie.getTailleHabillement().getId() : null;
+                id_Situation = (salarie.getSituationFamiliale() != null) ? salarie.getSituationFamiliale().getId() : null;
+                id_Pointure = (salarie.getPointure() != null) ? salarie.getPointure().getId() : null;
+                id_Etat = (salarie.getEtat() != null) ? salarie.getEtat().getId() : null;
+                id_Nationalite = (salarie.getNationalite() != null) ? salarie.getNationalite().getId() : null;
+                id_ModeP = (salarie.getModePaiement() != null) ? salarie.getModePaiement().getId() : null;
+                id_Pays = (salarie.getPays() != null) ? salarie.getPays().getId() : null;
+                idStatut = parametrageService.getStatut(salarie.getFonction().getCodeDiva().substring(0, 1)).getCodeDiva();
+                nombreDocumentsNonAjoutes = salarieService.listeDocumentNonAjoutes(salarie).size();
            
             etatBtn = false;
+                
+            } catch (Exception e) {
+            System.out.println("Erreur de recuperarer information du salarie car "+e.getMessage());
+            }
         }
 
+    }
+    public void chargerPresences(){
+            presences = presenceService.listePresencesSalarie(0, 10, salarieService.getSalarie(salarie.getId()).getMatricule(), null, null, null);
+    }
+    public void chargerDocs(){
+            docs = documentService.listeDocumentsSalarie(salarie.getId(), 0, Integer.parseInt(documentService.nombreDocumentsSalarie(salarie.getId()).toString()));
+    }
+    public void chargerContrats(){
+            contrats = contratService.listeContratsSalarie(0, Integer.parseInt(contratService.nombreContratsSalarie(salarie.getId()).toString()), salarie.getId());
+    }
+    public void chargerEnfants(){
+            enfants = enfantService.listeEnfantsSalarie(salarie.getId(), 0, Integer.parseInt(enfantService.nombreEnfantsSalarie(salarie.getId()).toString()));
+    }
+    public void chargerChantiers(){
+            chantiers = chantierService.listeChantiersAffectes(salarie.getId(), 1, 0, Integer.parseInt(chantierService.nombreChantiers("", "", Module.dos).toString()), "", "", Module.dos, true, idUser);
+    }
+    public void chargerAbsences(){
+            absences = absenceService.listeAbsences(0, 10, salarie.getMatricule(), salarie.getCin(), salarie.getCnss(), null);
+    }
+    public void chargerOutils(){
+            outils = outilService.listeOutilsTravail(salarie.getId(), 0, Integer.parseInt(outilService.nombreOutilsTravail(salarie.getId()).toString()));
     }
 
     public void reinitAddDoc() {

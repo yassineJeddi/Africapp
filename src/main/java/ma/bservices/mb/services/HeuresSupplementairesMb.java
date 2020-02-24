@@ -491,9 +491,9 @@ public class HeuresSupplementairesMb implements Serializable {
         matriculeSearch = "";
         cinSearch = "";
         cnss = "";
-
-        page = 1;
         List<Integer> lchantiers = HeureSupPagination.getChantierForSeach(intChantier, user_obj);
+        /*
+        page = 1;
 
         i = heuresSupplementairesService.nombreHS("", "", "", null, lchantiers, null);
         var = (i % 10 == 0) ? i / 10 : i / 10 + 1;
@@ -506,7 +506,7 @@ public class HeuresSupplementairesMb implements Serializable {
             prev = true;
         }
 
-        onFirst();
+        onFirst();*/
     }
 
     public void ajouterHS() {

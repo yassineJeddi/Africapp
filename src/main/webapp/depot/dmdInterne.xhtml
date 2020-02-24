@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="Template.xhtml">
+            <ui:define name="arborescence">
+                <h:outputText value="Demande > Consultation Des Demandes Interne" style="color:#000066; margin-left: -920px; font-size: 14px;  font-family: Times New Roman, Georgia, Serif;"/>
+            </ui:define>
+            <ui:define name="content">
+                <p:blockUI block="form" widgetVar="block">
+                    Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                </p:blockUI>
+                <h:form id="form">
+                    <p:dataTable id="dmdAppr" value="#{demandeMb.demandes}" var="dmd" >
+                        <f:facet name="header">
+                            <!--<p:link href="nouvelledemandeappro.xhtml" value="Nouvelle Demande" />-->
+                            <p:commandButton icon="ui-icon-plus" value="Ajouter" style="margin-top: 3px; "  action="nouvelledemandeInterne.xhmtl?faces-redirect=true"/>
+                            <p:spacer width="20px"/>
+                            <p:commandButton icon="ui-icon-search" value="rechercher" onclick="PF('search').show()" style="margin-bottom: 3px; " />
+                        </f:facet>
+                        <p:column headerText="Numéro">
+                            <h:outputText value="#{dmd.numDemande}"/>
+                        </p:column>
+                        <p:column headerText="Chantier">
+                            <h:outputText value="#{dmd.chantier.code}"/>
+                        </p:column>
+                        <p:column headerText="Atelier">
+                            <h:outputText value="#{dmd.atelier.code}"/>
+                        </p:column>
+                        <p:column headerText="Date Saisie">
+                            <h:outputText value="#{constanteMb.getDateFormatFR(dmd.dateAjout)}"/>
+                        </p:column>
+                        <p:column headerText="Date Livraison Souhaitée">
+                            <h:outputText value="#{constanteMb.getDateFormatFR(dmd.dateLivraisonSouhaitee)}"/>
+                        </p:column>
+                        <p:column headerText="Demandeur">
+                            <h:outputText value="#{dmd.demandeur.nom}"/>
+                        </p:column>
+                        <p:column headerText="Etat">
+                            <h:outputText value="#{dmd.etatDA.etat}"/>
+                        </p:column>
+                        <p:column headerText="Actions">
+                            <p:commandButton icon="ui-icon-document" action="#{demandeMb.detailDm(dmd)}" />
+                            <!--<f:setPropertyActionListener value="# {dmd}" target="# {detailDemandeInterne.DA}" />-->
+                            <!--</p:commandButton>-->
+                        </p:column>
+                        <f:facet name="footer">
+                            <f:facet name="footer">
+                                <h:panelGrid columns="9">
+                                    
+                                    <p:commandButton onstart="PF('block').show()"
+                                                     oncomplete="PF('block').hide()" 
+                                                     id="first"
+                                                     icon="ui-icon-triangle-1-w" 
+                                                     class="ui-paginator-first ui-state-default ui-corner-all" 
+                                                     disabled="#{demandeMb.first}"
+                                                     action="#{demandeMb.onFirst()}" 
+                                                     update="dmdAppr"/>
+                                    
+                                    <p:commandButton onstart="PF('block').show()"
+                                                     oncomplete="PF('block').hide()"
+                                                     id="prev"
+                                                     icon="ui-icon-carat-1-w"
+                                                     disabled="#{demandeMb.prev}"
+                                                     action="#{demandeMb.onPrevious()}" 
+                                                     update="dmdAppr"/>
+                                    
+                                    <p:spinner id="page" value="#{demandeMb.page}" 
+                                               disabled="#{demandeMb.pageId}"
+                                               min="1" max="#{demandeMb.var}" 
+                                               >
+                                        <p:ajax onstart="PF('block').show()" 
+                                                oncomplete="PF('block').hide()" 
+                                                listener="#{demandeMb.onPaginate()}" 
+                                                event="change" update="dmdAppr"
+                                                />
+                                    </p:spinner>
+                                    
+                                    <h:outputText value="/ #{demandeMb.var}"/>
+                                    
+                                    <p:commandButton onstart="PF('block').show()" oncomplete="PF('block').hide()" 
+                                                     id="next" disabled="#{demandeMb.next}" 
+                                                     icon="ui-icon-carat-1-e" 
+                                                     update="dmdAppr"
+                                                     action="#{demandeMb.onNext()}"
+                                                     />
+                                    <p:commandButton onstart="PF('block').show()" 
+                                                     oncomplete="PF('block').hide()"
+                                                     id="last" disabled="#{demandeMb.last}"
+                                                     icon="ui-icon-triangle-1-e" 
+                                                     update="dmdAppr" 
+                                                     action="#{demandeMb.onLast()}" 
+                                                     />
+
+                                    <h:outputText value="Nombre Total" style="padding-right:  7px ; color:  white"/>
+                                    <h:outputText value="#{demandeMb.nbr}"/>
+
+                                    <h:outputText value="#{demandeMb.page ==1 or demandeMb.page ==0 ?
+                                                           '1 -10': ''.concat((demandeMb.page-1) * 10 +1).concat('-').concat((demandeMb.page-1) * 10 +10) }"
+                                                  style="color:  white"/>
+                                </h:panelGrid>
+                            </f:facet>
+                        </f:facet>
+                    </p:dataTable>
+
+                    <p:dialog modal="true" widgetVar="search" closable="true" header="Recherche DA ">
+                        <h:panelGrid columns="2" cellspacing="7">
+                            <h:outputText value="Numéro DA: "/>
+                            <p:inputText value="#{demandeMb.numeroDA}"/>
+
+                            <h:outputText value="Chantier :"/>
+                            <p:selectOneMenu id="chantier" value="#{demandeMb.chantier}" filter="true" filterMatchMode="contains"> 
+                                <f:selectItem itemLabel="-- chantiers --" itemValue="" /> 
+                                <f:selectItems value="#{chantier.chantiers}" var="c" itemLabel="#{c.code}" itemValue="#{c.code}" />
+                            </p:selectOneMenu>
+
+                            <h:outputText value="Etat: "/>
+                            <p:selectOneMenu id="etat" filter="true" filterMatchMode="contains" value="#{demandeMb.etat}"> 
+                                <f:selectItem itemLabel="-- etats --" itemValue="" /> 
+                                <f:selectItems value="#{etatDAMb.etatDA}" var="e" itemLabel="#{e.etat}" itemValue="#{e.etat}" />
+                            </p:selectOneMenu>
+                        </h:panelGrid>
+                        <h:panelGrid columns="4"  cellpadding="7" >
+                            <h:outputText value="Date ajout: "/>
+                            <p:calendar value="#{demandeMb.dateAjoutDe}" />
+                            <h:outputText value="à : "/>
+                            <p:calendar value="#{demandeMb.dateAjoutA}" />
+
+                            <h:outputText value="Date LS de : "/>
+                            <p:calendar value="#{demandeMb.dateLSDe}" />
+                            <h:outputText value="Date LS de : "/>
+                            <p:calendar value="#{demandeMb.dateLSA}" />
+
+                        </h:panelGrid>
+                        <br/>
+                        <p:commandButton value="Recherche" action="#{demandeMb.rechercheDA()}" update=":form:dmdAppr" oncomplete="PF('search').hide()"/>
+                    </p:dialog>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+

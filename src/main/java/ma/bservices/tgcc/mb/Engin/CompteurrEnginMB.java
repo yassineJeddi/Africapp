@@ -16,9 +16,12 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import ma.bservices.tgcc.Entity.CompteurrEngin;
 import ma.bservices.tgcc.Entity.Engin;
+import ma.bservices.tgcc.Entity.ReferentielEngin;
 import ma.bservices.tgcc.authentification.Authentification;
 import ma.bservices.tgcc.service.Engin.EnginService;
 import ma.bservices.tgcc.service.Engin.ICompteurEnginService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.jsf.FacesContextUtils;
@@ -44,6 +47,9 @@ public class CompteurrEnginMB {
     private Integer idEngin;
     private Date dateChangement;
     
+    private ReferentielEngin referentielEngin;
+    private List<ReferentielEngin> listeReferentielEngin;
+    
     private List<CompteurrEngin> compteurrEngins = new ArrayList<CompteurrEngin>();
     
     
@@ -54,6 +60,37 @@ public class CompteurrEnginMB {
         enginSerive = ctx.getBean(EnginService.class);
         dateChangement=new Date();
     }
+    public void prepareRefEngins(Engin e){
+        referentielEngin = new ReferentielEngin();
+        engin =e;
+        listeReferentielEngin = enginSerive.allReferentielEnginByEngin(engin); 
+    }
+    public void prepReferentiel(ReferentielEngin r){
+        referentielEngin= r;        
+    }
+    public void addReferentiel(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication(); 
+        referentielEngin.setUserAdd(auth.getPrincipal().toString());
+        referentielEngin.setDateAdd(new Date());
+        referentielEngin.setEngin(engin);
+        enginSerive.addReferentielEngin(referentielEngin);
+        referentielEngin = new ReferentielEngin();
+        listeReferentielEngin = enginSerive.allReferentielEnginByEngin(engin);
+    }
+    public void editReferentiel(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication(); 
+        referentielEngin.setUserEdit(auth.getPrincipal().toString());
+        referentielEngin.setDateEdit(new Date());
+        enginSerive.editReferentielEngin(referentielEngin);
+        referentielEngin = new ReferentielEngin();
+        listeReferentielEngin = enginSerive.allReferentielEnginByEngin(engin);
+    }
+    public void remouveReferentiel(ReferentielEngin r){
+        enginSerive.remouvReferentielEngin(r);
+        referentielEngin = new ReferentielEngin();
+        listeReferentielEngin = enginSerive.allReferentielEnginByEngin(engin);
+    }
+    
     
     public void preparCompteurEngin(Engin e){
         
@@ -147,6 +184,22 @@ public class CompteurrEnginMB {
 
     public void setDateChangement(Date dateChangement) {
         this.dateChangement = dateChangement;
+    }
+
+    public ReferentielEngin getReferentielEngin() {
+        return referentielEngin;
+    }
+
+    public void setReferentielEngin(ReferentielEngin referentielEngin) {
+        this.referentielEngin = referentielEngin;
+    }
+
+    public List<ReferentielEngin> getListeReferentielEngin() {
+        return listeReferentielEngin;
+    }
+
+    public void setListeReferentielEngin(List<ReferentielEngin> listeReferentielEngin) {
+        this.listeReferentielEngin = listeReferentielEngin;
     }
     
 

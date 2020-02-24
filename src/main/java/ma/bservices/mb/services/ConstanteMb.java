@@ -38,6 +38,7 @@ import org.springframework.stereotype.Component;
 public class ConstanteMb implements Serializable {
 
     private Date maxDate, minDateNaissance;
+    private Date minDate;
      private static String repertoire = "/opt";
      //private static String repertoire="D://PROJETS//NetBeans//data";
    //private static String repertoire="E://data";
@@ -108,6 +109,7 @@ public class ConstanteMb implements Serializable {
     private String actionEngin="Action Engin";
     private String uploadDocEngin="Uploader document Engin";
     private String editMvmt="Modifier mvmt citerne";
+    private String referentielEngin="Gestion Referentiel";
 
 //AccidentTravail
     
@@ -650,9 +652,47 @@ public class ConstanteMb implements Serializable {
     public void setAjouterCurriculum(String ajouterCurriculum) {
         this.ajouterCurriculum = ajouterCurriculum;
     }
+
+    public Date getMinDate() {
+        return minDate;
+    }
+
+    public void setMinDate(Date minDate) {
+        this.minDate = minDate;
+    }
+
+    public String getReferentielEngin() {
+        return referentielEngin;
+    }
+
+    public void setReferentielEngin(String referentielEngin) {
+        this.referentielEngin = referentielEngin;
+    }
     
     
     
+    
+    public Date getminDate() {
+        Date minDate = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(minDate);
+        SimpleDateFormat simpleDateformat = new SimpleDateFormat("EEEE");
+        //System.out.println(simpleDateformat.format(minDate));
+        if ((simpleDateformat.format(minDate)).toString().equals("Samedi") || (simpleDateformat.format(minDate)).toString().equals("Dimanche") )
+        {
+            c.add(Calendar.DATE, 4);       
+        }
+        else
+        {
+            c.add(Calendar.DATE, 2);  
+        }
+        minDate = c.getTime();
+        return minDate;
+    }
+
+    public void setminDate(Date minDate) {
+        this.minDate = minDate;
+    }
     
     
     

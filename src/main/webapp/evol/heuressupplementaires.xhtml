@@ -81,13 +81,14 @@
                             </div>
                         </div>
 
-
-
-                        <p:dataTable var="hsupp" value="#{heuresuppMb.listHS}" rowKey="#{hsupp.id}"
-                                     rows="10"
-                                     class="table table-responsive table-bordered"
-                                     paginatorPosition="bottom"
-                                     id="salarieTable" >
+                        <p:dataTable id="salarieTable" var="hsupp" value="#{heuresuppMb.listHS}" rowKey="#{hsupp.id}"
+                                        class="table table-responsive table-bordered"
+                                         paginator="true" rows="10"
+                                         paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                         paginatorPosition="bottom"
+                                         editable="true"
+                                         rowsPerPageTemplate="5,10,15" lazy="true"
+                                     >
 
                             <p:column headerText="Chantier">
                                 <h:outputText value="#{hsupp.chantier.code}"/>
@@ -163,62 +164,7 @@
                                 </div>
                             </p:column>
 
-                            <f:facet name="footer">
-                                <h:panelGrid columns="9">
-                                    <p:commandButton onstart="PF('block').show()" 
-                                                     oncomplete="PF('block').hide()" 
-                                                     id="first" icon="ui-icon-triangle-1-w" 
-                                                     class="ui-paginator-first ui-state-default ui-corner-all"
-                                                     disabled="#{heuresuppMb.first}"
-                                                     action="#{heuresuppMb.onFirst()}" 
-                                                     update=":tableHS:salarieTable"
-                                                     />
-
-                                    <p:commandButton onstart="PF('block').show()"
-                                                     oncomplete="PF('block').hide()"
-                                                     id="prev" 
-                                                     icon="ui-icon-carat-1-w"
-                                                     disabled="#{heuresuppMb.prev}"
-                                                     action="#{heuresuppMb.onPrevious()}" 
-                                                     update=":tableHS:salarieTable"
-                                                     />
-
-                                    <p:spinner id="page" 
-                                               value="#{heuresuppMb.page}" 
-                                               disabled="#{heuresuppMb.pageId}" 
-                                               min="1" 
-                                               max="#{heuresuppMb.var}"
-                                               >
-                                        <p:ajax onstart="PF('block').show()"
-                                                oncomplete="PF('block').hide()" 
-                                                listener="#{heuresuppMb.onPaginate()}" 
-                                                event="change" 
-                                                update=":tableHS:salarieTable" 
-                                                />
-                                    </p:spinner>
-
-                                    <h:outputText value="/ #{heuresuppMb.var}"/>
-
-                                    <p:commandButton onstart="PF('block').show()"
-                                                     oncomplete="PF('block').hide()"  
-                                                     id="next" 
-                                                     disabled="#{heuresuppMb.next}"
-                                                     icon="ui-icon-carat-1-e"
-                                                     update=":tableHS:salarieTable"
-                                                     action="#{heuresuppMb.onNext()}"
-                                                     />
-
-                                    <p:commandButton onstart="PF('block').show()" oncomplete="PF('block').hide()" id="last" disabled="#{heuresuppMb.last}" icon="ui-icon-triangle-1-e" update=":tableHS:salarieTable" action="#{heuresuppMb.onLast()}" />
-
-                                    <h:outputText value="Nombre Total" style="padding-right:  7px ; color:  white"/>
-
-                                    <h:outputText value="#{heuresuppMb.i}"/>
-
-                                    <h:outputText value="#{heuresuppMb.page ==1 or heuresuppMb.page ==0 ?
-                                                           '1 -10': ''.concat((heuresuppMb.page-1) * 10 +1).concat('-').concat((heuresuppMb.page-1) * 10 +10) }"
-                                                  style="color:  white"/>
-                                </h:panelGrid>
-                            </f:facet>
+                            
 
                         </p:dataTable>
                     </h:form>

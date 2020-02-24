@@ -56,6 +56,9 @@ public interface ChantierService {
     public void affectSalarieChatierFinance(Salarie s, Chantier c);
     public void deleteAffectSalarieToutChatierFinance(Salarie s);
 
+    public List<Chantier> ateliersList(int start, int limit, String nom, String ville, int[] dos,String ate);
+    public Object nombreChantiers(Integer idUser, boolean adminAlfresco, String querySearch, int[] dos);
+    
     /**
      * get chantier by affaire
      *

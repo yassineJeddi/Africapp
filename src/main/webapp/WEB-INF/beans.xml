@@ -12,6 +12,16 @@
     <bean id="etatEnginDAO" class="ma.bservices.tgcc.dao.engin.EtatEnginDAOImpl">
         <property name="sessionFactory" ref="sessionFactory" />    
     </bean>
+    <!-- Demande Interne Achat et Logistique -->
+    
+    <bean id="demandeService" class="ma.bservices.services.DemandeServiceImpl">
+        <property name="demandeDao" ref="demandeDao" /> 
+    </bean>   
+ 
+    
+     <bean id="demandeDao" class="ma.bservices.dao.DemandeDaoImp">
+        <property name="sessionFactory" ref="sessionFactory" />    
+     </bean>
     
     <!-- Trace Achat -->
     
@@ -671,7 +681,7 @@
                 <prop key="hibernate.c3p0.max_size">50</prop>
                 <prop key="hibernate.c3p0.timeout">300</prop>
                 <prop key="hibernate.c3p0.max_statements">50</prop>
-                <prop key="hibernate.c3p0.idle_test_period">3000</prop>
+                <prop key="hibernate.c3p0.idle_test_period">300</prop>
             </props>
         </property>
         

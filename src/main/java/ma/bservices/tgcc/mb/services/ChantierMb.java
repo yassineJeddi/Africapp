@@ -15,6 +15,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import ma.bservices.beans.Chantier;
+import ma.bservices.mb.services.Module;
 import ma.bservices.tgcc.service.Engin.ChantierService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -35,7 +36,8 @@ public class ChantierMb implements Serializable {
     private List<String> l_code_chantier;
     private List<String> l_nom_chantier;
     private List<String> l_region;
-
+    private List<Chantier> ateliers;
+    private Integer page, nbr;
     private List<Chantier> chantiers = new ArrayList<>();
 
     public ChantierMb() {
@@ -81,6 +83,32 @@ public class ChantierMb implements Serializable {
         this.l_region = l_region;
     }
 
+    public List<Chantier> getAteliers() {
+        return ateliers;
+    }
+
+    public void setAteliers(List<Chantier> ateliers) {
+        this.ateliers = ateliers;
+    }
+
+    public Integer getNbr() {
+        return nbr;
+    }
+
+    public void setNbr(Integer nbr) {
+        this.nbr = nbr;
+    }
+
+    public Integer getPage() {
+        return page;
+    }
+
+    public void setPage(Integer page) {
+        this.page = page;
+    }
+    
+    
+
     @PostConstruct
     public void init() {
         WebApplicationContext ctx = FacesContextUtils.getWebApplicationContext(FacesContext.getCurrentInstance());
@@ -91,7 +119,8 @@ public class ChantierMb implements Serializable {
         this.l_code_chantier = chantierService.get_allChantiersCodes();
         this.l_nom_chantier = chantierService.get_allChantiersNames();
         this.l_region = chantierService.get_allChantiersRegins();
-
+        nbr = Integer.parseInt(chantierService.nombreChantiers(0, true, "", Module.dos).toString());
+        ateliers = chantierService.ateliersList(0, nbr, "", "", Module.dos,"DP ");
     }
 
     /**

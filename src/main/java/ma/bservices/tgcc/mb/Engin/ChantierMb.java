@@ -56,6 +56,7 @@ public class ChantierMb implements Serializable {
     private List<Chantier> chantiersSelect2;
     private List<Chantier> chantier;
     private List<Chantier> chantiersDiff;
+    private List<Chantier> ateliers;
 
     private Chantier chantierP = new Chantier();
     private Chantier chantierToEdit = new Chantier();
@@ -222,6 +223,14 @@ public class ChantierMb implements Serializable {
         this.chantierToUse = chantierToUse;
     }
     
+    public List<Chantier> getAteliers() {
+        return ateliers;
+    }
+
+    public void setAteliers(List<Chantier> ateliers) {
+        this.ateliers = ateliers;
+    }
+    
     
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////Fonctions ///////////////////////////////////////////////////////////////////////////
@@ -238,15 +247,18 @@ public class ChantierMb implements Serializable {
         Evol_ChantierMb evol_ChantierMb = (Evol_ChantierMb) FacesContext.getCurrentInstance().getApplication().getELResolver().getValue(elContext, null, "evol_chantierMb");
         
         boolean isRh = false;
+       
         for (GrantedAuthority grantedAuthority : auth.getAuthorities()) {
             if (grantedAuthority.getAuthority().equals("admin")) { //a verifier ? 
                 chantiers = chantierService.findAll();
+                ateliers = evol_ChantierMb.getAteliers();
                 isAdmin = true;
                 break;
             }
         }
         if (!isAdmin) {
             chantiers = chantierService.searchByUser(auth.getPrincipal().toString());
+            ateliers = evol_ChantierMb.getAteliers();
         }
 
         for (Chantier c : chantiers) {
@@ -362,10 +374,10 @@ public class ChantierMb implements Serializable {
     public void addAffinite() {
      List<Chantier> listOfAffinites = new LinkedList<>();
         for (Integer i : chanSelected.getIdChantiers()) {
-            System.out.println("CHANTIERS FROM LIST : " + i);
+            //System.out.println("CHANTIERS FROM LIST : " + i);
             if (i != null) {
                 Chantier c = chantierService.findById(i);
-                System.out.println("CHANTIER AFF : " + c.getCode());
+                //System.out.println("CHANTIER AFF : " + c.getCode());
                 if (chanSelected.getAffiniteChantier() == null) {
                     chanSelected.setAffiniteChantier(listOfAffinites);
                 }
@@ -419,7 +431,7 @@ public class ChantierMb implements Serializable {
     
     public void peprChantier(Chantier c){
         chantierToEdit=chantierService.findById(c.getId());
-        System.out.println("MB:::::::::::::::> chantierToEdit "+chantierToEdit.toString());
+        //System.out.println("MB:::::::::::::::> chantierToEdit "+chantierToEdit.toString());
         chantierToEdit.setCode(chantierToEdit.getCode().trim());
     }
     

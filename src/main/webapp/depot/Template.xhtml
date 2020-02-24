@@ -3,11 +3,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-
       xmlns:p="http://primefaces.org/ui">
 
     <h:head>
         <title>TGCC-INTEGRATION</title>
+        <meta charset="UTF-8"></meta>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" ></meta>
+        <!--<meta http-equiv="refresh" content="# {session.maxInactiveInterval};url=# {request.contextPath}/login.xhtml"/>-->
+
         <meta charset="UTF-8"></meta>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" ></meta>
         <meta http-equiv="refresh" content="#{session.maxInactiveInterval};url=#{request.contextPath}/login.xhtml"/>
@@ -15,10 +18,13 @@
 
         <link rel="stylesheet" type="text/css" href="../resources/bower_components/bootstrap/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" type="text/css" href="../resources/bower_components/bootstrap/dist/css/bootstrap-theme.min.css" />
-        <link rel="stylesheet" type="text/css" href="../resources/css/main.css" />
         <link rel="stylesheet" type="text/css" href="../resources/lib/font-awesome-4.3.0/css/font-awesome.min.css" />
-
+        <link href='https://fonts.googleapis.com/css?family=Lato:400,300' rel='stylesheet' type='text/css'/>
+        <link rel="stylesheet" type="text/css" href="../resources/bower_components/bootstrap-submenu/dist/css/bootstrap-submenu.min.css" />
+        <link rel="stylesheet" type="text/css" href="../resources/bower_components/bootstrap-submenu/dist/css/bootstrap-submenu.min.css.map" />
+        <link rel="stylesheet" type="text/css" href="../resources/css/main.css" />
         <link rel="icon" type="img/ico" href="../resources/img/logo.ico" />
+        <!--<link rel="stylesheet" type="text/css" href="../resources/css/wizard/wizard.css"/>-->
     </h:head>
 
     <h:body>
@@ -30,21 +36,25 @@
                 <div id="logo-zone">
                     <img class="logo-img center center-block" alt="logo-tgcc" src="../resources/img/logo.png" />
                 </div>
+
                 <div>
                     <ul class="sidebar-nav">
-                           <li>
+
+                        <li>
                             <div>
                                 <span>
-                                      <a href="../profile/pwdmngr.xhtml">
-                                    <div class="row user_connected">
+                                    <a href="../profile/pwdmngr.xhtml">
+                                        <div class="row user_connected">
 
-                                        <div class="col-lg-3 user"></div>
-                                        <div style="margin-left: -35px;color:#fff;" 
-                                             class="col-lg-9">#{authentification.get_connected_user().nom} #{authentification.get_connected_user().prenom}
+                                            <div class="col-lg-3 user"></div>
+                                            <div style="margin-left: -35px;color:#fff;" class="col-lg-9">#{authentification.get_connected_user().nom} #{authentification.get_connected_user().prenom}</div>
+
                                         </div>
-                                    </div>
-                                      </a>
+
+
+                                    </a>
                                 </span>
+
                             </div>
                         </li>
 <!--                        <li>
@@ -52,23 +62,25 @@
                                 <div class="icon-arrow-menu"></div>
                             </a>
                         </li>
--->                         <li >
+-->
+
+                        <li>
                             <a href="../achat/nouvelledemandeappro.xhtml">Achat 
                                 <div class="icon-arrow-menu"></div>
                             </a>
                         </li>
-                        <li>
+                        <li class="active">
                             <a href="../depot/dmdInterne.xhtml">Demande Interne
                                 <div class="icon-arrow-menu"></div>
                             </a>
                         </li>
-                        <li>
-                            <div>
-                                <a href="../evol/salaries.xhtml">Quinzainiers 
-                                    <div class="icon-arrow-menu"></div>
-                                </a>
-                            </div>
+
+                        <li >
+                            <a href="../evol/salaries.xhtml">Quinzainiers 
+                                <div class="icon-arrow-menu"></div>
+                            </a>
                         </li>
+
                         <li>
                             <a href="../mensuel/mensuel.xhtml">Mensuels
                                 <div class="icon-arrow-menu"></div>
@@ -84,7 +96,7 @@
                                 <div class="icon-arrow-menu"></div>
                             </a>
                         </li>
-                        <li class="active" >
+                        <li>
                             <a href="../engin/pointage.xhtml">Engins
                                 <div class="icon-arrow-menu"></div>
                             </a>
@@ -101,8 +113,7 @@
                                 <div class="icon-arrow-menu"></div>
                             </a>
                         </li>
-                        
-                         <li>
+                        <li>
                             <a href="../config/Gestion_Citerne.xhtml">Configuration
                                 <div class="icon-arrow-menu"></div>
                             </a>
@@ -115,6 +126,7 @@
 
             <!-- Page Content -->
             <div id="page-content-wrapper">
+
 
 
                 <div class="menu-vertical">
@@ -132,53 +144,69 @@
                             <div class="row nav-row">
                                 <ul class="nav nav-pills nav-tgcc" role="menu" aria-labelledby="dropdownMenu">
                                     <li class="nav-divider nav-divider-atl-header"></li>
-                                    <li class="nav-tgcc vertical-center" role="maintenance">
-                                        <a class="trigger right-caret" tabindex="0" data-toggle="dropdown" aria-expanded="false">
-                                            <span class="menu-logo"><img src="../resources/img/icon-engin.png" /></span>    
-                                            <span class="text-menu visible-lg visible-md">ENGINS</span>
-                                            <span class="fa fa-caret-down fa-fw" ></span>
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li > <a href="parcengins.xhtml" tabindex="0">PARC ENGINS</a></li>
-                                            <li > <a href="enginReforme.xhtml" tabindex="0">Engins réformés</a></li>
-                                            <li > <a href="enginArchive.xhtml" tabindex="0">Engins archivés</a></li>
-                                            <li > <a href="enginDept.xhtml" tabindex="0">Engins département logistique</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="nav-divider nav-divider-atl-header"></li>
                                     <li class="nav-tgcc vertical-center" role="user">
                                         <a class="trigger right-caret" tabindex="0" data-toggle="dropdown" aria-expanded="false">
-                                            <span class="menu-logo"><img src="../resources/img/icon-user.png" /></span>    
-                                            <span class="text-menu visible-lg visible-md">POINTAGE DES ENGINS</span>
+                                            <span class="menu-logo"><img src="../resources/img/operation_stock.png" /></span>    
+                                            <span class="text-menu visible-lg visible-md">Demande Interne</span>
                                             <span class="fa fa-caret-down fa-fw" ></span>
                                         </a>
                                         <ul class="dropdown-menu">
+                                            <li>
+                                                <a 
+                                                    tabindex="0" data-delay="100" 
+                                                    href="nouvelledemandeInterne.xhtml"
+                                                    data-close-others="true" aria-expanded="false">
+                                                    Nouvelle Demande Interne
+                                                </a>
 
-                                            <li > <a href="pointage.xhtml" tabindex="0">Pointage des engins</a></li>
-                                            <li > <a href="index.xhtml" tabindex="0">Historique du pointage</a></li>
-                                            <li > <a href="pointageDept.xhtml" tabindex="0">Pointage département logistique</a></li>
+
+                                            </li>
+                                            <li>
+                                                <a 
+                                                    tabindex="0"  data-delay="100" 
+                                                    href="dmdInterne.xhtml"
+                                                    data-close-others="true" aria-expanded="false">
+                                                    Consultation
+                                                </a>
+
+                                            </li>
                                         </ul>
+
                                     </li>
                                     <li class="nav-divider nav-divider-atl-header"></li>
-                                    <li class="nav-tgcc vertical-center" role="maintenance">
-                                        <a href="panne.xhtml" class="trigger right-caret" tabindex="0" aria-expanded="false">
-                                            <span class="menu-logo"><img src="../resources/img/icon-maintenance.png" /></span>    
-                                            <span class="text-menu visible-lg visible-md">MAINTENANCE</span>
-                                            <span class="fa fa-caret-down fa-fw" ></span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-divider nav-divider-atl-header"></li>
-                                    <li class="nav-tgcc vertical-center" role="maintenance">
+
+
+                                    <li class="nav-tgcc vertical-center" role="user">
                                         <a class="trigger right-caret" tabindex="0" data-toggle="dropdown" aria-expanded="false">
-                                            <span class="menu-logo"><img src="../resources/img/citerne.png" /></span>    
-                                            <span class="text-menu visible-lg visible-md">GASOIL / CITERNES</span>
+                                            <span class="menu-logo"><img src="../resources/img/operation_stock.png" /></span>    
+                                            <span class="text-menu visible-lg visible-md">Transport</span>
                                             <span class="fa fa-caret-down fa-fw" ></span>
                                         </a>
-                                        <ul class="dropdown-menu">
-                                            <li > <a href="Citerne.xhtml" tabindex="0">Gestion Gasoil</a></li>
-                                            <li > <a href="Gestion_Citerne.xhtml" tabindex="0">Gestion Citernes</a></li>
-                                        </ul>
+                                       
+
                                     </li>
+
+
+
+
+                                                                       <li class="nav-divider nav-divider-atl-header"></li>
+                                    
+                                                                        <li class="nav-tgcc vertical-center" role="maintenance">
+                                    
+                                                                            <a class="trigger right-caret" tabindex="0" data-toggle="dropdown" aria-expanded="false">
+                                                                                <span class="menu-logo"><img src="../resources/img/icon-maintenance.png" /></span>    
+                                                                                <span class="text-menu visible-lg visible-md">ADMINISTRATION</span>
+                                    
+                                                                            </a>
+                                    
+                                    
+                                    
+                                    
+                                                                        </li>
+
+
+
+
                                 </ul>
                             </div>
                         </div>
@@ -186,6 +214,7 @@
                             <div class="col-lg-2 col-sm-2 col-xs-2 col-md-2">
                                 <div class="logout">
                                     <div style="color: #FFF;" class="visible-lg visible-md">
+
                                         <a href="javascript:;" onclick="document.getElementById('form1').submit();">Logout</a>
                                     </div>
                                     <div class="logout-small visible-xs visible-sm">
@@ -196,11 +225,13 @@
                         </form>
                     </div>
                 </div>
+
                 <div class="arborescence">
-                    <h6><ui:insert name="arborescence">ENGINS</ui:insert></h6>
+                    <h6><ui:insert name="arborescence">Content</ui:insert></h6>
+
                 </div>
+
                 <div class="content">
-                    <!--p:ajaxStatus  oncomplete="updateDate();"/-->
                     <ui:insert name="content">Content</ui:insert>
                     <p:dialog widgetVar="alerteDialog" closable="true">
                         <div class="alert alert-danger alert-dismissable">
@@ -210,32 +241,33 @@
                         </div>
                     </p:dialog>
                 </div>
-                <!--                <br />  
-                                <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">T</a>-->
             </div>
-            <!-- /#page-content-wrapper -->
 
         </div>
-        <!-- /#wrapper -->
-
-        <!-- jQuery -->
-        <!--<script src="resources/js/jquery.js"></script>-->
-
-        <!-- Bootstrap Core JavaScript -->
-        <!--<script src="../resources/js/bootstrap.min.js"></script>-->
-
-        <!-- jQuery -->
-        <!--<script type="text/javascript" src="resources/bower_components/jquery/dist/jquery.min.js"></script>-->        
 
         <!-- Bootstrap Core JavaScript -->
         <script src="../resources/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-        <script src="../resources/js/main.js"></script>
+        <script src="../resources/bower_components/bootstrap-submenu/dist/js/bootstrap-submenu.min.js" ></script>
+        <script src="../resources/bower_components/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" ></script>
+        <!--<script type="text/javascript" src="../resources/css/wizard/wizard.js"></script>-->
         <!-- Menu Toggle Script -->
-        <script>
+        <script type="text/javascript">
                                             $("#menu-toggle").click(function (e) {
                                                 e.preventDefault();
                                                 $("#wrapper").toggleClass("toggled");
                                             });
+                                            $('[data-submenu]').submenupicker();
+                                            $(".dropdown-submenu").click(function (event) {
+                                                // stop bootstrap.js to hide the parents
+                                                // event.stopPropagation();
+                                                // // hide the open children
+                                                $(this).find(".dropdown-submenu").removeClass('open');
+                                                //// add 'open' class to all parents with class 'dropdown-submenu'
+                                                $(this).parents(".dropdown-submenu").addClass('open');
+                                                //// this is also open (or was)
+                                                $(this).toggleClass('open');
+                                            });
+                                            $('.dropdown-toggle').dropdownHover();
                                             $("input[id$='filter']").on('keypress', function (event) {
                                                 if (event.keyCode === 13) {
                                                     event.preventDefault();
@@ -257,7 +289,11 @@
 //                                                    event.preventDefault();
 //                                                    PF('alerteDialog').show();
 //                                                    console.log('annuler modifier date manualement ');
-//                                                });                                            }
+//                                                });
+//                                            }
         </script>
+
+
+
     </h:body>
 </html>

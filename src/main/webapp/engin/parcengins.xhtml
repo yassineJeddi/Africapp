@@ -14,9 +14,12 @@
     <body>
         <ui:composition template="./enginTemplate.xhtml">
             <ui:define name="content">
+                            <p:blockUI block="tablePE" widgetVar="block"> Chargement <br /> <h:graphicImage value="../images/loading.gif"/>
+                            </p:blockUI>
                 <p:panel id="pannelPE">
                     <!--<h:form id="parcEnginForm">-->
                     <h:form id="form">
+                        
                         <p:growl id="msgsM"  autoUpdate="false"/>
                         <h:panelGrid columns="10" cellpadding="5">
                             <p:commandButton class="btn btn-switch active" 
@@ -38,6 +41,7 @@
                             </h:commandLink>
                             <p:spacer width="10px" />
                             <p:commandButton class="btn btn-switch active" value="Actualiser" 
+                                             onstart="PF('block').show()" oncomplete="PF('block').hide()" 
                                              actionListener="#{parcEngins.enginsActif()}"
                                              update=":tablePE:tbl"/>
                         </h:panelGrid>  
@@ -137,6 +141,14 @@
                                                              update=":changeCpt" >
                                             </p:commandButton>
                                         </p:column>
+                                    </c:if>
+                                    <c:if test="#{authentification.hasPermission(constanteMb.referentielEngin)}">
+                                    <p:commandButton icon="ui-icon-bookmark"
+                                                     actionListener="#{compteurrEnginMB.prepareRefEngins(parcEnginsIt)}" 
+                                                     title="Refferentiel" 
+                                                     onclick="PF('referentiel').show();" 
+                                                     update=":referentielForm" >
+                                    </p:commandButton>
                                     </c:if>
                             </p:column>
                             </c:if>
@@ -463,6 +475,201 @@
                                 </div>
                             </div>
                         </h:form>
+                    </p:dialog>
+                    
+                    
+                    <!-- 
+                    ************************************************************************************************************************************************************************************
+                    *******************************Réferentiel*********************************************************************************************************************************
+                    ************************************************************************************************************************************************************************************
+                    -->
+                    
+                    
+                    
+                    <p:dialog header="Réferentiel" widgetVar="referentiel" id="referentiel" width="1000"  >
+                        <h:form id="referentielForm">
+                            <p:dataTable id="tblRef" var="ref" value="#{compteurrEnginMB.listeReferentielEngin}" 
+                                         widgetVar="referentielTab"   rowKey="#{ref.id}"
+                                         rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                         {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                         {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" >
+                            <!--<p:ajax event="rowSelect"   />-->
+                            
+                                <f:facet name="header">
+                                    <p:commandButton  icon="ui-icon-plus"
+                                                        value="Ajouter" 
+                                                        onclick="PF('referentielAdd').show();" 
+                                                        update=":referentielFormAdd"/>
+                                        <p:spacer width="30px"/> 
+                                </f:facet>
+                            <p:column headerText="Code" >
+                                <h:outputText value="#{ref.engin.code}" />
+                            </p:column> 
+                            <p:column headerText="TYPE VIDANGE" >
+                                <h:outputText value="#{ref.typeVid}" />
+                            </p:column> 
+                            <p:column headerText="DESIGNATION" >
+                                <h:outputText value="#{ref.des}" />
+                            </p:column> 
+                            <p:column headerText="REFERENCE" >
+                                <h:outputText value="#{ref.reference}" />
+                            </p:column> 
+                            <p:column headerText="MARQUE" >
+                                <h:outputText value="#{ref.marque}" />
+                            </p:column> 
+                            <p:column headerText="QUANTITE" >
+                                <h:outputText value="#{ref.quantite}" />
+                            </p:column> 
+                            <p:column headerText="UNITE" >
+                                <h:outputText value="#{ref.unite}" />
+                            </p:column> 
+                            <p:column headerText="OPERATIONS" >
+                                <p:commandButton  icon="ui-icon-trash"  action="#{compteurrEnginMB.remouveReferentiel(ref)}" 
+                                                update=":referentielAdd,:referentielForm" ajax="true" >
+                                  <p:confirm header="Confirmation" message="Voulez vous vraiment supprimer ce réferentiel ?" />
+                                </p:commandButton>
+                                <p:commandButton icon="ui-icon-pencil"
+                                                 actionListener="#{compteurrEnginMB.prepReferentiel(ref)}" 
+                                                 title="modification de referentiel" 
+                                                 oncomplete="PF('referentielEdit').show();" 
+                                                 update=":referentielEdit" >
+                                </p:commandButton>
+                            </p:column> 
+                            </p:dataTable>
+                        </h:form>
+                    </p:dialog>
+                    
+                    
+                    <p:dialog header="Ajouter Réferentiel" widgetVar="referentielAdd" id="referentielAdd"  draggable="false"   height="200" >
+                        <p:panel>
+                            <h:form id="referentielFormAdd"  >
+                                <div class="row">
+                                    <div class="col-lg-4 form-group">
+                                        <div class="row">
+                                            <h:outputText value="TYPE VIDANGE" />
+                                        </div>
+                                        <div class="row">
+                                            <h:inputText value="#{compteurrEnginMB.referentielEngin.typeVid}" />
+                                        </div>
+                                    </div> 
+                                    <div class="col-lg-4 form-group">
+                                        <div class="row">
+                                            <h:outputText value="DESIGNATION" />
+                                        </div>
+                                        <div class="row">
+                                            <h:inputText value="#{compteurrEnginMB.referentielEngin.des}" />
+                                        </div>
+                                    </div> 
+                                    <div class="col-lg-4 form-group">
+                                        <div class="row">
+                                            <h:outputText value="REFERENCE" />
+                                        </div>
+                                        <div class="row">
+                                            <h:inputText value="#{compteurrEnginMB.referentielEngin.reference}" />
+                                        </div>
+                                    </div> 
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-4 form-group">
+                                        <div class="row">
+                                            <h:outputText value="MARQUE" />
+                                        </div>
+                                        <div class="row">
+                                            <h:inputText value="#{compteurrEnginMB.referentielEngin.marque}" />
+                                        </div>
+                                    </div> 
+                                    <div class="col-lg-4 form-group">
+                                        <div class="row">
+                                            <h:outputText value="QUANTITE" />
+                                        </div>
+                                        <div class="row">
+                                            <h:inputText value="#{compteurrEnginMB.referentielEngin.quantite}" />
+                                        </div>
+                                    </div> 
+                                    <div class="col-lg-4 form-group">
+                                        <div class="row">
+                                            <h:outputText value="UNITE" />
+                                        </div>
+                                        <div class="row">
+                                            <h:inputText value="#{compteurrEnginMB.referentielEngin.unite}" />
+                                        </div>
+                                    </div> 
+                                </div>
+                                <div class="row">
+                                    <p:commandButton class="btn btn-switch active"  
+                                                     value="Valider" 
+                                                     update=":referentielForm:tblRef" 
+                                                     onclick="PF('referentielAdd').hide();" 
+                                                     action="#{compteurrEnginMB.addReferentiel()}"/> 
+                                </div> 
+                            </h:form>
+                        </p:panel>
+                    </p:dialog>
+                    
+                    <p:dialog header="Modification Réferentiel" widgetVar="referentielEdit" id="referentielEdit"  draggable="false"   height="200" >
+                        <p:panel>
+                            <h:form id="referentielFormEdit"  >
+                                <div class="row">
+                                    <div class="col-lg-4 form-group">
+                                        <div class="row">
+                                            <h:outputText value="TYPE VIDANGE" />
+                                        </div>
+                                        <div class="row">
+                                            <h:inputText value="#{compteurrEnginMB.referentielEngin.typeVid}" />
+                                        </div>
+                                    </div> 
+                                    <div class="col-lg-4 form-group">
+                                        <div class="row">
+                                            <h:outputText value="DESIGNATION" />
+                                        </div>
+                                        <div class="row">
+                                            <h:inputText value="#{compteurrEnginMB.referentielEngin.des}" />
+                                        </div>
+                                    </div> 
+                                    <div class="col-lg-4 form-group">
+                                        <div class="row">
+                                            <h:outputText value="REFERENCE" />
+                                        </div>
+                                        <div class="row">
+                                            <h:inputText value="#{compteurrEnginMB.referentielEngin.reference}" />
+                                        </div>
+                                    </div> 
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-4 form-group">
+                                        <div class="row">
+                                            <h:outputText value="MARQUE" />
+                                        </div>
+                                        <div class="row">
+                                            <h:inputText value="#{compteurrEnginMB.referentielEngin.marque}" />
+                                        </div>
+                                    </div> 
+                                    <div class="col-lg-4 form-group">
+                                        <div class="row">
+                                            <h:outputText value="QUANTITE" />
+                                        </div>
+                                        <div class="row">
+                                            <h:inputText value="#{compteurrEnginMB.referentielEngin.quantite}" />
+                                        </div>
+                                    </div> 
+                                    <div class="col-lg-4 form-group">
+                                        <div class="row">
+                                            <h:outputText value="UNITE" />
+                                        </div>
+                                        <div class="row">
+                                            <h:inputText value="#{compteurrEnginMB.referentielEngin.unite}" />
+                                        </div>
+                                    </div> 
+                                </div>
+                                <div class="row">
+                                    <p:commandButton class="btn btn-switch active"  
+                                                     value="Valider" 
+                                                     update=":referentielForm:tblRef" 
+                                                     onclick="PF('referentielEdit').hide();" 
+                                                     action="#{compteurrEnginMB.editReferentiel()}"/> 
+                                </div> 
+                            </h:form>
+                        </p:panel>
                     </p:dialog>
                     <!-- 
                     ************************************************************************************************************************************************************************************

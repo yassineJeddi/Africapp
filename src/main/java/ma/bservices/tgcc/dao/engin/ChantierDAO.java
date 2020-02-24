@@ -53,6 +53,9 @@ public interface ChantierDAO {
     public List<Voiture> getVoiture(int id);
     public List<Voiture> findAllVoiture();
 
+    public List<Chantier> ateliersList(int start, int limit, String nom, String ville, int[] dos,String ate);
+    public Object nombreChantiers(Integer idUser, boolean adminAlfresco, String querySearch, int[] dos);
+    
     /**
      * get libelle zone to insert by increment index of last Zone insert in
      * chantier

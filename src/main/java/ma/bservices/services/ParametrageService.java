@@ -33,6 +33,7 @@ import ma.bservices.beans.TypeAbsence;
 import ma.bservices.beans.TypeContrat;
 import ma.bservices.beans.TypeDocument;
 import ma.bservices.constantes.Constantes;
+import ma.bservices.tgcc.Entity.Engin;
 import ma.bservices.tgcc.utilitaire.MbHibernateDaoSupport;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -2454,6 +2455,22 @@ public class ParametrageService  extends MbHibernateDaoSupport {
         }
 
         return liste;
+
+    }
+    
+    
+        public Engin getEnginByCode(String code ) {
+        logger.debug("Engin par code");
+
+        Session session = sessionFactory.getCurrentSession();
+
+        Query query = session.createQuery("FROM Engin  WHERE  lower(code) =? ");
+
+        query.setParameter(0, code.toLowerCase(), StandardBasicTypes.STRING);
+        
+        Engin engin = (Engin) query.uniqueResult();
+
+        return engin;
 
     }
 

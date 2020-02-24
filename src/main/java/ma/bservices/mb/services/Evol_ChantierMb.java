@@ -28,6 +28,7 @@ public class Evol_ChantierMb implements Serializable {
     @ManagedProperty(value = "#{chantierServiceEvol}")
     private ChantierService chantierService;
     private List<Chantier> chantiers;
+    private List<Chantier> ateliers;
 
     public Evol_ChantierMb() {
     }
@@ -58,6 +59,7 @@ public class Evol_ChantierMb implements Serializable {
         nbr = Integer.parseInt(chantierService.nombreChantiers("", "", Module.dos).toString());
         //System.out.println("----------- Part 3");
         chantiers = chantierService.chantiersList(0, nbr, "", "", Module.dos);
+        ateliers = chantierService.ateliersList(0, nbr, "", "", Module.dos,"DP ");
 
         //System.out.println("----------- Part 4" + chantiers.size());
     }
@@ -114,4 +116,14 @@ public class Evol_ChantierMb implements Serializable {
         page = (nbr % 10 == 0) ? nbr / 10 : nbr / 10 + 1;
         chantiers = ChantierPaginate.page(page);
     }
+
+    public List<Chantier> getAteliers() {
+        return ateliers;
+    }
+
+    public void setAteliers(List<Chantier> ateliers) {
+        this.ateliers = ateliers;
+    }
+    
+    
 }

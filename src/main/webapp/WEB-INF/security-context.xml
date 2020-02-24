@@ -66,7 +66,12 @@ http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
         <intercept-url pattern="/evol/consultLoyerChantier.xhtml"         access="hasAnyRole('consulter Loyer Chantier','admin')" />  
         <intercept-url pattern="/evol/histoLoyerS.xhtml"                  access="hasAnyRole('historique Loyer Sal','admin')" />  
         <intercept-url pattern="/evol/caisse.xhtml"                       access="hasAnyRole('Caisse','admin')" />      
-        <intercept-url pattern="/evol/mensuel.xhtml"                      access="hasAnyRole('Affectation Mensuelle','admin')" />       
+        <intercept-url pattern="/evol/mensuel.xhtml"                      access="hasAnyRole('Affectation Mensuelle','admin')" />    
+        
+        
+              
+        <intercept-url pattern="/depot/dmdInterne.xhtml"                  access="hasAnyRole('consultation liste demande')" />              
+        <intercept-url pattern="/depot/nouvelledemandeInterne.xhtml"      access="hasAnyRole('nouvelle demande')" />   
         
         
          

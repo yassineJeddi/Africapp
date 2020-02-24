@@ -1,0 +1,352 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets" 
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Detail Salarie</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="Template.xhtml">
+            <ui:define name="arborescence">
+                <h:outputText value="RH > Consultation Salaries > Détail Salaries" styleClass="arborescence"/>
+            </ui:define>    
+            <ui:define name="content" >
+
+                <p:blockUI block="formUp" widgetVar="blockUp">
+                    Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                </p:blockUI>
+
+                
+                <h:form id="formUp" >
+
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <p:fileUpload allowTypes="/(\.|\/)(gif|jpe?g|png)$/" 
+                                          label="Upload photo"
+                                          mode="advanced"
+                                          auto="true"
+                                          onstart="PF('blockUp').show()"
+                                          oncomplete="PF('blockUp').hide()"
+                                          uploadLabel="Photo Salarie"
+                                          update=":formUp"
+                                          fileUploadListener="#{detailMb.savePhotoServer}">
+                            </p:fileUpload>   
+                            <p:graphicImage value="#{imageBean.image}" width="150px" height="150px">
+                                <f:param name="path" value="#{detailMb.salarie.cheminPhoto}" />
+                            </p:graphicImage>
+                        </div>
+                        <div class="col-lg-4 ">
+                            <h:panelGrid columns="2" cellpadding="8px" class="without-border">
+                                <h:outputText value="Matricule"/>
+                                <h:outputText value="#{detailMb.salarie.matricule}" />
+                                <h:outputText value="Civilité"/>
+                                <h:outputText value="#{detailMb.salarie.civilite!=null ?detailMb.salarie.civilite.civilite:'---'}"/>
+                                <h:outputText value="Nom"/>
+                                <h:outputText value="#{detailMb.salarie.nom}" />
+
+                                <h:outputText value="Nom Arabe"/>
+                                <h:outputText  value="#{detailMb.salarie.nomArabe}" />
+
+                                <h:outputText value="Prénom"/>
+                                <h:outputText value="#{detailMb.salarie.prenom}" />
+
+                                <h:outputText value="Prénom Arabe"/>
+                                <h:outputText value="#{detailMb.salarie.prenomArabe}" />
+
+                                <h:outputText value="Situation Familiale :"/>
+                                <h:outputText value="#{detailMb.salarie.situationFamiliale!=null ?detailMb.salarie.situationFamiliale.situationFamiliale:'---'}"/>
+                            </h:panelGrid>
+                        </div>
+                        <div class="col-lg-4">
+                            <h:panelGrid class="without-border" cellpadding="8px" columns="3" id="infos1">
+                                <h:outputText value="Matricule Nova"/>
+                                <h:outputText value="#{detailMb.salarie.matriculeDivalto}" />
+                                <h:outputText  />
+                                <h:outputText value="CIN"/>
+                                <h:outputText value="#{detailMb.salarie.cin}" />
+                                <h:outputText  />
+                                <h:outputText value="Fonction :"/>
+                                <h:outputText value="#{detailMb.salarie.fonction!=null ?detailMb.salarie.fonction.fonction:'---'}"/>
+                                <h:outputText  />
+                                <h:outputText value="Type :"/>
+                                <h:outputText value="#{detailMb.salarie.type!=null ?detailMb.salarie.type.type:'---'}"/>
+                                <h:outputText  />
+                                <h:outputText value="Etat :"/>
+                                <h:outputText value="#{detailMb.salarie.etat!=null ?detailMb.salarie.etat.etat :'---'}"/>
+                                <c:if test="#{authentification.hasPermission(constanteMb.modifierEtat)}">
+                                    <p:commandButton value="modifier Etat" onclick="PF('updateEtat').show()" process="@none"/>
+                                </c:if>
+                                <c:if test="#{authentification.hasPermission(constanteMb.modifierEtat)==false}">
+                                    <h:outputText />
+                                </c:if>
+                                <h:outputText value="Mode Paiement :"/>
+                                <h:outputText value="#{detailMb.salarie.modePaiement!=null ?detailMb.salarie.modePaiement.modePaiement:'---'}"/>
+                                <h:outputText  />
+                            </h:panelGrid>
+                        </div>
+                    </div>
+                </h:form> 
+                <h:form id="form" >
+                    <p:growl showDetail="true" id="growlId" sticky="true"   showSummary="true"  autoUpdate="true" />
+                    <p:tabView id="tabs" style="margin-top: 40px;">
+                        <p:tab id="ficheSalarie" title="Fiche Salarie">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <h:panelGrid columns="2" class="without-border">
+                                        <h:outputText value="Matricule"/>
+                                        <p:inputText value="#{detailMb.salarie.matricule}" disabled="true"/>
+
+                                        <h:outputText value="Civilité"/>
+                                        <p:selectOneMenu id="civilite" value="#{detailMb.id_Civilite}" styleClass="widthChamp"
+                                                         filter="true" filterMatchMode="contains">
+                                            <f:selectItem itemLabel="#{detailMb.salarie.civilite.civilite}" itemValue="#{detailMb.salarie.civilite.id}" /> 
+                                            <f:selectItems value="#{civiliteMb.civilites}" var="c" itemLabel="#{c.civilite}" itemValue="#{c.id}" />
+                                        </p:selectOneMenu>
+
+
+                                        <h:outputText value="Nom"/>
+                                        <p:inputText value="#{detailMb.salarie.nom}"
+                                                     required="true"                                                     
+                                                     requiredMessage="Code 1101 : Le nom ne peut être vide "/>
+
+                                        <h:outputText value="Nom Arabe"/>
+                                        <p:keyboard closeLabel="أغلق" backspaceLabel="إحدف" clearLabel="مسح" value="#{detailMb.salarie.nomArabe}" layout="custom" layoutTemplate="آ-1234567890-space,ضصثقفغعهخحج-back,شسيبلاتنمكط-clear,ئءؤرإأىةوزظ-close,space-space-spacebar-دذ" />
+
+                                        <h:outputText value="Prénom"/>
+                                        <p:inputText value="#{detailMb.salarie.prenom}" 
+                                                     required="true"
+                                                     requiredMessage="Code 1101 : Le prénom ne peut être vide "/>
+
+                                        <h:outputText value="Prénom Arabe"/>
+                                        <p:keyboard closeLabel="أغلق" backspaceLabel="إحدف" clearLabel="مسح" value="#{detailMb.salarie.prenomArabe}" layout="custom" layoutTemplate="آ-1234567890-space,ضصثقفغعهخحج-back,شسيبلاتنمكط-clear,ئءؤرإأىةوزظ-close,space-space-spacebar-دذ" />
+
+                                        <h:outputText value="Situation Familiale :"/>
+                                        <p:selectOneMenu id="situation" value="#{detailMb.id_Situation}" styleClass="widthChamp"> 
+                                            <f:selectItems value="#{situationMb.situations}" var="t" itemLabel="#{t.situationFamiliale}" itemValue="#{t.id}" />
+                                        </p:selectOneMenu>
+                                    </h:panelGrid>
+                                </div>
+                                <div class="col-lg-6">
+                                    <h:panelGrid class="without-border" columns="2">
+
+                                        <h:outputText value="Matricule Nova"/>
+                                        <p:inputText value="#{detailMb.salarie.matriculeDivalto}" />
+
+                                        <h:outputText value="CIN"/>
+                                        <p:inputText id="cinInput" value="#{detailMb.salarie.cin}"
+                                                     required="true"
+                                                     requiredMessage="Code 1101 : Le CIN ne peut être vide ">
+                                            <f:validateRegex for="msgCin" pattern="^[a-zA-Z][a-zA-Z0-9]{1,8}[0-9]$" />
+                                            <f:ajax event="change" render="msgCin" listener="#{detailMb.checkCin(detailMb.salarie.cin)}"/>
+                                        </p:inputText>
+                                        <h:outputText/>
+                                        <p:message id="msgCin" for="cinInput" />
+
+                                        <h:outputText value="Statut"/>
+                                        <p:selectOneMenu id="statut" required="true"
+                                                         requiredMessage="Code 1101 : Statut ne peut être vide" 
+                                                         value="#{detailMb.idStatut}" styleClass="widthChamp"
+                                                         filter="true" filterMatchMode="contains" > 
+                                            <p:ajax listener="#{detailMb.updateFontion()}" 
+                                                    onstart="PF('block').show()" oncomplete="PF('block').hide();" update="fonction" />
+                                            <f:selectItem itemLabel="" itemValue="" noSelectionOption="true" />
+                                            <f:selectItems value="#{statutMb.statuts}" var="s" itemLabel="#{s.statut}" itemValue="#{s.codeDiva}" />
+                                            <p:ajax update="fonction" 
+                                                    onstart="PF('block').show();" 
+                                                    oncomplete="PF('block').hide();"
+                                                    listener="#{detailMb.fonctionByStatut(detailMb.idStatut)}" event="change" />
+                                            <p:ajax update='' />
+                                        </p:selectOneMenu>
+
+
+                                        <h:outputText value="Fonction :"/>
+                                        <p:selectOneMenu id="fonction" value="#{detailMb.salarie.fonction.id}" styleClass="widthChamp"
+                                                         filter="true" filterMatchMode="contains"> 
+                                            <f:selectItems itemLabel="#{detailMb.salarie.fonction.fonction}" itemValue="#{detailMb.salarie.fonction.id}" />
+                                            <f:selectItems value="#{evol_fonctionMb.fonctions}" var="f" itemLabel="#{f.fonction}" itemValue="#{f.id}" />
+                                        </p:selectOneMenu>
+
+                                        <h:outputText value="Type :"/>
+                                        <p:selectOneMenu id="type" value="#{detailMb.typeID}" styleClass="widthChamp"> 
+                                            <f:selectItems value="#{typeMb.types}" var="t" itemLabel="#{t.type}" itemValue="#{t.id}" />
+                                        </p:selectOneMenu>
+
+                                        <h:outputText value="Mode Paiement :"/>
+                                        <p:selectOneMenu id="modep" value="#{detailMb.id_ModeP}" styleClass="widthChamp"> 
+                                            <f:selectItems value="#{modeMb.modes}" var="m" itemLabel="#{m.modePaiement}" itemValue="#{m.id}" />
+                                        </p:selectOneMenu> 
+
+                                    </h:panelGrid>
+
+                                </div>
+                            </div>
+                            <hr/>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <h:panelGrid class="without-border" columns="2" >
+                                        <h:outputText value="Date de Naissance"/>
+                                         <p:calendar pattern="dd/MM/yyyy" id="dateN"  value="#{detailMb.salarie.dateNaissance}"     />
+                                        <h:outputText value="Ville de Naissance"/>
+                                        <p:inputText  value="#{detailMb.salarie.lieuNaissance}"/>
+                                        <h:outputText value="Nationalité :"/>
+                                        <p:selectOneMenu id="nationalite" value="#{detailMb.id_Nationalite}" styleClass="widthChamp"> 
+                                            <f:selectItems value="#{nationaliteMb.nationalites}" var="m" itemLabel="#{m.nationalite}" itemValue="#{m.id}" />
+                                        </p:selectOneMenu>
+                                        <h:outputText class="label label-danger" value="Adresse"/><h:outputText value=""/>
+                                        <h:outputText value="Adresse :"/>
+                                        <p:inputTextarea  value="#{detailMb.salarie.adresse}" styleClass="widthChamp"/>
+                                        <h:outputText value="Adresse Arabe"/>
+                                        <p:keyboard style="height: 55px" closeLabel="أغلق" backspaceLabel="إحدف" clearLabel="مسح" value="#{detailMb.salarie.adresseArabe}" layout="custom" layoutTemplate="آ-1234567890-space,ضصثقفغعهخحج-back,شسيبلاتنمكط-clear,ئءؤرإأىةوزظ-close,space-space-spacebar-دذ" />
+                                        <h:outputText value="Ville"/>
+                                        <p:inputText  value="#{detailMb.salarie.ville}" required="true"
+                                                      requiredMessage="Code 1101 : la ville ne peut être vide"/>
+                                        <h:outputText value="Pays"/>
+                                        <p:selectOneMenu id="pays" value="#{detailMb.id_Pays}" styleClass="widthChamp"> 
+                                            <f:selectItems value="#{paysMb.pays}" var="pa" itemLabel="#{pa.pays}" itemValue="#{pa.id}" />
+                                        </p:selectOneMenu>
+
+                                        <h:outputText value="Téléphone "/>
+                                        <p:inputText  id="tel" label="GSM" maxlength="20" validatorMessage="veuillez saisir un numero de téléphone valide"
+                                                      value="#{detailMb.salarie.telephone}">
+                                            
+                                            <f:validateRegex pattern="^[+0-9 ]{10,20}$"/>
+                                            <f:ajax event="change" render="telMsg"/>
+                                        </p:inputText>
+                                        <h:outputText/>
+                                        <p:message for="tel" id="telMsg" />
+
+                                        <h:outputText value="GSM "/>
+                                        <p:inputText  id="gsm" label="GSM" maxlength="20" value="#{detailMb.salarie.gsm}">
+                                            <f:validateRegex pattern="^[+0-9 ]{10,20}$"/>
+                                            <f:ajax event="change" render="gsmMsg"/>
+                                        </p:inputText>
+                                        <h:outputText/>
+                                        <p:message for="gsm" id="gsmMsg" />
+
+                                        <h:outputText value="Email"/>
+                                        <p:inputText id="email" label="email" value="#{detailMb.salarie.email}">
+                                            <f:validateRegex for="email" pattern="^[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,4})$" />
+                                            <f:ajax event="change" render="emailMsg"/>
+                                        </p:inputText>
+                                        <h:outputText/>
+                                        <p:message for="email" id="emailMsg"/>
+                                    </h:panelGrid>
+                                </div>
+                                <div class="col-lg-6">
+                                    <!--<p:message id="ribmsg" for="rib"/>-->
+                                    <h:panelGrid  columns="2" class=" without-border" >
+                                        <h:outputText value="CNSS"/>
+                                        <p:inputText id="cnss" value="#{detailMb.salarie.cnss}">
+                                            <f:ajax event="change"  render="msg_cnss" listener="#{detailMb.checkCNSS(detailMb.salarie.cnss,detailMb.salarie.matricule)}" />
+                                            <f:validateRegex for="cnss" pattern="^$|^[0-9]{9,9}$" />
+                                            <p:clientValidator  />
+                                        </p:inputText>
+                                        <p:message id="msg_cnss" for="cnss" />   
+                                        <h:outputText/>
+                                        <h:outputText value="RIB"/>
+                                        <p:inputText id="rib" value="#{detailMb.salarie.rib}" readonly="#{authentification.hasPermission(constanteMb.modifierRIB)==false}">
+                                            <f:ajax event="change" render="msg_rib"  listener="#{detailMb.checkRIB(detailMb.salarie.rib,detailMb.salarie.matricule)}" />
+                                              <f:validateRegex for="rib" pattern="^$|^[0-9]{24,24}$" />
+                                            <p:clientValidator event="change" />
+                                        </p:inputText>
+                                        <p:message id="msg_rib" for="rib" />
+                                        <h:outputText/>
+                                        <h:outputText value="Banque"/>
+                                        <p:selectOneMenu style="width: 100%" id="banque" value="#{detailMb.salarie.nomBanque}">
+                                            <f:selectItem itemValue="SGMB" itemLabel="SGMB"/>
+                                            <f:selectItem itemValue="BP" itemLabel="BP"/>
+                                            <f:selectItem itemValue="ATTIJARIWAFABANK" itemLabel="ATTIJARIWAFABANK"/>
+                                            <f:selectItem itemValue="LA POSTE" itemLabel="LA POSTE"/>
+                                            <f:selectItem itemValue="BMCI" itemLabel="BMCI"/>
+                                            <f:selectItem itemValue="BMCE" itemLabel="BMCE"/>
+                                            <f:selectItem itemValue="CREDIT AGRICOLE" itemLabel="CREDIT AGRICOLE"/>
+                                            <f:selectItem itemValue="CREDIT DU MAROC" itemLabel="CREDIT DU MAROC"/>
+                                            <f:selectItem itemValue="C.I.H" itemLabel="C.I.H"/>
+                                            <f:selectItem itemValue="WAFACASH" itemLabel="WAFACASH"/>
+                                        </p:selectOneMenu>
+                                        <h:outputText value="Agence"/>
+                                        <p:inputText  value="#{detailMb.salarie.nomAgence}"/>
+                                        <section class="label label-danger">Autres</section>
+                                        <h:outputText />
+                                        <h:outputText value="Pointure"/>
+                                        <p:selectOneMenu id="pointure" value="#{detailMb.id_Pointure}"> 
+                                            <f:selectItem itemLabel="--Pointure--" itemValue="" />
+                                            <f:selectItems value="#{pointureMb.pointures}" var="p" itemLabel="#{p.pointure}" itemValue="#{p.id}" />
+                                        </p:selectOneMenu>
+                                        <h:outputText value="Taille d'habillement"/>
+                                        <p:selectOneMenu id="taille" value="#{detailMb.id_Taille}"> 
+                                            <f:selectItem itemLabel="--Taille--" itemValue="" />
+                                            <f:selectItems value="#{tailleMb.tailles}" var="t" itemLabel="#{t.tailleHabillement}" itemValue="#{t.id}" />
+                                        </p:selectOneMenu>
+
+                                        <h:outputText value="Couleur de Gilet"/>
+                                        <p:selectOneMenu id="gilet" value="#{detailMb.id_Gilet}"> 
+                                            <f:selectItem itemLabel="--Couleur Gilet--" itemValue="" />
+                                            <f:selectItems value="#{couleurGiletMb.gilets}"  var="g" itemLabel="#{g.couleurGilet}" itemValue="#{g.id}" />
+                                        </p:selectOneMenu>
+
+                                        <h:outputText value="Couleur de Casque"/>
+                                        <p:selectOneMenu id="casque" value="#{detailMb.id_Casque}" > 
+                                            <f:selectItem itemLabel="--Couleur Casque--" itemValue="" />
+                                            <f:selectItems value="#{couleurCasqueMb.casques}" var="c" itemLabel="#{c.couleurCasque}" itemValue="#{c.id}" />
+                                        </p:selectOneMenu>
+
+                                        <h:outputText/>
+                                        <c:if test="#{authentification.hasPermission(constanteMb.modifierSalarie)}">
+                                            <p:commandButton disabled="#{detailMb.salarie.etat.etat eq 'Blacklist'}" action="#{detailMb.modifier()}" 
+                                                             class="btn btn-switch active" update=":formUp, :form:growlId"  value="Modifier"
+                                                             onstart="PF('block').show()" oncomplete="PF('block').hide();" >
+                                                <f:ajax render=":infos1" />
+                                            </p:commandButton>
+                                        </c:if>
+                                    </h:panelGrid>
+                                </div>
+                            </div>
+                        </p:tab>
+                         
+                        
+                        
+                        
+                    </p:tabView>
+                </h:form>
+               
+                
+
+                
+                
+                
+
+
+                
+
+                
+                
+                
+
+                
+                
+                
+                <p:dialog widgetVar="updateEtat">
+                    <h:form>
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Etat"/>
+                            <p:selectOneMenu id="etat" value="#{detailMb.id_Etat}" styleClass="widthChamp">
+                                <f:selectItems value="#{etatMb.etats}" var="e" itemLabel="#{e.etat}" itemValue="#{e.id}" />
+                            </p:selectOneMenu>
+                            <p:commandButton value="Modifier Etat" action="#{detailMb.updateEtat()}" process="@form"
+                                             update=":formUp,:form" oncomplete="PF('updateEtat').hide()"/>
+                        </h:panelGrid>
+                    </h:form>
+                </p:dialog>
+                <p:blockUI block="form" widgetVar="block">
+                    Chargement<br /> <h:graphicImage value="../images/loading.gif"/>
+                </p:blockUI>
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

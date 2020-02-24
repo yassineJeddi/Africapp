@@ -25,6 +25,8 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.hibernate.type.StandardBasicTypes;
 
 /**
  *
@@ -706,6 +708,73 @@ public class ChantierDAOImpl extends MbHibernateDaoSupport implements ChantierDA
         } catch (Exception e) {
                 System.out.println("Erreur de supprimer Salarie Chatier Finance car "+e.getMessage());
         }
+
+    }
+
+    @Override
+            public Object nombreChantiers(Integer idUser, boolean adminAlfresco, String querySearch, int[] dos) {
+
+        Session session = getSessionFactory().openSession();
+        Query query = null;
+        if (adminAlfresco) {
+            query = session.createQuery("SELECT count(*) FROM Chantier WHERE (dos=? OR dos=?) AND lower(code) LIKE '%" + StringEscapeUtils.escapeSql(querySearch).toLowerCase() + "%'");
+            query.setParameter(0, dos[0], StandardBasicTypes.INTEGER);
+            query.setParameter(1, dos[1], StandardBasicTypes.INTEGER);
+        } else {
+            query = session.createSQLQuery("SELECT count(*) FROM PRJAP CH, CHANTIER_UTILISATEUR CU WHERE CH.PRJAP_ID=CU.CHANTIER_ID AND CU.UTILISATEUR_ID=? AND LOWER(CH.LIB80) LIKE '%" + StringEscapeUtils.escapeSql(querySearch).toLowerCase() + "%'");
+            query.setParameter(0, idUser, StandardBasicTypes.INTEGER);
+        }
+
+        return query.uniqueResult();
+
+    }
+        
+         public List<Chantier> ateliersList(int start, int limit, String nom, String ville, int[] dos,String ate) {
+
+        //logger.debug("liste des chantiers");
+
+        Session session = getSessionFactory().openSession();
+        String queryRecherche = "";
+
+        if (nom != "") {
+            queryRecherche += " AND lower(code) like '%" + StringEscapeUtils.escapeSql(nom).toLowerCase() + "%' ";
+        }
+        if (ville != "") {
+            queryRecherche += " AND lower(region) like '%" + StringEscapeUtils.escapeSql(ville).toLowerCase() + "%' ";
+        }
+
+//		queryRecherche = queryRecherche.replaceFirst("AND", " WHERE");
+       //ate = "%atelier%";
+        //System.out.println("SELECT id,code,region, heureEntree, heureSortie, nombreHeures, nombreMinutes FROM Chantier where (code like :ate) and (dos=? OR dos=?) " + queryRecherche + " order by code");
+        Query query = session.createQuery("SELECT id,code,region, heureEntree, heureSortie, nombreHeures, nombreMinutes FROM Chantier  where lower(code) like '%" + StringEscapeUtils.escapeSql(ate).toLowerCase() + "%' and (dos=? OR dos=?) " + queryRecherche + " order by code");
+        query.setParameter(0, dos[0], StandardBasicTypes.INTEGER);
+        query.setParameter(1, dos[1], StandardBasicTypes.INTEGER);
+        //query.setParameter("ate", ate);
+        query.setFirstResult(start);
+        query.setMaxResults(limit);
+
+        List liste = query.list();
+
+        List<Chantier> listeChantiers = new ArrayList<Chantier>();
+        Chantier chantier = null;
+
+        for (int i = 0; i < liste.size(); i++) {
+
+            Object[] o = (Object[]) liste.get(i);
+            chantier = new Chantier();
+            chantier.setId((Integer) o[0]);
+            chantier.setCode((String) o[1]);
+            chantier.setRegion((String) o[2]);
+//			chantier.setAdresse((String) o[3]);
+            chantier.setHeureEntree((String) o[3]);
+            chantier.setHeureSortie((String) o[4]);
+            chantier.setNombreHeures((Integer) o[5]);
+            chantier.setNombreMinutes((Integer) o[6]);
+
+            listeChantiers.add(chantier);
+        }
+
+        return listeChantiers;
 
     }
 

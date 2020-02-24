@@ -11,6 +11,7 @@ import ma.bservices.tgcc.Entity.ECHEANCIER_VIDANGE;
 import ma.bservices.tgcc.Entity.Engin;
 import ma.bservices.tgcc.Entity.InterventionMaintenance;
 import ma.bservices.tgcc.Entity.Panne;
+import ma.bservices.tgcc.Entity.ReferentielEngin;
 
 /**
  *
@@ -63,4 +64,11 @@ public interface EnginDAO {
     public List<Engin> findOneByArchive();
     public List<Engin> rechercherEnginByFa(String code, String designation, String marque, String etat, int chantier_id, String typeE, String familleE);
     public List<Engin> findAllEnginByChantierId(Integer chantier_id);
+    
+    
+    public void addReferentielEngin(ReferentielEngin r);
+    public void editReferentielEngin(ReferentielEngin r);
+    public void remouvReferentielEngin(ReferentielEngin r);
+    public List<ReferentielEngin> allReferentielEnginByEngin(Engin e);
+    
 }

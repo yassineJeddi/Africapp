@@ -248,6 +248,16 @@ public class ChantierServiceImpl implements ChantierService, Serializable {
     public void deleteAffectSalarieToutChatierFinance(Salarie s) {
         this.chantierDAO.deleteAffectSalarieToutChatierFinance( s);
     }
+    
+    @Override
+    public List<Chantier> ateliersList(int start, int limit, String nom, String ville, int[] dos, String ate) {
+        return this.chantierDAO.ateliersList(start, limit, nom, ville, dos, ate);
+    }
+
+    @Override
+    public Object nombreChantiers(Integer idUser, boolean adminAlfresco, String querySearch, int[] dos) {
+        return this.chantierDAO.nombreChantiers(idUser, adminAlfresco, querySearch, dos);
+    }
 
 
 }

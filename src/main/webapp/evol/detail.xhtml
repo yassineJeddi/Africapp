@@ -308,14 +308,19 @@
                             </div>
                         </p:tab>
                         <p:tab title="Enfant" id="tabEnfant">
-                            <p:dataTable var="enf" value="#{detailMb.enfants}" rowKey="#{enf.id}"
+                            <p:dataTable var="enfantTable" value="#{detailMb.enfants}" rowKey="#{enf.id}"
                                          paginator="true" rows="10"
                                          paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                          paginatorPosition="bottom"
                                          editable="true"
                                          rowsPerPageTemplate="5,10,15" lazy="true" id="enfantTable" >
                                 <f:facet name="header">
-                                    <p:commandButton style="display: #{detailMb.salarie.situationFamiliale.situationFamiliale eq 'Célibataire'? 'none' :'block'}"
+                                    <p:commandButton  icon="ui-icon-refresh"
+                                                     value="Charger" 
+                                                     actionListener="#{detailMb.chargerEnfants()}"
+                                                     update="form:tabs:enfantTable"/>
+                                        <p:spacer width="30px"/>
+                                    <p:commandButton style="display: #{detailMb.salarie.situationFamiliale.situationFamiliale eq 'Célibataire'? 'none' :'inline'}"
                                                      process="@this" icon="ui-icon-circle-check" value="Ajouter"
                                                      onclick="PF('addenf').show();" />
                                 </f:facet>
@@ -358,9 +363,18 @@
                             </p:dataTable>
                         </p:tab> 
                         <p:tab title="Document">
-                            <p:dataTable id="document" value="#{detailMb.docs}" var="doc">
+                            <p:dataTable id="document" value="#{detailMb.docs}" var="doc"
+                                         widgetVar="document"   rowKey="#{document.id}" 
+                                        rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                        {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                        {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" >
                                 <f:facet name="header">
+                                    <p:commandButton  icon="ui-icon-refresh"
+                                                     value="Charger" 
+                                                     actionListener="#{detailMb.chargerDocs()}"
+                                                     update="form:tabs:document"/>
                                     <c:if test="#{detailMb.nombreDocumentsNonAjoutes != 0}">
+                                        <p:spacer width="30px"/>
                                         <p:commandButton icon="ui-icon-plus" disabled="#{detailMb.salarie.etat.etat == 'Désactivé' || detailMb.salarie.etat.etat == 'Sorti'}" value="Completez dossier salarie"
                                                          action="#{dossierSalarieDocMb.documentSalarie(detailMb.salarie.id)}" process="@this">
                                         </p:commandButton>
@@ -392,8 +406,16 @@
                             </p:dataTable>
                         </p:tab>
                         <p:tab title="Contrat">
-                            <p:dataTable id="contrat" value="#{detailMb.contrats}" var="contrat">
+                            <p:dataTable id="contrat" value="#{detailMb.contrats}" var="contrat"
+                                         widgetVar="contrat"   rowKey="#{contrat.id}" 
+                                        rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                        {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                        {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" >
                                 <f:facet name="header">
+                                    <p:commandButton  icon="ui-icon-refresh"
+                                                     value="Charger" 
+                                                     actionListener="#{detailMb.chargerContrats()}"
+                                                     update="form:tabs:contrat"/>
                                     <p:commandButton  icon="ui-icon-circle-check" value="Ajouter" 
                                                       process="@this" update=":ajouterContrat"
                                                       actionListener="#{detailMb.initialContratToAdd()}"
@@ -446,9 +468,16 @@
                             </p:dataTable>
                         </p:tab>
                         <p:tab title="Chantiers">
-                            <p:dataTable id="chantier" value="#{detailMb.chantiers}" var="chantier">
+                            <p:dataTable id="chantier" value="#{detailMb.chantiers}" var="chantier"
+                                         widgetVar="chantier"   rowKey="#{chantier.id}" 
+                                        rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                        {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                        {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" >
                                 <f:facet name="header">
-                                   
+                                    <p:commandButton  icon="ui-icon-refresh"
+                                                     value="Charger" 
+                                                     actionListener="#{detailMb.chargerChantiers()}"
+                                                     update="form:tabs:chantier"/>
                                     <p:commandButton  icon="ui-icon-plus" value="Affectation" 
                                                       validateClient="false" immediate="true"
                                                       rendered="#{authentification.hasPermission(constanteMb.ajouterChantier)}"
@@ -472,95 +501,37 @@
                                                      process="@this"
                                                      action="#{detailMb.desAffectation(chantier.id)}"
                                                      update="chantier, :formAffect:nonAffect"
-                                                     
+                                                     onstart="PF('block').show()" oncomplete="PF('block').hide()"
                                                      />
                                 </p:column>
                             </p:dataTable>
                         </p:tab>
                         <p:tab title="Présences" id="presenceId">
                             <p:dataTable id="presence" 
-                                         value="#{presenceMb.presences}" 
+                                         value="#{detailMb.presences}" 
                                          var="presence" 
-                                         rows="10"
-                                         >
+                                         widgetVar="presence"   rowKey="#{presence.id}" 
+                                        rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                        {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                        {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" >
                                 <f:facet name="header">
-                                    <h:outputText value="#{presenceMb.sum}"/>
-                                    <p:spacer width="20px"/>
                                     <p:commandButton  icon="ui-icon-search"
                                                      value="rechercher" 
                                                      update="formSearch"                                                     
                                                      actionListener="#{presenceMb.initFind()}"
                                                      oncomplete="PF('findPresence').show()" />
                                      <p:commandButton  icon="ui-icon-refresh"
-                                                     value="Reinitialiser" 
-                                                     actionListener="#{presenceMb.reinitSearchPresence()}"
+                                                     value="Charger" 
+                                                     actionListener="#{detailMb.chargerPresences()}"
                                                      update="form:tabs:presence"/>
                                 </f:facet>
-                                
-                                   <f:facet name="footer">
-                                    <h:panelGrid columns="9">
-                                        <p:commandButton onstart="PF('block').show()"
-                                                         oncomplete="PF('block').hide()" 
-                                                         id="first" 
-                                                         icon="ui-icon-triangle-1-w" 
-                                                         class="ui-paginator-first ui-state-default ui-corner-all"
-                                                         disabled="#{presenceMb.first}"
-                                                         action="#{presenceMb.onFirst()}" 
-                                                         update="form:tabs:presence"
-                                                         />
-
-                                        <p:commandButton onstart="PF('block').show()" 
-                                                         oncomplete="PF('block').hide()" 
-                                                         id="prev" icon="ui-icon-carat-1-w" 
-                                                         disabled="#{presenceMb.prev}"
-                                                         action="#{presenceMb.onPrevious()}" 
-                                                         update="form:tabs:presence"
-                                                         />
-
-<!--                                        <p:spinner id="page" 
-                                                   value="#{presenceMb.page}" 
-                                                   disabled="#{presenceMb.pageId}" 
-                                                   min="1" max="#{presenceMb.var}"
-                                                   >
-                                            
-                                            <p:ajax onstart="PF('block').show()" 
-                                                    oncomplete="PF('block').hide()" 
-                                                    listener="#{presenceMb.onPaginate()}" 
-                                                    event="change" update="form:tabs:presence" />
-                                        </p:spinner>-->
-
-                                        <h:outputText value="#{presenceMb.page} / #{presenceMb.var}"/>
-
-                                        <p:commandButton onstart="PF('block').show()" 
-                                                         oncomplete="PF('block').hide()"  
-                                                         id="next" disabled="#{presenceMb.next}"
-                                                         icon="ui-icon-carat-1-e"
-                                                         update="form:tabs:presence" 
-                                                         action="#{presenceMb.onNext()}"/>
-
-                                        <p:commandButton onstart="PF('block').show()"
-                                                         oncomplete="PF('block').hide()" 
-                                                         id="last" disabled="#{presenceMb.last}" 
-                                                         icon="ui-icon-triangle-1-e" 
-                                                         update="form:tabs:presence"
-                                                         action="#{presenceMb.onLast()}" />
-
-                                        <h:outputText value="Nombre Total" style="padding-right:  7px ; color:  white"/>
-
-                                        <h:outputText value="#{presenceMb.i}"/>
-
-                                        <h:outputText value="#{presenceMb.page ==1 or presenceMb.page ==0 ?
-                                                               '1 -10': ''.concat((presenceMb.page-1) * 10 +1).concat('-').concat((presenceMb.page-1) * 10 +10) }"
-                                                      style="color:  white"/>
-                                    </h:panelGrid>
-                                </f:facet>
-                                
-                                
                                 <p:column headerText="Chantier">
                                     <h:outputText value="#{presence.chantier.code}"/>
                                 </p:column>
                                 <p:column headerText="Date">
-                                    <h:outputText value="#{constanteMb.getDateFormatFR(presence.date)}"/>
+                                    <h:outputText value="#{presence.date}">
+                                        <f:convertDateTime pattern="dd-MM-yyyy" />
+                                    </h:outputText>
                                 </p:column>
                                 <p:column headerText="Heure d'entrée">
                                     <h:outputText value="#{presence.heureEntree}"/>
@@ -574,41 +545,21 @@
                             </p:dataTable>
                         </p:tab>
                         <p:tab title="Absences" id="tabAbsence">
-                            <p:dataTable id="absence" value="#{evol_absenceMb.absences}" 
-                                         var="absence" editable="true">
+                            <p:dataTable id="absence" widgetVar="absence" value="#{detailMb.absences}" 
+                                         var="absence" editable="true" rowKey="#{absence.id}" 
+                                        rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                        {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                        {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" >
                                 <f:facet name="header">
+                                     <p:commandButton  icon="ui-icon-refresh"
+                                                     value="Charger" 
+                                                     actionListener="#{detailMb.chargerAbsences()}"
+                                                     onstart="PF('block').show()" oncomplete="PF('block').hide();"
+                                                     update="form:tabs:absence" />
                                     <p:commandButton process="@this" type="button" icon="ui-icon-circle-check" 
                                                      value="Ajouter" onclick="PF('addAbsence').show()" />
                                 </f:facet>
 
-                                <f:facet name="footer">
-                                    <h:panelGrid columns="9">
-                                        <p:commandButton onstart="PF('block').show()" oncomplete="PF('block').hide()" id="first" icon="ui-icon-triangle-1-w" class="ui-paginator-first ui-state-default ui-corner-all" disabled="#{evol_absenceMb.first}"
-                                                         action="#{evol_absenceMb.onFirst()}" update="form:tabs:absence"/>
-
-                                        <p:commandButton onstart="PF('block').show()" oncomplete="PF('block').hide()" id="prev" icon="ui-icon-carat-1-w" disabled="#{evol_absenceMb.prev}"
-                                                         action="#{evol_absenceMb.onPrevious()}" update="form:tabs:absence"/>
-
-                                        <p:spinner id="page" value="#{evol_absenceMb.page}" disabled="#{evol_absenceMb.pageId}" 
-                                                   min="1" max="#{evol_absenceMb.var}"  >
-                                            <p:ajax onstart="PF('block').show()" oncomplete="PF('block').hide()" listener="#{evol_absenceMb.onPaginate()}"  event="change" update="form:tabs:absence" />
-                                        </p:spinner>
-
-                                        <h:outputText value="/ #{evol_absenceMb.var}"/>
-
-                                        <p:commandButton onstart="PF('block').show()" oncomplete="PF('block').hide()"  id="next" disabled="#{evol_absenceMb.next}" icon="ui-icon-carat-1-e" update="form:tabs:absence" action="#{evol_absenceMb.onNext()}"/>
-
-                                        <p:commandButton onstart="PF('block').show()" oncomplete="PF('block').hide()" id="last" disabled="#{evol_absenceMb.last}" icon="ui-icon-triangle-1-e" update="form:tabs:absence" action="#{evol_absenceMb.onLast()}" />
-
-                                        <h:outputText value="Nombre Total" style="padding-right:  7px ; color:  white"/>
-
-                                        <h:outputText value="#{evol_absenceMb.i}"/>
-
-                                        <h:outputText value="#{evol_absenceMb.page ==1 or evol_absenceMb.page ==0 ?
-                                                               '1 -10': ''.concat((evol_absenceMb.page-1) * 10 +1).concat('-').concat((evol_absenceMb.page-1) * 10 +10) }"
-                                                      style="color:  white"/>
-                                    </h:panelGrid>
-                                </f:facet>
                                 <p:ajax event="rowEdit" listener="#{evol_absenceMb.onRowEdit}" update="form:tabs:absence" />
                                 <p:ajax event="rowEditCancel" listener="#{evol_absenceMb.onRowCancel}" update="form:tabs:absence" />
 
@@ -637,8 +588,6 @@
                                         </f:facet>
                                     </p:cellEditor>
                                 </p:column>
-
-
                                 <p:column headerText="Date de fin">
                                     <p:cellEditor>
                                         <f:facet name="output"><h:outputText value="#{constanteMb.getDateFormatFR(absence.dateFin)} #{absence.heureFin}"/></f:facet>
@@ -673,9 +622,19 @@
                             </p:dataTable>
                         </p:tab>
                         <p:tab title="Outils de travail"> 
-                            <p:dataTable id="outils" value="#{detailMb.outils}" var="outil">
+                            <p:dataTable id="outils" value="#{detailMb.outils}" var="outil"
+                                         rowKey="#{outil.id}" 
+                                        rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} 
+                                        {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                        {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15"
+                                         >
                                 <f:facet name="header">
+                                     <p:commandButton  icon="ui-icon-refresh"
+                                                     value="Charger" 
+                                                     actionListener="#{detailMb.chargerOutils()}"
+                                                     update="form:tabs:outils" />
                                     <p:commandButton validateClient="false" icon="ui-icon-circle-check" value="Ajouter" type="button" onclick="PF('addOutil').show()" />
+                                    
                                 </f:facet>
                                 <p:column headerText="Outil de travail">
                                     <h:outputText value="#{outil.categorieOutilTravail.categorieOutilTravail}"/>

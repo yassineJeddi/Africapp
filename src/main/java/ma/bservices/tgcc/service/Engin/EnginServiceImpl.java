@@ -16,6 +16,7 @@ import ma.bservices.tgcc.Entity.ECHEANCIER_VIDANGE;
 import ma.bservices.tgcc.Entity.Engin;
 import ma.bservices.tgcc.Entity.InterventionMaintenance;
 import ma.bservices.tgcc.Entity.Panne;
+import ma.bservices.tgcc.Entity.ReferentielEngin;
 import ma.bservices.tgcc.dao.engin.ChantierDAO;
 import ma.bservices.tgcc.dao.engin.EnginDAO;
 import ma.bservices.tgcc.dao.engin.EnginDAOImpl;
@@ -335,6 +336,26 @@ public class EnginServiceImpl implements EnginService, Serializable {
     @Override
     public ECHEANCIER_VIDANGE lastEcheancierVidangeByCodeEngin(String code) {
         return enginDAO.lastEcheancierVidangeByCodeEngin(code);
+    }
+
+    @Override
+    public void addReferentielEngin(ReferentielEngin r) {
+          enginDAO.addReferentielEngin(r);
+    }
+
+    @Override
+    public void editReferentielEngin(ReferentielEngin r) {
+        enginDAO.editReferentielEngin(r);
+    }
+
+    @Override
+    public void remouvReferentielEngin(ReferentielEngin r) {
+        enginDAO.remouvReferentielEngin(r);
+    }
+
+    @Override
+    public List<ReferentielEngin> allReferentielEnginByEngin(Engin e) {
+        return enginDAO.allReferentielEnginByEngin(e);
     }
     
     

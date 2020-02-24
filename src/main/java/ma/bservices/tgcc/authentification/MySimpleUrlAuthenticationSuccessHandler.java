@@ -69,6 +69,7 @@ public class MySimpleUrlAuthenticationSuccessHandler implements AuthenticationSu
         boolean isAdminEcart = false;
         boolean isDocteur = false;
         boolean isAt = false;
+        boolean isDemandeInterne = false;
         authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String username = authentication.getPrincipal().toString();
@@ -115,6 +116,9 @@ public class MySimpleUrlAuthenticationSuccessHandler implements AuthenticationSu
                 case "créer une nouvelle demande d approvisionnement":
                     is_achat = true;
                     break;
+                case "consultation liste demande":
+                    isDemandeInterne = true;
+                    break OUTER;
             }
         }
         if (is_mensuel) {
@@ -140,6 +144,8 @@ public class MySimpleUrlAuthenticationSuccessHandler implements AuthenticationSu
             return "/dossiersMedicaux/dossiersMedicaux.xhtml";
         }else if (isAt) {
             return "/at/at.xhtml";
+        }else if (isDemandeInterne) {
+            return "/depot/dmdInterne.xhtml";
         } else {
             return "/evol/salaries.xhtml";
         }

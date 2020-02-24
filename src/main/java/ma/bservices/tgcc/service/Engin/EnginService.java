@@ -11,6 +11,7 @@ import ma.bservices.tgcc.Entity.ECHEANCIER_VIDANGE;
 import ma.bservices.tgcc.Entity.Engin;
 import ma.bservices.tgcc.Entity.InterventionMaintenance;
 import ma.bservices.tgcc.Entity.Panne;
+import ma.bservices.tgcc.Entity.ReferentielEngin;
 
 /**
  *
@@ -73,5 +74,12 @@ public interface EnginService {
     public List<Engin> findAllEnginPointageAutoDept(int chantier_id);
     public List<Engin> findAllEnginPointageManuelDept(int chantier_id);
     public List<Engin> findAllEnginByChantierId(Integer chantier_id);
+    
+    public void addReferentielEngin(ReferentielEngin r);
+    public void editReferentielEngin(ReferentielEngin r);
+    public void remouvReferentielEngin(ReferentielEngin r);
+    public List<ReferentielEngin> allReferentielEnginByEngin(Engin e);
+    
+    
     
 }

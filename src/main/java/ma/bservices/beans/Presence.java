@@ -329,4 +329,10 @@ public class Presence implements Serializable {
         this.conf = conf;
     }
 
+    @Override
+    public String toString() {
+        return "Presence{" + "id=" + id + ", presenceId=" + presenceId + ", date=" + date + ", heureEntree=" + heureEntree + ", heureSortie=" + heureSortie + ", nombreHeures=" + nombreHeures + ", nombreMinutes=" + nombreMinutes + ", longDateTimeEntree=" + longDateTimeEntree + ", longDateTimeSortie=" + longDateTimeSortie + ", chaineDate=" + chaineDate + ", multiplePointage=" + multiplePointage + ", heureEntreeReelle=" + heureEntreeReelle + ", heureSortieReelle=" + heureSortieReelle + ", dateSaisieHeureEntree=" + dateSaisieHeureEntree + ", dateSaisieHeureSortie=" + dateSaisieHeureSortie + ", flag=" + flag + ", creePar=" + creePar + ", dateCreation=" + dateCreation + ", ce1=" + ce1 + ", conf=" + conf + '}';
+    }
+
+    
 }

@@ -135,7 +135,8 @@ public class PresenceService extends MbHibernateDaoSupport {
      * @return nom du chantier
      */
     public String recupererCodeChantierPointageParSalarie(String matricule, Date datePointage) {
-
+        try {
+            
         Session session = sessionFactory.getCurrentSession();
 //        try {
 //
@@ -153,7 +154,7 @@ public class PresenceService extends MbHibernateDaoSupport {
         query.setParameter(1, datePointage, StandardBasicTypes.DATE);
 
         List listeCodesChantiers = query.list();
-
+        //session.close();
         if (listeCodesChantiers.size() == 0) {
             return "";
         }
@@ -161,6 +162,11 @@ public class PresenceService extends MbHibernateDaoSupport {
         //		  System.out.println(listeCodesChantiers.get(0));
         //		  Object[] o=(Object[]) listeCodesChantiers.get(0);
         return (String) listeCodesChantiers.get(0);
+        
+        } catch (Exception e) {
+            System.out.println("Erreur au niveau recupererCodeChantierPointageParSalarie car "+e.getMessage());
+            return "";
+        }
 
     }
 
@@ -175,6 +181,9 @@ public class PresenceService extends MbHibernateDaoSupport {
      */
     public boolean verifierValiditeHeureMinutePointageSalarie(Integer idSalarie, Date datePointage, String heureMinute) {
 
+        try {
+            
+        
         Session session = sessionFactory.getCurrentSession();
 //        try {
 //
@@ -221,8 +230,12 @@ public class PresenceService extends MbHibernateDaoSupport {
             }
 
         }
-
+        //session.close();
         return true;
+        } catch (Exception e) {
+            System.out.println("Erreur au niveau verifierValiditeHeureMinutePointageSalarie car "+e.getMessage());
+            return false;
+        }
     }
 
     /**
@@ -236,7 +249,8 @@ public class PresenceService extends MbHibernateDaoSupport {
      * @return Renvoie True si l'heure de pointage est valide sinon False
      */
     public boolean verifierValiditeHeureMinutePointageSalarie(Integer idSalarie, Date date, Long longDateTimePointage, String typePointage) {
-
+        try {
+            
         Session session = sessionFactory.getCurrentSession();
 //        try {
 //
@@ -283,8 +297,12 @@ public class PresenceService extends MbHibernateDaoSupport {
         if (query.list().size() > 0) {
             return false;
         }
-
+        //session.close();
         return true;
+        } catch (Exception e) {
+            System.out.println("Erreur au niveau verifierValiditeHeureMinutePointageSalarie car "+e.getMessage());
+            return false;
+        }
     }
 
     /**
@@ -1409,7 +1427,7 @@ public class PresenceService extends MbHibernateDaoSupport {
         List<Presence> lp = new ArrayList<Presence>();
         try { 
                 Session session = sessionFactory.getCurrentSession();
-                SimpleDateFormat  df = new SimpleDateFormat ("yyyy-MM-dd");
+                SimpleDateFormat  df = new SimpleDateFormat ("yyyyMMdd");
                 String queryRecherche = " FROM Presence p WHERE p.salarie is not null " ;
                 if (idChantier != null) {
                     queryRecherche += " AND p.chantier.id=" + idChantier ;
@@ -1419,15 +1437,18 @@ public class PresenceService extends MbHibernateDaoSupport {
                 } else {*/
                     if (dateDe != null) {
                         queryRecherche += " AND p.date >= '"+df.format(dateDe)+"'" ;
+                        //queryRecherche += " AND p.date >= '"+dateDe+"'" ;
                     }
                     if (dateA != null) {  
                         queryRecherche += " AND p.date <=  '"+df.format(dateA)+"'";
+                       // queryRecherche += " AND p.date <=  '"+dateA+"'";
                     }
                 //} 
                 System.out.println(" queryRecherche ::::::> "+queryRecherche);
                 lp = (List<Presence>) this.getHibernateTemplate().find(queryRecherche);   
                // Query query = session.createSQLQuery(queryRecherche); 
                // lp = query.list();
+               //session.close();
 
         } catch (Exception e) {
             System.out.println(" Erreur de récupération list des presences car "+e.getMessage());
@@ -1871,7 +1892,10 @@ public class PresenceService extends MbHibernateDaoSupport {
      * @return la liste des Présences
      */
     public List<Presence> listePresencesSalarie(int start, int limit, String matriculeSalarie, Integer idChantier, Date dateDe, Date dateA) {
-
+        
+        List<Presence> listePresencesSalarie = new ArrayList<Presence>();
+        try {
+            
         Session session = sessionFactory.getCurrentSession();
 
         String queryRecherche = "";
@@ -1911,9 +1935,27 @@ public class PresenceService extends MbHibernateDaoSupport {
         query.setMaxResults(limit);
         }
 
-        List<Presence> listePresencesSalarie = query.list();
+        listePresencesSalarie = query.list();
+        //session.close();
+        } catch (Exception e) {
+            System.out.println("Erreur de recuperer liste presence au niveau listePresencesSalarie car "+e.getMessage());
+        }
         return listePresencesSalarie;
-
+    }
+    public  List<Presence> allPresenceBySalarie(Integer idSalarie){
+        List<Presence>  l = new ArrayList<Presence>();
+        try {
+            if(idSalarie>0){
+                Session session = sessionFactory.getCurrentSession();
+                Query query = session.createQuery("FROM Presence WHERE salarie.id="+idSalarie+" order by date desc");
+                l = query.list();
+                //session.close();
+            }
+        } catch (Exception e) {
+            System.out.println("Erreur de recuperer liste presence au niveau allPresenceBySalarie car "+e.getMessage());
+        }
+        return l;
+        
     }
 
     /**

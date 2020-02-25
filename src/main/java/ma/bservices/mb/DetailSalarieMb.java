@@ -1006,7 +1006,7 @@ public class DetailSalarieMb implements Serializable {
 
     }
     public void chargerPresences(){
-            presences = presenceService.listePresencesSalarie(0, 10, salarieService.getSalarie(salarie.getId()).getMatricule(), null, null, null);
+            presences = presenceService.allPresenceBySalarie(salarie.getId());
     }
     public void chargerDocs(){
             docs = documentService.listeDocumentsSalarie(salarie.getId(), 0, Integer.parseInt(documentService.nombreDocumentsSalarie(salarie.getId()).toString()));

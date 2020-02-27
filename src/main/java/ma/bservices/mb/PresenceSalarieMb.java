@@ -15,6 +15,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import ma.bservices.beans.Presence;
 import ma.bservices.mb.services.Module;
+import ma.bservices.services.IPresenceService;
 import ma.bservices.services.PresenceService;
 import ma.bservices.services.SalarieService;
 import org.springframework.stereotype.Component;
@@ -31,6 +32,8 @@ public class PresenceSalarieMb implements Serializable {
     //Présences
     @ManagedProperty(value = "#{presenceService}")
     private PresenceService presenceService;
+    @ManagedProperty(value = "#{presenceServicei}")
+    private IPresenceService presenceServicei;
     @ManagedProperty(value = "#{salarieService}")
     private SalarieService salarieService;
     
@@ -86,6 +89,14 @@ public class PresenceSalarieMb implements Serializable {
     public void setIdChantier(Integer idChantier) {
         this.idChantier = idChantier;
     }
+
+    public IPresenceService getPresenceServicei() {
+        return presenceServicei;
+    }
+
+    public void setPresenceServicei(IPresenceService presenceServicei) {
+        this.presenceServicei = presenceServicei;
+    }
     
     
 
@@ -108,7 +119,7 @@ public class PresenceSalarieMb implements Serializable {
             return;
         }  
         try { 
-            presences = presenceService.findPresencesSalarie(idChantier, dateDe, dateA);
+            presences = presenceServicei.allPresenceByChantierAndDate(idChantier, dateDe, dateA);
         } catch (Exception e) {
             System.out.println(" Erreur de récupération list des presences car "+e.getMessage());
         }

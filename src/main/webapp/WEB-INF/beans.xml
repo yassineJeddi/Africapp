@@ -32,6 +32,16 @@
     <bean id="traceAchatDao" class="ma.bservices.dao.TraceAchatDaoImp">
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
+    <!-- Presence -->
+    
+    <bean id="presenceServicei" class="ma.bservices.services.PresenceServiceImp">
+        <property name="presenceDao" ref="presenceDao" /> 
+    </bean>
+  
+    <bean id="presenceDao" class="ma.bservices.dao.PresenceDaoImp">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    
     <!-- Trace Utilisateur -->
     
     <bean id="traceUtilisateurService" class="ma.bservices.tgcc.service.Engin.TraceUtilisateurServiceImp">
@@ -674,7 +684,7 @@
                 <prop key="hibernate.dialect">${hibernate.dialect}</prop> 
                 <!--<prop key="hibernate.dialect">org.hibernate.dialect.SQLServer2008Dialect</prop>--> 
                 <prop key="hibernate.show_sql">false</prop>  
-                <!--<prop key="hibernate.format_sql">true</prop>--> 
+                <prop key="hibernate.format_sql">true</prop>
                 
                 
                 <prop key="hibernate.c3p0.min_size">5</prop>

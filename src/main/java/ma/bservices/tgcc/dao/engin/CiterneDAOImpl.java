@@ -165,15 +165,19 @@ public class CiterneDAOImpl extends MbHibernateDaoSupport implements CiterneDAO,
 
     @Override
     public void editTraceCiterne(TraceCiterne t) {
-        
-        Session session = getSessionFactory().openSession();
-        session.setFlushMode(FlushMode.AUTO);
+        try {
+            
+            Session session = getSessionFactory().openSession();
+            session.setFlushMode(FlushMode.AUTO);
 
-        session.beginTransaction();
-        session.update(session.merge(t));
+            session.beginTransaction();
+            session.update(t);
 
-        session.getTransaction().commit();
-        session.close();
+            session.getTransaction().commit();
+            session.close();
+        } catch (Exception e) {
+            System.out.println("Erreur de modification TraceCiterne car "+e.getMessage());
+        }
     }
 
     @Override

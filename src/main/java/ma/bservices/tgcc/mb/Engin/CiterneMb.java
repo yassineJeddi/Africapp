@@ -32,15 +32,13 @@ import ma.bservices.tgcc.Entity.Citerne;
 import ma.bservices.tgcc.Entity.Engin;
 import ma.bservices.tgcc.Entity.Mensuel;
 import ma.bservices.tgcc.Entity.TraceBonLivraisonCiterne;
-import ma.bservices.tgcc.Entity.TraceCiterne;
-import ma.bservices.tgcc.Entity.TraceUtilisateur;
+import ma.bservices.tgcc.Entity.TraceCiterne; 
 import ma.bservices.tgcc.Entity.Voiture;
 import ma.bservices.tgcc.service.Engin.Bean.CiterneServiceBean;
 import ma.bservices.tgcc.service.Engin.CiterneService;
 import ma.bservices.tgcc.service.Engin.EnginService;
 import ma.bservices.tgcc.service.Engin.ITraceUtilisateurService;
-import ma.bservices.tgcc.service.Engin.LivraisonCiterneService;
-import ma.bservices.tgcc.service.Engin.TraceUtilisateurServiceImp;
+import ma.bservices.tgcc.service.Engin.LivraisonCiterneService; 
 import ma.bservices.tgcc.service.Engin.UtilisateurService;
 import ma.bservices.tgcc.service.Mensuel.MensuelService;
 import ma.bservices.tgcc.service.SendEmail;
@@ -93,6 +91,7 @@ public class CiterneMb implements Serializable {
     private Engin engin=new Engin(); 
     private Bon_Livraison_Citerne bon_gasoil = new Bon_Livraison_Citerne();
     private Bon_Livraison_Citerne bon_gasoil_To_Edit = new Bon_Livraison_Citerne();
+    private TraceCiterne traceCiterneToEdit;
     
     private Utilisateur u  = new Utilisateur();
     
@@ -137,7 +136,11 @@ public class CiterneMb implements Serializable {
     private TraceCiterne traceCitern;
     private Citerne citernDist;
     private Citerne citernSrc;
+    private Citerne citernEditDist;
+    private Citerne citernEditSrc;
     private Integer idCiternTrans;
+    private Integer idCiternExp;
+    private Integer idCiternRcp;
     private String codeEnginMvmtEdit;
     
     private Float cptK;
@@ -157,8 +160,1071 @@ public class CiterneMb implements Serializable {
     private List<Citerne> l_citernes;
     private List<Citerne> l_citerneTransfaire;
     private List<TraceCiterne> traceCiternes = new ArrayList<TraceCiterne>();
+    private List<TraceCiterne> traceCiternesEdit = new ArrayList<TraceCiterne>();
 
 
+    
+
+    /**
+     * end getters and setters
+     */
+    @PostConstruct
+    public void init() {
+        WebApplicationContext ctx = FacesContextUtils.getWebApplicationContext(FacesContext.getCurrentInstance());
+        citerneService = ctx.getBean(CiterneService.class);
+        livraisonCiterneService = ctx.getBean(LivraisonCiterneService.class);
+        enginService = ctx.getBean(EnginService.class);
+        mensuelService = ctx.getBean(MensuelService.class);
+        utilisateurService = ctx.getBean(UtilisateurService.class);
+
+        citerne = new Citerne();
+        citerne_ToDetail_livraison = new Citerne();
+        citerne_bon_caisse = new Citerne();
+        citerneServiceBean = new CiterneServiceBean();
+        date_Bon_livraison = new Date();
+        date_bon_caisse = new Date();
+        bon_Livraison_Citerne_to_add_boncaisse = new Bon_Livraison_Citerne();
+        citerne_bon_gasoil_mensuel = new Citerne();
+        bon_gasoil_mensuel_to_add = new Bon_Livraison_Citerne();
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String user = auth.getPrincipal().toString();
+        u = utilisateurService.getUsersByLogin(user); 
+        
+        date_bon_gasoil_mensuel = new Date();
+        mensuel = new Mensuel();
+        mensuel_to_search = new Mensuel();
+        mensuels = new ArrayList<>();
+        historique_searchBonLivraison = new Citerne();
+
+    }
+    
+    public void chargerCiterne(){
+        List<Chantier> listCh = utilisateurService.findChantiersByUser(u);    
+        l_citernes = citerneService.find_all_Citerne();
+        List<Citerne> temp = new LinkedList<>();
+        if (l_citernes != null && listCh != null) {
+            for (Citerne c : l_citernes) {
+                if (listCh.contains(c.getChantier_Principal())) {
+                    temp.add(c);
+                }
+            }
+        }   
+        
+        l_citernes = new LinkedList<>();
+        l_citernes.addAll(temp);
+        
+        //l_Historiqes = livraisonCiterneService.l_historiques();
+    }
+
+    /**
+     * methode redirect vers popu livraison
+     *
+     * @param selected
+     */
+    public void redirect_pop_livraison(Citerne selected) {
+        citerne_ToDetail_livraison = selected;
+
+        tons_max_afficherLivraison = 0.0;
+        try {
+            
+            if (selected.getType_citerne().equals("Diesel")) {
+                tons_max_afficherLivraison = selected.getCapacite() * 0.8 / 1000;
+
+            } else if (selected.getType_citerne().equals("Essence")) {
+                tons_max_afficherLivraison = selected.getCapacite() * 0.79 / 1000;
+            }
+
+            converti(citerne_ToDetail_livraison.getCapacite() - citerne_ToDetail_livraison.getVolume_actuel_(), citerne_ToDetail_livraison.getType_citerne());
+
+            } catch (Exception e) {
+                System.out.println("Erreur de chargement les données car "+e.getMessage());
+           }
+        }
+    
+    public void refrechBl(){
+          redirect_pop_livraison(citerne_ToDetail_livraison);
+    }
+
+    /**
+     * methode pour sauvegarde livraison + fichier
+     *
+     * @throws java.io.IOException
+     */
+    public void save() throws IOException {
+
+        boolean value = false;
+//        litreToTon();
+        List<Bon_Livraison_Citerne> l_his_s = this.livraisonCiterneService.l_historiques();
+        /*System.out.println("+++++++> numero_commande : "+numero_commande);
+        for (Bon_Livraison_Citerne l_histori : l_his_s) {
+        System.out.println("+++++++> numero_commande : "+l_histori.getNumero_commande());
+            if (l_histori.getCiterne() != null) {
+                if (l_histori.getCiterne().getArchiver() != null) {
+                    if (l_histori.getCiterne().getArchiver().equals(false)) {
+                        if (l_histori.getNumero_commande() != null) {
+                            if (l_histori.getNumero_commande().equals(numero_commande)) {
+                                value = true;
+                            }
+                        }
+
+                    }
+                }
+            }
+        }*/
+
+        Double volume_somme = 0d;
+
+        if (uploadedFile == null) {
+//            tonToLitre();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, Message.CHARGE_DOCUMERNT, Message.CHARGE_DOCUMERNT));
+
+        } else if (uploadedFile.getFileName().equals("")) {
+//            tonToLitre();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, Message.CHARGE_DOCUMERNT, Message.CHARGE_DOCUMERNT));
+        } else if (!"pdf".equals(FilenameUtils.getExtension(uploadedFile.getFileName()))) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, Message.STRING_CHARGE_DOCUMENT_PDF, Message.STRING_CHARGE_DOCUMENT_PDF));
+//            tonToLitre();
+
+        }// else if (value == true) {
+//            tonToLitre();
+         //  FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, Message.NUM_COMMANDE, Message.NUM_COMMANDE));
+        //} 
+        else {
+
+            if (volume_actuel != null && this.citerne_ToDetail_livraison.getVolume_actuel_() != null) {
+                volume_somme = (volume_actuel * 1000) + this.getCiterne_ToDetail_livraison().getVolume_actuel_();
+            }
+            if (volume_somme > this.citerne_ToDetail_livraison.getCapacite()) {
+//            tonToLitre();
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, Message.VOLUME_CAPACITE_CITERNE_DEPASSE, Message.VOLUME_CAPACITE_CITERNE_DEPASSE));
+
+            } else {
+                Bon_Livraison_Citerne bon_Livraison_Citerne = new Bon_Livraison_Citerne();
+
+                bon_Livraison_Citerne.setChemin_fichier(this.citerneServiceBean.upload_fichier(uploadedFile));
+
+//                Integer volume = this.citerneServiceBean.getSomme_volume_actuel(this.citerne_ToDetail_livraison.getVolume_actuel(), volume_actuel);
+                System.out.println("entre volume 1:" + this.citerne_ToDetail_livraison.getVolume_actuel_());
+                System.out.println("entre volume 2:" + volume_actuel.intValue() * 1000);
+                System.out.println("entre volume 3:" + volume_somme);
+
+                this.citerne_ToDetail_livraison.setVolume_actuel_(volume_somme);
+
+                this.citerneService.update_citerne(citerne_ToDetail_livraison);
+
+                bon_Livraison_Citerne.setCiterne(citerne_ToDetail_livraison);
+
+                bon_Livraison_Citerne.setVolume_actuel(volume_somme);
+
+                bon_Livraison_Citerne.setVolume(volume_actuel * 1000);
+
+                bon_Livraison_Citerne.setNumero_commande(numero_commande);
+                bon_Livraison_Citerne.setNumero_Livraison(numero_commande_livraison);
+
+                bon_Livraison_Citerne.setDate(date_Bon_livraison);
+
+                bon_Livraison_Citerne.setAction("LIVRAISON");
+                bon_Livraison_Citerne.setCommentaire(commentBl);
+
+                livraisonCiterneService.save(bon_Livraison_Citerne);
+
+                FacesContext context = FacesContext.getCurrentInstance();
+
+                context.addMessage(null, new FacesMessage("" + Message.BON_LIVRAISON_TRUE, ""));
+
+                volume_actuel = 0.0;
+
+                numero_commande_livraison = "";
+
+                numero_commande = "";
+            }
+        }
+    }
+
+    public String dedecimals(Double d) {
+        try {
+
+                if (d == 0 || d == null) {
+                    return "0.00";
+                } else {
+                    String s = "";
+                    DecimalFormat df = new DecimalFormat("#.##");
+                    s = df.format(d);
+                    return s;
+                }
+        } catch (Exception e) {
+            System.out.println("Erreur de dedecimals car  "+e.getMessage());
+            return "0.00";
+        }
+    }
+
+    /* handles la selection d'une ligne de la table des mensuels */
+    public void onRowSelectMensuel(Mensuel m) {
+        System.out.println("MENSUEL : SELECLED : " + m.getNom());
+    }
+
+    /**
+     * metdhode qui permet de redirect vers bon caisse
+     *
+     * @param selected
+     */
+    public void nv_bon_gasoil(){
+        redirect_bon_caisse(citerne_bon_caisse);
+        chargerBonG();
+    }
+    public void chargerBonG(){
+          bon_gasoil = new Bon_Livraison_Citerne();
+         // bon_gasoil.setDate(new Date());   
+          date_bon_caisse = new Date();
+          bon_gasoil.setDate(date_bon_caisse);
+    }
+    public void chargerBonGasoil(Citerne selected){
+        chargerBonG();
+        cptHr=0;cptKl=0;
+        bon_gasoil.setCiterne(selected);
+        Kilométrage_bon_caisse = null;
+        heure_engin = null;
+        Tonnes_bonCaisse = null;
+        l_engin_to_bonCaisse = null;
+        isButtonVisible = true;
+        citerne_bon_caisse = selected;
+        this.l_engin_chantier_bon_caisse = l_enginBonGasoilSecCopie;
+        bon_gasoil= new Bon_Livraison_Citerne();
+        try {
+             listEnginCiterne = enginService.findAllEnginByChantierId(selected.getChantier_Principal().getId());
+        } catch (Exception e) {
+            System.out.println(" :::::::> Erreur de chargement les engin car "+e.getMessage());
+        }
+    }
+    public void redirect_bon_caisse(Citerne selected) {
+      chargerBonG();
+      cptHr=0;cptKl=0;
+        //System.out.println(" :::::::> 1");
+      bon_gasoil.setCiterne(selected);
+       
+        //System.out.println(" :::::::> 2");
+        try {
+             listEnginCiterne = enginService.findAllEnginByChantierId(selected.getChantier_Principal().getId());
+        } catch (Exception e) {
+            System.out.println(" :::::::> 22 "+e.getMessage());
+        }
+        //System.out.println("listEnginCiterne :::::::> "+listEnginCiterne);
+        //System.out.println("bon_gasoil :::::::> "+bon_gasoil.toString());
+        Kilométrage_bon_caisse = null;
+        heure_engin = null;
+        Tonnes_bonCaisse = null;
+        l_engin_to_bonCaisse = null;
+
+        isButtonVisible = true;
+
+        //System.out.println(" :::::::> 3");
+        citerne_bon_caisse = selected;
+
+        List<Engin> l_engins_sec = new ArrayList<>();
+
+        List<Engin> l_engins_prin = new ArrayList<>();
+
+        l_chantier_sec_bon_caisse = this.citerneService.getListeChantierByCiterne(citerne_bon_caisse.getId());
+
+        //System.out.println("entre engin 1 :  " + l_chantier_sec_bon_caisse.size());
+
+        //System.out.println(" :::::::> 4");
+        if (l_chantier_sec_bon_caisse != null) {
+            for (Chantier ch_ : l_chantier_sec_bon_caisse) {
+                for (Engin en_ : ch_.getEnginList()) {
+                    l_engins_sec.add(en_);
+                }
+            }
+        }
+
+        l_chantierSecBonGasoilEngin = this.citerneService.getListeChantierByCiterne(selected.getId());
+
+        //System.out.println("entre engin 2 :  " + l_engins_sec.size());
+
+        ELContext elContext = FacesContext.getCurrentInstance().getELContext();
+
+        ma.bservices.tgcc.mb.services.EnginMb engin_bean = (ma.bservices.tgcc.mb.services.EnginMb) FacesContext.getCurrentInstance().getApplication().getELResolver().getValue(elContext, null, "enginServMb");
+
+        List<Engin> engin_to_boucle = engin_bean.getL_engins();
+
+        if (!engin_to_boucle.isEmpty()) {
+
+            for (Engin engin__ : engin_to_boucle) {
+                if (engin__ != null) {
+
+                    if (citerne_bon_caisse.getChantier_Principal() != null && engin__.getPrjapId() != null) {
+                        if (citerne_bon_caisse.getChantier_Principal().getId().equals(engin__.getPrjapId().getId())) {
+                            if (engin__.getArchive() != true) {
+                                l_engins_prin.add(engin__);
+                                l_enginBonGasoilSecCopie = l_engins_prin;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        //System.out.println("entre engin 3 :  " + l_engins_prin.size());
+
+//        for (Engin en_ : citerne_bon_caisse.getChantier_Principal().getEnginList()) {
+//            
+//        }
+     //   this.l_engin_chantier_bon_caisse = this.citerneServiceBean.get_list_engin_chantier(l_engins_prin, l_engins_sec);
+      this.l_engin_chantier_bon_caisse = l_enginBonGasoilSecCopie;
+      bon_gasoil= new Bon_Livraison_Citerne();
+
+//          l_enginBonGasoilSecCopie = this.l_engin_chantier_bon_caisse;
+    }
+
+    public void afficherEnginLieChantierSelectionne() {
+
+        if (chantierSecSelectionneBonGasoilEngin == -1) {
+            this.l_engin_chantier_bon_caisse = l_enginBonGasoilSecCopie;
+        } else {
+
+            l_engin_chantier_bon_caisse = this.citerneService.getEnginByChantierId(chantierSecSelectionneBonGasoilEngin);
+        }
+
+    }
+
+    /**
+     * methode pour sauvegarde bonn gasoil
+     *
+     * @throws java.io.IOException
+     * @throws com.itextpdf.text.DocumentException
+     */
+    /*
+    public void save_bon_gasoil() throws IOException, DocumentException {
+
+        if(engin.getCompteurKilometrique()>=0 && engin.getComteurHoraire()>=0){
+            //if(engin.getCompteurKilometrique()>=cptK && engin.getComteurHoraire()>= cptH){
+                if (Tonnes_bonCaisse != null && this.citerne_bon_caisse.getCapacite() != null) {
+                    if (Tonnes_bonCaisse > this.citerne_bon_caisse.getVolume_actuel_()) {
+
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, Message.VOLUME_CAPACITE_CITERNE_INF, Message.VOLUME_CAPACITE_CITERNE_INF));
+
+                    } else {
+
+                        bon_Livraison_Citerne_to_add_boncaisse.setAction("BON_GASOIL_ENGIN");
+                        bon_Livraison_Citerne_to_add_boncaisse.setCiterne(citerne_bon_caisse);
+                        bon_Livraison_Citerne_to_add_boncaisse.setDate(date_bon_caisse);
+                        bon_Livraison_Citerne_to_add_boncaisse.setHeure(engin.getComteurHoraire().toString());
+
+                        Double volume_actuel_somme = this.citerneServiceBean.getSoustraction_volume_actuel(this.citerne_bon_caisse.getVolume_actuel_(), Tonnes_bonCaisse);
+
+                        bon_Livraison_Citerne_to_add_boncaisse.setVolume_actuel(volume_actuel_somme);
+                        citerne_bon_caisse.setVolume_actuel_(volume_actuel_somme);
+                         try {
+                            System.out.println("===================> engin Citerne "+engin.toString());
+                            this.enginService.updateEngin(engin);
+                            
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'enregistrement d'engin car "+e.getMessage());
+                        }
+                        
+                        this.citerneService.update_citerne(citerne_bon_caisse);
+                        bon_Livraison_Citerne_to_add_boncaisse.setVolume(Tonnes_bonCaisse);
+                        bon_Livraison_Citerne_to_add_boncaisse.setKilometrage(engin.getCompteurKilometrique().toString());
+                        this.citerneService.save_bon_caisse_citerne_engin(bon_Livraison_Citerne_to_add_boncaisse, l_engin_to_bonCaisse);
+                        this.livraisonCiterneService.update(bon_Livraison_Citerne_to_add_boncaisse);
+                       
+                        this.display_button_telecharger = true;
+                        // this.citerneServiceBean.telecharger_bon_gasoil_engin(bon_Livraison_Citerne_to_add_boncaisse);
+                        this.bon_temp = bon_Livraison_Citerne_to_add_boncaisse;
+                        // bon_Livraison_Citerne_to_add_boncaisse.setChemin_fichier();
+                        
+                        bon_Livraison_Citerne_to_add_boncaisse = new Bon_Livraison_Citerne();
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Succes", "Bon Edité avec succès"));
+                        isButtonVisible = false;
+                    }
+
+               // }
+            }
+        }
+        else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Attention", "Veuiller Remplir Kilometrage ou Heures Engin"));
+            System.out.println("Kilometrage ou Horaire");
+        }
+        
+    }*/
+
+    public void save_bon_gasoil() throws IOException, DocumentException {
+
+        if ((cptKl <0 ) && (cptHr<0)) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Attention", "les Compteurs doit être positif"));
+        }/*else if(bon_gasoil.getEngin().getCompteurKilometrique()>cptKl && ("kilométrique".equals(bon_gasoil.getEngin().getTypeCompteur()) || "kilométrique_horaire".equals(bon_gasoil.getEngin().getTypeCompteur()))){
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Attention", "le compteur kilométrique doit être supérieur ou égal "+bon_gasoil.getEngin().getCompteurKilometrique()));
+        } else if(bon_gasoil.getEngin().getComteurHoraire()>cptHr && ("horaire".equals(bon_gasoil.getEngin().getTypeCompteur()) || "kilométrique_horaire".equals(bon_gasoil.getEngin().getTypeCompteur()))){
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Attention", "le compteur horaire doit être supérieur ou égal "+bon_gasoil.getEngin().getComteurHoraire()));
+        }*/else if (Tonnes_bonCaisse != null && this.citerne_bon_caisse.getCapacite() != null) {
+             
+            if (Tonnes_bonCaisse <0 ) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Attention", "les litres doit être positif"));
+            } else
+            if (Tonnes_bonCaisse > this.citerne_bon_caisse.getVolume_actuel_()) {
+
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, Message.VOLUME_CAPACITE_CITERNE_INF, Message.VOLUME_CAPACITE_CITERNE_INF));
+
+            } else {
+                Bon_Livraison_Citerne lastb = new Bon_Livraison_Citerne();
+                try {
+                        lastb = citerneService.lastAlimentationEngin(enginService.findOneById(bon_gasoil.getEngin().getIDEngin()));
+                        if(lastb != null){
+                            bon_gasoil.setLastKilometrage(lastb.getKilometrage());
+                            bon_gasoil.setLastHeure(lastb.getHeure());
+                        }
+                } catch (Exception e) {
+                    System.out.println("Erreur de recuperation last alimentation car "+e.getMessage());
+                }
+                
+                bon_gasoil.setAction("BON_GASOIL_ENGIN");
+                bon_gasoil.setCiterne(citerne_bon_caisse);
+                bon_gasoil.setDate(new Date());
+                bon_gasoil.setHeure(cptHr+"");
+                bon_gasoil.setDateOperation(date_bon_caisse); 
+
+                Double volume_actuel_somme = this.citerneServiceBean.getSoustraction_volume_actuel(this.citerne_bon_caisse.getVolume_actuel_(), Tonnes_bonCaisse);
+
+                bon_gasoil.setVolume_actuel(volume_actuel_somme);
+                citerne_bon_caisse.setVolume_actuel_(volume_actuel_somme);
+                this.citerneService.update_citerne(citerne_bon_caisse);
+                bon_gasoil.setVolume(Tonnes_bonCaisse);
+                bon_gasoil.setKilometrage(cptKl+"");
+                
+                this.citerneService.save_bon_caisse_citerne_engin(bon_gasoil, l_engin_to_bonCaisse);
+                this.display_button_telecharger = true;
+                // this.citerneServiceBean.telecharger_bon_gasoil_engin(bon_gasoil);
+                this.bon_temp = bon_gasoil;
+                // bon_Livraison_Citerne_to_add_boncaisse.setChemin_fichier();
+                this.livraisonCiterneService.update(bon_gasoil);
+                /* Modification les compteurs d'engin
+                Engin eng = bon_gasoil.getEngin();
+                eng.setCompteurKilometrique(cptKl);
+                eng.setComteurHoraire(cptHr);
+                enginService.updateEngin(eng);
+                */
+                bon_gasoil = new Bon_Livraison_Citerne();
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Succes", "Bon Edité avec succès"));
+                isButtonVisible = false;
+                /*
+                bon_Livraison_Citerne_to_add_boncaisse.setAction("BON_GASOIL_ENGIN");
+                bon_Livraison_Citerne_to_add_boncaisse.setCiterne(citerne_bon_caisse);
+                bon_Livraison_Citerne_to_add_boncaisse.setDate(date_bon_caisse);
+                bon_Livraison_Citerne_to_add_boncaisse.setHeure(heure_engin);
+
+                Double volume_actuel_somme = this.citerneServiceBean.getSoustraction_volume_actuel(this.citerne_bon_caisse.getVolume_actuel_(), Tonnes_bonCaisse);
+
+                bon_Livraison_Citerne_to_add_boncaisse.setVolume_actuel(volume_actuel_somme);
+
+                citerne_bon_caisse.setVolume_actuel_(volume_actuel_somme);
+
+                this.citerneService.update_citerne(citerne_bon_caisse);
+
+                bon_Livraison_Citerne_to_add_boncaisse.setVolume(Tonnes_bonCaisse);
+                bon_Livraison_Citerne_to_add_boncaisse.setKilometrage(Kilométrage_bon_caisse);
+
+                this.citerneService.save_bon_caisse_citerne_engin(bon_Livraison_Citerne_to_add_boncaisse, l_engin_to_bonCaisse);
+
+                this.display_button_telecharger = true;
+
+                // this.citerneServiceBean.telecharger_bon_gasoil_engin(bon_Livraison_Citerne_to_add_boncaisse);
+                this.bon_temp = bon_Livraison_Citerne_to_add_boncaisse;
+                // bon_Livraison_Citerne_to_add_boncaisse.setChemin_fichier();
+
+                this.livraisonCiterneService.update(bon_Livraison_Citerne_to_add_boncaisse);
+
+                bon_Livraison_Citerne_to_add_boncaisse = new Bon_Livraison_Citerne();
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Succes", "Bon Edité avec succès"));
+                isButtonVisible = false;
+                */
+            }
+            
+        }
+    }
+    
+    public void downloadBonGasoil() throws IOException, DocumentException {
+        String s = this.citerneServiceBean.telecharger_bon_gasoil_engin(bon_temp);
+
+        bon_temp.setChemin_fichier(s);
+        //System.out.println("CHEMIN FICHIER SET TO : " + bon_temp.getChemin_fichier());
+        this.livraisonCiterneService.update(bon_temp);
+
+    }
+
+    /**
+     * methode qui permet de telecharger Bon caisse citerne
+     *
+     *
+     * @throws java.io.IOException
+     * @throws com.itextpdf.text.DocumentException
+     */
+    public void telecharger_bon_caisse() throws IOException, DocumentException {
+
+        this.citerneServiceBean.telecharger_bon_gasoil_engin(bon_Livraison_Citerne_to_add_boncaisse);
+
+        this.livraisonCiterneService.update(bon_Livraison_Citerne_to_add_boncaisse);
+
+    }
+
+    /**
+     * methode qui permet de telecharger bon caisse
+     *
+     * @param livraison_Citerne
+     * @throws java.io.IOException
+     */
+    public void telecharger_bon_gasoil_historique(Bon_Livraison_Citerne livraison_Citerne) throws IOException {
+
+        //System.out.println("entre : " + livraison_Citerne.getChemin_fichier());
+
+        if (livraison_Citerne.getChemin_fichier() != null) {
+
+            this.citerneServiceBean.telecharger_fichier(livraison_Citerne.getChemin_fichier());
+        }
+
+    }
+    public void prepModifierMvmt(Bon_Livraison_Citerne livraison_Citerne){
+        bon_gasoil_To_Edit = livraison_Citerne;
+    }
+    public void modifierMvmt(Bon_Livraison_Citerne livraison_Citerne){
+        bon_gasoil_To_Edit = livraison_Citerne;
+        
+    }
+
+    /**
+     * methode qui redirect vers hstorique citernee
+     *
+     * @param selected
+     */
+    public void redirectHistoriqueCiterne(Citerne selected) {
+
+        historique_searchBonLivraison = selected;
+
+        //System.out.println("historique_searchBonLivraison 1: " + historique_searchBonLivraison.getId());
+
+        if (l_detail_citerne_historique != null) {
+            this.l_detail_citerne_historique.clear();
+        }
+
+        this.l_detail_citerne_historique = this.livraisonCiterneService.get_listBy_id_bonLivraison(selected.getId());
+
+    }
+    public void prepMvmt( Bon_Livraison_Citerne b){
+        bon_gasoil_To_Edit = b;
+        //System.out.println("ma.bservices.tgcc.mb.Engin.CiterneMb.prepMvmt():::::::> bon_gasoil_To_Edit : "+bon_gasoil_To_Edit.toString());
+        allEngins= enginService.enginsActif();
+        RequestContext.getCurrentInstance().execute("PF('dlg_mvmtCiterne').show();");
+    }
+    public void prepTraceCiterne( TraceCiterne t){
+        traceCiterneToEdit = t;
+        
+        citernEditSrc = traceCiterneToEdit.getCiternSrc();
+        citernEditDist=traceCiterneToEdit.getCiternDist();
+        
+        l_citernes = citerneService.find_allCiterneNon_archiver(); 
+        //System.out.println("ma.bservices.tgcc.mb.Engin.CiterneMb.prepMvmt():::::::> bon_gasoil_To_Edit : "+traceCiterneToEdit.toString());
+        //allEngins= enginService.enginsActif();
+        RequestContext.getCurrentInstance().execute("PF('dlg_modifTrans_gasoil').show();");
+    }
+    public void selectCiterneExp(Integer id){
+        citernEditSrc = citerneService.findCiternById(id);
+        //System.out.println("::::::::::> citernSrc : "+citernSrc.toString());
+    }
+    public void selectCiterneRcp(Integer id){
+        citernEditDist = citerneService.findCiternById(id);
+        //System.out.println("::::::::::> citernDist : "+citernDist.toString());
+    }
+    public void editTraceCiterne(){
+        Citerne c = traceCiterneToEdit.getCiternSrc();
+        traceCiterneToEdit.setCiternSrc(citernEditSrc);
+        traceCiterneToEdit.setCiternDist(citernEditDist);
+        System.out.println("::::::::::> traceCiterneToEdit : "+traceCiterneToEdit.toString());
+        citerneService.editTraceCiterne(traceCiterneToEdit);
+        citernEditSrc = new Citerne();
+        citernEditDist = new Citerne();
+        traceCiternes = citerneService.findAllTraceCiterneByCiterne(c);
+        RequestContext.getCurrentInstance().execute("PF('dlg_modifTrans_gasoil').show();");
+    }
+    
+    
+    public void changeEnginEditMvmt(){
+        if(codeEnginMvmtEdit.trim().length()>0){
+            Engin e = enginService.findOneByCode(codeEnginMvmtEdit);
+            if(e!=null){
+                bon_gasoil_To_Edit.setEngin(e);
+            }
+        }
+    }
+    public void enregistrerMvmt(){
+        //System.out.println("bon_gasoil_To_Edit :::::::::> 0) ");
+        RemplireTrace r = new RemplireTrace();
+        TraceBonLivraisonCiterne t = new TraceBonLivraisonCiterne();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication(); 
+        //System.out.println("bon_gasoil_To_Edit :::::::::> 1) ");
+        t = r.remplirTraceBonLivraisonCiterne(livraisonCiterneService.findBonLivraisonCiterneById(bon_gasoil_To_Edit.getId()), auth.getPrincipal().toString(), "Modification MVMT Citerne"); 
+        //System.out.println("bon_gasoil_To_Edit :::::::::> 2) "+bon_gasoil_To_Edit.toString());
+        traceUtilisateurService.addTraceBonLivraisonCiterne(t);
+        livraisonCiterneService.update(bon_gasoil_To_Edit);
+        bon_gasoil_To_Edit= new Bon_Livraison_Citerne();
+        codeEnginMvmtEdit="";
+    }
+
+    /**
+     * methode qui permet de redirect vers dialog bon gasoil mensuel
+     *
+     * @param selected
+     */
+    public void redirect_bon_gasoil_mensuel(Citerne selected) {
+        mensuel = null;
+        mensuel_to_search = new Mensuel();
+        mensuels = null;
+        voitureSalaries = null;
+        nombre_litre_bon_gasoil_mensuel = null;
+        date_bon_gasoil_mensuel = new Date();
+        closeBGMWindow = false;
+        this.citerne_bon_gasoil_mensuel = selected;
+
+    }
+
+    /**
+     * methode qui permet de sauvegarde bon gasoil mensuel
+     *
+     * @throws java.io.IOException
+     * @throws com.itextpdf.text.DocumentException
+     */
+    public void save_bon_gasoil_mensuel() throws IOException, DocumentException {
+
+        if (nombre_litre_bon_gasoil_mensuel != null && this.citerne_bon_gasoil_mensuel != null) {
+
+            if (voitureSalaries == null || voitureSalaries.isEmpty()) {
+
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Pas de voiture", "Ce mensuel n'a pas de voiture"));
+
+            } else if (this.citerne_bon_gasoil_mensuel.getVolume_actuel_() < nombre_litre_bon_gasoil_mensuel) {
+
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, Message.VOLUME_CAPACITE_CITERNE_INF, Message.VOLUME_CAPACITE_CITERNE_INF));
+
+            } else {
+
+                bon_gasoil_mensuel_to_add.setAction("BON_GASOIL_MENSUEL");
+                //System.out.println("NOMBRE LITRES : " + nombre_litre_bon_gasoil_mensuel);
+                bon_gasoil_mensuel_to_add.setCiterne(this.citerne_bon_gasoil_mensuel);
+                bon_gasoil_mensuel_to_add.setDate(date_bon_gasoil_mensuel);
+                Double volume_actuel_somme = this.citerneServiceBean.getSoustraction_volume_actuel(this.citerne_bon_gasoil_mensuel.getVolume_actuel_(), nombre_litre_bon_gasoil_mensuel);
+                //System.out.println("VOLUME ACTUEL AFTER SOMME : " + volume_actuel_somme);
+
+                bon_gasoil_mensuel_to_add.setVolume_actuel(volume_actuel_somme);
+
+                this.citerne_bon_gasoil_mensuel.setVolume_actuel_(volume_actuel_somme);
+
+                bon_gasoil_mensuel_to_add.setVolume(nombre_litre_bon_gasoil_mensuel);
+
+                // modifier volume actuel citerne
+                this.citerneService.update_citerne(this.citerne_bon_gasoil_mensuel);
+
+                this.citerneService.save_bon_caisse_citerne_mensuel(bon_gasoil_mensuel_to_add, mensuel.getId());
+
+                this.display_button_telecharger_bon_gasoil_mensuel = true;
+
+                this.citerneServiceBean.telecharger_bon_gasoil_mensuel(this.bon_gasoil_mensuel_to_add);
+
+                this.livraisonCiterneService.update(this.bon_gasoil_mensuel_to_add);
+
+                closeBGMWindow = true;
+
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Succes", "L'opération à été terminé avec succès!"));
+
+            }
+        }
+
+    }
+
+    /**
+     * methode qui permet de telecharger bon gasoil mensuel
+     *
+     * @throws java.lang.Exception
+     */
+    public void telecharger_bon_gasoil_mensuel() throws Exception {
+
+    }
+
+    /**
+     * methode qui permet de recherche sur historique
+     */
+    public void rechercher_historique_citerne() {
+
+        //System.out.println("entre :" + date_historique_search);
+
+        if (date_historique_search == null && action_search.equals("-1") && numCommande_search.equals("") && numLivraison_search.equals("")) {
+
+            //System.out.println("historique_searchBonLivraison 2: " + historique_searchBonLivraison.getId());
+
+            l_detail_citerne_historique = this.livraisonCiterneService.get_listBy_id_bonLivraison(historique_searchBonLivraison.getId());
+
+        } else {
+
+            l_detail_citerne_historique = this.livraisonCiterneService.get_liste_livraisonByDate_action(historique_searchBonLivraison.getId(), date_historique_search, action_search, numCommande_search, numLivraison_search);
+
+        }
+
+    }
+
+    public void reinitHistoCiterne() {
+
+        if (l_detail_citerne_historique != null) {
+            this.l_detail_citerne_historique.clear();
+        }
+
+        this.l_detail_citerne_historique = this.livraisonCiterneService.get_listBy_id_bonLivraison(historique_searchBonLivraison.getId());
+
+    }
+
+    /**
+     * methode pour display
+     *
+     * @param code
+     */
+    public void display_engin_kiometrique(String code) {
+        chargerBonG();
+        Tonnes_bonCaisse = 0.0;
+        //System.out.println("entre :" + code);
+        Engin en_ = this.enginService.findOneByCode(code);
+        engin=new Engin();
+        setEngin(en_);
+        bon_gasoil.setEngin(engin);
+        cptKl = engin.getCompteurKilometrique();
+        cptHr = engin.getComteurHoraire();
+        this.kilometrique_display = false;
+        this.heure_display = false;
+        if (en_.getCompteurKilometrique() != null) {
+            kilometrique_display = true;
+        }
+        if (en_.getComteurHoraire() != null) {
+            heure_display = true;
+        }
+        //System.out.println("::::> bon_gasoil "+bon_gasoil.getEngin().toString());
+    }
+
+    public String convertToDoubleDecimals(Double d) {
+
+        DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.FRANCE);
+        DecimalFormatSymbols symbols = formatter.getDecimalFormatSymbols();
+
+        symbols.setGroupingSeparator(' ');
+
+        formatter.setDecimalFormatSymbols(symbols);
+        // System.out.println(formatter.format(d));
+
+        String s = formatter.format(d.doubleValue());
+        return s;
+    }
+
+    /**
+     * methode qui permet de afficher voiture mensuel
+     *
+     * @param selected
+     */
+
+
+    /**
+     * methode fermer pop
+     *
+     * @throws java.io.IOException
+     */
+    public void fermer_pop() throws IOException {
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        ec.redirect(ec.getRequestContextPath() + "/engin/Citerne.xhtml");
+    }
+
+    /**
+     * methode qui permet de rechercher mensuel
+     */
+    public void rechercher_mensuel_By() {
+
+        mensuels = this.mensuelService.search(mensuel_to_search.getMatricule(), mensuel_to_search.getNom(), mensuel_to_search.getPrenom(), "", "");
+        /*for (Mensuel m : mensuels) {
+            System.out.println("MENSUEL : " + m.getNom());
+        }*/
+    }
+
+    /**
+     * methode qui permet de converti date en format jj-mm-aaaa
+     *
+     * @param date
+     * @return
+     */
+    public String convertFormatDate(Date date) {
+
+        Outils outils = new Outils();
+        return outils.convertDate_To_string(date);
+
+    }
+
+    /**
+     * convert ton to litre
+     */
+    private void litreToTon() {
+
+        if (citerne_ToDetail_livraison.getType_citerne() != null) {
+            switch (citerne_ToDetail_livraison.getType_citerne()) {
+                case "Diesel":
+                    // 1 kg = 1litre/0.85
+                    // 1t = 1000kg => kg = t/1000
+                    tons_dispo = volume_actuel * 0.8 / 1000;
+                    break;
+                case "Essence":
+                    tons_dispo = volume_actuel * 0.79 / 1000;
+                    break;
+            }
+        }
+        volume_actuel = tons_dispo;
+        //System.out.println("volume " + volume_actuel);
+    }
+
+    public void tonToLitre() {
+        Double t = 0.0;
+        if (citerne_ToDetail_livraison.getType_citerne() != null) {
+            switch (citerne_ToDetail_livraison.getType_citerne()) {
+                case "Diesel":
+                    // 1 kg = 1litre/0.85
+                    // 1t = 1000kg => kg = t/1000
+                    t = tons_dispo / (0.85 * 1000);
+                    break;
+                case "Essence":
+                    t = tons_dispo / (0.79 * 1000);
+                    break;
+            }
+        }
+        volume_actuel = t;
+        System.out.println("volume " + volume_actuel);
+    }
+    private Double tons, tons_dispo;
+
+    /**
+     * methode converti Litre to Ton
+     *
+     * @param litre
+     * @param type
+     */
+    private void converti(Double litre, String type) {
+
+        if (type != null) {
+            switch (type) {
+                case "Diesel":
+                    // 1 kg = 1litre/0.85
+                    // 1t = 1000kg => kg = t/1000
+                    tons = (litre / 0.85) / 1000.0;
+                    break;
+                case "Essence":
+                    tons = (litre / 0.79) / 1000.0;
+                    break;
+            }
+        }
+        tons = Math.floor(tons * 100) / 100;
+    }
+
+    public Double getTons() {
+        return tons;
+    }
+
+    public void setTons(Double tons) {
+        this.tons = tons;
+    }
+
+    public Double getTons_dispo() {
+        return tons_dispo;
+    }
+
+    public void setTons_dispo(Double tons_dispo) {
+        this.tons_dispo = tons_dispo;
+    }
+
+    public void checkCapacite(Double vol) {
+
+        volume_actuel = vol;
+
+        if (volume_actuel != null) {
+
+            afficherVolumeTonne = vol * 0.8;
+        }
+
+        afficherVolumeTonne = Math.floor(afficherVolumeTonne * 100) / 100;
+
+        checkBtn = afficherVolumeTonne > tons_max_afficherLivraison;
+        if (checkBtn) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, Message.VOLUME_CAPACITE_CITERNE_DEPASSE, Message.VOLUME_CAPACITE_CITERNE_DEPASSE));
+        } else {
+//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, Message.VOLUME_CAPACITE_CITERNE_INF_SUCCESS, Message.VOLUME_CAPACITE_CITERNE_INF_SUCCESS));
+        }
+    }
+
+    public void checkCapaciteTonne(Double vol) {
+
+        afficherVolumeTonne = vol;
+
+        if (afficherVolumeTonne != null) {
+
+            volume_actuel = afficherVolumeTonne * 0.8;
+        }
+
+        afficherVolumeTonne = Math.floor(afficherVolumeTonne * 100) / 100;
+
+        checkBtn = afficherVolumeTonne > tons_max_afficherLivraison;
+        if (checkBtn) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, Message.VOLUME_CAPACITE_CITERNE_DEPASSE, Message.VOLUME_CAPACITE_CITERNE_DEPASSE));
+        } else {
+//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, Message.VOLUME_CAPACITE_CITERNE_INF_SUCCESS, Message.VOLUME_CAPACITE_CITERNE_INF_SUCCESS));
+        }
+    }
+    
+    /*** Debut Gestion TRansfaire gasoil entre citerne***/
+    public void prepTransfaire(Citerne c){ 
+        l_citerneTransfaire = citerneService.find_allCiterneNon_archiver();        
+        citernSrc = c; 
+        citernDist = new Citerne();
+        traceCitern = new TraceCiterne();
+        traceCiternes =new ArrayList<TraceCiterne>();
+        try {
+            traceCiternes = citerneService.findAllTraceCiterneByCiterne(c);
+        } catch (Exception e) {
+            System.out.println(" ::::> Erreur de chargement la liste transfaire citernSrc  car : "+e.getMessage());
+        }
+        //System.out.println(" ::::> chargement liste de transfaire citernSrc : "+traceCiternes.size());
+    }
+    
+    public void chageCiternEv(){
+        //System.out.println("id ::::::::::> "+idCiternTrans);
+        if(idCiternTrans>0){
+            citernDist=citerneService.findCiternById(idCiternTrans);
+        }
+        //System.out.println("=======> citernDist change : "+citernDist.toString());
+    }
+    
+    public void chargerListTransfaire(){
+        if(citernSrc !=null){
+            try {
+                traceCiternes = citerneService.findAllTraceCiterneByCiterne(citernSrc);
+            } catch (Exception e) {
+                System.out.println("Erreur de récuperation de la liste des transfaire engin car "+e.getMessage());
+            }
+        }
+    }
+    public void prepReceptionGz(Citerne c){
+        try {
+                traceCiternes = citerneService.findAllTraceCiterneByCiterneDist(c);
+            } catch (Exception e) {
+                System.out.println("Erreur de récuperation de la liste des transfaire engin car "+e.getMessage());
+            }
+    }
+    public void saveReceptionGz(TraceCiterne t){
+        citernDist = t.getCiternDist();
+        citernDist.setVolume_actuel_(((citernDist.getVolume_actuel_()!=null)?citernDist.getVolume_actuel_():0)+t.getLitreReceptione()); 
+        t.setUtilisateurReception(u);
+        t.setValide(Boolean.TRUE);
+        t.setDateOperationRecep(new Date());
+            try {
+                    citerneService.update_citerne(citernDist);
+            } catch (Exception e) {
+                System.out.println("Erreur de modification citernDist  car "+e.getMessage());
+            }
+            try { 
+                    citerneService.editTraceCiterne(t); 
+                    //System.out.println("t.getLitreReceptione() : "+t.getLitreReceptione());
+                    //System.out.println("t.getLitreTransf() : "+t.getLitreTransf());
+                    //System.out.println("t.getLitreReceptione()!= t.getLitreTransf() : "+(t.getLitreReceptione()!= t.getLitreTransf()));
+                    if((t.getLitreReceptione()-t.getLitreTransf())!=0){
+                        String msgEmail;
+                        try {
+                          msgEmail = "Bonjour, \n\nUn écart a été constaté concernant le transfert de gasoil N° "+t.getNumBon()
+                                  +", ID "+t.getId()+", en provenance du chantier "+ t.getCiternSrc().getChantier_Principal().getCode().trim()
+                                  +"("+t.getLitreTransf()+" L)"
+                                  +" et à destination du chantier "+ t.getCiternDist().getChantier_Principal().getCode().trim()
+                                  +"("+t.getLitreReceptione()+" L)"
+                                  +".\n\nCordialement.";
+                        } catch (Exception e) {
+                            msgEmail = "Bonjour, \nUne déference de transfert de gasoil de la "
+                                        + t.getCiternSrc().getLibelle_citerne()+" ("+t.getLitreTransf()+"L) vers La citerne "
+                                        + t.getCiternDist().getLibelle_citerne()+" ("+t.getLitreReceptione()+"L). \nCordialement." ;
+                            System.out.println("Erreu d'affectation du message car "+e.getMessage());
+                        }
+                        try {
+                            ApplicationContext context = new ClassPathXmlApplicationContext("mail.xml");
+                            SendEmail sm = (SendEmail) context.getBean("sendEmail");
+                           String[] listDestinatairesMail = {"hamza.achtioua@tgcc.ma"} ;
+                            String[] cc = {"said.jamaleddine@tgcc.ma","mohamed.benseddik@tgcc.ma","yassine.jeddi@tgcc.ma"} ; 
+                             
+                            if (listDestinatairesMail != null ) {
+                                for (String m : listDestinatairesMail) {
+                                    sm.sendMailCc("notification@tgcc.ma", m, "Écart Gasoil", msgEmail,cc);
+                                }
+                            }
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'envoi l'email car "+e.getMessage());
+                        }
+                    }
+            } catch (Exception e) {
+                System.out.println("Erreur de modifier traceCitern  car "+e.getMessage());
+            }
+    }
+    public void saveTransfaire(){
+        Boolean b = Boolean.FALSE;
+        try {
+            
+            traceCitern.setCiternSrc(citernSrc);
+            traceCitern.setCiternSrcLitre(citernSrc.getVolume_actuel_());
+            traceCitern.setCiternDist(citernDist);
+            traceCitern.setCiternDistLitre(citernDist.getVolume_actuel_());
+            traceCitern.setUtilisateurExpedition(u);
+            traceCitern.setValide(Boolean.FALSE);
+            
+            citernSrc.setVolume_actuel_(citernSrc.getVolume_actuel_()-traceCitern.getLitreTransf()); 
+             b = Boolean.TRUE;
+            } catch (Exception e) {
+                System.out.println("Erreur d'operation sur les objets  car "+e.getMessage());
+            }
+            try {
+                if(b){
+                    citerneService.update_citerne(citernSrc);
+                }
+            } catch (Exception e) {
+                System.out.println("Erreur de modification citernSrc  car "+e.getMessage());
+            }
+            try {
+                if(b){
+                    citerneService.addTraceCiterne(traceCitern);
+                     ApplicationContext context = new ClassPathXmlApplicationContext("mail.xml");
+
+           // List<String> listDestinatairesMail = getRecipientsByModule("ENGIN_PANNE");
+                    SendEmail sm = (SendEmail) context.getBean("sendEmail");
+                    String[] listDestinatairesMail = {"hamza.achtioua@tgcc.ma"} ;
+                    String[] cc = {"said.jamaleddine@tgcc.ma","mohamed.benseddik@tgcc.ma","yassine.jeddi@tgcc.ma"} ; 
+                    if (listDestinatairesMail != null ) {
+                        for (String m : listDestinatairesMail) {
+                            sm.sendMailCc("notification@tgcc.ma", m, "Notification de réception de Gasoil", "Bonjour,\n\nUn transfert d'une quantité de Gasoil de "
+                                    + traceCitern.getLitreTransf()+"L a été effectuée vers le chantier "
+                                    + traceCitern.getCiternDist().getChantier_Principal().getCode().trim()+" en provenance du chantier  "
+                                    + traceCitern.getCiternSrc().getChantier_Principal().getCode().trim()+".\n\nMerci de procéder à la réception sur UPSIT.\n\nCordialement.",cc );
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("Erreur d'ajout traceCitern  car "+e.getMessage());
+            } 
+            if (b) {
+                try {
+                        traceCiternes = citerneService.findAllTraceCiterneByCiterne(citernSrc);
+                    } catch (Exception e) {
+                        System.out.println(" ::::> Erreur de chargement la liste transfaire citernSrc  car : "+e.getMessage());
+                    }
+                prepTransfaire(citernSrc);
+            }else{
+                citernSrc.setVolume_actuel_(citernSrc.getVolume_actuel_()+traceCitern.getLitreTransf());
+                prepTransfaire(citernSrc);
+            }
+            chargerListTransfaire();
+    }
+    /*** Fin Gestion TRansfaire gasoil entre citerne ***/
+    
     /**
      * getters and setters
      *
@@ -771,1042 +1837,57 @@ public class CiterneMb implements Serializable {
         this.traceUtilisateurService = traceUtilisateurService;
     }
 
+    public TraceCiterne getTraceCiterneToEdit() {
+        return traceCiterneToEdit;
+    }
+
+    public void setTraceCiterneToEdit(TraceCiterne traceCiterneToEdit) {
+        this.traceCiterneToEdit = traceCiterneToEdit;
+    }
+
+    public Integer getIdCiternExp() {
+        return idCiternExp;
+    }
+
+    public void setIdCiternExp(Integer idCiternExp) {
+        this.idCiternExp = idCiternExp;
+    }
+
+    public Integer getIdCiternRcp() {
+        return idCiternRcp;
+    }
+
+    public void setIdCiternRcp(Integer idCiternRcp) {
+        this.idCiternRcp = idCiternRcp;
+    }
+
+    public Citerne getCiternEditDist() {
+        return citernEditDist;
+    }
+
+    public void setCiternEditDist(Citerne citernEditDist) {
+        this.citernEditDist = citernEditDist;
+    }
+
+    public Citerne getCiternEditSrc() {
+        return citernEditSrc;
+    }
+
+    public void setCiternEditSrc(Citerne citernEditSrc) {
+        this.citernEditSrc = citernEditSrc;
+    }
+
+    public List<TraceCiterne> getTraceCiternesEdit() {
+        return traceCiternesEdit;
+    }
+
+    public void setTraceCiternesEdit(List<TraceCiterne> traceCiternesEdit) {
+        this.traceCiternesEdit = traceCiternesEdit;
+    }
+
     
-
     
     
-    
-
-    /**
-     * end getters and setters
-     */
-    @PostConstruct
-    public void init() {
-        WebApplicationContext ctx = FacesContextUtils.getWebApplicationContext(FacesContext.getCurrentInstance());
-        citerneService = ctx.getBean(CiterneService.class);
-        livraisonCiterneService = ctx.getBean(LivraisonCiterneService.class);
-        enginService = ctx.getBean(EnginService.class);
-        mensuelService = ctx.getBean(MensuelService.class);
-        utilisateurService = ctx.getBean(UtilisateurService.class);
-
-        citerne = new Citerne();
-        citerne_ToDetail_livraison = new Citerne();
-        citerne_bon_caisse = new Citerne();
-        citerneServiceBean = new CiterneServiceBean();
-        date_Bon_livraison = new Date();
-        date_bon_caisse = new Date();
-        bon_Livraison_Citerne_to_add_boncaisse = new Bon_Livraison_Citerne();
-        citerne_bon_gasoil_mensuel = new Citerne();
-        bon_gasoil_mensuel_to_add = new Bon_Livraison_Citerne();
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String user = auth.getPrincipal().toString();
-        u = utilisateurService.getUsersByLogin(user); 
-        
-        date_bon_gasoil_mensuel = new Date();
-        mensuel = new Mensuel();
-        mensuel_to_search = new Mensuel();
-        mensuels = new ArrayList<>();
-        historique_searchBonLivraison = new Citerne();
-
-    }
-    
-    public void chargerCiterne(){
-        List<Chantier> listCh = utilisateurService.findChantiersByUser(u);    
-        l_citernes = citerneService.find_all_Citerne();
-        List<Citerne> temp = new LinkedList<>();
-        if (l_citernes != null && listCh != null) {
-            for (Citerne c : l_citernes) {
-                if (listCh.contains(c.getChantier_Principal())) {
-                    temp.add(c);
-                }
-            }
-        }   
-        
-        l_citernes = new LinkedList<>();
-        l_citernes.addAll(temp);
-        
-        //l_Historiqes = livraisonCiterneService.l_historiques();
-    }
-
-    /**
-     * methode redirect vers popu livraison
-     *
-     * @param selected
-     */
-    public void redirect_pop_livraison(Citerne selected) {
-        citerne_ToDetail_livraison = selected;
-
-        tons_max_afficherLivraison = 0.0;
-        try {
-            
-            if (selected.getType_citerne().equals("Diesel")) {
-                tons_max_afficherLivraison = selected.getCapacite() * 0.8 / 1000;
-
-            } else if (selected.getType_citerne().equals("Essence")) {
-                tons_max_afficherLivraison = selected.getCapacite() * 0.79 / 1000;
-            }
-
-            converti(citerne_ToDetail_livraison.getCapacite() - citerne_ToDetail_livraison.getVolume_actuel_(), citerne_ToDetail_livraison.getType_citerne());
-
-            } catch (Exception e) {
-                System.out.println("Erreur de chargement les données car "+e.getMessage());
-           }
-        }
-    
-    public void refrechBl(){
-          redirect_pop_livraison(citerne_ToDetail_livraison);
-    }
-
-    /**
-     * methode pour sauvegarde livraison + fichier
-     *
-     * @throws java.io.IOException
-     */
-    public void save() throws IOException {
-
-        boolean value = false;
-//        litreToTon();
-        List<Bon_Livraison_Citerne> l_his_s = this.livraisonCiterneService.l_historiques();
-        /*System.out.println("+++++++> numero_commande : "+numero_commande);
-        for (Bon_Livraison_Citerne l_histori : l_his_s) {
-        System.out.println("+++++++> numero_commande : "+l_histori.getNumero_commande());
-            if (l_histori.getCiterne() != null) {
-                if (l_histori.getCiterne().getArchiver() != null) {
-                    if (l_histori.getCiterne().getArchiver().equals(false)) {
-                        if (l_histori.getNumero_commande() != null) {
-                            if (l_histori.getNumero_commande().equals(numero_commande)) {
-                                value = true;
-                            }
-                        }
-
-                    }
-                }
-            }
-        }*/
-
-        Double volume_somme = 0d;
-
-        if (uploadedFile == null) {
-//            tonToLitre();
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, Message.CHARGE_DOCUMERNT, Message.CHARGE_DOCUMERNT));
-
-        } else if (uploadedFile.getFileName().equals("")) {
-//            tonToLitre();
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, Message.CHARGE_DOCUMERNT, Message.CHARGE_DOCUMERNT));
-        } else if (!"pdf".equals(FilenameUtils.getExtension(uploadedFile.getFileName()))) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, Message.STRING_CHARGE_DOCUMENT_PDF, Message.STRING_CHARGE_DOCUMENT_PDF));
-//            tonToLitre();
-
-        }// else if (value == true) {
-//            tonToLitre();
-         //  FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, Message.NUM_COMMANDE, Message.NUM_COMMANDE));
-        //} 
-        else {
-
-            if (volume_actuel != null && this.citerne_ToDetail_livraison.getVolume_actuel_() != null) {
-                volume_somme = (volume_actuel * 1000) + this.getCiterne_ToDetail_livraison().getVolume_actuel_();
-            }
-            if (volume_somme > this.citerne_ToDetail_livraison.getCapacite()) {
-//            tonToLitre();
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, Message.VOLUME_CAPACITE_CITERNE_DEPASSE, Message.VOLUME_CAPACITE_CITERNE_DEPASSE));
-
-            } else {
-                Bon_Livraison_Citerne bon_Livraison_Citerne = new Bon_Livraison_Citerne();
-
-                bon_Livraison_Citerne.setChemin_fichier(this.citerneServiceBean.upload_fichier(uploadedFile));
-
-//                Integer volume = this.citerneServiceBean.getSomme_volume_actuel(this.citerne_ToDetail_livraison.getVolume_actuel(), volume_actuel);
-                System.out.println("entre volume 1:" + this.citerne_ToDetail_livraison.getVolume_actuel_());
-                System.out.println("entre volume 2:" + volume_actuel.intValue() * 1000);
-                System.out.println("entre volume 3:" + volume_somme);
-
-                this.citerne_ToDetail_livraison.setVolume_actuel_(volume_somme);
-
-                this.citerneService.update_citerne(citerne_ToDetail_livraison);
-
-                bon_Livraison_Citerne.setCiterne(citerne_ToDetail_livraison);
-
-                bon_Livraison_Citerne.setVolume_actuel(volume_somme);
-
-                bon_Livraison_Citerne.setVolume(volume_actuel * 1000);
-
-                bon_Livraison_Citerne.setNumero_commande(numero_commande);
-                bon_Livraison_Citerne.setNumero_Livraison(numero_commande_livraison);
-
-                bon_Livraison_Citerne.setDate(date_Bon_livraison);
-
-                bon_Livraison_Citerne.setAction("LIVRAISON");
-                bon_Livraison_Citerne.setCommentaire(commentBl);
-
-                livraisonCiterneService.save(bon_Livraison_Citerne);
-
-                FacesContext context = FacesContext.getCurrentInstance();
-
-                context.addMessage(null, new FacesMessage("" + Message.BON_LIVRAISON_TRUE, ""));
-
-                volume_actuel = 0.0;
-
-                numero_commande_livraison = "";
-
-                numero_commande = "";
-            }
-        }
-    }
-
-    public String dedecimals(Double d) {
-        try {
-
-                if (d == 0 || d == null) {
-                    return "0.00";
-                } else {
-                    String s = "";
-                    DecimalFormat df = new DecimalFormat("#.##");
-                    s = df.format(d);
-                    return s;
-                }
-        } catch (Exception e) {
-            System.out.println("Erreur de dedecimals car  "+e.getMessage());
-            return "0.00";
-        }
-    }
-
-    /* handles la selection d'une ligne de la table des mensuels */
-    public void onRowSelectMensuel(Mensuel m) {
-        System.out.println("MENSUEL : SELECLED : " + m.getNom());
-    }
-
-    /**
-     * metdhode qui permet de redirect vers bon caisse
-     *
-     * @param selected
-     */
-    public void nv_bon_gasoil(){
-        redirect_bon_caisse(citerne_bon_caisse);
-        chargerBonG();
-    }
-    public void chargerBonG(){
-          bon_gasoil = new Bon_Livraison_Citerne();
-         // bon_gasoil.setDate(new Date());   
-          date_bon_caisse = new Date();
-          bon_gasoil.setDate(date_bon_caisse);
-    }
-    public void chargerBonGasoil(Citerne selected){
-        chargerBonG();
-        cptHr=0;cptKl=0;
-        bon_gasoil.setCiterne(selected);
-        Kilométrage_bon_caisse = null;
-        heure_engin = null;
-        Tonnes_bonCaisse = null;
-        l_engin_to_bonCaisse = null;
-        isButtonVisible = true;
-        citerne_bon_caisse = selected;
-        this.l_engin_chantier_bon_caisse = l_enginBonGasoilSecCopie;
-        bon_gasoil= new Bon_Livraison_Citerne();
-        try {
-             listEnginCiterne = enginService.findAllEnginByChantierId(selected.getChantier_Principal().getId());
-        } catch (Exception e) {
-            System.out.println(" :::::::> Erreur de chargement les engin car "+e.getMessage());
-        }
-    }
-    public void redirect_bon_caisse(Citerne selected) {
-      chargerBonG();
-      cptHr=0;cptKl=0;
-        //System.out.println(" :::::::> 1");
-      bon_gasoil.setCiterne(selected);
-       
-        //System.out.println(" :::::::> 2");
-        try {
-             listEnginCiterne = enginService.findAllEnginByChantierId(selected.getChantier_Principal().getId());
-        } catch (Exception e) {
-            System.out.println(" :::::::> 22 "+e.getMessage());
-        }
-        //System.out.println("listEnginCiterne :::::::> "+listEnginCiterne);
-        //System.out.println("bon_gasoil :::::::> "+bon_gasoil.toString());
-        Kilométrage_bon_caisse = null;
-        heure_engin = null;
-        Tonnes_bonCaisse = null;
-        l_engin_to_bonCaisse = null;
-
-        isButtonVisible = true;
-
-        //System.out.println(" :::::::> 3");
-        citerne_bon_caisse = selected;
-
-        List<Engin> l_engins_sec = new ArrayList<>();
-
-        List<Engin> l_engins_prin = new ArrayList<>();
-
-        l_chantier_sec_bon_caisse = this.citerneService.getListeChantierByCiterne(citerne_bon_caisse.getId());
-
-        //System.out.println("entre engin 1 :  " + l_chantier_sec_bon_caisse.size());
-
-        //System.out.println(" :::::::> 4");
-        if (l_chantier_sec_bon_caisse != null) {
-            for (Chantier ch_ : l_chantier_sec_bon_caisse) {
-                for (Engin en_ : ch_.getEnginList()) {
-                    l_engins_sec.add(en_);
-                }
-            }
-        }
-
-        l_chantierSecBonGasoilEngin = this.citerneService.getListeChantierByCiterne(selected.getId());
-
-        //System.out.println("entre engin 2 :  " + l_engins_sec.size());
-
-        ELContext elContext = FacesContext.getCurrentInstance().getELContext();
-
-        ma.bservices.tgcc.mb.services.EnginMb engin_bean = (ma.bservices.tgcc.mb.services.EnginMb) FacesContext.getCurrentInstance().getApplication().getELResolver().getValue(elContext, null, "enginServMb");
-
-        List<Engin> engin_to_boucle = engin_bean.getL_engins();
-
-        if (!engin_to_boucle.isEmpty()) {
-
-            for (Engin engin__ : engin_to_boucle) {
-                if (engin__ != null) {
-
-                    if (citerne_bon_caisse.getChantier_Principal() != null && engin__.getPrjapId() != null) {
-                        if (citerne_bon_caisse.getChantier_Principal().getId().equals(engin__.getPrjapId().getId())) {
-                            if (engin__.getArchive() != true) {
-                                l_engins_prin.add(engin__);
-                                l_enginBonGasoilSecCopie = l_engins_prin;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        //System.out.println("entre engin 3 :  " + l_engins_prin.size());
-
-//        for (Engin en_ : citerne_bon_caisse.getChantier_Principal().getEnginList()) {
-//            
-//        }
-     //   this.l_engin_chantier_bon_caisse = this.citerneServiceBean.get_list_engin_chantier(l_engins_prin, l_engins_sec);
-      this.l_engin_chantier_bon_caisse = l_enginBonGasoilSecCopie;
-      bon_gasoil= new Bon_Livraison_Citerne();
-
-//          l_enginBonGasoilSecCopie = this.l_engin_chantier_bon_caisse;
-    }
-
-    public void afficherEnginLieChantierSelectionne() {
-
-        if (chantierSecSelectionneBonGasoilEngin == -1) {
-            this.l_engin_chantier_bon_caisse = l_enginBonGasoilSecCopie;
-        } else {
-
-            l_engin_chantier_bon_caisse = this.citerneService.getEnginByChantierId(chantierSecSelectionneBonGasoilEngin);
-        }
-
-    }
-
-    /**
-     * methode pour sauvegarde bonn gasoil
-     *
-     * @throws java.io.IOException
-     * @throws com.itextpdf.text.DocumentException
-     */
-    /*
-    public void save_bon_gasoil() throws IOException, DocumentException {
-
-        if(engin.getCompteurKilometrique()>=0 && engin.getComteurHoraire()>=0){
-            //if(engin.getCompteurKilometrique()>=cptK && engin.getComteurHoraire()>= cptH){
-                if (Tonnes_bonCaisse != null && this.citerne_bon_caisse.getCapacite() != null) {
-                    if (Tonnes_bonCaisse > this.citerne_bon_caisse.getVolume_actuel_()) {
-
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, Message.VOLUME_CAPACITE_CITERNE_INF, Message.VOLUME_CAPACITE_CITERNE_INF));
-
-                    } else {
-
-                        bon_Livraison_Citerne_to_add_boncaisse.setAction("BON_GASOIL_ENGIN");
-                        bon_Livraison_Citerne_to_add_boncaisse.setCiterne(citerne_bon_caisse);
-                        bon_Livraison_Citerne_to_add_boncaisse.setDate(date_bon_caisse);
-                        bon_Livraison_Citerne_to_add_boncaisse.setHeure(engin.getComteurHoraire().toString());
-
-                        Double volume_actuel_somme = this.citerneServiceBean.getSoustraction_volume_actuel(this.citerne_bon_caisse.getVolume_actuel_(), Tonnes_bonCaisse);
-
-                        bon_Livraison_Citerne_to_add_boncaisse.setVolume_actuel(volume_actuel_somme);
-                        citerne_bon_caisse.setVolume_actuel_(volume_actuel_somme);
-                         try {
-                            System.out.println("===================> engin Citerne "+engin.toString());
-                            this.enginService.updateEngin(engin);
-                            
-                        } catch (Exception e) {
-                            System.out.println("Erreur d'enregistrement d'engin car "+e.getMessage());
-                        }
-                        
-                        this.citerneService.update_citerne(citerne_bon_caisse);
-                        bon_Livraison_Citerne_to_add_boncaisse.setVolume(Tonnes_bonCaisse);
-                        bon_Livraison_Citerne_to_add_boncaisse.setKilometrage(engin.getCompteurKilometrique().toString());
-                        this.citerneService.save_bon_caisse_citerne_engin(bon_Livraison_Citerne_to_add_boncaisse, l_engin_to_bonCaisse);
-                        this.livraisonCiterneService.update(bon_Livraison_Citerne_to_add_boncaisse);
-                       
-                        this.display_button_telecharger = true;
-                        // this.citerneServiceBean.telecharger_bon_gasoil_engin(bon_Livraison_Citerne_to_add_boncaisse);
-                        this.bon_temp = bon_Livraison_Citerne_to_add_boncaisse;
-                        // bon_Livraison_Citerne_to_add_boncaisse.setChemin_fichier();
-                        
-                        bon_Livraison_Citerne_to_add_boncaisse = new Bon_Livraison_Citerne();
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Succes", "Bon Edité avec succès"));
-                        isButtonVisible = false;
-                    }
-
-               // }
-            }
-        }
-        else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Attention", "Veuiller Remplir Kilometrage ou Heures Engin"));
-            System.out.println("Kilometrage ou Horaire");
-        }
-        
-    }*/
-
-    public void save_bon_gasoil() throws IOException, DocumentException {
-
-        if ((cptKl <0 ) && (cptHr<0)) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Attention", "les Compteurs doit être positif"));
-        }/*else if(bon_gasoil.getEngin().getCompteurKilometrique()>cptKl && ("kilométrique".equals(bon_gasoil.getEngin().getTypeCompteur()) || "kilométrique_horaire".equals(bon_gasoil.getEngin().getTypeCompteur()))){
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Attention", "le compteur kilométrique doit être supérieur ou égal "+bon_gasoil.getEngin().getCompteurKilometrique()));
-        } else if(bon_gasoil.getEngin().getComteurHoraire()>cptHr && ("horaire".equals(bon_gasoil.getEngin().getTypeCompteur()) || "kilométrique_horaire".equals(bon_gasoil.getEngin().getTypeCompteur()))){
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Attention", "le compteur horaire doit être supérieur ou égal "+bon_gasoil.getEngin().getComteurHoraire()));
-        }*/else if (Tonnes_bonCaisse != null && this.citerne_bon_caisse.getCapacite() != null) {
-             
-            if (Tonnes_bonCaisse <0 ) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Attention", "les litres doit être positif"));
-            } else
-            if (Tonnes_bonCaisse > this.citerne_bon_caisse.getVolume_actuel_()) {
-
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, Message.VOLUME_CAPACITE_CITERNE_INF, Message.VOLUME_CAPACITE_CITERNE_INF));
-
-            } else {
-                Bon_Livraison_Citerne lastb = new Bon_Livraison_Citerne();
-                try {
-                        lastb = citerneService.lastAlimentationEngin(enginService.findOneById(bon_gasoil.getEngin().getIDEngin()));
-                        if(lastb != null){
-                            bon_gasoil.setLastKilometrage(lastb.getKilometrage());
-                            bon_gasoil.setLastHeure(lastb.getHeure());
-                        }
-                } catch (Exception e) {
-                    System.out.println("Erreur de recuperation last alimentation car "+e.getMessage());
-                }
-                
-                bon_gasoil.setAction("BON_GASOIL_ENGIN");
-                bon_gasoil.setCiterne(citerne_bon_caisse);
-                bon_gasoil.setDate(new Date());
-                bon_gasoil.setHeure(cptHr+"");
-                bon_gasoil.setDateOperation(date_bon_caisse); 
-
-                Double volume_actuel_somme = this.citerneServiceBean.getSoustraction_volume_actuel(this.citerne_bon_caisse.getVolume_actuel_(), Tonnes_bonCaisse);
-
-                bon_gasoil.setVolume_actuel(volume_actuel_somme);
-                citerne_bon_caisse.setVolume_actuel_(volume_actuel_somme);
-                this.citerneService.update_citerne(citerne_bon_caisse);
-                bon_gasoil.setVolume(Tonnes_bonCaisse);
-                bon_gasoil.setKilometrage(cptKl+"");
-                
-                this.citerneService.save_bon_caisse_citerne_engin(bon_gasoil, l_engin_to_bonCaisse);
-                this.display_button_telecharger = true;
-                // this.citerneServiceBean.telecharger_bon_gasoil_engin(bon_gasoil);
-                this.bon_temp = bon_gasoil;
-                // bon_Livraison_Citerne_to_add_boncaisse.setChemin_fichier();
-                this.livraisonCiterneService.update(bon_gasoil);
-                /* Modification les compteurs d'engin
-                Engin eng = bon_gasoil.getEngin();
-                eng.setCompteurKilometrique(cptKl);
-                eng.setComteurHoraire(cptHr);
-                enginService.updateEngin(eng);
-                */
-                bon_gasoil = new Bon_Livraison_Citerne();
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Succes", "Bon Edité avec succès"));
-                isButtonVisible = false;
-                /*
-                bon_Livraison_Citerne_to_add_boncaisse.setAction("BON_GASOIL_ENGIN");
-                bon_Livraison_Citerne_to_add_boncaisse.setCiterne(citerne_bon_caisse);
-                bon_Livraison_Citerne_to_add_boncaisse.setDate(date_bon_caisse);
-                bon_Livraison_Citerne_to_add_boncaisse.setHeure(heure_engin);
-
-                Double volume_actuel_somme = this.citerneServiceBean.getSoustraction_volume_actuel(this.citerne_bon_caisse.getVolume_actuel_(), Tonnes_bonCaisse);
-
-                bon_Livraison_Citerne_to_add_boncaisse.setVolume_actuel(volume_actuel_somme);
-
-                citerne_bon_caisse.setVolume_actuel_(volume_actuel_somme);
-
-                this.citerneService.update_citerne(citerne_bon_caisse);
-
-                bon_Livraison_Citerne_to_add_boncaisse.setVolume(Tonnes_bonCaisse);
-                bon_Livraison_Citerne_to_add_boncaisse.setKilometrage(Kilométrage_bon_caisse);
-
-                this.citerneService.save_bon_caisse_citerne_engin(bon_Livraison_Citerne_to_add_boncaisse, l_engin_to_bonCaisse);
-
-                this.display_button_telecharger = true;
-
-                // this.citerneServiceBean.telecharger_bon_gasoil_engin(bon_Livraison_Citerne_to_add_boncaisse);
-                this.bon_temp = bon_Livraison_Citerne_to_add_boncaisse;
-                // bon_Livraison_Citerne_to_add_boncaisse.setChemin_fichier();
-
-                this.livraisonCiterneService.update(bon_Livraison_Citerne_to_add_boncaisse);
-
-                bon_Livraison_Citerne_to_add_boncaisse = new Bon_Livraison_Citerne();
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Succes", "Bon Edité avec succès"));
-                isButtonVisible = false;
-                */
-            }
-            
-        }
-    }
-    
-    public void downloadBonGasoil() throws IOException, DocumentException {
-        String s = this.citerneServiceBean.telecharger_bon_gasoil_engin(bon_temp);
-
-        bon_temp.setChemin_fichier(s);
-        //System.out.println("CHEMIN FICHIER SET TO : " + bon_temp.getChemin_fichier());
-        this.livraisonCiterneService.update(bon_temp);
-
-    }
-
-    /**
-     * methode qui permet de telecharger Bon caisse citerne
-     *
-     *
-     * @throws java.io.IOException
-     * @throws com.itextpdf.text.DocumentException
-     */
-    public void telecharger_bon_caisse() throws IOException, DocumentException {
-
-        this.citerneServiceBean.telecharger_bon_gasoil_engin(bon_Livraison_Citerne_to_add_boncaisse);
-
-        this.livraisonCiterneService.update(bon_Livraison_Citerne_to_add_boncaisse);
-
-    }
-
-    /**
-     * methode qui permet de telecharger bon caisse
-     *
-     * @param livraison_Citerne
-     * @throws java.io.IOException
-     */
-    public void telecharger_bon_gasoil_historique(Bon_Livraison_Citerne livraison_Citerne) throws IOException {
-
-        //System.out.println("entre : " + livraison_Citerne.getChemin_fichier());
-
-        if (livraison_Citerne.getChemin_fichier() != null) {
-
-            this.citerneServiceBean.telecharger_fichier(livraison_Citerne.getChemin_fichier());
-        }
-
-    }
-    public void prepModifierMvmt(Bon_Livraison_Citerne livraison_Citerne){
-        bon_gasoil_To_Edit = livraison_Citerne;
-    }
-    public void modifierMvmt(Bon_Livraison_Citerne livraison_Citerne){
-        bon_gasoil_To_Edit = livraison_Citerne;
-        
-    }
-
-    /**
-     * methode qui redirect vers hstorique citernee
-     *
-     * @param selected
-     */
-    public void redirectHistoriqueCiterne(Citerne selected) {
-
-        historique_searchBonLivraison = selected;
-
-        //System.out.println("historique_searchBonLivraison 1: " + historique_searchBonLivraison.getId());
-
-        if (l_detail_citerne_historique != null) {
-            this.l_detail_citerne_historique.clear();
-        }
-
-        this.l_detail_citerne_historique = this.livraisonCiterneService.get_listBy_id_bonLivraison(selected.getId());
-
-    }
-    public void prepMvmt( Bon_Livraison_Citerne b){
-        bon_gasoil_To_Edit = b;
-        System.out.println("ma.bservices.tgcc.mb.Engin.CiterneMb.prepMvmt():::::::> bon_gasoil_To_Edit : "+bon_gasoil_To_Edit.toString());
-        allEngins= enginService.enginsActif();
-        RequestContext.getCurrentInstance().execute("PF('dlg_mvmtCiterne').show();");
-    }
-    public void changeEnginEditMvmt(){
-        if(codeEnginMvmtEdit.trim().length()>0){
-            Engin e = enginService.findOneByCode(codeEnginMvmtEdit);
-            if(e!=null){
-                bon_gasoil_To_Edit.setEngin(e);
-            }
-        }
-    }
-    public void enregistrerMvmt(){
-        //System.out.println("bon_gasoil_To_Edit :::::::::> 0) ");
-        RemplireTrace r = new RemplireTrace();
-        TraceBonLivraisonCiterne t = new TraceBonLivraisonCiterne();
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication(); 
-        //System.out.println("bon_gasoil_To_Edit :::::::::> 1) ");
-        t = r.remplirTraceBonLivraisonCiterne(livraisonCiterneService.findBonLivraisonCiterneById(bon_gasoil_To_Edit.getId()), auth.getPrincipal().toString(), "Modification MVMT Citerne"); 
-        //System.out.println("bon_gasoil_To_Edit :::::::::> 2) "+bon_gasoil_To_Edit.toString());
-        traceUtilisateurService.addTraceBonLivraisonCiterne(t);
-        livraisonCiterneService.update(bon_gasoil_To_Edit);
-        bon_gasoil_To_Edit= new Bon_Livraison_Citerne();
-        codeEnginMvmtEdit="";
-    }
-
-    /**
-     * methode qui permet de redirect vers dialog bon gasoil mensuel
-     *
-     * @param selected
-     */
-    public void redirect_bon_gasoil_mensuel(Citerne selected) {
-        mensuel = null;
-        mensuel_to_search = new Mensuel();
-        mensuels = null;
-        voitureSalaries = null;
-        nombre_litre_bon_gasoil_mensuel = null;
-        date_bon_gasoil_mensuel = new Date();
-        closeBGMWindow = false;
-        this.citerne_bon_gasoil_mensuel = selected;
-
-    }
-
-    /**
-     * methode qui permet de sauvegarde bon gasoil mensuel
-     *
-     * @throws java.io.IOException
-     * @throws com.itextpdf.text.DocumentException
-     */
-    public void save_bon_gasoil_mensuel() throws IOException, DocumentException {
-
-        if (nombre_litre_bon_gasoil_mensuel != null && this.citerne_bon_gasoil_mensuel != null) {
-
-            if (voitureSalaries == null || voitureSalaries.isEmpty()) {
-
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Pas de voiture", "Ce mensuel n'a pas de voiture"));
-
-            } else if (this.citerne_bon_gasoil_mensuel.getVolume_actuel_() < nombre_litre_bon_gasoil_mensuel) {
-
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, Message.VOLUME_CAPACITE_CITERNE_INF, Message.VOLUME_CAPACITE_CITERNE_INF));
-
-            } else {
-
-                bon_gasoil_mensuel_to_add.setAction("BON_GASOIL_MENSUEL");
-                //System.out.println("NOMBRE LITRES : " + nombre_litre_bon_gasoil_mensuel);
-                bon_gasoil_mensuel_to_add.setCiterne(this.citerne_bon_gasoil_mensuel);
-                bon_gasoil_mensuel_to_add.setDate(date_bon_gasoil_mensuel);
-                Double volume_actuel_somme = this.citerneServiceBean.getSoustraction_volume_actuel(this.citerne_bon_gasoil_mensuel.getVolume_actuel_(), nombre_litre_bon_gasoil_mensuel);
-                //System.out.println("VOLUME ACTUEL AFTER SOMME : " + volume_actuel_somme);
-
-                bon_gasoil_mensuel_to_add.setVolume_actuel(volume_actuel_somme);
-
-                this.citerne_bon_gasoil_mensuel.setVolume_actuel_(volume_actuel_somme);
-
-                bon_gasoil_mensuel_to_add.setVolume(nombre_litre_bon_gasoil_mensuel);
-
-                // modifier volume actuel citerne
-                this.citerneService.update_citerne(this.citerne_bon_gasoil_mensuel);
-
-                this.citerneService.save_bon_caisse_citerne_mensuel(bon_gasoil_mensuel_to_add, mensuel.getId());
-
-                this.display_button_telecharger_bon_gasoil_mensuel = true;
-
-                this.citerneServiceBean.telecharger_bon_gasoil_mensuel(this.bon_gasoil_mensuel_to_add);
-
-                this.livraisonCiterneService.update(this.bon_gasoil_mensuel_to_add);
-
-                closeBGMWindow = true;
-
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Succes", "L'opération à été terminé avec succès!"));
-
-            }
-        }
-
-    }
-
-    /**
-     * methode qui permet de telecharger bon gasoil mensuel
-     *
-     * @throws java.lang.Exception
-     */
-    public void telecharger_bon_gasoil_mensuel() throws Exception {
-
-    }
-
-    /**
-     * methode qui permet de recherche sur historique
-     */
-    public void rechercher_historique_citerne() {
-
-        //System.out.println("entre :" + date_historique_search);
-
-        if (date_historique_search == null && action_search.equals("-1") && numCommande_search.equals("") && numLivraison_search.equals("")) {
-
-            //System.out.println("historique_searchBonLivraison 2: " + historique_searchBonLivraison.getId());
-
-            l_detail_citerne_historique = this.livraisonCiterneService.get_listBy_id_bonLivraison(historique_searchBonLivraison.getId());
-
-        } else {
-
-            l_detail_citerne_historique = this.livraisonCiterneService.get_liste_livraisonByDate_action(historique_searchBonLivraison.getId(), date_historique_search, action_search, numCommande_search, numLivraison_search);
-
-        }
-
-    }
-
-    public void reinitHistoCiterne() {
-
-        if (l_detail_citerne_historique != null) {
-            this.l_detail_citerne_historique.clear();
-        }
-
-        this.l_detail_citerne_historique = this.livraisonCiterneService.get_listBy_id_bonLivraison(historique_searchBonLivraison.getId());
-
-    }
-
-    /**
-     * methode pour display
-     *
-     * @param code
-     */
-    public void display_engin_kiometrique(String code) {
-        chargerBonG();
-        Tonnes_bonCaisse = 0.0;
-        //System.out.println("entre :" + code);
-        Engin en_ = this.enginService.findOneByCode(code);
-        engin=new Engin();
-        setEngin(en_);
-        bon_gasoil.setEngin(engin);
-        cptKl = engin.getCompteurKilometrique();
-        cptHr = engin.getComteurHoraire();
-        this.kilometrique_display = false;
-        this.heure_display = false;
-        if (en_.getCompteurKilometrique() != null) {
-            kilometrique_display = true;
-        }
-        if (en_.getComteurHoraire() != null) {
-            heure_display = true;
-        }
-        //System.out.println("::::> bon_gasoil "+bon_gasoil.getEngin().toString());
-    }
-
-    public String convertToDoubleDecimals(Double d) {
-
-        DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.FRANCE);
-        DecimalFormatSymbols symbols = formatter.getDecimalFormatSymbols();
-
-        symbols.setGroupingSeparator(' ');
-
-        formatter.setDecimalFormatSymbols(symbols);
-        // System.out.println(formatter.format(d));
-
-        String s = formatter.format(d.doubleValue());
-        return s;
-    }
-
-    /**
-     * methode qui permet de afficher voiture mensuel
-     *
-     * @param selected
-     */
-
-
-    /**
-     * methode fermer pop
-     *
-     * @throws java.io.IOException
-     */
-    public void fermer_pop() throws IOException {
-        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-        ec.redirect(ec.getRequestContextPath() + "/engin/Citerne.xhtml");
-    }
-
-    /**
-     * methode qui permet de rechercher mensuel
-     */
-    public void rechercher_mensuel_By() {
-
-        mensuels = this.mensuelService.search(mensuel_to_search.getMatricule(), mensuel_to_search.getNom(), mensuel_to_search.getPrenom(), "", "");
-        /*for (Mensuel m : mensuels) {
-            System.out.println("MENSUEL : " + m.getNom());
-        }*/
-    }
-
-    /**
-     * methode qui permet de converti date en format jj-mm-aaaa
-     *
-     * @param date
-     * @return
-     */
-    public String convertFormatDate(Date date) {
-
-        Outils outils = new Outils();
-        return outils.convertDate_To_string(date);
-
-    }
-
-    /**
-     * convert ton to litre
-     */
-    private void litreToTon() {
-
-        if (citerne_ToDetail_livraison.getType_citerne() != null) {
-            switch (citerne_ToDetail_livraison.getType_citerne()) {
-                case "Diesel":
-                    // 1 kg = 1litre/0.85
-                    // 1t = 1000kg => kg = t/1000
-                    tons_dispo = volume_actuel * 0.8 / 1000;
-                    break;
-                case "Essence":
-                    tons_dispo = volume_actuel * 0.79 / 1000;
-                    break;
-            }
-        }
-        volume_actuel = tons_dispo;
-        //System.out.println("volume " + volume_actuel);
-    }
-
-    public void tonToLitre() {
-        Double t = 0.0;
-        if (citerne_ToDetail_livraison.getType_citerne() != null) {
-            switch (citerne_ToDetail_livraison.getType_citerne()) {
-                case "Diesel":
-                    // 1 kg = 1litre/0.85
-                    // 1t = 1000kg => kg = t/1000
-                    t = tons_dispo / (0.85 * 1000);
-                    break;
-                case "Essence":
-                    t = tons_dispo / (0.79 * 1000);
-                    break;
-            }
-        }
-        volume_actuel = t;
-        System.out.println("volume " + volume_actuel);
-    }
-    private Double tons, tons_dispo;
-
-    /**
-     * methode converti Litre to Ton
-     *
-     * @param litre
-     * @param type
-     */
-    private void converti(Double litre, String type) {
-
-        if (type != null) {
-            switch (type) {
-                case "Diesel":
-                    // 1 kg = 1litre/0.85
-                    // 1t = 1000kg => kg = t/1000
-                    tons = (litre / 0.85) / 1000.0;
-                    break;
-                case "Essence":
-                    tons = (litre / 0.79) / 1000.0;
-                    break;
-            }
-        }
-        tons = Math.floor(tons * 100) / 100;
-    }
-
-    public Double getTons() {
-        return tons;
-    }
-
-    public void setTons(Double tons) {
-        this.tons = tons;
-    }
-
-    public Double getTons_dispo() {
-        return tons_dispo;
-    }
-
-    public void setTons_dispo(Double tons_dispo) {
-        this.tons_dispo = tons_dispo;
-    }
-
-    public void checkCapacite(Double vol) {
-
-        volume_actuel = vol;
-
-        if (volume_actuel != null) {
-
-            afficherVolumeTonne = vol * 0.8;
-        }
-
-        afficherVolumeTonne = Math.floor(afficherVolumeTonne * 100) / 100;
-
-        checkBtn = afficherVolumeTonne > tons_max_afficherLivraison;
-        if (checkBtn) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, Message.VOLUME_CAPACITE_CITERNE_DEPASSE, Message.VOLUME_CAPACITE_CITERNE_DEPASSE));
-        } else {
-//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, Message.VOLUME_CAPACITE_CITERNE_INF_SUCCESS, Message.VOLUME_CAPACITE_CITERNE_INF_SUCCESS));
-        }
-    }
-
-    public void checkCapaciteTonne(Double vol) {
-
-        afficherVolumeTonne = vol;
-
-        if (afficherVolumeTonne != null) {
-
-            volume_actuel = afficherVolumeTonne * 0.8;
-        }
-
-        afficherVolumeTonne = Math.floor(afficherVolumeTonne * 100) / 100;
-
-        checkBtn = afficherVolumeTonne > tons_max_afficherLivraison;
-        if (checkBtn) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, Message.VOLUME_CAPACITE_CITERNE_DEPASSE, Message.VOLUME_CAPACITE_CITERNE_DEPASSE));
-        } else {
-//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, Message.VOLUME_CAPACITE_CITERNE_INF_SUCCESS, Message.VOLUME_CAPACITE_CITERNE_INF_SUCCESS));
-        }
-    }
-    
-    /*** Debut Gestion TRansfaire gasoil entre citerne***/
-    public void prepTransfaire(Citerne c){ 
-        l_citerneTransfaire = citerneService.find_allCiterneNon_archiver();        
-        citernSrc = c; 
-        citernDist = new Citerne();
-        traceCitern = new TraceCiterne();
-        traceCiternes =new ArrayList<TraceCiterne>();
-        try {
-            traceCiternes = citerneService.findAllTraceCiterneByCiterne(c);
-        } catch (Exception e) {
-            System.out.println(" ::::> Erreur de chargement la liste transfaire citernSrc  car : "+e.getMessage());
-        }
-        //System.out.println(" ::::> chargement liste de transfaire citernSrc : "+traceCiternes.size());
-    }
-    
-    public void chageCiternEv(){
-        //System.out.println("id ::::::::::> "+idCiternTrans);
-        if(idCiternTrans>0){
-            citernDist=citerneService.findCiternById(idCiternTrans);
-        }
-        //System.out.println("=======> citernDist change : "+citernDist.toString());
-    }
-    
-    public void chargerListTransfaire(){
-        if(citernSrc !=null){
-            try {
-                traceCiternes = citerneService.findAllTraceCiterneByCiterne(citernSrc);
-            } catch (Exception e) {
-                System.out.println("Erreur de récuperation de la liste des transfaire engin car "+e.getMessage());
-            }
-            
-        }
-    }
-    public void prepReceptionGz(Citerne c){
-        try {
-                traceCiternes = citerneService.findAllTraceCiterneByCiterneDist(c);
-            } catch (Exception e) {
-                System.out.println("Erreur de récuperation de la liste des transfaire engin car "+e.getMessage());
-            }
-        
-    }
-    public void saveReceptionGz(TraceCiterne t){
-        citernDist = t.getCiternDist();
-        citernDist.setVolume_actuel_(((citernDist.getVolume_actuel_()!=null)?citernDist.getVolume_actuel_():0)+t.getLitreReceptione()); 
-        t.setUtilisateurReception(u);
-        t.setValide(Boolean.TRUE);
-        t.setDateOperationRecep(new Date());
-            try {
-                    citerneService.update_citerne(citernDist);
-            } catch (Exception e) {
-                System.out.println("Erreur de modification citernDist  car "+e.getMessage());
-            }
-            
-            try { 
-                    citerneService.editTraceCiterne(t); 
-                    //System.out.println("t.getLitreReceptione() : "+t.getLitreReceptione());
-                    //System.out.println("t.getLitreTransf() : "+t.getLitreTransf());
-                    //System.out.println("t.getLitreReceptione()!= t.getLitreTransf() : "+(t.getLitreReceptione()!= t.getLitreTransf()));
-                    if((t.getLitreReceptione()-t.getLitreTransf())!=0){
-                        String msgEmail;
-                        try {
-                          msgEmail = "Bonjour, \n\nUn écart a été constaté concernant le transfert de gasoil N° "+t.getNumBon()
-                                  +", ID "+t.getId()+", en provenance du chantier "+ t.getCiternSrc().getChantier_Principal().getCode().trim()
-                                  +"("+t.getLitreTransf()+" L)"
-                                  +" et à destination du chantier "+ t.getCiternDist().getChantier_Principal().getCode().trim()
-                                  +"("+t.getLitreReceptione()+" L)"
-                                  +".\n\nCordialement.";
-                        } catch (Exception e) {
-                            msgEmail = "Bonjour, \nUne déference de transfert de gasoil de la "
-                                        + t.getCiternSrc().getLibelle_citerne()+" ("+t.getLitreTransf()+"L) vers La citerne "
-                                        + t.getCiternDist().getLibelle_citerne()+" ("+t.getLitreReceptione()+"L). \nCordialement." ;
-                            System.out.println("Erreu d'affectation du message car "+e.getMessage());
-                        }
-                        try {
-                            ApplicationContext context = new ClassPathXmlApplicationContext("mail.xml");
-                            SendEmail sm = (SendEmail) context.getBean("sendEmail");
-                           String[] listDestinatairesMail = {"hamza.achtioua@tgcc.ma"} ;
-                            String[] cc = {"said.jamaleddine@tgcc.ma","mohamed.benseddik@tgcc.ma","yassine.jeddi@tgcc.ma"} ; 
-                             
-                            if (listDestinatairesMail != null ) {
-                                for (String m : listDestinatairesMail) {
-                                    sm.sendMailCc("notification@tgcc.ma", m, "Écart Gasoil", msgEmail,cc);
-                                }
-                            }
-                        } catch (Exception e) {
-                            System.out.println("Erreur d'envoi l'email car "+e.getMessage());
-                        }
-                    }
-            } catch (Exception e) {
-                System.out.println("Erreur de modifier traceCitern  car "+e.getMessage());
-            }
-    }
-    public void saveTransfaire(){
-        Boolean b = Boolean.FALSE;
-        try {
-            
-            traceCitern.setCiternSrc(citernSrc);
-            traceCitern.setCiternSrcLitre(citernSrc.getVolume_actuel_());
-            traceCitern.setCiternDist(citernDist);
-            traceCitern.setCiternDistLitre(citernDist.getVolume_actuel_());
-            traceCitern.setUtilisateurExpedition(u);
-            traceCitern.setValide(Boolean.FALSE);
-            
-            citernSrc.setVolume_actuel_(citernSrc.getVolume_actuel_()-traceCitern.getLitreTransf()); 
-             b = Boolean.TRUE;
-            } catch (Exception e) {
-                System.out.println("Erreur d'operation sur les objets  car "+e.getMessage());
-            }
-            try {
-                if(b){
-                    citerneService.update_citerne(citernSrc);
-                }
-            } catch (Exception e) {
-                System.out.println("Erreur de modification citernSrc  car "+e.getMessage());
-            }
-            try {
-                if(b){
-                    citerneService.addTraceCiterne(traceCitern);
-                     ApplicationContext context = new ClassPathXmlApplicationContext("mail.xml");
-
-           // List<String> listDestinatairesMail = getRecipientsByModule("ENGIN_PANNE");
-                    SendEmail sm = (SendEmail) context.getBean("sendEmail");
-                    String[] listDestinatairesMail = {"hamza.achtioua@tgcc.ma"} ;
-                    String[] cc = {"said.jamaleddine@tgcc.ma","mohamed.benseddik@tgcc.ma","yassine.jeddi@tgcc.ma"} ; 
-                    if (listDestinatairesMail != null ) {
-                        for (String m : listDestinatairesMail) {
-                            sm.sendMailCc("notification@tgcc.ma", m, "Notification de réception de Gasoil", "Bonjour,\n\nUn transfert d'une quantité de Gasoil de "
-                                    + traceCitern.getLitreTransf()+"L a été effectuée vers le chantier "
-                                    + traceCitern.getCiternDist().getChantier_Principal().getCode().trim()+" en provenance du chantier  "
-                                    + traceCitern.getCiternSrc().getChantier_Principal().getCode().trim()+".\n\nMerci de procéder à la réception sur UPSIT.\n\nCordialement.",cc );
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                System.out.println("Erreur d'ajout traceCitern  car "+e.getMessage());
-            } 
-            if (b) {
-                try {
-                        traceCiternes = citerneService.findAllTraceCiterneByCiterne(citernSrc);
-                    } catch (Exception e) {
-                        System.out.println(" ::::> Erreur de chargement la liste transfaire citernSrc  car : "+e.getMessage());
-                    }
-                prepTransfaire(citernSrc);
-            }else{
-                citernSrc.setVolume_actuel_(citernSrc.getVolume_actuel_()+traceCitern.getLitreTransf());
-                prepTransfaire(citernSrc);
-            }
-            chargerListTransfaire();
-    }
-    /*** Fin Gestion TRansfaire gasoil entre citerne ***/
     
 
 }

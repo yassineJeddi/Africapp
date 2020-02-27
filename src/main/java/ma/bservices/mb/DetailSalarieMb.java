@@ -53,6 +53,7 @@ import ma.bservices.services.ChantierService;
 import ma.bservices.services.ContratService;
 import ma.bservices.services.DocumentService;
 import ma.bservices.services.EnfantService;
+import ma.bservices.services.IPresenceService;
 import ma.bservices.services.OutilTravailService;
 import ma.bservices.services.ParametrageService;
 import ma.bservices.services.PresenceService;
@@ -135,6 +136,8 @@ public class DetailSalarieMb implements Serializable {
     //Présences
     @ManagedProperty(value = "#{presenceService}")
     private PresenceService presenceService;
+    @ManagedProperty(value = "#{presenceServicei}")
+    private IPresenceService presenceServicei;
     private List<Presence> presences;
     private Date de, a;
     private String sum;
@@ -179,6 +182,15 @@ public class DetailSalarieMb implements Serializable {
     
     //Getter & Setter
 
+    public IPresenceService getPresenceServicei() {
+        return presenceServicei;
+    }
+
+    public void setPresenceServicei(IPresenceService presenceServicei) {
+        this.presenceServicei = presenceServicei;
+    }
+    
+    
     public Integer getIdUser() {
         return idUser;
     }
@@ -1003,10 +1015,9 @@ public class DetailSalarieMb implements Serializable {
             System.out.println("Erreur de recuperarer information du salarie car "+e.getMessage());
             }
         }
-
     }
     public void chargerPresences(){
-            presences = presenceService.allPresenceBySalarie(salarie.getId());
+            presences = presenceServicei.allPresenceBySalarie(salarie.getId());
     }
     public void chargerDocs(){
             docs = documentService.listeDocumentsSalarie(salarie.getId(), 0, Integer.parseInt(documentService.nombreDocumentsSalarie(salarie.getId()).toString()));

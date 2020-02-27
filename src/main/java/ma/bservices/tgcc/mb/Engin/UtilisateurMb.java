@@ -380,12 +380,12 @@ public class UtilisateurMb implements Serializable {
     }
 
     public void listOfChByUser(Utilisateur user) {
-        System.out.println("USER : " + user.getLogin());
+        //System.out.println("USER : " + user.getLogin());
         listOfChantiersByUser = new LinkedList<>();
         Utilisateur u = adminService.getUtilisateur(user.getId());
         listOfChantiersByUser = utilisateurService.findChantiersByUser(u);
 
-        System.out.println(listOfChantiersByUser);
+        //System.out.println(listOfChantiersByUser);
 //        listOfChantiersByUser = 
 //        Set<Chantier> setCh = u.getChantiers();
 //        List<Chantier> listCh = new LinkedList<>();
@@ -444,6 +444,12 @@ public class UtilisateurMb implements Serializable {
             prepareChantiersUser(u);
         }
 
+    }
+    
+    public void affecterAllChantier(){
+        utilisateurService.affecterAllChantier(utilisateurToAdd);
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "L'utilisateur est affecté au chantier choisi avec succès."));
+        prepareChantiersUser(utilisateurToAdd);
     }
 
     public void prepareGroups(Utilisateur user) {

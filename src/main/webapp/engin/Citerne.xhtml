@@ -68,10 +68,8 @@
                                                      title="Ajouter Bon De Livraison" oncomplete="PF('dlg_livraison').show()"
                                                      actionListener="#{citerneMb.redirect_pop_livraison(citerneIt)}" update=":formA" />
                                 </center>
-
                             </p:column>
                             <p:column headerText="BG Engin" style="width: 100px;">
-
                                 <center>
                                     <p:commandButton icon="ui-icon-plusthick" 
                                                      disabled="#{citerneIt.archiver eq true or citerneIt.volume_actuel_ eq 0}" 
@@ -80,15 +78,12 @@
                                                      actionListener="#{citerneMb.chargerBonGasoil(citerneIt)}"
                                                      update=":form_bon_caisse,:form_bon_caisse:BG_DAteId" />
                                 </center>
-
                             </p:column>
-
                             <p:column headerText="Detail" style="width: 60px;">
                                 <p:commandButton icon="ui-icon-document-b" oncomplete="PF('dlg_historique_citerne').show()" title="Détail de la citerne" 
                                                  actionListener="#{citerneMb.redirectHistoriqueCiterne(citerneIt)}"
                                                  update=":form_historique" immediate="true" />
                             </p:column>
-
                         </p:dataTable>
                     </h:form>
                     <p:dialog header="Ajouter BL" id="dlLivraison" 
@@ -311,39 +306,92 @@
                                                    value="Actualiser"  
                                                    update=":form_bon_transfaire:tblTans,@this,:form_bon_transfaire:citerneListTrans"
                                                    />
-                                <p:dataTable id="tblTans" var="citerneIt" value="#{citerneMb.traceCiternes}"   rowKey="#{citerneIt.id}"
+                                <p:dataTable id="tblTans" var="cEdit" value="#{citerneMb.traceCiternes}"   rowKey="#{cEdit.id}"
                                      rows="5"  paginator="true" paginatorTemplate="{CurrentPageReport} 
                                      {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
                                      {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" 
                                      >
-                                    <p:column headerText="Citerne Expédition" filterBy="#{citerneIt.citernSrc.libelle_citerne}"  filterMatchMode="contains" >
-                                        <h:outputText value="#{citerneIt.citernSrc.libelle_citerne}" />
+                                    <p:column headerText="Citerne Expédition" filterBy="#{cEdit.citernSrc.libelle_citerne}"  filterMatchMode="contains" >
+                                        <h:outputText value="#{cEdit.citernSrc.libelle_citerne}" />
                                     </p:column>
-                                    <p:column headerText="Citerne Réception" filterBy="#{citerneIt.citernDist.libelle_citerne}"  filterMatchMode="contains" >
-                                        <h:outputText value="#{citerneIt.citernDist.libelle_citerne }" />
+                                    <p:column headerText="Citerne Réception" filterBy="#{cEdit.citernDist.libelle_citerne}"  filterMatchMode="contains" >
+                                        <h:outputText value="#{cEdit.citernDist.libelle_citerne }" />
                                     </p:column>
-                                    <p:column headerText="Qte Transférée" filterBy="#{citerneIt.litreTransf}"  filterMatchMode="contains" >
-                                        <h:outputText value="#{citerneIt.litreTransf}" />
+                                    <p:column headerText="Qte Transférée" filterBy="#{cEdit.litreTransf}"  filterMatchMode="contains" >
+                                        <h:outputText value="#{cEdit.litreTransf}" />
                                     </p:column>
-                                    <p:column headerText="N° BON" filterBy="#{citerneIt.numBon}"  filterMatchMode="contains" >
-                                        <h:outputText value="#{citerneIt.numBon}" />
+                                    <p:column headerText="N° BON" filterBy="#{cEdit.numBon}"  filterMatchMode="contains" >
+                                        <h:outputText value="#{cEdit.numBon}" />
                                     </p:column>
-                                    <p:column headerText="Moyen transport : " filterBy="#{citerneIt.comment}"  filterMatchMode="contains" >
-                                        <h:outputText value="#{citerneIt.comment}" />
+                                    <p:column headerText="Moyen transport : " filterBy="#{cEdit.comment}"  filterMatchMode="contains" >
+                                        <h:outputText value="#{cEdit.comment}" />
                                     </p:column>
-                                    <p:column headerText="Date transfert" filterBy="#{citerneIt.dateTrans}"  filterMatchMode="contains" >
-                                        <h:outputText value="#{citerneIt.dateTrans}" />
+                                    <p:column headerText="Date transfert" filterBy="#{cEdit.dateTrans}"  filterMatchMode="contains" >
+                                        <h:outputText value="#{cEdit.dateTrans}" />
                                     </p:column>
-                                    <p:column headerText="Utilisateur" filterBy="#{citerneIt.utilisateurExpedition.login}"  filterMatchMode="contains" >
-                                        <h:outputText value="#{citerneIt.utilisateurExpedition.login}" />
+                                    <p:column headerText="Utilisateur" filterBy="#{cEdit.utilisateurExpedition.login}"  filterMatchMode="contains" >
+                                        <h:outputText value="#{cEdit.utilisateurExpedition.login}" />
                                     </p:column>
+                                    <!--<c:if test="#{authentification.hasPermission(constanteMb.editMvmt)}">-->
+                                        <p:column headerText=" " width="50px;">
+                                            <p:commandButton  title="Modifier mouvement" onstart="PF('block').show()" oncomplete="PF('block').hide()" 
+                                                              actionListener="#{citerneMb.prepTraceCiterne(cEdit)}" 
+                                                              update=":form_modifTrans_gasoil" immediate="true" icon="ui-icon ui-icon-pencil" />
+                                        </p:column>
+                                    <!--</c:if>-->
                                 </p:dataTable>
                             </h:panelGrid>
                         </h:form>
                     </p:dialog>
                     
-                    <!--*******************  dialog pour Transfaire Gasoil ****************************************-->
+                    <!--*******************  dialog pour Modifier Transfaire Gasoil ****************************************-->
                     
+                    
+                    <p:dialog header="Modification Transfert Gasoil" 
+                              draggable="true" modal="true" height="450"
+                              width="40%" style="margin-right:80px;" 
+                              widgetVar="dlg_modifTrans_gasoil" id="dlg_modifTrans_gasoil"   >
+                        <h:form id="form_modifTrans_gasoil"  enctype="multipart/form-data">
+                        <p:blockUI  animate="true" block=" :form_modifTrans_gasoil"  trigger=":form_bon_transfaire:tblTans">
+                            Chargement en cours ... <br />
+                            <p:graphicImage url="https://upload.wikimedia.org/wikipedia/commons/5/53/Loading_bar.gif"/>
+                        </p:blockUI>
+                            <p:messages id="msgModifTrans" closable="true" showDetail="true"/>
+                            <h:panelGrid columns="2" cellpadding="10"> 
+                                <h:outputText value="Citerne Expédition :" />
+                                <p:selectOneMenu required="true" requiredMessage="Le choix de la citerne distination est obligatoire" 
+                                                 id="citerneListExp"  filter="true" filterMatchMode="contains">
+                                    <f:selectItem itemLabel="#{citerneMb.traceCiterneToEdit.citernSrc.libelle_citerne}" noSelectionOption="true"/>
+                                    <f:selectItems value="#{citerneMb.l_citernes}" var="c" itemLabel="#{c.libelle_citerne}" itemValue="#{c.id}"  />
+                                    <p:ajax listener="#{citerneMb.selectCiterneExp(citerneMb.traceCiterneToEdit.citernSrc.id)}" update="@this"/>
+                                </p:selectOneMenu>
+                                <h:outputText value="Citerne Réception :" />
+                                <p:selectOneMenu required="true" requiredMessage="Le choix de la citerne distination est obligatoire" 
+                                                 id="citerneListRcp"  filter="true" filterMatchMode="contains">
+                                    <f:selectItem itemLabel="#{citerneMb.traceCiterneToEdit.citernDist.libelle_citerne}" noSelectionOption="true"/>
+                                    <f:selectItems value="#{citerneMb.l_citernes}" var="c" itemLabel="#{c.libelle_citerne}" itemValue="#{c.id}"  />
+                                    <p:ajax listener="#{citerneMb.selectCiterneExp(citerneMb.traceCiterneToEdit.citernSrc.id)}" update="@this"/>
+                                </p:selectOneMenu>
+                                <h:outputText value="Qte Transférée :" />
+                                <p:inputText value="#{citerneMb.traceCiterneToEdit.litreTransf}" />
+                                <h:outputText value="Qte Receptionée :" />
+                                <p:inputText value="#{citerneMb.traceCiterneToEdit.litreReceptione}" />
+                                <h:outputText value="N° BON :" />
+                                <p:inputText value="#{citerneMb.traceCiterneToEdit.numBon}" />
+                                <h:outputText value="Moyen transport :" />
+                                <p:inputText value="#{citerneMb.traceCiterneToEdit.comment}" />
+                                <h:outputText value="Date transfert :" />
+                                <p:calendar value="#{citerneMb.traceCiterneToEdit.dateTrans}" />
+                                <h:outputText value="Date Receptionée :" />
+                                <p:calendar value="#{citerneMb.traceCiterneToEdit.dateRecep}" />
+                            </h:panelGrid>
+                            <p:commandButton  title="Valider"  value="Valider"  onstart="PF('block').show()" oncomplete="PF('block').hide()" 
+                                              update=":form_bon_transfaire,:form_bon_transfaire:tblTans" immediate="true" icon="ui-icon ui-icon-pencil" 
+                                              action="#{citerneMb.editTraceCiterne()}"/>
+                            
+                        </h:form>
+                    </p:dialog>
+                    <!--*******************  dialog pour Transfaire Gasoil ****************************************-->
 
                     <p:dialog header="Réception Gasoil" 
                               draggable="true"

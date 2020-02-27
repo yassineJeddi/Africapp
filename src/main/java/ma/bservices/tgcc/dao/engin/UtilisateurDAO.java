@@ -47,5 +47,6 @@ public interface UtilisateurDAO {
      * Unit Test
      */
     public Boolean delete(Utilisateur id);
+    public void affecterAllChantier(Utilisateur u) ;
 
 }

@@ -312,4 +312,17 @@ public class UtilisateurDAOImpl extends MbHibernateDaoSupport implements Utilisa
         return listOfGrp;
     }
 
+    @Override
+    public void affecterAllChantier(Utilisateur u) {
+        
+         try {
+                Session session   = this.getHibernateTemplate().getSessionFactory().openSession();
+                //Query query1 = session.createSQLQuery("{ CALL P$AFECT_USER_CHANTIER("+u.getId()+") }");
+                Query query1 = session.createSQLQuery("insert into CHANTIER_UTILISATEUR select PRJAP_id CHANTIER_ID, "+u.getId()+" UTILISATEUR_ID from PRJAP where PRJAP_ID not in (SELECT CHANTIER_ID FROM CHANTIER_UTILISATEUR WHERE	UTILISATEUR_ID ="+u.getId()+")");
+                int res1 = query1.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("Erreur d'affecter touts les chantier car "+e.getMessage());
+        }
+    
+    }
 }

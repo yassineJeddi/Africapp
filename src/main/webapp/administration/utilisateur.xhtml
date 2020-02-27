@@ -254,6 +254,14 @@
 
                         <h:form id="hello">
                             <p:messages id="msgsMH" autoUpdate="false" showIcon="true" showDetail="true" closable="true"/>
+                            
+                            <p:commandButton icon="ui-icon-check" value="Affecter tous les chantiers"
+                                                 title="affecter tous les chantier" 
+                                                 actionListener="#{utilisateur.affecterAllChantier()}" 
+                                                 oncomplete="PF('tabb').clearFilters();PF('tableChantiers').clearFilters();"
+                                                 update=":hello, :form"
+
+                                                 />
                             <p:dataTable  var="chantierIt" id="tbb" value="#{utilisateur.listDiffChan}" 
                                           rows="10"  paginator="true" widgetVar="tableChantiers" paginatorTemplate="{CurrentPageReport} 
                                           {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}

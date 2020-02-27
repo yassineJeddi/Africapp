@@ -45,4 +45,5 @@ public interface UtilisateurService {
     public List<Permission> findPermissionsByUser(Utilisateur u);
     
     public List<Groupe> findGroupsByUser(Utilisateur u);
+    public void affecterAllChantier(Utilisateur u);
 }

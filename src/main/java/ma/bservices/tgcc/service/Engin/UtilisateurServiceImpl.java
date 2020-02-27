@@ -83,10 +83,10 @@ public class UtilisateurServiceImpl implements UtilisateurService, Serializable 
     
     @Override
     public void addChToUser(Utilisateur user, List<Chantier> ch) {
-        
+        /*
         for (Chantier c : ch) {
             System.out.println("list of chantiers : " + c.getCode());
-        }
+        }*/
         Set<Chantier> setOfChantiers = new HashSet(ch);
         //System.out.println("set of chantiers " + setOfChantiers);
         user.setChantiers(setOfChantiers);
@@ -118,6 +118,11 @@ public class UtilisateurServiceImpl implements UtilisateurService, Serializable 
     @Override
     public void updateUser(Utilisateur u) {
         utilisateurDAO.updateUser(u);
+    }
+    
+    @Override
+    public void affecterAllChantier(Utilisateur u)  {
+        utilisateurDAO.affecterAllChantier(u);
     }
     
 }

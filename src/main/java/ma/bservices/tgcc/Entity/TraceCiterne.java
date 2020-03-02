@@ -215,7 +215,7 @@ public class TraceCiterne implements Serializable {
     
     @Override
     public String toString() {
-        return "TraceCiterne{" + "id=" + id + ", citernSrc=" + citernSrc + ", citernSrcLitre=" + citernSrcLitre + ", citernDist=" + citernDist + ", citernDistLitre=" + citernDistLitre + ", litreTransf=" + litreTransf + ", litreReceptione=" + litreReceptione + ", dateTrans=" + dateTrans + ", dateOperation=" + dateOperation + ", numBon=" + numBon + ", comment=" + comment + ", valide=" + valide + ", utilisateurExpedition=" + utilisateurExpedition + ", utilisateurReception=" + utilisateurReception + '}';
+        return "TraceCiterne{" + "id=" + id + ", citernSrc=" + citernSrc.getId() + ", citernSrcLitre=" + citernSrcLitre + ", citernDist=" + citernDist.getId() + ", citernDistLitre=" + citernDistLitre + ", litreTransf=" + litreTransf + ", litreReceptione=" + litreReceptione + ", dateTrans=" + dateTrans + ", dateOperation=" + dateOperation + ", numBon=" + numBon + ", comment=" + comment + ", valide=" + valide + ", utilisateurExpedition=" + utilisateurExpedition + ", utilisateurReception=" + utilisateurReception + '}';
     }
  
 

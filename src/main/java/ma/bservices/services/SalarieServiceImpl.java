@@ -207,12 +207,17 @@ public class SalarieServiceImpl implements Serializable, SalarieServiceIn {
         return salarieDao.listSalarieByListChantier(listChantiers);
     }
     @Override
-    public List<Salarie> listSalarieBlackListSorti() {
-         return salarieDao.listSalarieBlackListSorti();
-    } 
+    public List<Salarie> listSalarieByMatOrCin(String mat, String cin) {
+         return salarieDao.listSalarieByMatOrCin(mat, cin);
+    }
 
     @Override
     public List<Salarie> listSalarieActifByChantierId(int idChantier) {
         return salarieDao.listSalarieActifByChantierId(idChantier);
+    }
+
+    @Override
+    public List<Salarie> listMensuelSalarieActifByChantierId(int idChantier) {
+        return salarieDao.listMensuelSalarieActifByChantierId(idChantier);
     }
 }

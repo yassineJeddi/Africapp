@@ -109,6 +109,7 @@ public class ConstanteMb implements Serializable {
     private String actionEngin="Action Engin";
     private String uploadDocEngin="Uploader document Engin";
     private String editMvmt="Modifier mvmt citerne";
+    private String editTrsf="Modifier Transfert citerne";
     private String referentielEngin="Gestion Referentiel";
 
 //AccidentTravail
@@ -667,6 +668,14 @@ public class ConstanteMb implements Serializable {
 
     public void setReferentielEngin(String referentielEngin) {
         this.referentielEngin = referentielEngin;
+    }
+
+    public String getEditTrsf() {
+        return editTrsf;
+    }
+
+    public void setEditTrsf(String editTrsf) {
+        this.editTrsf = editTrsf;
     }
     
     

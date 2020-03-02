@@ -36,5 +36,7 @@ public interface DossierMedicalDao {
     public Long addAntecedentProfessionnel(AntecedentProfessionnel antecedentProfessionnel);
     public Long updateAntecedentProfessionnel(AntecedentProfessionnel antecedentProfessionnel);
     public Long addAntecedent(Antecedent antecedentToAdd);
+
+    public List<DossierMedical> findDosMedByIdsalarie(int id);
     
 }

@@ -822,21 +822,39 @@ public class AccidentTravailMb {
             
                     
 
-            if (!"pdf".equals(extension)) {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, Message.STRING_CHARGE_DOCUMENT_PDF, Message.STRING_CHARGE_DOCUMENT_PDF));
+            if (!"pdf".equals(extension) && !"jpg".equals(extension) && !"jpeg".equals(extension) && !"png".equals(extension)) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Merci de charger un PDF ou image(.jpg, .jpeg, .png) ", ""));
             } else {
-                Path file = Files.createTempFile(folder, filename, "." + extension);
+                    Path file = Files.createTempFile(folder, filename, "." + extension);
 
-                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                try (InputStream input = uploadedFile.getInputstream()) {
-                    Files.copy(input, file, StandardCopyOption.REPLACE_EXISTING);
-                    documentDetailAt.setChemin(chemin + "/" +file.getFileName());
-                    documentDetailAt.setCreePar(auth.getPrincipal().toString());
-                    documentDetailAt.setDateCreation(new Date());
-                    documentDetailAt.setDetailAT(detailAT);
-                    documentDetailAtService.addDocumentDetailAt(documentDetailAt);
-                    documentDetailAts = documentDetailAtService.allDocumentDetailAtByIdDetailAt(detailAT.getId()); 
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, Message.STRING_CHARGE_DOCUMENT_DONE, Message.STRING_CHARGE_DOCUMENT_DONE));
+                    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                if ("pdf".equals(extension) ){
+                    try (InputStream input = uploadedFile.getInputstream()) {
+                        Files.copy(input, file, StandardCopyOption.REPLACE_EXISTING);
+                        documentDetailAt.setChemin(chemin + "/" +file.getFileName());
+                        documentDetailAt.setCreePar(auth.getPrincipal().toString());
+                        documentDetailAt.setDateCreation(new Date());
+                        documentDetailAt.setDetailAT(detailAT);
+                        documentDetailAtService.addDocumentDetailAt(documentDetailAt);
+                        documentDetailAts = documentDetailAtService.allDocumentDetailAtByIdDetailAt(detailAT.getId()); 
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, Message.STRING_CHARGE_DOCUMENT_DONE, Message.STRING_CHARGE_DOCUMENT_DONE));
+                } 
+                }else{ 
+                    if(uploadedFile.getSize()<1000001){
+                        try (InputStream input = uploadedFile.getInputstream()) {
+                            Files.copy(input, file, StandardCopyOption.REPLACE_EXISTING);
+                            documentDetailAt.setChemin(chemin + "/" +file.getFileName());
+                            documentDetailAt.setCreePar(auth.getPrincipal().toString());
+                            documentDetailAt.setDateCreation(new Date());
+                            documentDetailAt.setDetailAT(detailAT);
+                            documentDetailAtService.addDocumentDetailAt(documentDetailAt);
+                            documentDetailAts = documentDetailAtService.allDocumentDetailAtByIdDetailAt(detailAT.getId()); 
+                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, Message.STRING_CHARGE_DOCUMENT_DONE, Message.STRING_CHARGE_DOCUMENT_DONE));
+                        }
+                    }else{
+                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "La taille d'image est plus grande que 1 Mo! ", ""));
+                    }
+                        
                 }
             }
         }

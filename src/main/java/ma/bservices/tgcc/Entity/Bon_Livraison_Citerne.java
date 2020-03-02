@@ -52,7 +52,7 @@ public class Bon_Livraison_Citerne implements Serializable {
     @JoinColumn(name = "CITERNE_ID", referencedColumnName = "ID")
     private Citerne citerne;
 
-    @OneToOne
+    @OneToOne(optional = true)
     private Engin engin;
 
     @OneToOne

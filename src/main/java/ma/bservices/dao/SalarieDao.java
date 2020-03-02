@@ -76,6 +76,7 @@ public interface SalarieDao {
     public Salarie getSalarieByID(Integer idc);
     
     public List<Salarie> listSalarieByListChantier(String listChantiers);
-    public List<Salarie> listSalarieBlackListSorti();
+    public List<Salarie> listSalarieByMatOrCin(String mat, String cin);
     public List<Salarie> listSalarieActifByChantierId(int idChantier);
+    public List<Salarie> listMensuelSalarieActifByChantierId(int idChantier);
 }

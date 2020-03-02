@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ma.bservices.services;
+package ma.bservices.tgcc.service;
 
 import java.util.List;
 import ma.bservices.tgcc.Entity.Antecedent;
@@ -36,4 +36,7 @@ public interface DossierMedicalService {
     public Long addAntecedentProfessionnel(AntecedentProfessionnel antecedentProfessionnel);
     public Long updateAntecedentProfessionnel(AntecedentProfessionnel antecedentProfessionnel); 
     public Long addAntecedent(Antecedent antecedent);
+
+    public List<DossierMedical> findDosMedByIdsalarie(int id);
+    
 }

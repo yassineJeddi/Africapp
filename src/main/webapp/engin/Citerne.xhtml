@@ -80,7 +80,8 @@
                                 </center>
                             </p:column>
                             <p:column headerText="Detail" style="width: 60px;">
-                                <p:commandButton icon="ui-icon-document-b" oncomplete="PF('dlg_historique_citerne').show()" title="Détail de la citerne" 
+                                <p:commandButton icon="ui-icon-document-b" oncomplete="PF('dlg_historique_citerne').show()" title="Détail de la citerne"
+                                                 
                                                  actionListener="#{citerneMb.redirectHistoriqueCiterne(citerneIt)}"
                                                  update=":form_historique" immediate="true" />
                             </p:column>
@@ -327,18 +328,18 @@
                                         <h:outputText value="#{cEdit.comment}" />
                                     </p:column>
                                     <p:column headerText="Date transfert" filterBy="#{cEdit.dateTrans}"  filterMatchMode="contains" >
-                                        <h:outputText value="#{cEdit.dateTrans}" />
+                                        <p:calendar  value="#{cEdit.dateTrans}"  pattern="dd/MM/yyyy" mask="99/99/9999" disabled="true" />
                                     </p:column>
                                     <p:column headerText="Utilisateur" filterBy="#{cEdit.utilisateurExpedition.login}"  filterMatchMode="contains" >
                                         <h:outputText value="#{cEdit.utilisateurExpedition.login}" />
                                     </p:column>
-                                    <!--<c:if test="#{authentification.hasPermission(constanteMb.editMvmt)}">-->
+                                    <c:if test="#{authentification.hasPermission(constanteMb.editTrsf)}">
                                         <p:column headerText=" " width="50px;">
                                             <p:commandButton  title="Modifier mouvement" onstart="PF('block').show()" oncomplete="PF('block').hide()" 
                                                               actionListener="#{citerneMb.prepTraceCiterne(cEdit)}" 
                                                               update=":form_modifTrans_gasoil" immediate="true" icon="ui-icon ui-icon-pencil" />
                                         </p:column>
-                                    <!--</c:if>-->
+                                    </c:if>
                                 </p:dataTable>
                             </h:panelGrid>
                         </h:form>
@@ -359,29 +360,37 @@
                             <p:messages id="msgModifTrans" closable="true" showDetail="true"/>
                             <h:panelGrid columns="2" cellpadding="10"> 
                                 <h:outputText value="Citerne Expédition :" />
-                                <p:selectOneMenu required="true" requiredMessage="Le choix de la citerne distination est obligatoire" 
+                                <p:selectOneMenu required="true" requiredMessage="Le choix de la citerne distination est obligatoire" value="#{citerneMb.idCiternEditSrc}"
                                                  id="citerneListExp"  filter="true" filterMatchMode="contains">
                                     <f:selectItem itemLabel="#{citerneMb.traceCiterneToEdit.citernSrc.libelle_citerne}" noSelectionOption="true"/>
                                     <f:selectItems value="#{citerneMb.l_citernes}" var="c" itemLabel="#{c.libelle_citerne}" itemValue="#{c.id}"  />
-                                    <p:ajax listener="#{citerneMb.selectCiterneExp(citerneMb.traceCiterneToEdit.citernSrc.id)}" update="@this"/>
+                                    <p:ajax listener="#{citerneMb.selectCiterneExp()}" update="@this"/>
                                 </p:selectOneMenu>
                                 <h:outputText value="Citerne Réception :" />
-                                <p:selectOneMenu required="true" requiredMessage="Le choix de la citerne distination est obligatoire" 
+                                <p:selectOneMenu required="true" requiredMessage="Le choix de la citerne distination est obligatoire" value="#{citerneMb.idCiternEditDist}"
                                                  id="citerneListRcp"  filter="true" filterMatchMode="contains">
                                     <f:selectItem itemLabel="#{citerneMb.traceCiterneToEdit.citernDist.libelle_citerne}" noSelectionOption="true"/>
                                     <f:selectItems value="#{citerneMb.l_citernes}" var="c" itemLabel="#{c.libelle_citerne}" itemValue="#{c.id}"  />
-                                    <p:ajax listener="#{citerneMb.selectCiterneExp(citerneMb.traceCiterneToEdit.citernSrc.id)}" update="@this"/>
+                                    <p:ajax listener="#{citerneMb.selectCiterneRcp()}" update="@this"/>
                                 </p:selectOneMenu>
                                 <h:outputText value="Qte Transférée :" />
-                                <p:inputText value="#{citerneMb.traceCiterneToEdit.litreTransf}" />
+                                <p:inputText value="#{citerneMb.traceCiterneToEdit.litreTransf}" >
+                                    <p:ajax  event="keyup"/>
+                                </p:inputText>
                                 <h:outputText value="Qte Receptionée :" />
-                                <p:inputText value="#{citerneMb.traceCiterneToEdit.litreReceptione}" />
+                                <p:inputText value="#{citerneMb.traceCiterneToEdit.litreReceptione}" >
+                                    <p:ajax  event="keyup"/>
+                                </p:inputText>
                                 <h:outputText value="N° BON :" />
-                                <p:inputText value="#{citerneMb.traceCiterneToEdit.numBon}" />
+                                <p:inputText value="#{citerneMb.traceCiterneToEdit.numBon}" >
+                                    <p:ajax  event="keyup"/>
+                                </p:inputText>
                                 <h:outputText value="Moyen transport :" />
-                                <p:inputText value="#{citerneMb.traceCiterneToEdit.comment}" />
+                                <p:inputText value="#{citerneMb.traceCiterneToEdit.comment}" >
+                                    <p:ajax  event="keyup"/>
+                                </p:inputText>
                                 <h:outputText value="Date transfert :" />
-                                <p:calendar value="#{citerneMb.traceCiterneToEdit.dateTrans}" />
+                                <p:calendar value="#{citerneMb.traceCiterneToEdit.dateTrans}"   pattern="dd/MM/yyyy" mask="99/99/9999"  />
                                 <h:outputText value="Date Receptionée :" />
                                 <p:calendar value="#{citerneMb.traceCiterneToEdit.dateRecep}" />
                             </h:panelGrid>
@@ -501,8 +510,8 @@
                                 <p:column headerText="Numero BC" filterBy="#{mvmtIt.numero_commande}" filterMatchMode="contains">
                                     <h:outputText value="#{mvmtIt.numero_commande}" />
                                 </p:column>
-                                <p:column headerText="Numero BL" filterBy="#{mvmtIt.numero_Livraison}" filterMatchMode="contains">
-                                    <h:outputText value="#{mvmtIt.numero_Livraison}" />
+                                <p:column headerText="Numero BL" filterBy="#{mvmtIt.numBon}" filterMatchMode="contains">
+                                    <h:outputText value="#{mvmtIt.numBon}" />
                                 </p:column>
                                 <p:column headerText="Opération" style="width: 200px;"  filterBy="#{mvmtIt.action}" filterMatchMode="contains">
                                     <h:outputText value="#{mvmtIt.action}" />
@@ -535,17 +544,29 @@
                                 <h:outputText value="Date : " /> 
                                 <p:calendar value="#{citerneMb.bon_gasoil_To_Edit.date}" /> 
                                 <h:outputText value="Volume : " /> 
-                                <h:inputText value="#{citerneMb.bon_gasoil_To_Edit.volume}"  /> 
+                                <h:inputText value="#{citerneMb.bon_gasoil_To_Edit.volume}" >
+                                    <p:ajax  event="keyup"/>
+                                </h:inputText> 
                                 <h:outputText value="Compteur Km : " /> 
-                                <h:inputText value="#{citerneMb.bon_gasoil_To_Edit.kilometrage}" /> 
+                                <h:inputText value="#{citerneMb.bon_gasoil_To_Edit.kilometrage}" >
+                                    <p:ajax  event="keyup"/>
+                                </h:inputText>
                                 <h:outputText value="Compteur H : " /> 
-                                <h:inputText value="#{citerneMb.bon_gasoil_To_Edit.heure}" /> 
+                                <h:inputText value="#{citerneMb.bon_gasoil_To_Edit.heure}" >
+                                    <p:ajax  event="keyup"/>
+                                </h:inputText>
                                 <h:outputText value="Commentaire : " /> 
-                                <h:inputText value="#{citerneMb.bon_gasoil_To_Edit.commentaire}" style="width: 100%" /> 
+                                <h:inputText value="#{citerneMb.bon_gasoil_To_Edit.commentaire}" style="width: 100%" >
+                                    <p:ajax  event="keyup"/>
+                                </h:inputText> 
                                 <h:outputText value="Numero BC : " /> 
-                                <h:inputText value="#{citerneMb.bon_gasoil_To_Edit.numero_commande}" /> 
+                                <h:inputText value="#{citerneMb.bon_gasoil_To_Edit.numero_commande}" >
+                                    <p:ajax  event="keyup"/>
+                                </h:inputText> 
                                 <h:outputText value="Numero BL : " /> 
-                                <h:inputText value="#{citerneMb.bon_gasoil_To_Edit.numBon}" /> 
+                                <h:inputText value="#{citerneMb.bon_gasoil_To_Edit.numBon}" >
+                                    <p:ajax  event="keyup"/>
+                                </h:inputText> 
                             </h:panelGrid>
                             <p:commandButton class="btn btn-switch active" update=":form_historique,:form_historique:tbl" 
                                              oncomplete="PF('dlg_mvmtCiterne').hide()" value="Enregistrer" 

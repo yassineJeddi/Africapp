@@ -19,50 +19,46 @@
             <ui:define name="content">
                 <p:blockUI widgetVar="block" block="tableDM" >
                     Chargement<br /> <h:graphicImage value="../images/loading.gif" />
-                </p:blockUI>
+                </p:blockUI> 
                 <p:panel id="pannel"> 
-                <h:form id="tableDM" onkeypress="return event.keyCode != 13">    
-                    <p:growl showDetail="true" autoUpdate="true" id="msgs"  />
+                <h:form id="tableDM" onkeypress="return event.keyCode != 13"> 
                     <p:blockUI widgetVar="block" block="tableDM" >
                         Chargement<br /> <h:graphicImage value="../images/loading.gif" />
-                    </p:blockUI>
-                    <h:panelGrid columns="4" style="width:98%" cellpadding="5">
-                        <p:selectOneMenu id="listChantierId" value="#{dossMb.idChantier}" panelStyle="width:180px" style="width:100%" filter="true" filterMatchMode="contains" 
-                                         >
+                    </p:blockUI> 
+                    <p:growl showDetail="true" autoUpdate="true" id="msgs"  />
+                    <h:panelGrid columns="4" style="width:99%" cellpadding="5">
+                        <p:selectOneMenu id="listChantierId" value="#{dossMb.idChantier}" panelStyle="width:180px" style="width:100%" filter="true" filterMatchMode="contains" >
                             <f:selectItem itemLabel="--- Selectionner Chantier ---" itemValue="0" />
                             <f:selectItems value="#{dossMb.chantiers}" var="c" itemLabel="#{c.code}" itemValue="#{c.id}" />
-                            <p:ajax event="select" listener="#{dossMb.listeDossiers()}" update=":tableDM" onstart="PF('vtWidget').clearFilters()"  />
-                            <p:ajax event="change" listener="#{dossMb.listeDossiers()}" update=":tableDM" onstart="PF('vtWidget').clearFilters()" />
+                            <p:ajax listener="#{dossMb.listeDossiers()}" update=":tableDM, :tableDM:vtWidget" onsuccess="PF('vtWidget').clearFilters()"/> 
                         </p:selectOneMenu> 
                          
                         <p:selectOneRadio id="actifId" value="#{dossMb.idStatut}"  style="float:right" > 
-                            <f:selectItem itemLabel="Actifs"   itemValue="1" />
-                            <f:selectItem itemLabel="Archivés" itemValue="0" />
-                            <p:ajax event="select" listener="#{dossMb.listeDossiersStatut()}" update=":tableDM" onstart="PF('vtWidget').clearFilters()"  />
-                            <p:ajax event="change" listener="#{dossMb.listeDossiersStatut()}" update=":tableDM" onstart="PF('vtWidget').clearFilters()"  />
+                            <f:selectItem itemLabel="Présences Chantier"   itemValue="1" />
+                            <f:selectItem itemLabel="Recherche (MAT/CIN)" itemValue="0" />
+                            <p:ajax listener="#{dossMb.listeDossiersStatut()}"  update=" :tableDM,:tableDM:vtWidget" onsuccess="PF('vtWidget').clearFilters()" /> 
                         </p:selectOneRadio> 
                          
-                        <p:commandButton id="btnCharger" onclick="PF('vtWidget').clearFilters()"
-                                         onstart="PF('block').show()"  oncomplete="PF('block').hide()"  
-                                         class="btn btn-switch active"  value="Charger" icon="fa fa-spinner " 
-                                         update=":tableDM" style="float:right" 
-                                         action="#{dossMb.chargerDonnees()}"   />
-                        <p:commandButton id="btnAjouter"  onstart="PF('block').show()" oncomplete="PF('block').hide()"  
-                                         rendered="false"  
-                                         class="btn btn-switch active"  value="Ajouter" action="#{dossMb.listenerDlgAdd()}"
-                                         icon="fa fa-plus" update=":formdlgId" style="float:right" />
-                        
-                          
+                        <p:commandButton id="btnCharger"  onstart="PF('block').show();"  oncomplete="PF('block').hide()" onsuccess="PF('vtWidget').clearFilters()"
+                                         class="btn btn-switch active"  value="Charger" icon="fa fa-spinner "
+                                         style="float:right"  rendered="#{dossMb.idStatut == 0 ? false : true}"  update=":tableDM" 
+                                         action="#{dossMb.chargerDonnees}"/>
+                        <p:commandButton onstart="PF('block').show();"  oncomplete="PF('block').hide()" onsuccess="PF('vtWidget').clearFilters()"
+                                         id="btnCharger2" rendered="#{dossMb.idStatut == 1 ? false : true}"   
+                                         class="btn btn-switch active"  value="Rechercher" icon="fa fa-search " 
+                                         update=":formRecherche" style="float:right" 
+                                         action="#{dossMb.find}"   />  
                     </h:panelGrid>
                     
-                      
-                    <p:dataTable var="dos" rows="5" value="#{dossMb.dossiersMedicaux}" sortBy="#{dos.triOrdre}" sortOrder="ASCENDING" 
+                 
+                    <p:blockUI widgetVar="block1" block="tableDM" >
+                        Chargement<br /> <h:graphicImage value="../images/loading.gif" />
+                    </p:blockUI>  
+                    <p:dataTable id="vtWidget"  widgetVar="vtWidget" var="dos" rows="5" value="#{dossMb.dossiersMedicaux}" sortBy="#{dos.triOrdre}" sortOrder="ASCENDING" 
                                  class="table table-responsive table-bordered" emptyMessage="Aucun enregistrement..." 
                                  paginatorPosition="bottom" paginator="true" 
                                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                 rowsPerPageTemplate="5,10,15" widgetVar="vtWidget"
-                                 id="dossierTable"  
-                                 
+                                 rowsPerPageTemplate="5,10,15" 
                                  >
                          
                     <f:facet name="header">
@@ -102,7 +98,7 @@
                     <p:column headerText="Actions" >
                          
                         <p:commandButton icon="fa fa-list" title="Détail" style="background-color:#712D35;float:left"
-                                         onstart="PF('block').show()" oncomplete="PF('block').hide()"
+                                         onstart="PF('block1').show()" oncomplete="PF('block1').hide()"
                                          action="#{dossMb.afficherDossier(dos)}"  
                                          update=":shomFormId," >
                         </p:commandButton> 
@@ -115,7 +111,8 @@
                         
                     </p:dataTable>
                 </h:form>
-                    
+                  
+                </p:panel>     
                     
                 <p:dialog header="Documents" width="80%" height="500" resizable="false" modal="true" widgetVar="tableDoc" closable="true">
                      <h:form id="formTableDoc" onkeypress="return event.keyCode != 13"> 
@@ -175,7 +172,7 @@
                             
                         </p:panelGrid>
                             <p:commandButton onclick="PF('addAntecedent').hide()" value="Annuler" update=":shomFormId, :formdlgId"></p:commandButton>
-                            <p:commandButton action="#{dossMb.saveAntecedent()}" value="Enregistrer" update=":shomFormId, :formdlgId"></p:commandButton>
+                            <p:commandButton action="#{dossMb.saveAntecedent()}"  value="Enregistrer" update=":shomFormId, :formdlgId"></p:commandButton>
                     </h:form>
                 </p:dialog>
                 <p:dialog header="PDF" width="80%" resizable="false" height="500" modal="true" widgetVar="consulterDoc">
@@ -335,9 +332,9 @@
                                          oncomplete="PF('consulterDoc').show()"  ></p:commandButton>
                         
                         
-                        <p:commandButton style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()" onclick="PF('vtWidget').clearFilters()" 
-                                         action="#{dossMb.updateVisite()}"   
-                                         update=":shomFormId, :tableDM" value="Modifier"  
+                        <p:commandButton style="float:right" onstart="PF('block').show();PF('vtWidget').clearFilters()" oncomplete="PF('block').hide()"  
+                                         action="#{dossMb.updateVisite()}"  
+                                         update=" :tableDM, :shomFormId" value="Modifier"  
                                          ></p:commandButton>  
                        
                         <p:commandButton style="float:right" value="Annuler"  onclick="PF('dlg500').hide()"  ></p:commandButton>  
@@ -429,8 +426,8 @@
                            
                         
                         <br></br> 
-                        <p:commandButton style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()" onclick="PF('vtWidget').clearFilters()"
-                                         action="#{dossMb.enregistrerVisite()}"  
+                        <p:commandButton style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()"
+                                         action="#{dossMb.enregistrerVisite()}"   
                                          update=":shomFormId, :tableDM" value="Enregistrer"    
                                          ></p:commandButton> 
                        
@@ -601,8 +598,7 @@
                            </p:panel>
                         <br></br>
                         <br></br>
-                        <p:commandButton style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()" 
-                                         onclick="PF('vtWidget').clearFilters()"
+                        <p:commandButton style="float:right" onstart="PF('block').show();PF('vtWidget').clearFilters()" oncomplete="PF('block').hide()" 
                                          action="#{dossMb.enregistrerVisite()}"   
                                          update=":shomFormId, :tableDM" value="Enregistrer"   ></p:commandButton>  
                        
@@ -699,8 +695,8 @@
                         <p:commandButton icon="ui-icon-circle-check" value="Générer Fiche"  actionListener="#{dossMb.addFichier(dossMb.visiteToShow)}" update=":visuliser_id"
                                                       oncomplete="PF('consulterDoc').show()"  ></p:commandButton>
                        
-                        <p:commandButton style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()" onclick="PF('vtWidget').clearFilters()" 
-                                         action="#{dossMb.updateVisite()}"  update=":shomFormId, :tableDM" value="Modifier"  ></p:commandButton>  
+                        <p:commandButton style="float:right" onstart="PF('block').show();PF('vtWidget').clearFilters()" oncomplete="PF('block').hide()" 
+                                         action="#{dossMb.updateVisite()}" update=":shomFormId, :tableDM" value="Modifier"  ></p:commandButton>  
                         
                         <p:commandButton style="float:right" value="Annuler"  onclick="PF('dlg50').hide()"  ></p:commandButton>  
                     </h:form>
@@ -1049,8 +1045,8 @@
                         <br></br>
                         <p:commandButton icon="ui-icon-circle-check" value="Générer Fiche"  actionListener="#{dossMb.addFichier(dossMb.visiteToShow)}" update=":visuliser_id"           
                                          oncomplete="PF('consulterDoc').show()"  ></p:commandButton>
-                        <p:commandButton style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()" onclick="PF('vtWidget').clearFilters()"     
-                                         action="#{dossMb.updateVisite()}"  update=":shomFormId" value="Enregistrer"  ></p:commandButton>  
+                        <p:commandButton style="float:right" onstart="PF('block').show();PF('vtWidget').clearFilters()" oncomplete="PF('block').hide()"
+                                         action="#{dossMb.updateVisite()}" update=":shomFormId, :tableDM" value="Enregistrer"  ></p:commandButton>  
                         
                         <p:commandButton style="float:right" value="Annuler"  onclick="PF('dlg5').hide()"  ></p:commandButton>  
                     </h:form>
@@ -1401,8 +1397,7 @@
                            </p:panel>
                         <br></br>
                         <br></br>
-                        <p:commandButton style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()" 
-                                         onclick="PF('vtWidget').clearFilters()"
+                        <p:commandButton style="float:right" onstart="PF('block').show();PF('vtWidget').clearFilters()" oncomplete="PF('block').hide()"  
                                          action="#{dossMb.enregistrerVisite()}"  update=":shomFormId, :tableDM" value="Enregistrer"   ></p:commandButton>  
                         
                         <p:commandButton style="float:right" value="Annuler"  onclick="PF('dlg4').hide()"  ></p:commandButton>  
@@ -1414,12 +1409,7 @@
                                 <p:panelGrid id="panelSalId" styleClass="ui-noborder" style="width:100%"> 
                                     <p:row>
                                         <p:column colspan="2">
-                                            <p:selectOneMenu id="listChantierId" value="#{dossMb.idSalarie}" disabled="true" panelStyle="width:180px" style="width:100%" filter="true" filterMatchMode="startsWith" >
-                                            <f:selectItem itemLabel="--- Selectionner Salarie ---" itemValue="0" />
-                                            <f:selectItems value="#{dossMb.salaries}" var="c" itemLabel="#{c.matricule} #{c.nom}#{c.prenom}" itemValue="#{c.id}" />
-                                                <!--<p:ajax event="change" listener="#{dossMb.listenrSalarieShow()}" update="panelSalId" />-->
-                                                <!--<p:ajax event="select" listener="#{dossMb.listenrSalarieShow()}" update="panelSalId" />-->
-                                            </p:selectOneMenu> 
+                                           <p:inputText disabled="true" value="#{dossMb.dosMedToshow.salarie.matricule} ---- #{dossMb.dosMedToshow.salarie.nom} #{dossMb.dosMedToshow.salarie.prenom}" style="width:100%;"></p:inputText>
                                         </p:column> 
                                         <p:column>    <p:outputLabel value="N° CIN:"></p:outputLabel></p:column>
                                         <p:column>    <p:inputText disabled="true" value="#{dossMb.dosMedToshow.salarie.cin}" style="width:100%;"></p:inputText></p:column>
@@ -1564,7 +1554,7 @@
                                 id="antTable"  editable="true">
                                     <f:facet name="header">
                                         CURRICULUM LABORIS 
-                                        <p:commandButton id="toggler"  title="Ajouter un nouveau enregistrement" 
+                                        <p:commandButton id="toggler"  title="Ajouter un nouveau enregistrement"  
                                                          action="#{dossMb.addAntecedent}" style="margin-top: -4px; float:right" value="Ajouter" icon="fa fa-plus" update="antTable" />
                                         
                                     </f:facet>
@@ -1722,7 +1712,7 @@
                                         <p:commandButton style="margin-top: -4px;float:right" value="Visite embauche" icon="fa fa-plus" title="Ajouter Visite"
                                                         onstart="PF('block').show()" oncomplete="PF('block').hide()" 
                                                         action="#{dossMb.listenerAjoutVisite('EM')}"
-                                                        update=":visiteAddFormIdEm" > 
+                                                        update=":visiteAddFormIdEm"  > 
                                         </p:commandButton> 
                                         <p:commandButton style="margin-top: -4px;float:right" value="Visite AT" icon="fa fa-plus" title="Ajouter Visite"
                                                         onstart="PF('block').show()" oncomplete="PF('block').hide()" 
@@ -1777,8 +1767,9 @@
                             </p:dataTable>
                         </p:panel> 
                         <br></br> 
-                        <p:commandButton value="Enregistrer" style="float:right" onstart="PF('block').show()" oncomplete="PF('block').hide()" onclick="PF('vtWidget').clearFilters()" 
-                                         action="#{dossMb.modifierDossier()}" update=":shomFormId, :tableDM" ></p:commandButton>
+                        <p:commandButton id="idSave" value="Enregistrer" style="float:right" onstart="PF('block').show();" oncomplete="PF('block').hide();"  
+                                         onsuccess="PF('vtWidget').clearFilters()" 
+                                         action="#{dossMb.modifierDossier()}" update=":tableDM " ></p:commandButton>
                          
 
                     </h:form>
@@ -2015,16 +2006,68 @@
                         </p:panel> 
 
                         <br></br>
-                        <p:commandButton value="Enregistrer" style="float:right" 
-                                         onstart="PF('block').show()" oncomplete="PF('block').hide()" onclick="PF('vtWidget').clearFilters()"
+                        <p:commandButton value="Enregistrer" style="float:right"  
+                                         onstart="PF('block').show()" oncomplete="PF('block').hide()"
                                          action="#{dossMb.enregistrerDossier()}" update=":formdlgId, :tableDM" >
                         </p:commandButton>
                        
                     </h:form>
                 </p:dialog>
-                 
-                <!--                Fin Dialogs             -->
-                </p:panel>   
+                <p:dialog modal="true" header="Recherche" width="50%" widgetVar="find" > 
+                    <p:blockUI widgetVar="block" block="formRecherche" >
+                        Chargement<br /> <h:graphicImage value="../images/loading.gif" />
+                    </p:blockUI> 
+                    <h:form id="formRecherche"  onkeypress="return event.keyCode != 13">
+                        <h:panelGrid columns="5">
+                            <h:outputText value="Matricule :"/>
+                            <p:inputText id="matId" value="#{dossMb.mat}" >
+                                <p:ajax event="keyup" listener="#{dossMb.recherche1()}" update="cinId"></p:ajax>
+                            </p:inputText>
+                            
+                            <h:outputText value="CIN :"/>
+                            <p:inputText id="cinId" value="#{dossMb.cin}" >
+                                <p:ajax event="keyup" listener="#{dossMb.recherche2()}" update="matId"></p:ajax>
+                            </p:inputText>
+                             
+                             
+                            <p:commandButton ajax="true"  value="Recherche" update=":formRecherche" action="#{dossMb.recherche}"  style="float:right"/>
+                        </h:panelGrid>
+                        <br></br>
+                            
+                        <p:dataTable var="s" rows="5" value="#{dossMb.salaries}" style="width: 100%"
+                                         class="table table-responsive table-bordered" emptyMessage="Aucun enregistrement..." 
+                                         paginatorPosition="both" paginator="true"
+                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="5,10,15"  
+                                         id="salarieTable" >
+                                  
+                                <p:column headerText="MATRICULE" filterBy="#{s.matricule}" filterMatchMode="contains" >
+                                     <h:outputText value="#{s.matricule}" >
+                                         <f:convertDateTime pattern="yyyy-MM-dd" ></f:convertDateTime>
+                                     </h:outputText>
+                                </p:column> 
+                                <p:column headerText="CIN" filterBy="#{s.cin}" filterMatchMode="contains" >
+                                     <h:outputText value="#{s.cin}" />
+                                </p:column>    
+                                <p:column headerText="PRENOM NOM"   >
+                                    <h:outputText value="#{s.prenom} #{s.nom}" />
+                                </p:column> 
+                                <p:column headerText="ETAT"   >
+                                    <h:outputText value="#{s.etat.etat}" />
+                                </p:column>  
+                                <p:column headerText="ACTIONS" > 
+                                     <p:commandButton icon="fa fa-align-justify"  title="Afficher détail"  style="background-color:#712D35" 
+                                                      onstart="PF('block').show()" oncomplete="PF('block').hide()"  update=":tableDM"
+                                                      action="#{dossMb.showDossier(s.id)}"
+                                                      >
+                                     </p:commandButton>     
+                                 </p:column> 
+
+                            </p:dataTable>
+                        
+                        
+                    </h:form>
+                </p:dialog> 
             </ui:define>
         </ui:composition>
     </h:body>

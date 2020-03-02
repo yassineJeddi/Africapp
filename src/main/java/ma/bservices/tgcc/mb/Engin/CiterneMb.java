@@ -138,6 +138,8 @@ public class CiterneMb implements Serializable {
     private Citerne citernSrc;
     private Citerne citernEditDist;
     private Citerne citernEditSrc;
+    private Integer idCiternEditDist;
+    private Integer idCiternEditSrc;
     private Integer idCiternTrans;
     private Integer idCiternExp;
     private Integer idCiternRcp;
@@ -305,9 +307,9 @@ public class CiterneMb implements Serializable {
                 bon_Livraison_Citerne.setChemin_fichier(this.citerneServiceBean.upload_fichier(uploadedFile));
 
 //                Integer volume = this.citerneServiceBean.getSomme_volume_actuel(this.citerne_ToDetail_livraison.getVolume_actuel(), volume_actuel);
-                System.out.println("entre volume 1:" + this.citerne_ToDetail_livraison.getVolume_actuel_());
-                System.out.println("entre volume 2:" + volume_actuel.intValue() * 1000);
-                System.out.println("entre volume 3:" + volume_somme);
+                //System.out.println("entre volume 1:" + this.citerne_ToDetail_livraison.getVolume_actuel_());
+                //System.out.println("entre volume 2:" + volume_actuel.intValue() * 1000);
+               // System.out.println("entre volume 3:" + volume_somme);
 
                 this.citerne_ToDetail_livraison.setVolume_actuel_(volume_somme);
 
@@ -722,30 +724,34 @@ public class CiterneMb implements Serializable {
         citernEditDist=traceCiterneToEdit.getCiternDist();
         
         l_citernes = citerneService.find_allCiterneNon_archiver(); 
-        //System.out.println("ma.bservices.tgcc.mb.Engin.CiterneMb.prepMvmt():::::::> bon_gasoil_To_Edit : "+traceCiterneToEdit.toString());
+        System.out.println("::::::::::> 0 traceCiterneToEdit : "+traceCiterneToEdit.toString());
         //allEngins= enginService.enginsActif();
         RequestContext.getCurrentInstance().execute("PF('dlg_modifTrans_gasoil').show();");
     }
-    public void selectCiterneExp(Integer id){
-        citernEditSrc = citerneService.findCiternById(id);
-        //System.out.println("::::::::::> citernSrc : "+citernSrc.toString());
+    public void selectCiterneExp(){
+        citernEditSrc = citerneService.findCiternById(idCiternEditSrc);
+        //System.out.println("::::::::::> citernSrc : "+citernEditSrc.toString());
     }
-    public void selectCiterneRcp(Integer id){
-        citernEditDist = citerneService.findCiternById(id);
-        //System.out.println("::::::::::> citernDist : "+citernDist.toString());
+    public void selectCiterneRcp(){
+        citernEditDist = citerneService.findCiternById(idCiternEditDist);
+        //System.out.println("::::::::::> citernDist : "+citernEditDist.toString());
     }
     public void editTraceCiterne(){
+        System.out.println("::::::::::> 1 traceCiterneToEdit : "+traceCiterneToEdit.toString());
         Citerne c = traceCiterneToEdit.getCiternSrc();
         traceCiterneToEdit.setCiternSrc(citernEditSrc);
         traceCiterneToEdit.setCiternDist(citernEditDist);
-        System.out.println("::::::::::> traceCiterneToEdit : "+traceCiterneToEdit.toString());
+        System.out.println("::::::::::> 2 traceCiterneToEdit : "+traceCiterneToEdit.toString());
         citerneService.editTraceCiterne(traceCiterneToEdit);
         citernEditSrc = new Citerne();
         citernEditDist = new Citerne();
         traceCiternes = citerneService.findAllTraceCiterneByCiterne(c);
-        RequestContext.getCurrentInstance().execute("PF('dlg_modifTrans_gasoil').show();");
+        RequestContext.getCurrentInstance().execute("PF('dlg_modifTrans_gasoil').hide();");
     }
-    
+    public void traceCiterneToEditselectCiterneExp(){
+        //citernEditSrc = citerneService.findCiternById(idCiternEditSrc);
+        System.out.println("::::::::::> citernSrc : "+traceCiterneToEdit.getLitreTransf());
+    }
     
     public void changeEnginEditMvmt(){
         if(codeEnginMvmtEdit.trim().length()>0){
@@ -1883,6 +1889,22 @@ public class CiterneMb implements Serializable {
 
     public void setTraceCiternesEdit(List<TraceCiterne> traceCiternesEdit) {
         this.traceCiternesEdit = traceCiternesEdit;
+    }
+
+    public Integer getIdCiternEditDist() {
+        return idCiternEditDist;
+    }
+
+    public void setIdCiternEditDist(Integer idCiternEditDist) {
+        this.idCiternEditDist = idCiternEditDist;
+    }
+
+    public Integer getIdCiternEditSrc() {
+        return idCiternEditSrc;
+    }
+
+    public void setIdCiternEditSrc(Integer idCiternEditSrc) {
+        this.idCiternEditSrc = idCiternEditSrc;
     }
 
     

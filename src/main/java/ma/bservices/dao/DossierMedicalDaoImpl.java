@@ -43,17 +43,15 @@ public class DossierMedicalDaoImpl extends MbHibernateDaoSupport implements Doss
     @Override
     public Long addDossierMedical(DossierMedical dossierMedical) {
         Transaction tx = null;
-        Session session = getSessionFactory().openSession();
         try {
+            Session session = getSessionFactory().openSession();
             session.setFlushMode(FlushMode.AUTO);
             tx = session.beginTransaction();
             session.persist(dossierMedical);
             tx.commit();
             session.close();
         } catch (DataAccessException exp) {
-            System.err.print("Exception " + exp.getMessage());
-            tx.rollback();
-            session.close();
+            System.err.print("Exception " + exp.getMessage()); 
             return null;
         }
         return dossierMedical.getId();
@@ -62,17 +60,15 @@ public class DossierMedicalDaoImpl extends MbHibernateDaoSupport implements Doss
     @Override
     public Long updateDossierMedical(DossierMedical dossierMedical) {
         Transaction tx = null;
-        Session session = getSessionFactory().openSession();
         try {
+            Session session = getSessionFactory().openSession();
             session.setFlushMode(FlushMode.AUTO);
             tx = session.beginTransaction();
             session.update(dossierMedical);
             tx.commit();
             session.close();
         } catch (DataAccessException exp) {
-            System.err.print("Exception " + exp.getMessage());
-            tx.rollback();
-            session.close();
+            System.err.print("Exception " + exp.getMessage()); 
             return null;
         }
         return dossierMedical.getId();
@@ -81,17 +77,15 @@ public class DossierMedicalDaoImpl extends MbHibernateDaoSupport implements Doss
     @Override
     public boolean deleteDossierMedical(DossierMedical dossierMedical) {
         Transaction tx = null;
-        Session session = getSessionFactory().openSession();
         try {
+            Session session = getSessionFactory().openSession();
             session.setFlushMode(FlushMode.AUTO);
             tx = session.beginTransaction();
             session.delete(dossierMedical);
             tx.commit();
             session.close();
         } catch (DataAccessException exp) {
-            System.err.print("Exception " + exp.getMessage());
-            tx.rollback();
-            session.close();
+            System.err.print("Exception " + exp.getMessage()); 
             return false;
         }
         return true;
@@ -138,35 +132,36 @@ public class DossierMedicalDaoImpl extends MbHibernateDaoSupport implements Doss
 
     @Override
     public List<DossierMedical> findAllDossierMedicalByStatut(Integer Actif) {
+        List <DossierMedical>  l = new ArrayList<DossierMedical> ();
        try {
-           List l = null;
             if(Actif!=null){
-                if(Actif==1)      l = this.getHibernateTemplate().find("SELECT s FROM DossierMedical s where s.actif = 1");
-                else if(Actif==0) l = this.getHibernateTemplate().find("SELECT s FROM DossierMedical s where s.actif <> 1");
+                if(Actif==1)      l = (List<DossierMedical>) this.getHibernateTemplate().find("SELECT s FROM DossierMedical s where s.actif = 1");
+                else if(Actif==0) l = (List<DossierMedical>) this.getHibernateTemplate().find("SELECT s FROM DossierMedical s where s.actif <> 1");
             }else{
-                l = this.getHibernateTemplate().find("SELECT s FROM DossierMedical s ");
+                l = (List<DossierMedical>) this.getHibernateTemplate().find("SELECT s FROM DossierMedical s ");
             }
-            if (l.size() > 0) {
-                return l;
-        }
-
         } catch (DataAccessException e) {
         System.err.print("Exception " + e.getMessage());
         }
-        return null;
+        return l;
     }
 
     @Override
     public List<DossierMedical> findDossierMedicalChantiersAndStatut(String code, Integer Actif) {  
-        Session session = sessionFactory.getCurrentSession();
-        Query query = session.createSQLQuery("select [id],[ACCIDNT],[ACTIF],[ACT_PROF],[AUTRES],[BCG],[CONJOIN],[CREEPAR],[DATECREATION],[DATEMODIFICATION],[DOCTEUR],[ENFANTS],[ETAT],[FORMATION_PROF],[FRERES],[INTOXICATION],[IPP],[DERN_VISITE],[MALADIE_PERS],[MERE],[MODIFIEPAR],[PERE],[POST_TRA],[RISQUE],[SERVICE],[SOEURS],[TETANOS],[salarie_ID],[DATE_EMBAUCHE],[PROCHAINE_VISITE],[TITULARISATION] from View_DOSSIER_MEDICAL");
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            Query query = session.createSQLQuery("select [id],[ACCIDNT],[ACTIF],[ACT_PROF],[AUTRES],[BCG],[CONJOIN],[CREEPAR],[DATECREATION],[DATEMODIFICATION],[DOCTEUR],[ENFANTS],[ETAT],[FORMATION_PROF],[FRERES],[INTOXICATION],[IPP],[DERN_VISITE],[MALADIE_PERS],[MERE],[MODIFIEPAR],[PERE],[POST_TRA],[RISQUE],[SERVICE],[SOEURS],[TETANOS],[salarie_ID],[DATE_EMBAUCHE],[PROCHAINE_VISITE],[TITULARISATION] from View_DOSSIER_MEDICAL");
 
-        List <DossierMedical> dossierMedicaux = new ArrayList<>();
-        for (int i = 0; i < query.list().size(); i++) { 
-            dossierMedicaux.add((DossierMedical) query.list().get(i));
+            List <DossierMedical> dossierMedicaux = new ArrayList<>();
+            for (int i = 0; i < query.list().size(); i++) { 
+                dossierMedicaux.add((DossierMedical) query.list().get(i));
+            }
+
+            return dossierMedicaux; 
+        } catch (Exception e) {
+            System.out.println("findDossierMedicalChantiersAndStatut: " +e.getMessage());
+            return null;
         }
-
-        return dossierMedicaux; 
     }
 
     @Override 
@@ -215,17 +210,15 @@ public class DossierMedicalDaoImpl extends MbHibernateDaoSupport implements Doss
     @Override
     public Integer insertDocument(DocumentDossierMedical document) {
         Transaction tx = null;
-        Session session = getSessionFactory().openSession();
         try {
+            Session session = getSessionFactory().openSession();
             session.setFlushMode(FlushMode.AUTO);
             tx = session.beginTransaction();
             session.persist(document);
             tx.commit();
             session.close();
         } catch (DataAccessException exp) {
-            System.err.print("Exception " + exp.getMessage());
-            tx.rollback();
-            session.close();
+            System.err.print("Exception " + exp.getMessage()); 
             return null;
         }
         return document.getId();
@@ -244,17 +237,17 @@ public class DossierMedicalDaoImpl extends MbHibernateDaoSupport implements Doss
     }
     @Override
     public void miseAjourSalarie(int id) { 
-            Session s = sessionFactory.openSession();
-            s.setFlushMode(FlushMode.AUTO);
         try {
-            s.getTransaction().begin();
+            Session s = sessionFactory.openSession();
+//            s.setFlushMode(FlushMode.AUTO);
+//            s.getTransaction().begin();
             Query _q=sessionFactory.getCurrentSession().createSQLQuery("{CALL PROC_DOSSIER_MEDICAL("+id+")}"); 
             _q.executeUpdate();
-            System.out.println("::::::::::::::::> i : "+id);
+            System.out.println("FROM DAO :::::::::::::::: : "+id);
 //            s.getTransaction().commit();
             s.close();  
         } catch (HibernateException e) {
-            System.err.println("HibernateException "+e.getMessage()); 
+            System.err.println("HibernateException ::>  "+e.getMessage()); 
         }
 
     }
@@ -287,17 +280,15 @@ public class DossierMedicalDaoImpl extends MbHibernateDaoSupport implements Doss
     @Override
     public Long addAntecedentProfessionnel(AntecedentProfessionnel antecedentProfessionnel) {
         Transaction tx = null;
-        Session session = getSessionFactory().openSession();
         try {
+            Session session = getSessionFactory().openSession();
             session.setFlushMode(FlushMode.AUTO);
             tx = session.beginTransaction();
             session.persist(antecedentProfessionnel);
             tx.commit();
             session.close();
         } catch (DataAccessException exp) {
-            System.err.print("Exception " + exp.getMessage());
-            tx.rollback();
-            session.close();
+            System.err.print("Exception " + exp.getMessage()); 
             return null;
         }
         return antecedentProfessionnel.getId();
@@ -306,17 +297,15 @@ public class DossierMedicalDaoImpl extends MbHibernateDaoSupport implements Doss
     @Override
     public Long updateAntecedentProfessionnel(AntecedentProfessionnel antecedentProfessionnel) {
         Transaction tx = null;
-        Session session = getSessionFactory().openSession();
         try {
+            Session session = getSessionFactory().openSession();
             session.setFlushMode(FlushMode.AUTO);
             tx = session.beginTransaction();
             session.update(antecedentProfessionnel);
             tx.commit();
             session.close();
         } catch (DataAccessException exp) {
-            System.err.print("Exception " + exp.getMessage());
-            tx.rollback();
-            session.close();
+            System.err.print("Exception " + exp.getMessage()); 
             return null;
         }
         return antecedentProfessionnel.getId();
@@ -333,11 +322,23 @@ public class DossierMedicalDaoImpl extends MbHibernateDaoSupport implements Doss
             tx.commit();
             session.close();
         } catch (DataAccessException exp) {
-            System.err.print("Exception " + exp.getMessage());
-            tx.rollback();
+            System.err.print("Exception " + exp.getMessage()); 
             return null;
         }
         return antecedent.getId();
+    }
+
+    @Override
+    public List<DossierMedical> findDosMedByIdsalarie(int id) {
+        List<DossierMedical> l = new ArrayList<>();  
+        try {   
+             String req=" FROM DossierMedical s where s.salarie.id="+id+")";
+             l = (List<DossierMedical>) this.getHibernateTemplate().find(req);  
+
+        } catch (DataAccessException e) {
+            System.err.println("Erreur de récupération des salarier par chantier "+e.getMessage());
+        }   
+        return l;
     }
 
      

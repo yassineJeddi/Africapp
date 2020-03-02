@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ma.bservices.services;
+package ma.bservices.tgcc.service;
 
 import java.io.Serializable;
 import java.util.List;
@@ -111,4 +111,9 @@ public class DossierMedicalServiceImp implements DossierMedicalService, Serializ
     public Long addAntecedent(Antecedent antecedent) {
         return dossierMedicalDao.addAntecedent(antecedent);
     } 
+
+    @Override
+    public List<DossierMedical> findDosMedByIdsalarie(int id) {
+        return dossierMedicalDao.findDosMedByIdsalarie(id);
+    }
 }

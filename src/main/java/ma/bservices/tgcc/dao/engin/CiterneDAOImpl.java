@@ -171,7 +171,9 @@ public class CiterneDAOImpl extends MbHibernateDaoSupport implements CiterneDAO,
             session.setFlushMode(FlushMode.AUTO);
 
             session.beginTransaction();
-            session.update(t);
+            System.out.println("1 DAO ;;;;;;;;;;;> editTraceCiterne  ");
+            session.update(session.merge(t));
+            System.out.println("2 DAO ;;;;;;;;;;;> editTraceCiterne  ");
 
             session.getTransaction().commit();
             session.close();

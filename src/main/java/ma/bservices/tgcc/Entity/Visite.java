@@ -41,6 +41,17 @@ public class Visite implements Serializable{
     @Column(name = "CREEPAR")
     private String creePar;
     
+    @Column(name = "DATECREATION")
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateCreation;
+    
+    @Column(name = "MODIFIEPAR")
+    private String modifiePar;
+
+    @Column(name = "DATEMODIFICATION")
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateModification;
+    
     @Column(name = "ETAT")
     private String etat; 
     
@@ -217,13 +228,6 @@ public class Visite implements Serializable{
     @Column(name = "PROCH_VIS")
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date prochaineVisite;
-    
-    @Column(name = "DATECREATION")
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date dateCreation;
-
-    @Column(name = "MODIFIEPAR")
-    private String modifiePar;
 
     @Column(name = "COMMENTAIRE")
     private String commentaire;
@@ -756,6 +760,14 @@ public class Visite implements Serializable{
 
     public void setChantier(Chantier chantier) {
         this.chantier = chantier;
+    }
+
+    public Date getDateModification() {
+        return dateModification;
+    }
+
+    public void setDateModification(Date dateModification) {
+        this.dateModification = dateModification;
     }
 
      

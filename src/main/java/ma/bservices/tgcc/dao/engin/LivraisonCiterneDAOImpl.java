@@ -68,16 +68,19 @@ public class LivraisonCiterneDAOImpl extends MbHibernateDaoSupport implements Li
 
     @Override
     public void update(Bon_Livraison_Citerne bon_Livraison_Citerne) {
+        try {
+                Session session = getSessionFactory().openSession();
+                session.setFlushMode(FlushMode.AUTO);
 
-        Session session = getSessionFactory().openSession();
-        session.setFlushMode(FlushMode.AUTO);
+                session.beginTransaction();
+                session.update(bon_Livraison_Citerne);
 
-        session.beginTransaction();
-        session.update(bon_Livraison_Citerne);
+                session.getTransaction().commit();
 
-        session.getTransaction().commit();
-
-        session.close();
+                session.close();
+        } catch (Exception e) {
+            System.out.println("Erreu de modification Bon_Livraison_Citerne car "+e.getMessage());
+        }
     }
 
     @Override

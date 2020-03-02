@@ -646,7 +646,7 @@ public class Gestion_CiterneMb implements Serializable {
          * test si capacite modifie est inferieur volume actuel dans la citerne
          * ( message d 'erreur )
          */
-        if (citern_to_update.getVolume_actuel_() <= 0) {
+        if (citern_to_update.getVolume_actuel_() < 0) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, Message.VOLUMEMOIN0_ERREUR, Message.VOLUMEMOIN0_ERREUR));
 
         } else if (capacite_toUpdate < citern_to_update.getVolume_actuel_() / 1000) {

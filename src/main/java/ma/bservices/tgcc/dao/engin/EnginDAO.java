@@ -21,6 +21,8 @@ public interface EnginDAO {
 
     
     public List<InterventionMaintenance> listIntervPr(int idEngin);
+    public void addInterventionMaintenancePr(InterventionMaintenance i);
+    public void editInterventionMaintenancePr(InterventionMaintenance i);
     public List<InterventionMaintenance> listIntervCr(int idEngin);
     public ECHEANCIER_VIDANGE lastEcheancierVidangeByCodeEngin(String code);
     

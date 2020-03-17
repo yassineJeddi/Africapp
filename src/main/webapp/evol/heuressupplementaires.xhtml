@@ -73,7 +73,7 @@
                                     <p:commandButton icon="ui-icon-search" value="rechercher" 
                                                      actionListener="#{heuresuppMb.reinitSearch}" 
                                                      oncomplete="PF('Find').show();"
-                                                     update="FindHS"
+                                                     update=":FindHS"
                                                      />
 
                                 </h:panelGrid>
@@ -208,8 +208,8 @@
                             <h:outputText value="Date :" />
                             <p:calendar pattern="dd/MM/yyyy" id="button" class="" 
                                         style="display: flex" 
-
-                                        required="true" 
+                                        required="true" readonly="true"
+                                        mindate="#{operationStock.mindate}"
                                         maxdate="#{operationStock.dateOfToday}"
                                         requiredMessage = "La date est obligatoire" 
                                         showOn="button" 
@@ -254,15 +254,22 @@
                     <h:form id="FindHS">
                         <h:panelGrid columns="2">
                             <h:outputText value="Matricule :"/>
-                            <p:inputText value="#{heuresuppMb.matriculeSearch}" />
+                            <p:inputText value="#{heuresuppMb.matriculeSearch}" >
+                                    <p:ajax  event="keyup"/>
+                            </p:inputText>
 
                             <h:outputText value="CIN :"/>
-                            <p:inputText value="#{heuresuppMb.cinSearch}" />
+                            <p:inputText value="#{heuresuppMb.cinSearch}"  >
+                                    <p:ajax  event="keyup"/>
+                            </p:inputText>
 
                             <h:outputText value="CNSS :"/>
-                            <p:inputText value="#{heuresuppMb.cnss}" />
+                            <p:inputText value="#{heuresuppMb.cnss}" >
+                                    <p:ajax  event="keyup"/>
+                            </p:inputText>
 
-                            <p:commandButton value="Rechercher" action="#{heuresuppMb.rechercheByMatCinCnss()}" 
+                            <p:commandButton value="Rechercher" action="#{heuresuppMb.findByMatCinCnss()}" 
+                                             onstart="PF('block').show()" oncomplete="PF('block').hide()"
                                              onclick="PF('Find').hide();"
                                              update=":tableHS" />
                         </h:panelGrid>

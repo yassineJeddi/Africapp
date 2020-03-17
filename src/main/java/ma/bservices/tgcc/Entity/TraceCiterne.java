@@ -55,6 +55,8 @@ public class TraceCiterne implements Serializable {
     private String comment; 
     @Column(name = "VALIDE")
     private Boolean valide = Boolean.FALSE; 
+    @Column(name = "FICHIER")
+    private String fichier; 
     @ManyToOne
     private Utilisateur utilisateurExpedition;
     @ManyToOne
@@ -188,6 +190,14 @@ public class TraceCiterne implements Serializable {
 
     public void setDateOperationRecep(Date dateOperationRecep) {
         this.dateOperationRecep = dateOperationRecep;
+    }
+
+    public String getFichier() {
+        return fichier;
+    }
+
+    public void setFichier(String fichier) {
+        this.fichier = fichier;
     }
  
     

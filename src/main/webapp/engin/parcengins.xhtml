@@ -19,8 +19,7 @@
                 <p:panel id="pannelPE">
                     <!--<h:form id="parcEnginForm">-->
                     <h:form id="form">
-                        
-                        <p:growl id="msgsM"  autoUpdate="false"/>
+                        <p:growl id="msgsM" autoUpdate="false" />
                         <h:panelGrid columns="10" cellpadding="5">
                             <p:commandButton class="btn btn-switch active" 
                                              update=":form_search"
@@ -1182,6 +1181,41 @@
 
                     <!-- 
                     ************************************************************************************************************************************************************************************
+                    *******************************Ajouter Type Engin*********************************************************************************************************************************
+                    ************************************************************************************************************************************************************************************
+                    -->
+                    <p:dialog header="Nouveau Type Engin" maximizable="false" resizable="false" draggable="false" 
+                              widgetVar="dlgAddTypeEngin"  id="dlgAddTypeEngin" 
+                              style="margin-right: 50px; overflow: scroll !important; min-height: 200px !important;" >
+                        <h:form id="formTypeEngin">
+                            <div class="row">
+                                <div class="col-lg-6 form-group">
+                                    <p:outputLabel value="Famille (*)" />
+                                    <p:inputText id="nomFamille" class="form-control" value="#{parcEngins.familleEngin.famille}"
+                                                 required="true" requiredMessage="La Famille Engin est obligatoire"> 
+                                    </p:inputText>
+                                    <p:message for="nomFamille" id="nomMarqueMessage"/>
+                                </div>
+                                <div class="col-lg-6 form-group">
+                                    <p:outputLabel value="Catégorie Famille " />
+                                    <p:inputText id="catFamille" class="form-control" 
+                                                 value="#{parcEngins.familleEngin.cat}" >
+                                    </p:inputText>
+                                </div>
+                            </div>
+                            <div class="row"> 
+                                <div class="col-lg-3 form-group"></div>
+                                <div class="col-lg-6 form-group">
+                                    <p:commandButton onclick="PF('dlgAddFamilleEngin').hide();" value="Enregistrer" style="width: 100%"
+                                                     actionListener="#{parcEngins.addFamilleEngin()}" update=":form_new:idFamilleEngin,:updateE:idFamilleEnginEdit"/>
+                                </div>
+                                <div class="col-lg-3 form-group"></div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <!-- 
+                    ************************************************************************************************************************************************************************************
                     *******************************Ajouter Fournisseur Engin*********************************************************************************************************************************
                     ************************************************************************************************************************************************************************************
                     -->
@@ -1678,8 +1712,7 @@
                                 <h:outputText value="#{parcEngins.engin.marque}" />
                                 <h:outputText value="Chantier"  />
                                 <p:selectOneMenu filter="true" filterMatchMode="contains" value="#{parcEngins.chantierAffectation}">
-                                    <f:selectItems value="#{chantierServMb.chantiers}" var="y"
-                                                   itemLabel="#{y.code}" itemValue="#{y.id}" />
+                                    <f:selectItems value="#{chantier.chantiers}" var="y" itemLabel="#{y.code}" itemValue="#{y.id}" />
                                 </p:selectOneMenu>
                             </h:panelGrid>
                             <p:commandButton update=":tablePE:tbl,:form:msgsM" value="Affectation" onclick="PF('dlg3').hide();"

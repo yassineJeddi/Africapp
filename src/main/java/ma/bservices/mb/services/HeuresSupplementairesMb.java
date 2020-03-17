@@ -9,8 +9,8 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,7 +28,6 @@ import ma.bservices.beans.Presence;
 import ma.bservices.beans.Salarie;
 import ma.bservices.beans.Utilisateur;
 import ma.bservices.paginate.HeureSupPagination;
-import ma.bservices.paginate.SalariePagination;
 import ma.bservices.services.ChantierService;
 import ma.bservices.services.HeuresSupplementairesService;
 import ma.bservices.services.ParametrageService;
@@ -36,7 +35,6 @@ import ma.bservices.services.PresenceService;
 import ma.bservices.services.SalarieService;
 import ma.bservices.tgcc.authentification.Authentification;
 import ma.bservices.tgcc.service.Engin.UtilisateurService;
-import org.primefaces.context.RequestContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -68,6 +66,9 @@ public class HeuresSupplementairesMb implements Serializable {
 
     @ManagedProperty(value = "#{utilisateurService}")
     private UtilisateurService utilisateurService;
+    
+    @ManagedProperty(value = "#{chantierService}")
+    private ma.bservices.tgcc.service.Engin.ChantierService chantierServiceCh;
 
     private List<HeuresSupplementaires> listHS = new ArrayList<>();
 
@@ -462,6 +463,64 @@ public class HeuresSupplementairesMb implements Serializable {
         this.addButtonChantier = addButtonChantier;
     }
 
+    public ma.bservices.tgcc.service.Engin.ChantierService getChantierServiceCh() {
+        return chantierServiceCh;
+    }
+
+    public void setChantierServiceCh(ma.bservices.tgcc.service.Engin.ChantierService chantierServiceCh) {
+        this.chantierServiceCh = chantierServiceCh;
+    }
+
+    public Utilisateur getUser_obj() {
+        return user_obj;
+    }
+
+    public void setUser_obj(Utilisateur user_obj) {
+        this.user_obj = user_obj;
+    }
+
+    public Boolean getIsAdmin() {
+        return isAdmin;
+    }
+
+    public void setIsAdmin(Boolean isAdmin) {
+        this.isAdmin = isAdmin;
+    }
+
+    public String getHeureEntreeChantier() {
+        return heureEntreeChantier;
+    }
+
+    public void setHeureEntreeChantier(String heureEntreeChantier) {
+        this.heureEntreeChantier = heureEntreeChantier;
+    }
+
+    public String getMinEntreeChantier() {
+        return minEntreeChantier;
+    }
+
+    public void setMinEntreeChantier(String minEntreeChantier) {
+        this.minEntreeChantier = minEntreeChantier;
+    }
+
+    public String getHeureSortieChantier() {
+        return heureSortieChantier;
+    }
+
+    public void setHeureSortieChantier(String heureSortieChantier) {
+        this.heureSortieChantier = heureSortieChantier;
+    }
+
+    public String getMinSortieChantier() {
+        return minSortieChantier;
+    }
+
+    public void setMinSortieChantier(String minSortieChantier) {
+        this.minSortieChantier = minSortieChantier;
+    }
+
+    
+
     @PostConstruct
     public void init() {
 
@@ -683,6 +742,15 @@ public class HeuresSupplementairesMb implements Serializable {
             first = true;
             next = true;
             prev = true;
+        }
+    }
+    
+    public void findByMatCinCnss() {
+        List<Chantier> chantiers = new ArrayList<Chantier>();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        chantiers = chantierServiceCh.searchByUser(auth.getPrincipal().toString());
+        if(chantiers.size()>0){
+            listHS = heuresSupplementairesService.findByMatCinCnss(chantiers,cinSearch, cnss, matriculeSearch);
         }
     }
 
@@ -1077,9 +1145,9 @@ public class HeuresSupplementairesMb implements Serializable {
     }
 
     public void reinitSearch() {
-        matriculeSearch = null;
-        cinSearch = null;
-        cnss = null;
+        matriculeSearch = "";
+        cinSearch = "";
+        cnss = "";
     }
 
     public void validate() {

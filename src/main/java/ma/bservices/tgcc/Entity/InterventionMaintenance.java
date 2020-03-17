@@ -83,6 +83,21 @@ public class InterventionMaintenance implements Serializable {
     
     @Column(name = "DATE_REV")
     private Date DATE_REV;
+    
+    @Column(name = "DATE_CREATE_REV")
+    private Date DATE_CREATE_REV;
+    
+    @Column(name = "CREEPAR")
+    private String creepar;
+    
+    @Column(name = "DATE_MODIF_REV")
+    private Date DATE_MODIF_REV;
+    
+    @Column(name = "MODIFPAR_REV")
+    private String modifpar_REV;
+    
+    @Column(name = "FICHIER")
+    private String fichier;
 
     @ManyToOne()
     @JoinColumn(name = "ID_HISTO_PANNE")
@@ -254,6 +269,48 @@ public class InterventionMaintenance implements Serializable {
     
     public InterventionMaintenance() {
     }
+
+    public String getFichier() {
+        return fichier;
+    }
+
+    public void setFichier(String fichier) {
+        this.fichier = fichier;
+    }
+
+    public Date getDATE_CREATE_REV() {
+        return DATE_CREATE_REV;
+    }
+
+    public void setDATE_CREATE_REV(Date DATE_CREATE_REV) {
+        this.DATE_CREATE_REV = DATE_CREATE_REV;
+    }
+
+    public String getCreepar() {
+        return creepar;
+    }
+
+    public void setCreepar(String creepar) {
+        this.creepar = creepar;
+    }
+
+    public Date getDATE_MODIF_REV() {
+        return DATE_MODIF_REV;
+    }
+
+    public void setDATE_MODIF_REV(Date DATE_MODIF_REV) {
+        this.DATE_MODIF_REV = DATE_MODIF_REV;
+    }
+
+    public String getModifpar_REV() {
+        return modifpar_REV;
+    }
+
+    public void setModifpar_REV(String modifpar_REV) {
+        this.modifpar_REV = modifpar_REV;
+    }
+    
+    
 
     @Override
     public String toString() {

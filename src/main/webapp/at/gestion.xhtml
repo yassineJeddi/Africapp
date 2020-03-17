@@ -192,6 +192,9 @@ and open the template in the editor.
                                     <p:column headerText="Titre" filterBy="#{c.titre}"  filterMatchMode="contains"  >
                                         <h:outputText value="#{c.titre}" />
                                     </p:column> 
+                                <p:column headerText="Datecirticat" filterBy="#{c.dateCertification}"  filterMatchMode="contains"  >
+                                        <h:outputText value="#{c.dateCertification}" />
+                                    </p:column> 
                                     <p:column headerText="NBJ Arret" filterBy="#{c.nbjArret}"  filterMatchMode="contains"  >
                                         <h:outputText value="#{c.nbjArret}" />
                                     </p:column> 
@@ -308,6 +311,13 @@ and open the template in the editor.
                                                    value="#{accidentTravailMb.certificatAt.tauxIpp}"
                                                    disabled="#{!accidentTravailMb.selectGuerison}" />
                                 </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 form-group">
+                                    <p:outputLabel value="Date Certification "/>
+                                    <p:calendar value="#{accidentTravailMb.certificatAt.dateCertification}"   
+                                                pattern="yyyy-MM-dd"   />
+                                </div> 
                             </div>
                             <div class="row">
                                 <div class="col-lg-12 form-group">

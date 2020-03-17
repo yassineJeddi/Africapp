@@ -493,6 +493,9 @@ public class ParcEnginsMb implements Serializable {
         marqueClass=new Marque();
         typeEngins = typeEnginService.allTypeEngin();
     }
+    public void preparAddTypeEngin(){ 
+        typeEngin = new TypeEngin();
+    }
     public void addDesignation(){
         designation.setCodeDesignation(designation.getCodeDesignation().toUpperCase());
         designation.setFamilleEngin(designation.getFamilleEngin().toUpperCase());

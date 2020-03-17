@@ -85,6 +85,8 @@ public class Bon_Livraison_Citerne implements Serializable {
     @Column(name = "NUM_BON")
     private String numBon;
 
+    @Column(name = "FOURNISSEURBL")
+    private String fournisseurBL;
     /**
      * add construct par default
      */
@@ -244,6 +246,15 @@ public class Bon_Livraison_Citerne implements Serializable {
     public void setLastHeure(String lastHeure) {
         this.lastHeure = lastHeure;
     }
+
+    public String getFournisseurBL() {
+        return fournisseurBL;
+    }
+
+    public void setFournisseurBL(String fournisseurBL) {
+        this.fournisseurBL = fournisseurBL;
+    }
+    
     
     
 

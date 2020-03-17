@@ -26,17 +26,15 @@
                         <p:messages id="growlId" showDetail="true" closable="true"/>
                         <h:panelGrid columns="2" cellpadding="5">
                             <p:outputLabel value="Bonjour!"/>
-                            <p:outputLabel value="#{utilisateur.userConnected.prenom} #{utilisateur.userConnected.nom}"/>
-                            <p:outputLabel value="Nom :" />
-                            <p:inputText value="#{utilisateur.userConnected.nom}"  />
-                            <p:outputLabel value="Prenom :" />
-                            <p:inputText value="#{utilisateur.userConnected.prenom}"  />
-                            <p:outputLabel value="Email :" />
-                            <p:inputText value="#{utilisateur.userConnected.email}"  />
-                            <p:outputLabel value="Tel :" />
-                            <p:inputText value="#{utilisateur.userConnected.mobile}"  />
+                            <p:outputLabel value="#{authentification.get_connected_user().getLogin()} #{authentification.get_connected_user().mensuel.prenom}"/>
+                            <p:outputLabel value="ancien mot de passe" />
+                            <p:inputText value="#{utilisateur.oldPwd}" type="password"/>
+                            <p:outputLabel value="nouveau mot de passe" />
+                            <p:inputText value="#{utilisateur.newPwd}" type="password" />
+                            <p:outputLabel value="confirmer nouveau mot de passe" />
+                            <p:inputText value="#{utilisateur.confirmNewPwd}" type="password" />
                         </h:panelGrid>
-                        <p:commandButton value="Valider" actionListener="#{utilisateur.changerUtilisateur()}" update=":group:growlId"/>
+                        <p:commandButton value="Valider" actionListener="#{utilisateur.changePwd(authentification.get_connected_user())}" update=":group:growlId"/>
 
                     </h:form>
 

@@ -32,6 +32,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -303,6 +304,7 @@ public class OperationStockMb implements Serializable {
 
     private boolean isDetailable;
     private Date dateOfToday;
+    private Date  mindate ;
 
     private Date dateReceptionTransfert;
 
@@ -391,6 +393,15 @@ public class OperationStockMb implements Serializable {
     int referenceTrGlobal;
     List<ArticleQuantite> listOfArticleQuantiteGlobal = new LinkedList<>();
 
+    public Date getMindate() {
+        return mindate;
+    }
+
+    public void setMindate(Date mindate) {
+        this.mindate = mindate;
+    }
+    
+    
     public int getReferenceTrGlobal() {
         return referenceTrGlobal;
     }
@@ -2811,6 +2822,11 @@ public class OperationStockMb implements Serializable {
         dateTransfert = new Date();
         dateConsommation = new Date();
         dateRetour = new Date();
+        
+        
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -1);
+        mindate = calendar.getTime();
     }
 
     public void info(int articleId, int zoneId, int lotId) {

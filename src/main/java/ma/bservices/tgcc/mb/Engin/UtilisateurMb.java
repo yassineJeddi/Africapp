@@ -31,6 +31,8 @@ import ma.bservices.tgcc.service.Engin.UtilisateurService;
 import ma.bservices.tgcc.service.Mensuel.MensuelService;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.jsf.FacesContextUtils;
@@ -255,64 +257,8 @@ public class UtilisateurMb implements Serializable {
     private Utilisateur utilisateurToAdd = new Utilisateur();
     private Utilisateur userCurrent = new Utilisateur();
     private Utilisateur user = new Utilisateur();
+    private Utilisateur userConnected = new Utilisateur();
 
-    public Utilisateur getUserCurrent() {
-        return userCurrent;
-    }
-
-    public void setUserCurrent(Utilisateur userCurrent) {
-        this.userCurrent = userCurrent;
-    }
-
-    public MensuelService getMensuelService() {
-        return mensuelService;
-    }
-
-    public void setMensuelService(MensuelService mensuelService) {
-        this.mensuelService = mensuelService;
-    }
-
-    public Utilisateur getUtilisateurToAdd() {
-        return utilisateurToAdd;
-    }
-
-    public void setUtilisateurToAdd(Utilisateur utilisateurToAdd) {
-        this.utilisateurToAdd = utilisateurToAdd;
-    }
-
-    public void setUserSearch(Utilisateur userSearch) {
-        this.userSearch = userSearch;
-    }
-
-    public void setUtilisateur(Utilisateur utilisateur) {
-        this.utilisateur = utilisateur;
-    }
-
-    private Utilisateur utilisateur = new Utilisateur();
-
-    public UtilisateurService getUtilisateurService() {
-        return utilisateurService;
-    }
-
-    public void setUtilisateurService(UtilisateurService utilisateurService) {
-        this.utilisateurService = utilisateurService;
-    }
-
-    public List<Utilisateur> getUsers() {
-        return users;
-    }
-
-    public Utilisateur getUser() {
-        return user;
-    }
-
-    public void setUser(Utilisateur user) {
-        this.user = user;
-    }
-
-    public void setUsers(List<Utilisateur> users) {
-        this.users = users;
-    }
 
     @PostConstruct
     public void init() {
@@ -325,6 +271,14 @@ public class UtilisateurMb implements Serializable {
         findModules();
         user = adminService.getUtilisateur(userCurrent.getId());
         users = utilisateurService.findAll();
+        
+        
+        Authentication authentication;
+        authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String username = authentication.getPrincipal().toString();
+        userConnected = utilisateurService.getUsersByLogin(username);
+        
     }
 
     public void onGrpSelectFilter() {
@@ -660,10 +614,13 @@ public class UtilisateurMb implements Serializable {
         utilisateurService = ctx.getBean(UtilisateurService.class);
         users = utilisateurService.findAll();
     }
+    public void changerUtilisateur() {
+        utilisateurService.updateUser(userConnected);
+    }
 
     public void changePwd(Utilisateur user) {
         String theOld = "";
-        System.out.println("connected user : " + user.getNom());
+        //System.out.println("connected user : " + user.getNom());
         String oldPassword = user.getPassword();
 
         try {
@@ -680,7 +637,7 @@ public class UtilisateurMb implements Serializable {
         }
 
         if (theOld.compareTo(oldPassword) == 0) {
-            System.out.println("ANCIEN VALID");
+            //System.out.println("ANCIEN VALID");
             if (newPwd.compareTo(confirmNewPwd) == 0) {
                 try {
                     MessageDigest md = MessageDigest.getInstance("MD5");
@@ -744,5 +701,72 @@ public class UtilisateurMb implements Serializable {
         }
 
     }
+    
+    public Utilisateur getUserCurrent() {
+        return userCurrent;
+    }
+
+    public void setUserCurrent(Utilisateur userCurrent) {
+        this.userCurrent = userCurrent;
+    }
+
+    public MensuelService getMensuelService() {
+        return mensuelService;
+    }
+
+    public void setMensuelService(MensuelService mensuelService) {
+        this.mensuelService = mensuelService;
+    }
+
+    public Utilisateur getUtilisateurToAdd() {
+        return utilisateurToAdd;
+    }
+
+    public void setUtilisateurToAdd(Utilisateur utilisateurToAdd) {
+        this.utilisateurToAdd = utilisateurToAdd;
+    }
+
+    public void setUserSearch(Utilisateur userSearch) {
+        this.userSearch = userSearch;
+    }
+
+    public void setUtilisateur(Utilisateur utilisateur) {
+        this.utilisateur = utilisateur;
+    }
+
+    private Utilisateur utilisateur = new Utilisateur();
+
+    public UtilisateurService getUtilisateurService() {
+        return utilisateurService;
+    }
+
+    public void setUtilisateurService(UtilisateurService utilisateurService) {
+        this.utilisateurService = utilisateurService;
+    }
+
+    public List<Utilisateur> getUsers() {
+        return users;
+    }
+
+    public Utilisateur getUser() {
+        return user;
+    }
+
+    public void setUser(Utilisateur user) {
+        this.user = user;
+    }
+
+    public void setUsers(List<Utilisateur> users) {
+        this.users = users;
+    }
+
+    public Utilisateur getUserConnected() {
+        return userConnected;
+    }
+
+    public void setUserConnected(Utilisateur userConnected) {
+        this.userConnected = userConnected;
+    }
+    
 
 }

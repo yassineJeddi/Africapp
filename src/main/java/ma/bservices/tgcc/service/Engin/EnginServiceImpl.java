@@ -357,6 +357,16 @@ public class EnginServiceImpl implements EnginService, Serializable {
     public List<ReferentielEngin> allReferentielEnginByEngin(Engin e) {
         return enginDAO.allReferentielEnginByEngin(e);
     }
+
+    @Override
+    public void addInterventionMaintenancePr(InterventionMaintenance i) {
+        enginDAO.addInterventionMaintenancePr(i);
+    }
+
+    @Override
+    public void editInterventionMaintenancePr(InterventionMaintenance i) {
+        enginDAO.editInterventionMaintenancePr(i);
+    }
     
     
 }

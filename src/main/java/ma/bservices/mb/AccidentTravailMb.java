@@ -711,7 +711,8 @@ public class AccidentTravailMb {
            /* listDestinatairesMail.add("yassine.jeddi@tgcc.ma");
             listDestinatairesMail.add("hanane.noam@tgcc.ma");
             listDestinatairesMail.add("khadija.majid@tgcc.ma");
-            */
+             */
+           
             
             if (listDestinatairesMail != null && !listDestinatairesMail.isEmpty()) {
                 for (String m : listDestinatairesMail) {

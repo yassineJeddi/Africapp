@@ -136,6 +136,23 @@ public class CiterneServiceBean implements Serializable {
         return chemin + "/" + file.getFileName();
 
     }
+    public String upload_BonTransfert(UploadedFile uploadedFile) throws IOException {
+
+        //String chemin = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/resources/document");
+        String chemin = ConstanteMb.getRepertoire() + "/files/Citerne/BonTransfert";
+        Path folder = Paths.get(chemin);
+        Files.createDirectories(folder);
+        String filename = FilenameUtils.getBaseName(uploadedFile.getFileName());
+
+        String extension = FilenameUtils.getExtension(uploadedFile.getFileName());
+        Path file = Files.createTempFile(folder, filename + "-", "." + extension);
+
+        try (InputStream input = uploadedFile.getInputstream()) {
+            Files.copy(input, file, StandardCopyOption.REPLACE_EXISTING);
+        }
+        return chemin + "/" + file.getFileName();
+
+    }
 
     /**
      * methode qui permet de telecharger fichier
@@ -144,6 +161,43 @@ public class CiterneServiceBean implements Serializable {
      * @throws java.io.FileNotFoundException
      */
     public void telecharger_fichier(String chemin) throws FileNotFoundException, IOException {
+
+        if (chemin != null && !"".equals(chemin)) {
+
+            FacesContext context = FacesContext.getCurrentInstance();
+
+            File file = new File(chemin);
+
+            HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+            response.reset();
+            response.setBufferSize(DEFAULT_BUFFER_SIZE);
+            response.setContentType("application/pdf");
+            response.setHeader("Content-Length", String.valueOf(file.length()));
+            response.setHeader("Content-Disposition", "attachment;filename=\""
+                    + file.getName() + "\"");
+            BufferedInputStream input = null;
+            BufferedOutputStream output = null;
+            try {
+                input = new BufferedInputStream(new FileInputStream(file),
+                        DEFAULT_BUFFER_SIZE);
+                output = new BufferedOutputStream(response.getOutputStream(),
+                        DEFAULT_BUFFER_SIZE);
+                byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+                int length;
+                while ((length = input.read(buffer)) > 0) {
+                    output.write(buffer, 0, length);
+                }
+            } finally {
+                if (input != null) {
+                    input.close();
+                    output.close();
+                }
+            }
+            context.responseComplete();
+        }
+
+    }
+    public void telecharger_BonTransfert(String chemin) throws FileNotFoundException, IOException {
 
         if (chemin != null && !"".equals(chemin)) {
 

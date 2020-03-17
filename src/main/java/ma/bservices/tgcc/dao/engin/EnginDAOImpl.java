@@ -606,7 +606,7 @@ public class EnginDAOImpl extends MbHibernateDaoSupport implements EnginDAO, Ser
 
     @Override
     public void editReferentielEngin(ReferentielEngin r) {
-         try {
+        try {
             Session session = getSessionFactory().openSession();
             session.setFlushMode(FlushMode.AUTO);
             session.beginTransaction();
@@ -642,6 +642,34 @@ public class EnginDAOImpl extends MbHibernateDaoSupport implements EnginDAO, Ser
             System.out.println("Erreur de recuperation de last panne car "+exp.getMessage());
         }
        return l;
+    }
+
+    @Override
+    public void addInterventionMaintenancePr(InterventionMaintenance i) {
+        try {
+            Session session = getSessionFactory().openSession();
+            session.setFlushMode(FlushMode.AUTO);
+            session.beginTransaction();
+            session.save(i);
+            session.getTransaction().commit();
+            session.close();
+        } catch (Exception e) {
+            System.out.println("Erreur d'enregistrement InterventionMaintenance car "+e.getMessage());
+        }
+    }
+
+    @Override
+    public void editInterventionMaintenancePr(InterventionMaintenance i) {
+        try {
+            Session session = getSessionFactory().openSession();
+            session.setFlushMode(FlushMode.AUTO);
+            session.beginTransaction();
+            session.update(i);
+            session.getTransaction().commit();
+            session.close();
+        } catch (Exception e) {
+            System.out.println("Erreur de modifier InterventionMaintenance car "+e.getMessage());
+        }
     }
     
     

@@ -8,6 +8,9 @@ package ma.bservices.tgcc.mb.Engin;
 import com.itextpdf.text.DocumentException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -25,6 +28,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import ma.bservice.tgcc.Constante.Message;
+import ma.bservices.mb.services.ConstanteMb;
 import ma.bservices.beans.Chantier;
 import ma.bservices.beans.Utilisateur;
 import ma.bservices.tgcc.Entity.Bon_Livraison_Citerne;
@@ -45,7 +49,7 @@ import ma.bservices.tgcc.service.SendEmail;
 import ma.bservices.tgcc.utilitaire.Outils;
 import ma.bservices.tgcc.utilitaire.RemplireTrace;
 import org.apache.commons.io.FilenameUtils;
-import org.primefaces.context.RequestContext;
+import org.primefaces.context.RequestContext; 
 import org.primefaces.model.UploadedFile;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -108,13 +112,16 @@ public class CiterneMb implements Serializable {
     private Date date_Bon_livraison;
     private Date date_bon_caisse;
     private String Kilométrage_bon_caisse;
+    private String fournisseurBL;
     private String heure_engin;
     private Double Tonnes_bonCaisse;
     private UploadedFile uploadedFile;
+    private UploadedFile uploadedBon;
     private String l_engin_to_bonCaisse;
     private Bon_Livraison_Citerne bon_Livraison_Citerne_to_add_boncaisse, bon_temp;
     private String numero_commande_livraison;
     private String numero_commande;
+    private String selectedDoc;
     private Boolean display_button_telecharger = false;
     private Boolean display_button_telecharger_bon_gasoil_mensuel = false;
     private String numero_commande_bon_caisse;
@@ -325,7 +332,8 @@ public class CiterneMb implements Serializable {
                 bon_Livraison_Citerne.setNumero_Livraison(numero_commande_livraison);
 
                 bon_Livraison_Citerne.setDate(date_Bon_livraison);
-
+                bon_Livraison_Citerne.setFournisseurBL(fournisseurBL);
+                
                 bon_Livraison_Citerne.setAction("LIVRAISON");
                 bon_Livraison_Citerne.setCommentaire(commentBl);
 
@@ -682,6 +690,29 @@ public class CiterneMb implements Serializable {
         if (livraison_Citerne.getChemin_fichier() != null) {
 
             this.citerneServiceBean.telecharger_fichier(livraison_Citerne.getChemin_fichier());
+        }
+
+    }
+    public void visualiser(String chemin) {
+        FacesContext context = FacesContext.getCurrentInstance();
+                System.out.println("chemin :::::::::::::::> " );
+         try {
+                System.out.println("chemin : " + chemin);
+                selectedDoc = chemin.substring(chemin.indexOf("files")); 
+                System.out.println("selectedDoc : " + selectedDoc);
+            } catch (Exception e) {
+                System.out.println("Ereur de telechargement du fichier "+e.getMessage());
+                selectedDoc ="";
+                context.addMessage(null, new FacesMessage("Ereur de visualiser du fichier car"+e.getMessage(), ""));
+         }
+    }
+    public void telecharger_bon_Transfaire_gasoil(TraceCiterne t) throws IOException {
+
+        //System.out.println("entre : " + livraison_Citerne.getChemin_fichier());
+
+        if (t.getFichier()!= null) {
+
+            this.citerneServiceBean.telecharger_BonTransfert(t.getFichier());
         }
 
     }
@@ -1089,13 +1120,22 @@ public class CiterneMb implements Serializable {
         citernSrc = c; 
         citernDist = new Citerne();
         traceCitern = new TraceCiterne();
-        traceCiternes =new ArrayList<TraceCiterne>();
+        traceCiternes =new ArrayList<TraceCiterne>(); 
+        //
         try {
             traceCiternes = citerneService.findAllTraceCiterneByCiterne(c);
         } catch (Exception e) {
             System.out.println(" ::::> Erreur de chargement la liste transfaire citernSrc  car : "+e.getMessage());
         }
         //System.out.println(" ::::> chargement liste de transfaire citernSrc : "+traceCiternes.size());
+    }
+    public void uploadedFileInfo(){
+        try {
+           System.out.println("mmmmmmmmmmmmmmm> "+uploadedBon.getFileName());
+        } catch (Exception e) {
+            System.out.println(" mmmmmmmmmmmmmmm> Erreur   car : "+e.getMessage());
+        }
+        
     }
     
     public void chageCiternEv(){
@@ -1172,62 +1212,91 @@ public class CiterneMb implements Serializable {
                 System.out.println("Erreur de modifier traceCitern  car "+e.getMessage());
             }
     }
-    public void saveTransfaire(){
-        Boolean b = Boolean.FALSE;
-        try {
+    public void saveTransfaire() throws IOException{
+                            System.out.println("*********** 1");
             
-            traceCitern.setCiternSrc(citernSrc);
-            traceCitern.setCiternSrcLitre(citernSrc.getVolume_actuel_());
-            traceCitern.setCiternDist(citernDist);
-            traceCitern.setCiternDistLitre(citernDist.getVolume_actuel_());
-            traceCitern.setUtilisateurExpedition(u);
-            traceCitern.setValide(Boolean.FALSE);
-            
-            citernSrc.setVolume_actuel_(citernSrc.getVolume_actuel_()-traceCitern.getLitreTransf()); 
-             b = Boolean.TRUE;
-            } catch (Exception e) {
-                System.out.println("Erreur d'operation sur les objets  car "+e.getMessage());
-            }
-            try {
-                if(b){
-                    citerneService.update_citerne(citernSrc);
-                }
-            } catch (Exception e) {
-                System.out.println("Erreur de modification citernSrc  car "+e.getMessage());
-            }
-            try {
-                if(b){
-                    citerneService.addTraceCiterne(traceCitern);
-                     ApplicationContext context = new ClassPathXmlApplicationContext("mail.xml");
+            /**********Debut***********/
+            if(citernSrc.getVolume_actuel_()-traceCitern.getLitreTransf()>0){
+                System.out.println("*********** 2");
+                Boolean b = Boolean.FALSE;
+                String fichier="";
+                //upload fichier
+                String chemin = ConstanteMb.getRepertoire() + "/files/Citerne/BonTransfert";
+                Path folder = Paths.get(chemin);
+                Files.createDirectories(folder);
+                if (uploadedBon == null) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, Message.STRING_CHARGE_DOCUMENT, Message.STRING_CHARGE_DOCUMENT));
+                } else if (uploadedBon.getFileName().equals("")) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, Message.STRING_CHARGE_DOCUMENT, Message.STRING_CHARGE_DOCUMENT));
+                } else {
+                    String extension = FilenameUtils.getExtension(uploadedBon.getFileName());
+                    if (!"pdf".equals(extension)) {
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, Message.STRING_CHARGE_DOCUMENT_PDF, Message.STRING_CHARGE_DOCUMENT_PDF));
+                    } else {
+                        try {
+                            try {
+                            fichier = this.citerneServiceBean.upload_BonTransfert(uploadedBon);
+                           } catch (Exception e) {
+                               System.out.println("Erreur d'operation sur les objets  car "+e.getMessage());
+                           }
+                            try {
+                                    traceCitern.setCiternSrc(citernSrc);
+                                    traceCitern.setCiternSrcLitre(citernSrc.getVolume_actuel_());
+                                    traceCitern.setCiternDist(citernDist);
+                                    traceCitern.setCiternDistLitre(citernDist.getVolume_actuel_());
+                                    traceCitern.setUtilisateurExpedition(u);
+                                    traceCitern.setValide(Boolean.FALSE);
+                                    traceCitern.setFichier(fichier);
+                                    citernSrc.setVolume_actuel_(citernSrc.getVolume_actuel_()-traceCitern.getLitreTransf());                                 
+                                    b = Boolean.TRUE;
+                                if(b){
+                                    citerneService.update_citerne(citernSrc);
+                                    citerneService.addTraceCiterne(traceCitern); 
+                                }
+                            } catch (Exception e) {
+                                System.out.println("Erreur de modification citernSrc  car "+e.getMessage());
+                            }
+                        try {
+                            /*if(b){
+                                 ApplicationContext context = new ClassPathXmlApplicationContext("mail.xml");
 
-           // List<String> listDestinatairesMail = getRecipientsByModule("ENGIN_PANNE");
-                    SendEmail sm = (SendEmail) context.getBean("sendEmail");
-                    String[] listDestinatairesMail = {"hamza.achtioua@tgcc.ma"} ;
-                    String[] cc = {"said.jamaleddine@tgcc.ma","mohamed.benseddik@tgcc.ma","yassine.jeddi@tgcc.ma"} ; 
-                    if (listDestinatairesMail != null ) {
-                        for (String m : listDestinatairesMail) {
-                            sm.sendMailCc("notification@tgcc.ma", m, "Notification de réception de Gasoil", "Bonjour,\n\nUn transfert d'une quantité de Gasoil de "
-                                    + traceCitern.getLitreTransf()+"L a été effectuée vers le chantier "
-                                    + traceCitern.getCiternDist().getChantier_Principal().getCode().trim()+" en provenance du chantier  "
-                                    + traceCitern.getCiternSrc().getChantier_Principal().getCode().trim()+".\n\nMerci de procéder à la réception sur UPSIT.\n\nCordialement.",cc );
+                       // List<String> listDestinatairesMail = getRecipientsByModule("ENGIN_PANNE");
+                                SendEmail sm = (SendEmail) context.getBean("sendEmail");
+                                String[] listDestinatairesMail = {"hamza.achtioua@tgcc.ma"} ;
+                                String[] cc = {"said.jamaleddine@tgcc.ma","mohamed.benseddik@tgcc.ma","yassine.jeddi@tgcc.ma"} ; 
+                                if (listDestinatairesMail != null ) {
+                                    for (String m : listDestinatairesMail) {
+                                        sm.sendMailCc("notification@tgcc.ma", m, "Notification de réception de Gasoil", "Bonjour,\n\nUn transfert d'une quantité de Gasoil de "
+                                                + traceCitern.getLitreTransf()+"L a été effectuée vers le chantier "
+                                                + traceCitern.getCiternDist().getChantier_Principal().getCode().trim()+" en provenance du chantier  "
+                                                + traceCitern.getCiternSrc().getChantier_Principal().getCode().trim()+".\n\nMerci de procéder à la réception sur UPSIT.\n\nCordialement.",cc );
+                                    }
+                                }
+                            }*/
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'ajout traceCitern  car "+e.getMessage());
+                        } 
+                        if (b) {
+                            try {
+                                    traceCiternes = citerneService.findAllTraceCiterneByCiterne(citernSrc);
+                                } catch (Exception e) {
+                                    System.out.println(" ::::> Erreur de chargement la liste transfaire citernSrc  car : "+e.getMessage());
+                                }
+                            prepTransfaire(citernSrc);
+                        }else{
+                            citernSrc.setVolume_actuel_(citernSrc.getVolume_actuel_()+traceCitern.getLitreTransf());
+                            prepTransfaire(citernSrc);
                         }
-                    }
+                        chargerListTransfaire();
+                        } catch (Exception e) {
+                            System.out.println("Erreur d'ajouter nombre des jours arreter au AT car "+e.getMessage());
+                        }
                 }
-            } catch (Exception e) {
-                System.out.println("Erreur d'ajout traceCitern  car "+e.getMessage());
             } 
-            if (b) {
-                try {
-                        traceCiternes = citerneService.findAllTraceCiterneByCiterne(citernSrc);
-                    } catch (Exception e) {
-                        System.out.println(" ::::> Erreur de chargement la liste transfaire citernSrc  car : "+e.getMessage());
-                    }
-                prepTransfaire(citernSrc);
             }else{
-                citernSrc.setVolume_actuel_(citernSrc.getVolume_actuel_()+traceCitern.getLitreTransf());
-                prepTransfaire(citernSrc);
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "La quantite transféré doit etre inferieur ou egale la quantité de la citerne", ""));
             }
-            chargerListTransfaire();
+            
     }
     /*** Fin Gestion TRansfaire gasoil entre citerne ***/
     
@@ -1907,6 +1976,32 @@ public class CiterneMb implements Serializable {
         this.idCiternEditSrc = idCiternEditSrc;
     }
 
+    public UploadedFile getUploadedBon() {
+        return uploadedBon;
+    }
+
+    public void setUploadedBon(UploadedFile uploadedBon) {
+        this.uploadedBon = uploadedBon;
+    }
+
+    public String getFournisseurBL() {
+        return fournisseurBL;
+    }
+
+    public void setFournisseurBL(String fournisseurBL) {
+        this.fournisseurBL = fournisseurBL;
+    }
+
+    public String getSelectedDoc() {
+        return selectedDoc;
+    }
+
+    public void setSelectedDoc(String selectedDoc) {
+        this.selectedDoc = selectedDoc;
+    }
+
+    
+    
     
     
     

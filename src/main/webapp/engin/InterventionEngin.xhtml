@@ -1,21 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
-
-<!DOCTYPE html>
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"      
+          
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
-
     <h:head>
         <link rel="stylesheet" type="text/css" href="../resources/css/main.css" />
-        <title>Document Engin</title>
+        <title>Interventions Engin</title>
     </h:head>
     <body>
         <ui:composition template="./enginTemplate.xhtml">
@@ -80,6 +74,7 @@ and open the template in the editor.
             </p:panel>
                 <p:panel id="panel">
                     <h:form id="formTable">
+                        <p:commandButton value="Ajouter Interventions maintenance préventive"  onclick="PF('addImp').show();" action="#{interventionEnginMb.prepInterventionMaintenance()}" />
                         <p:messages id="msgsM" closable="true"/>
                         <br/>
                                 <h:form id="form11">
@@ -110,6 +105,13 @@ and open the template in the editor.
                                         </p:column>
                                         <p:column headerText="N° de Fiche"  >
                                             <h:outputText  value="#{l.NUM_FM}"  />
+                                        </p:column> 
+                                        <p:column headerText=" "  >
+                                                <p:commandButton icon="ui-icon-document"
+                                                         title ="Consulter Document"
+                                                         action="#{interventionEnginMb.visualiser(l.fichier)}" 
+                                                         oncomplete="PF('consulterDoc').show()"
+                                                         update=":visuliser_id" />
                                         </p:column>  
                                     </p:dataTable>
                                 </h:form>
@@ -181,6 +183,119 @@ and open the template in the editor.
                     </h:form>
                     <!--             dialog consultation document                        -->
                 </p:panel>
+                
+                    <!-- 
+                    ************************************************************************************************************************************************************************************
+                    *******************************Ajouter Interventions maintenance préventive ********************************************************************************************************
+                    ************************************************************************************************************************************************************************************
+                    -->
+                    
+                    
+                    <p:dialog header="Ajouter Interventions maintenance préventive" 
+                              widgetVar="addImp" id="addImp"  maximizable="true" 
+                              resizable="true" draggable="true"  width="800">
+                        <h:form id="form_addImp"  enctype="multipart/form-data" >
+                            <div class="row">
+                                <div class="col-lg-3 form-group">
+                                    <p:outputLabel value="Chantier: "/>
+                                </div>
+                                <div class="col-lg-9 form-group">
+                                    <p:selectOneMenu filter="true" filterMatchMode="contains"   value="#{interventionEnginMb.prijAp_id}"
+                                                     style="width: 100%" class="form-control" >
+                                        <f:selectItems value="#{chantier.chantiers}" var="C"  itemLabel="#{C.code}" itemValue="#{C.id}"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-2 form-group">
+                                    <p:outputLabel value="Type Rév "/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:inputNumber  value="#{interventionEnginMb.interventionMaintenance.TYPE_REV}"
+                                                    required="true" requiredMessage="Le Type est obligatoire" />
+                                </div>
+                                <div class="col-lg-2 form-group">
+                                    <p:outputLabel value="N° de Fiche "/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:inputText value="#{interventionEnginMb.interventionMaintenance.NUM_FM}"
+                                                 required="true" requiredMessage="Le N° de Fiche est obligatoire" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-2 form-group">
+                                    <p:outputLabel value="Date intervention"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:calendar  value="#{interventionEnginMb.interventionMaintenance.DATE_INTER}" showOn="button"
+                                                 required="true" requiredMessage="Date intervention est obligatoire" />
+                                </div>
+                                <div class="col-lg-2 form-group">
+                                    <p:outputLabel value="Date révision"/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:calendar  value="#{interventionEnginMb.interventionMaintenance.DATE_REV}" showOn="button"
+                                                 required="true" requiredMessage="Le N° de Fiche est obligatoire" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-2 form-group">
+                                    <p:outputLabel value="Secteur "/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:inputText value="#{interventionEnginMb.interventionMaintenance.SECTEUR_INTERV}"
+                                                 required="true" requiredMessage="Le Secteur est obligatoire" />
+                                </div>
+                                <div class="col-lg-2 form-group">
+                                    <p:outputLabel value="Cpt à la révision "/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:fileUpload  required="true" requiredMessage="Le Bon est obligatoire" 
+                                                   value="#{interventionEnginMb.interventionMaintenance.CPT_REV}"
+                                                   mode="simple"   >
+                                    </p:fileUpload>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-2 form-group">
+                                    <p:outputLabel value="Secteur "/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:inputText value="#{interventionEnginMb.interventionMaintenance.SECTEUR_INTERV}"
+                                                 required="true" requiredMessage="Le Secteur est obligatoire" />
+                                </div>
+                                <div class="col-lg-2 form-group">
+                                    <p:outputLabel value="Fichier "/>
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <p:fileUpload  required="true" requiredMessage="Le Bon est obligatoire" 
+                                                   value="#{interventionEnginMb.uploadedFile}"
+                                                   mode="simple"   >
+                                    </p:fileUpload>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 form-group"></div>
+                                <div class="col-lg-4 form-group">
+                                    <p:commandButton value="Valider"
+                                                     action="#{interventionEnginMb.addInterventionMaintenance()}" ajax="false"
+                                                     onclick="PF('addImp').hide();" update=":addImp,:formTable,formTable:form11,formTable:form11:tbl"
+                                                     />
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                    
+                <p:dialog   draggable="true" width="80%" responsive="true"
+                            resizable="false" 
+                            modal="true" 
+                            widgetVar="consulterDoc">
+                    <h:form id="visuliser_id">    
+                        <p:media value="#{imageBean.bon}" width="100%" height="500" player="pdf"> 
+                            <f:param name="path" value="#{interventionEnginMb.selectedDoc}" />
+                        </p:media>
+                    </h:form>
+                </p:dialog>
             </ui:define>
         </ui:composition>
     </body>

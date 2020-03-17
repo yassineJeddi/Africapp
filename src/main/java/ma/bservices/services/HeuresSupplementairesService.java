@@ -161,6 +161,32 @@ public class HeuresSupplementairesService {
         return (HeuresSupplementaires) query.uniqueResult();
 
     }
+    /**
+     * Récupérer heures supplémentaires
+     *
+     * @param cin cnss matricule
+     * @return HeuresSupplementaires
+     */
+    public List<HeuresSupplementaires> findByMatCinCnss(List<Chantier> chantiers,String cin, String cnss, String matricule) {
+        List<HeuresSupplementaires> l = new  ArrayList<HeuresSupplementaires>();
+        String idChantier="0";
+        for (Chantier chantier : chantiers) {
+            idChantier=idChantier+","+chantier.getId();
+        }
+        try {
+            String rq = "FROM HeuresSupplementaires h WHERE h.chantier.id in("+idChantier+" )";
+            rq+=(cin!=null && !"".equals(cin.trim()) )? " AND h.salarie.cin = '"+cin+"'":""; 
+            rq+=(cnss!=null && !"".equals(cnss.trim()))? " AND h.salarie.cnss = '"+cnss+"'":""; 
+            rq+=(matricule!=null && !"".equals(matricule.trim()))? " AND h.salarie.matricule = '"+matricule+"'":""; 
+                Session session = sessionFactory.getCurrentSession();
+                Query query = session.createQuery(rq);
+                l = query.list();
+        } catch (Exception e) {
+            System.out.println("Erreur de recuperation liste des heures suplumentaire car "+e.getMessage());
+        }
+        return l;
+
+    }
 
     /**
      * Récupérer la liste des heures supplémentaires

@@ -53,7 +53,6 @@ public class AccidentTravailDaoImp extends MbHibernateDaoSupport implements IAcc
         Transaction tx = null;
         Session session = getSessionFactory().openSession();
         try {
-            System.out.println("DAO -------> ma.bservices.dao.AccidentTravailDaoImp.editAccidentTravail()");
             session.setFlushMode(FlushMode.AUTO);
             tx = session.beginTransaction();
             session.merge(a);

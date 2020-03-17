@@ -99,7 +99,7 @@ public class ImageBean implements Serializable {
     }
 
     public StreamedContent getBon(){
-     
+     String fichier="", chemin="";
      try {
             if (FacesContext.getCurrentInstance().getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
                 //System.out.println("phase is render response");
@@ -108,9 +108,9 @@ public class ImageBean implements Serializable {
             ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
 
             //String chemin= context.getRealPath("/");
-            String chemin  = ConstanteMb.getRepertoire();
-            String fichier = context.getRequestParameterMap().get("path");
-            System.out.println("file " + fichier);
+            chemin  = ConstanteMb.getRepertoire();
+            fichier = context.getRequestParameterMap().get("path");
+            System.out.println(":::::::::::::::> file " + fichier);
            // String codeCurrent = "resources/document/bonTransfert" + refTr + ".pdf";
             InputStream stream = new FileInputStream( chemin + "/" + fichier);
 
